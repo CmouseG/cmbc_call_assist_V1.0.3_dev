@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.voipgateway.dingxin.dao.TblGwpMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.voipgateway.dingxin.dao.entity.TblGwp" >
+    <id column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="rec_status" property="recStatus" jdbcType="INTEGER" />
+    <result column="port_uuid" property="portUuid" jdbcType="INTEGER" />
+    <result column="alias" property="alias" jdbcType="CHAR" />
+    <result column="bkp_uuid" property="bkpUuid" jdbcType="INTEGER" />
+    <result column="local_sim_uuid" property="localSimUuid" jdbcType="INTEGER" />
+    <result column="domain_uuid" property="domainUuid" jdbcType="INTEGER" />
+    <result column="local_imei" property="localImei" jdbcType="CHAR" />
+    <result column="current_imei" property="currentImei" jdbcType="CHAR" />
+    <result column="local_imsi" property="localImsi" jdbcType="CHAR" />
+    <result column="work_mode" property="workMode" jdbcType="INTEGER" />
+    <result column="mod_type" property="modType" jdbcType="INTEGER" />
+    <result column="mod_status" property="modStatus" jdbcType="INTEGER" />
+    <result column="mod_signal_val" property="modSignalVal" jdbcType="INTEGER" />
+    <result column="mod_signal_level" property="modSignalLevel" jdbcType="INTEGER" />
+    <result column="mod_ber_val" property="modBerVal" jdbcType="INTEGER" />
+    <result column="mod_error_count" property="modErrorCount" jdbcType="INTEGER" />
+    <result column="last_bind_time" property="lastBindTime" jdbcType="TIMESTAMP" />
+    <result column="last_used_time" property="lastUsedTime" jdbcType="TIMESTAMP" />
+    <result column="cur_call_status" property="curCallStatus" jdbcType="INTEGER" />
+    <result column="cur_sms_status" property="curSmsStatus" jdbcType="INTEGER" />
+    <result column="cur_ussd_status" property="curUssdStatus" jdbcType="INTEGER" />
+    <result column="cur_call_sn" property="curCallSn" jdbcType="INTEGER" />
+    <result column="cur_sms_sn" property="curSmsSn" jdbcType="INTEGER" />
+    <result column="cur_ussd_sn" property="curUssdSn" jdbcType="INTEGER" />
+    <result column="round_trip_delay" property="roundTripDelay" jdbcType="INTEGER" />
+    <result column="packet_all" property="packetAll" jdbcType="INTEGER" />
+    <result column="packet_retries" property="packetRetries" jdbcType="INTEGER" />
+    <result column="packet_timeout" property="packetTimeout" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, rec_status, port_uuid, `alias`, bkp_uuid, local_sim_uuid, domain_uuid, local_imei, 
+    current_imei, local_imsi, work_mode, mod_type, mod_status, mod_signal_val, mod_signal_level, 
+    mod_ber_val, mod_error_count, last_bind_time, last_used_time, cur_call_status, cur_sms_status, 
+    cur_ussd_status, cur_call_sn, cur_sms_sn, cur_ussd_sn, round_trip_delay, packet_all, 
+    packet_retries, packet_timeout
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwpExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tbl_gwp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_gwp
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tbl_gwp
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwpExample" >
+    delete from tbl_gwp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwp" >
+    insert into tbl_gwp (uuid, rec_status, port_uuid, 
+      `alias`, bkp_uuid, local_sim_uuid, 
+      domain_uuid, local_imei, current_imei, 
+      local_imsi, work_mode, mod_type, 
+      mod_status, mod_signal_val, mod_signal_level, 
+      mod_ber_val, mod_error_count, last_bind_time, 
+      last_used_time, cur_call_status, cur_sms_status, 
+      cur_ussd_status, cur_call_sn, cur_sms_sn, 
+      cur_ussd_sn, round_trip_delay, packet_all, 
+      packet_retries, packet_timeout)
+    values (#{uuid,jdbcType=INTEGER}, #{recStatus,jdbcType=INTEGER}, #{portUuid,jdbcType=INTEGER}, 
+      #{alias,jdbcType=CHAR}, #{bkpUuid,jdbcType=INTEGER}, #{localSimUuid,jdbcType=INTEGER}, 
+      #{domainUuid,jdbcType=INTEGER}, #{localImei,jdbcType=CHAR}, #{currentImei,jdbcType=CHAR}, 
+      #{localImsi,jdbcType=CHAR}, #{workMode,jdbcType=INTEGER}, #{modType,jdbcType=INTEGER}, 
+      #{modStatus,jdbcType=INTEGER}, #{modSignalVal,jdbcType=INTEGER}, #{modSignalLevel,jdbcType=INTEGER}, 
+      #{modBerVal,jdbcType=INTEGER}, #{modErrorCount,jdbcType=INTEGER}, #{lastBindTime,jdbcType=TIMESTAMP}, 
+      #{lastUsedTime,jdbcType=TIMESTAMP}, #{curCallStatus,jdbcType=INTEGER}, #{curSmsStatus,jdbcType=INTEGER}, 
+      #{curUssdStatus,jdbcType=INTEGER}, #{curCallSn,jdbcType=INTEGER}, #{curSmsSn,jdbcType=INTEGER}, 
+      #{curUssdSn,jdbcType=INTEGER}, #{roundTripDelay,jdbcType=INTEGER}, #{packetAll,jdbcType=INTEGER}, 
+      #{packetRetries,jdbcType=INTEGER}, #{packetTimeout,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwp" >
+    insert into tbl_gwp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="recStatus != null" >
+        rec_status,
+      </if>
+      <if test="portUuid != null" >
+        port_uuid,
+      </if>
+      <if test="alias != null" >
+        `alias`,
+      </if>
+      <if test="bkpUuid != null" >
+        bkp_uuid,
+      </if>
+      <if test="localSimUuid != null" >
+        local_sim_uuid,
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid,
+      </if>
+      <if test="localImei != null" >
+        local_imei,
+      </if>
+      <if test="currentImei != null" >
+        current_imei,
+      </if>
+      <if test="localImsi != null" >
+        local_imsi,
+      </if>
+      <if test="workMode != null" >
+        work_mode,
+      </if>
+      <if test="modType != null" >
+        mod_type,
+      </if>
+      <if test="modStatus != null" >
+        mod_status,
+      </if>
+      <if test="modSignalVal != null" >
+        mod_signal_val,
+      </if>
+      <if test="modSignalLevel != null" >
+        mod_signal_level,
+      </if>
+      <if test="modBerVal != null" >
+        mod_ber_val,
+      </if>
+      <if test="modErrorCount != null" >
+        mod_error_count,
+      </if>
+      <if test="lastBindTime != null" >
+        last_bind_time,
+      </if>
+      <if test="lastUsedTime != null" >
+        last_used_time,
+      </if>
+      <if test="curCallStatus != null" >
+        cur_call_status,
+      </if>
+      <if test="curSmsStatus != null" >
+        cur_sms_status,
+      </if>
+      <if test="curUssdStatus != null" >
+        cur_ussd_status,
+      </if>
+      <if test="curCallSn != null" >
+        cur_call_sn,
+      </if>
+      <if test="curSmsSn != null" >
+        cur_sms_sn,
+      </if>
+      <if test="curUssdSn != null" >
+        cur_ussd_sn,
+      </if>
+      <if test="roundTripDelay != null" >
+        round_trip_delay,
+      </if>
+      <if test="packetAll != null" >
+        packet_all,
+      </if>
+      <if test="packetRetries != null" >
+        packet_retries,
+      </if>
+      <if test="packetTimeout != null" >
+        packet_timeout,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=INTEGER},
+      </if>
+      <if test="recStatus != null" >
+        #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="portUuid != null" >
+        #{portUuid,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=CHAR},
+      </if>
+      <if test="bkpUuid != null" >
+        #{bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localSimUuid != null" >
+        #{localSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localImei != null" >
+        #{localImei,jdbcType=CHAR},
+      </if>
+      <if test="currentImei != null" >
+        #{currentImei,jdbcType=CHAR},
+      </if>
+      <if test="localImsi != null" >
+        #{localImsi,jdbcType=CHAR},
+      </if>
+      <if test="workMode != null" >
+        #{workMode,jdbcType=INTEGER},
+      </if>
+      <if test="modType != null" >
+        #{modType,jdbcType=INTEGER},
+      </if>
+      <if test="modStatus != null" >
+        #{modStatus,jdbcType=INTEGER},
+      </if>
+      <if test="modSignalVal != null" >
+        #{modSignalVal,jdbcType=INTEGER},
+      </if>
+      <if test="modSignalLevel != null" >
+        #{modSignalLevel,jdbcType=INTEGER},
+      </if>
+      <if test="modBerVal != null" >
+        #{modBerVal,jdbcType=INTEGER},
+      </if>
+      <if test="modErrorCount != null" >
+        #{modErrorCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastBindTime != null" >
+        #{lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUsedTime != null" >
+        #{lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="curCallStatus != null" >
+        #{curCallStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curSmsStatus != null" >
+        #{curSmsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curUssdStatus != null" >
+        #{curUssdStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curCallSn != null" >
+        #{curCallSn,jdbcType=INTEGER},
+      </if>
+      <if test="curSmsSn != null" >
+        #{curSmsSn,jdbcType=INTEGER},
+      </if>
+      <if test="curUssdSn != null" >
+        #{curUssdSn,jdbcType=INTEGER},
+      </if>
+      <if test="roundTripDelay != null" >
+        #{roundTripDelay,jdbcType=INTEGER},
+      </if>
+      <if test="packetAll != null" >
+        #{packetAll,jdbcType=INTEGER},
+      </if>
+      <if test="packetRetries != null" >
+        #{packetRetries,jdbcType=INTEGER},
+      </if>
+      <if test="packetTimeout != null" >
+        #{packetTimeout,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwpExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_gwp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_gwp
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.recStatus != null" >
+        rec_status = #{record.recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.portUuid != null" >
+        port_uuid = #{record.portUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.alias != null" >
+        `alias` = #{record.alias,jdbcType=CHAR},
+      </if>
+      <if test="record.bkpUuid != null" >
+        bkp_uuid = #{record.bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.localSimUuid != null" >
+        local_sim_uuid = #{record.localSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.domainUuid != null" >
+        domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.localImei != null" >
+        local_imei = #{record.localImei,jdbcType=CHAR},
+      </if>
+      <if test="record.currentImei != null" >
+        current_imei = #{record.currentImei,jdbcType=CHAR},
+      </if>
+      <if test="record.localImsi != null" >
+        local_imsi = #{record.localImsi,jdbcType=CHAR},
+      </if>
+      <if test="record.workMode != null" >
+        work_mode = #{record.workMode,jdbcType=INTEGER},
+      </if>
+      <if test="record.modType != null" >
+        mod_type = #{record.modType,jdbcType=INTEGER},
+      </if>
+      <if test="record.modStatus != null" >
+        mod_status = #{record.modStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.modSignalVal != null" >
+        mod_signal_val = #{record.modSignalVal,jdbcType=INTEGER},
+      </if>
+      <if test="record.modSignalLevel != null" >
+        mod_signal_level = #{record.modSignalLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.modBerVal != null" >
+        mod_ber_val = #{record.modBerVal,jdbcType=INTEGER},
+      </if>
+      <if test="record.modErrorCount != null" >
+        mod_error_count = #{record.modErrorCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastBindTime != null" >
+        last_bind_time = #{record.lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastUsedTime != null" >
+        last_used_time = #{record.lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.curCallStatus != null" >
+        cur_call_status = #{record.curCallStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.curSmsStatus != null" >
+        cur_sms_status = #{record.curSmsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.curUssdStatus != null" >
+        cur_ussd_status = #{record.curUssdStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.curCallSn != null" >
+        cur_call_sn = #{record.curCallSn,jdbcType=INTEGER},
+      </if>
+      <if test="record.curSmsSn != null" >
+        cur_sms_sn = #{record.curSmsSn,jdbcType=INTEGER},
+      </if>
+      <if test="record.curUssdSn != null" >
+        cur_ussd_sn = #{record.curUssdSn,jdbcType=INTEGER},
+      </if>
+      <if test="record.roundTripDelay != null" >
+        round_trip_delay = #{record.roundTripDelay,jdbcType=INTEGER},
+      </if>
+      <if test="record.packetAll != null" >
+        packet_all = #{record.packetAll,jdbcType=INTEGER},
+      </if>
+      <if test="record.packetRetries != null" >
+        packet_retries = #{record.packetRetries,jdbcType=INTEGER},
+      </if>
+      <if test="record.packetTimeout != null" >
+        packet_timeout = #{record.packetTimeout,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_gwp
+    set uuid = #{record.uuid,jdbcType=INTEGER},
+      rec_status = #{record.recStatus,jdbcType=INTEGER},
+      port_uuid = #{record.portUuid,jdbcType=INTEGER},
+      `alias` = #{record.alias,jdbcType=CHAR},
+      bkp_uuid = #{record.bkpUuid,jdbcType=INTEGER},
+      local_sim_uuid = #{record.localSimUuid,jdbcType=INTEGER},
+      domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      local_imei = #{record.localImei,jdbcType=CHAR},
+      current_imei = #{record.currentImei,jdbcType=CHAR},
+      local_imsi = #{record.localImsi,jdbcType=CHAR},
+      work_mode = #{record.workMode,jdbcType=INTEGER},
+      mod_type = #{record.modType,jdbcType=INTEGER},
+      mod_status = #{record.modStatus,jdbcType=INTEGER},
+      mod_signal_val = #{record.modSignalVal,jdbcType=INTEGER},
+      mod_signal_level = #{record.modSignalLevel,jdbcType=INTEGER},
+      mod_ber_val = #{record.modBerVal,jdbcType=INTEGER},
+      mod_error_count = #{record.modErrorCount,jdbcType=INTEGER},
+      last_bind_time = #{record.lastBindTime,jdbcType=TIMESTAMP},
+      last_used_time = #{record.lastUsedTime,jdbcType=TIMESTAMP},
+      cur_call_status = #{record.curCallStatus,jdbcType=INTEGER},
+      cur_sms_status = #{record.curSmsStatus,jdbcType=INTEGER},
+      cur_ussd_status = #{record.curUssdStatus,jdbcType=INTEGER},
+      cur_call_sn = #{record.curCallSn,jdbcType=INTEGER},
+      cur_sms_sn = #{record.curSmsSn,jdbcType=INTEGER},
+      cur_ussd_sn = #{record.curUssdSn,jdbcType=INTEGER},
+      round_trip_delay = #{record.roundTripDelay,jdbcType=INTEGER},
+      packet_all = #{record.packetAll,jdbcType=INTEGER},
+      packet_retries = #{record.packetRetries,jdbcType=INTEGER},
+      packet_timeout = #{record.packetTimeout,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwp" >
+    update tbl_gwp
+    <set >
+      <if test="recStatus != null" >
+        rec_status = #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="portUuid != null" >
+        port_uuid = #{portUuid,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        `alias` = #{alias,jdbcType=CHAR},
+      </if>
+      <if test="bkpUuid != null" >
+        bkp_uuid = #{bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localSimUuid != null" >
+        local_sim_uuid = #{localSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localImei != null" >
+        local_imei = #{localImei,jdbcType=CHAR},
+      </if>
+      <if test="currentImei != null" >
+        current_imei = #{currentImei,jdbcType=CHAR},
+      </if>
+      <if test="localImsi != null" >
+        local_imsi = #{localImsi,jdbcType=CHAR},
+      </if>
+      <if test="workMode != null" >
+        work_mode = #{workMode,jdbcType=INTEGER},
+      </if>
+      <if test="modType != null" >
+        mod_type = #{modType,jdbcType=INTEGER},
+      </if>
+      <if test="modStatus != null" >
+        mod_status = #{modStatus,jdbcType=INTEGER},
+      </if>
+      <if test="modSignalVal != null" >
+        mod_signal_val = #{modSignalVal,jdbcType=INTEGER},
+      </if>
+      <if test="modSignalLevel != null" >
+        mod_signal_level = #{modSignalLevel,jdbcType=INTEGER},
+      </if>
+      <if test="modBerVal != null" >
+        mod_ber_val = #{modBerVal,jdbcType=INTEGER},
+      </if>
+      <if test="modErrorCount != null" >
+        mod_error_count = #{modErrorCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastBindTime != null" >
+        last_bind_time = #{lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUsedTime != null" >
+        last_used_time = #{lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="curCallStatus != null" >
+        cur_call_status = #{curCallStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curSmsStatus != null" >
+        cur_sms_status = #{curSmsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curUssdStatus != null" >
+        cur_ussd_status = #{curUssdStatus,jdbcType=INTEGER},
+      </if>
+      <if test="curCallSn != null" >
+        cur_call_sn = #{curCallSn,jdbcType=INTEGER},
+      </if>
+      <if test="curSmsSn != null" >
+        cur_sms_sn = #{curSmsSn,jdbcType=INTEGER},
+      </if>
+      <if test="curUssdSn != null" >
+        cur_ussd_sn = #{curUssdSn,jdbcType=INTEGER},
+      </if>
+      <if test="roundTripDelay != null" >
+        round_trip_delay = #{roundTripDelay,jdbcType=INTEGER},
+      </if>
+      <if test="packetAll != null" >
+        packet_all = #{packetAll,jdbcType=INTEGER},
+      </if>
+      <if test="packetRetries != null" >
+        packet_retries = #{packetRetries,jdbcType=INTEGER},
+      </if>
+      <if test="packetTimeout != null" >
+        packet_timeout = #{packetTimeout,jdbcType=INTEGER},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwp" >
+    update tbl_gwp
+    set rec_status = #{recStatus,jdbcType=INTEGER},
+      port_uuid = #{portUuid,jdbcType=INTEGER},
+      `alias` = #{alias,jdbcType=CHAR},
+      bkp_uuid = #{bkpUuid,jdbcType=INTEGER},
+      local_sim_uuid = #{localSimUuid,jdbcType=INTEGER},
+      domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      local_imei = #{localImei,jdbcType=CHAR},
+      current_imei = #{currentImei,jdbcType=CHAR},
+      local_imsi = #{localImsi,jdbcType=CHAR},
+      work_mode = #{workMode,jdbcType=INTEGER},
+      mod_type = #{modType,jdbcType=INTEGER},
+      mod_status = #{modStatus,jdbcType=INTEGER},
+      mod_signal_val = #{modSignalVal,jdbcType=INTEGER},
+      mod_signal_level = #{modSignalLevel,jdbcType=INTEGER},
+      mod_ber_val = #{modBerVal,jdbcType=INTEGER},
+      mod_error_count = #{modErrorCount,jdbcType=INTEGER},
+      last_bind_time = #{lastBindTime,jdbcType=TIMESTAMP},
+      last_used_time = #{lastUsedTime,jdbcType=TIMESTAMP},
+      cur_call_status = #{curCallStatus,jdbcType=INTEGER},
+      cur_sms_status = #{curSmsStatus,jdbcType=INTEGER},
+      cur_ussd_status = #{curUssdStatus,jdbcType=INTEGER},
+      cur_call_sn = #{curCallSn,jdbcType=INTEGER},
+      cur_sms_sn = #{curSmsSn,jdbcType=INTEGER},
+      cur_ussd_sn = #{curUssdSn,jdbcType=INTEGER},
+      round_trip_delay = #{roundTripDelay,jdbcType=INTEGER},
+      packet_all = #{packetAll,jdbcType=INTEGER},
+      packet_retries = #{packetRetries,jdbcType=INTEGER},
+      packet_timeout = #{packetTimeout,jdbcType=INTEGER}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+</mapper>

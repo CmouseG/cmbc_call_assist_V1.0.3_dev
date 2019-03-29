@@ -1,4 +1,4 @@
-package com.guiji.voipgateway.dao.entity;
+package com.guiji.voipgateway.synway.dao.entity;
 
 /** 
 * @Description: 公共表查询

@@ -1,10 +1,10 @@
-package com.guiji.voipgateway.dao;
+package com.guiji.voipgateway.synway.dao;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.guiji.voipgateway.dao.entity.ShareTabQuery;
+import com.guiji.voipgateway.synway.dao.entity.ShareTabQuery;
 import com.guiji.voipgateway.model.Company;
 import com.guiji.voipgateway.model.GwDevtbl;
 import com.guiji.voipgateway.model.SimPort;

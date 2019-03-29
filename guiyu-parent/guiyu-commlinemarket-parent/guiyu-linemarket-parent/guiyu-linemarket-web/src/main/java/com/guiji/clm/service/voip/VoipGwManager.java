@@ -1,15 +1,10 @@
 package com.guiji.clm.service.voip;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.guiji.ccmanager.api.ILineOperation;
 import com.guiji.ccmanager.entity.OutLineInfoAddReq;
+import com.guiji.clm.cfg.BrandConfig;
 import com.guiji.clm.constant.ClmConstants;
+import com.guiji.clm.dao.VoipGwInfoMapper;
 import com.guiji.clm.dao.VoipGwPortMapper;
 import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwPort;
@@ -24,7 +19,6 @@ import com.guiji.clm.service.fee.FeeService;
 import com.guiji.clm.service.fee.FeeService.FeeOptEnum;
 import com.guiji.clm.util.CheckUtil;
 import com.guiji.clm.util.DataLocalCacheUtil;
-import com.guiji.clm.vo.SipLineBaseInfoVO;
 import com.guiji.clm.vo.VoipGwInfoVO;
 import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.clm.vo.VoipGwPortVO;
@@ -34,6 +28,7 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dict.api.ISysDict;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.fsmanager.api.ISimCard;
 import com.guiji.fsmanager.entity.FsSipVO;
@@ -46,8 +41,13 @@ import com.guiji.utils.StrUtils;
 import com.guiji.voipgateway.api.VoipGatewayRemote;
 import com.guiji.voipgateway.model.GwDevtbl;
 import com.guiji.voipgateway.model.SimPort;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
 * @Description: 语音网关管理功能
@@ -58,6 +58,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class VoipGwManager {
+
+	@Autowired
+	ISysDict sysDict;
 	@Autowired
 	VoipGwPortMapper voipGwPortMapper;
 	@Autowired
@@ -89,6 +92,7 @@ public class VoipGwManager {
 	 * @param voipGwInfo
 	 * @return
 	 */
+
 	@Transactional
 	public VoipGwInfo startVoipGwInit(VoipGwInfo voipGwInfo) {
 		if(voipGwInfo==null || !CheckUtil.fieldIsNullCheck(voipGwInfo, 
@@ -475,7 +479,7 @@ public class VoipGwManager {
 				}
 				//获取设备实时数据
 				if(voipGwInfo.getCompanyId()!=null && voipGwInfo.getDevId()!=null) {
-					ReturnData<GwDevtbl> gwDevtblData = voipGatewayRemote.queryGwDevByDevId(voipGwInfo.getCompanyId(), voipGwInfo.getDevId());
+					ReturnData<GwDevtbl> gwDevtblData = voipGatewayRemote.queryGwDevByDevId(voipGwInfo.getGwBrand(), voipGwInfo.getCompanyId(), voipGwInfo.getDevId());
 					if(gwDevtblData!=null && gwDevtblData.getBody()!=null) {
 						GwDevtbl gwDevtbl = gwDevtblData.getBody();
 						vo.setGwStatus(gwDevtbl.getWorkStatusId());	//设置目前设备的工作情况
@@ -491,20 +495,30 @@ public class VoipGwManager {
 		}
 		return null;
 	}
-	
+
+	@Autowired
+	VoipGwInfoMapper voipGwInfoMapper;
+
 	/**
 	 * 将本地网关端口数据转为带监控的VO数据
 	 * @param list
 	 * @return
 	 */
 	private List<VoipGwPortVO> changePort2VO(List<VoipGwPort> list){
+
 		if(list!=null && !list.isEmpty()) {
 			List<VoipGwPortVO> rtnList = new ArrayList<VoipGwPortVO>();
 			//获取设备实时数据
 			ReturnData<List<SimPort>> gwPortData = null;
+
+			VoipGwInfo voipGwInfo = null;
+
 			if(list.get(0).getCompanyId()!=null && list.get(0).getDevId()!=null) {
 				//实时查询集中管理平台的端口信息
-				gwPortData = voipGatewayRemote.querySimPortListByDevId(list.get(0).getCompanyId(), list.get(0).getDevId());
+
+				voipGwInfo = voipGwInfoMapper.selectByPrimaryKey(list.get(0).getGwId());
+
+				gwPortData = voipGatewayRemote.querySimPortListByDevId(voipGwInfo.getGwBrand(), list.get(0).getCompanyId(), list.get(0).getDevId());
 			}
 			for(VoipGwPort voipGwPort : list) {
 				VoipGwPortVO vo = new VoipGwPortVO();
@@ -513,19 +527,19 @@ public class VoipGwManager {
 					List<SimPort> simPortList = gwPortData.getBody();
 					if(simPortList!=null && !simPortList.isEmpty()) {
 						for(SimPort simPort : simPortList) {
-							if(voipGwPort.getSipAccount().equals(simPort.getPortNumber())) {
-								vo.setSipMatched(true); //账号匹配了
-								vo.setPortRegStatus(simPort.getRegStatusId()); //端口注册状态
-								vo.setPortWorkStatus(simPort.getWorkStatusId()); //端口工作状态
-								vo.setPortConnFlag(simPort.getConnectionStatus()==1?true:false); //基站连接状态
-								vo.setLoadType(simPort.getLoadType()); //负载状态
-								if(StrUtils.isNotEmpty(simPort.getPhoneNumber())) {
-									vo.setGwPhoneNo(simPort.getPhoneNumber());
-									if(StrUtils.isEmpty(vo.getPhoneNo())) {
-										vo.setPhoneNo(simPort.getPhoneNumber());
-									}
+							//如果是鼎信，匹配端口，如果是三汇，匹配用户名
+							if(!(BrandConfig.DINGXIN.equals(voipGwInfo.getGwBrand()) && voipGwPort.getPort().equals(simPort.getPortNumber())) &&
+									!(BrandConfig.SYNWAY.equals(voipGwInfo.getGwBrand()) && voipGwPort.getSipAccount().equals(simPort.getPortNumber()))) continue;
+							vo.setSipMatched(true); //账号匹配了
+							vo.setPortRegStatus(simPort.getRegStatusId()); //端口注册状态
+							vo.setPortWorkStatus(simPort.getWorkStatusId()); //端口工作状态
+							vo.setPortConnFlag(simPort.getConnectionStatus()==1?true:false); //基站连接状态
+							vo.setLoadType(simPort.getLoadType()); //负载状态
+							if(StrUtils.isNotEmpty(simPort.getPhoneNumber())) {
+								vo.setGwPhoneNo(simPort.getPhoneNumber());
+								if(StrUtils.isEmpty(vo.getPhoneNo())) {
+									vo.setPhoneNo(simPort.getPhoneNumber());
 								}
-								continue;
 							}
 						}
 					}
@@ -552,11 +566,12 @@ public class VoipGwManager {
 	 * @param voipGwInfo
 	 */
 	@Transactional
-	private void fillVoipGwDevInfo(VoipGwInfo voipGwInfo) {
+	void fillVoipGwDevInfo(VoipGwInfo voipGwInfo) {
 		if(voipGwInfo!=null && StrUtils.isEmpty(voipGwInfo.getCompanyId())) {
 			//设备信息（公司信息）为空，那么调用网关服务重新查询下
-			Result.ReturnData<GwDevtbl> gwDevtblData = voipGatewayRemote.queryCompanyByDevName(voipGwInfo.getGwName());
+			Result.ReturnData<GwDevtbl> gwDevtblData = voipGatewayRemote.queryCompanyByDevName(voipGwInfo.getGwBrand(), voipGwInfo.getGwName());
 			if(gwDevtblData != null && gwDevtblData.getBody()!=null) {
+
 				//更新网关集中管理后信息
 				voipGwInfo.setCompanyId(gwDevtblData.getBody().getCompanyId()); //公司ID
 				voipGwInfo.setDevId(gwDevtblData.getBody().getDevId()); //设备编号

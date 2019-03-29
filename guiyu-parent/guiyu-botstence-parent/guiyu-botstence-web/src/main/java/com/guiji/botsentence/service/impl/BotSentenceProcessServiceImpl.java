@@ -217,6 +217,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		String orgCode=data.getBody().getOrgCode();
 		String orgName=data.getBody().getOrgName();
 		
+		if(StringUtils.isNotBlank(paramVO.getOrgCode())) {
+			orgCode = paramVO.getOrgCode();
+			orgName = paramVO.getOrgName();
+		}
+		
+		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
 		if(null == paramVO || StringUtils.isBlank(paramVO.getProcessId())) {

@@ -429,7 +429,7 @@
 
   <select id="getSubOrgIdByOrgId" resultType="int">
   	SELECT t.id FROM `sys_organization` t
-	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'.%')
+	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'%')
 	AND t.usable = 1
   </select>
   
@@ -444,7 +444,7 @@
   
   <select id="querySubOrgByOrgId" parameterType="java.lang.Integer" resultType="java.util.Map">
   	SELECT t.id, t.`name` FROM `sys_organization` t
-	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'.%')
+	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'%')
 	AND t.usable = 1
   </select>
   

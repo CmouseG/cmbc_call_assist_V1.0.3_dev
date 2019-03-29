@@ -299,6 +299,7 @@ public class BotSentenceApprovalController {
 				}
 			}
 		}
+		file.delete();
 	}
 	
 	@RequestMapping(value="deployTestSellbot")

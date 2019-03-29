@@ -5,13 +5,14 @@ import java.util.List;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.vo.FileRecordsListVo;
 
 public interface FileInterface {
 
 	//查询文件记录
-	public Page<FileRecords> queryFileInterface( int pagenum, int pagesize,
-												 String batchName, String startTime, String endTime,
-												 String userId, String orgCode, Integer authLevel);
+	public Page<FileRecordsListVo> queryFileInterface(int pagenum, int pagesize,
+													  String batchName, String startTime, String endTime,
+													  String userId, String orgCode, Integer authLevel);
 	
 	public 	List<FileErrorRecords> queryErrorRecords(String fileRecordId);
 

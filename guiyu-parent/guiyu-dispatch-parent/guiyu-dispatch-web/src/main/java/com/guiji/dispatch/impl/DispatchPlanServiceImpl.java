@@ -1104,7 +1104,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  example.setLimitEnd(pageSize);
 	  example.setOrderByClause("`plan_uuid` DESC");
 	  Criteria createCriteria = example.createCriteria();
-	  createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
 	  if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
 		  createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
@@ -1367,7 +1366,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
 			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
 		}
-		createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
 		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
 			List<Integer> ids = new ArrayList<>();

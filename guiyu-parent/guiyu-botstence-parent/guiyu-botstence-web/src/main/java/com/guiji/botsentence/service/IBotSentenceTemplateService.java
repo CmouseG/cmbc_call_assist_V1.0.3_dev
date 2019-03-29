@@ -30,5 +30,6 @@ public interface IBotSentenceTemplateService {
 	public boolean validateHasTempalte(String userId);
 	
 	public List<BotSentenceTemplate> queryTemplateByIndustry(String industryId);
-	
+
+	public BotSentenceTemplate getBotSentenceTemplateByTemplateId(String templateId);
 }

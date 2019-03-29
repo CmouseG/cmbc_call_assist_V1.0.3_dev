@@ -10,6 +10,7 @@ import com.guiji.dispatch.dto.QueryFileRecordsDto;
 import com.guiji.dispatch.enums.AuthLevelEnum;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.dispatch.vo.FileRecordsListVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,10 @@ public class FileInterfaceImpl implements FileInterface {
 	 * @return
 	 */
 	@Override
-	public Page<FileRecords> queryFileInterface(int pagenum, int pagesize,
+	public Page<FileRecordsListVo> queryFileInterface(int pagenum, int pagesize,
 												String batchName, String startTime, String endTime,
 												String userId, String orgCode, Integer authLevel) {
-		Page<FileRecords> page = new Page<>();
+		Page<FileRecordsListVo> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
 		/*
@@ -105,7 +106,7 @@ public class FileInterfaceImpl implements FileInterface {
 		ResultPage<FileRecords> pageRes = new ResultPage<FileRecords>(pagenum, pagesize);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");
-		List<FileRecords> list = recordMapper.queryFileRecordList(queryRecord,
+		List<FileRecordsListVo> list = recordMapper.queryFileRecordListPage(queryRecord,
 				beginDate, endDate, pageRes);
 		int count = recordMapper.queryFileRecordCount(queryRecord, beginDate, endDate);
 

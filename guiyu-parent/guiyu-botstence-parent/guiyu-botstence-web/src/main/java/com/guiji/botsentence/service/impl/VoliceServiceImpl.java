@@ -964,6 +964,7 @@ public class VoliceServiceImpl implements IVoliceService {
 					botSentenceApprovalService.saveDeploy(sellbot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
 				}
 				
+				
 				/*if(null != allList && allList.size() > 0) {
 					logger.info("共返回" + allList.size() + "条任务");
 					int index = 1;

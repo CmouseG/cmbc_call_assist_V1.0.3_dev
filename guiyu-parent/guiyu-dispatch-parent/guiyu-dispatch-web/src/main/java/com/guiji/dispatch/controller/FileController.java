@@ -499,7 +499,7 @@ public class FileController {
 
 	//下载导入记录文件
 	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
-	@RequestMapping(value = "dispatch/file/downloadImportRecord_bak", method = {RequestMethod.POST, RequestMethod.GET})
+	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
 	public void downloadImportRecord_bak(HttpServletRequest request, HttpServletResponse response,
 									 @RequestParam(required = false, name = "id") Long id)
 			throws UnsupportedEncodingException, WriteException {
@@ -561,7 +561,7 @@ public class FileController {
 
 	//下载导入记录文件
 	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
-	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
+	@RequestMapping(value = "dispatch/file/importRecord", method = {RequestMethod.POST, RequestMethod.GET})
 	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
 							 @RequestParam(required = false, name = "id") Long id,
 							 @RequestHeader String userId, @RequestHeader String orgCode)

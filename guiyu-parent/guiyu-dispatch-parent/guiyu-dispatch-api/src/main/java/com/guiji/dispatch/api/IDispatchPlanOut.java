@@ -2,13 +2,9 @@ package com.guiji.dispatch.api;
 
 import java.util.List;
 
-import com.guiji.dispatch.model.ExportFileDto;
-import com.guiji.dispatch.model.ExportFileRecordVo;
+import com.guiji.dispatch.model.*;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-
-import com.guiji.dispatch.model.DispatchPlan;
-import com.guiji.dispatch.model.PlanCountVO;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -129,7 +125,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
     })
     @GetMapping(value="out/lineIsUsed")
-    Result.ReturnData<Boolean> lineIsUsed(@RequestParam("lineId") Integer lineId, @RequestParam("userIdList") List<Integer> userIdList);
+    Result.ReturnData<Boolean> lineIsUsed(@RequestBody LineIsUseDto LineIsUseDto);
 
 
     //查询计划任务

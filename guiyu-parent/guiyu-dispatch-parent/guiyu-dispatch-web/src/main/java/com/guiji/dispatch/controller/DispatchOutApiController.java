@@ -9,10 +9,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.enums.SysDelEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
-import com.guiji.dispatch.model.DispatchPlan;
-import com.guiji.dispatch.model.ExportFileDto;
-import com.guiji.dispatch.model.ExportFileRecordVo;
-import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.model.*;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.service.IResourcePoolService;
@@ -214,29 +211,38 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<Integer> userIdList) {
+	public ReturnData<Boolean> lineIsUsed(@RequestBody LineIsUseDto lineIsUseDto) {
 		boolean bool = false;
-		if(null != lineId && null != userIdList && userIdList.size()>0) {
-			//查询用户、线路关联数据
-			List<DispatchBatchLine> batchLineList = lineService.queryListByUserIdLineId(userIdList, lineId);
-			if (null != batchLineList && batchLineList.size() > 0) {
-				//获取批次ID列表
-				List<Integer> batchIdList = new ArrayList<Integer>();
-				for (DispatchBatchLine batchLine : batchLineList) {
-					batchIdList.add(batchLine.getBatchId());
-				}
+		logger.info("com.guiji.dispatch.controller.DispatchOutApiController.lineIsUsed, lineIsUseDto:{}", JsonUtils.bean2Json(lineIsUseDto));
+		try {
+			if (null != lineIsUseDto && null != lineIsUseDto.getLineId()
+					&& null != lineIsUseDto.getUserIdList() && lineIsUseDto.getUserIdList().size() > 0) {
+				Integer lineId = lineIsUseDto.getLineId();
+				List<Integer> userIdList = lineIsUseDto.getUserIdList();
+				//查询用户、线路关联数据
+				List<DispatchBatchLine> batchLineList = lineService.queryListByUserIdLineId(userIdList, lineId);
+				if (null != batchLineList && batchLineList.size() > 0) {
+					//获取批次ID列表
+					List<Integer> batchIdList = new ArrayList<Integer>();
+					for (DispatchBatchLine batchLine : batchLineList) {
+						batchIdList.add(batchLine.getBatchId());
+					}
 
-				DispatchPlanExample planEx = new DispatchPlanExample();
-				DispatchPlanExample.Criteria criteria = planEx.createCriteria();
-				criteria.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
-						.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
-				criteria.andUserIdIn(userIdList);
-				criteria.andBatchIdIn(batchIdList);
-				//查询“计划中”状态数据
-				int count = dispatchMapper.countByExample(planEx);
-				bool = count>0?true:false;
+					DispatchPlanExample planEx = new DispatchPlanExample();
+					DispatchPlanExample.Criteria criteria = planEx.createCriteria();
+					criteria.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
+							.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
+					criteria.andUserIdIn(userIdList);
+					criteria.andBatchIdIn(batchIdList);
+					//查询“计划中”状态数据
+					int count = dispatchMapper.countByExample(planEx);
+					bool = count > 0 ? true : false;
+				}
 			}
+		}catch(Exception e){
+			logger.error("查询线路是否占用异常", e);
 		}
+		logger.info("查询线路是否占用:{}", bool);
 		return new ReturnData<Boolean>(bool);
 	}
 

@@ -41,12 +41,13 @@ public class RoleController {
 	
 	@Jurisdiction("system_role_delete")
 	@RequestMapping("delete")
-	public void delete(Long id,@RequestHeader Long userId){
+	public void delete(Long id, @RequestHeader Long userId)
+	{
 		List<SysUser> users = userService.queryUserByRoleId(id.intValue());
-		if(users.size() > 0) {
+		if (users != null && users.size() > 0){
 			throw new GuiyuException("该角色下存在绑定用户，请先将用户解绑再删除！");
 		}
-		roleService.delete(id,userId);
+		roleService.delete(id, userId);
 	}
 	
 	@Jurisdiction("system_role_edit")

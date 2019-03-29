@@ -150,7 +150,7 @@ public class DingxinServiceImpl implements ThirdGateWayService {
             TblSim tblSim = tblSimMapper.selectByPrimaryKey(tblGwp.getLocalSimUuid());
 
             simPort.setRegStatusId(1);
-            simPort.setWorkStatusId(map.get(tblGwp.getPortUuid()).getRunStatus() == 10?1:0 );
+            simPort.setWorkStatusId(map.get(tblGwp.getPortUuid()).getRunStatus() == 10 ? 1 : 0);
             simPort.setPortNumber(map.get(tblGwp.getPortUuid()).getPortNo());
             simPort.setLoadType(tblGwp.getModSignalLevel());
             simPort.setPhoneNumber(tblSim.getMobile());

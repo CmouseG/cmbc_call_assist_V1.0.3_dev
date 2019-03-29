@@ -1,8 +1,5 @@
 package com.guiji.dispatch.model;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
 import java.io.Serializable;
 import java.util.List;
 

@@ -212,7 +212,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	public void doAfterAllAnalysed(AnalysisContext context)
 	{
 		logger.info("i数量:{}, count数量:{}", i, count);
-		if(i == 0) {
+		if(count == 0) {
 			throw new GuiyuException(DispatchCodeExceptionEnum.IMPORT_FILE_NULL.getErrorCode(), DispatchCodeExceptionEnum.IMPORT_FILE_NULL.getErrorMsg());
 		}
 		// 更新导入记录

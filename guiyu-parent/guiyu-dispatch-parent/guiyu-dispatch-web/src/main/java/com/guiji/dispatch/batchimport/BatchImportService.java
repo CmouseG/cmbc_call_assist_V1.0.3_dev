@@ -3,10 +3,12 @@ package com.guiji.dispatch.batchimport;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.fastjson.util.IOUtils;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.dispatch.batchimport.listener.BatchImportExcelListener;
 import com.guiji.dispatch.batchimport.listener.BatchImportExcelModel;
 import com.guiji.dispatch.dao.FileRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
@@ -50,6 +52,7 @@ public class BatchImportService implements IBatchImportService {
 			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, BatchImportExcelModel.class), excelListener);
 		} catch (Exception e) {
 			logger.error("批量导入失败!!!", e);
+			throw new GuiyuException(e);
 		} finally {
 			IOUtils.close(inputStream);
 		}

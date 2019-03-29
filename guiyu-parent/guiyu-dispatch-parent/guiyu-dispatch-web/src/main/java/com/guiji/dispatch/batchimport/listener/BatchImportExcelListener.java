@@ -209,6 +209,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	@Override
 	public void doAfterAllAnalysed(AnalysisContext context)
 	{
+		logger.info("i数量:{}, count数量:{}", i, count);
 		// 更新导入记录
 		FileRecords fileRecord = new FileRecords();
 		fileRecord.setSuccessCount(count);

@@ -201,7 +201,7 @@ public class SipLineManager {
 			if(sipLineBaseInfo.getLineId()!=null && inUseUserList!=null && !inUseUserList.isEmpty()) {
 				//调用调度中心检查线路是否在使用
 				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId(),inUseUserList);
-				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果：",sipLineBaseInfo.getLineId(),inUsedFlag);
+				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果:{}",sipLineBaseInfo.getLineId(),inUsedFlag);
 				if(inUsedFlag.getBody().booleanValue()) {
 					//在使用抛出异常，不能直接删除
 					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());

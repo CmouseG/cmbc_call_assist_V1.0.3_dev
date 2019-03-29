@@ -9,10 +9,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.enums.SysDelEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
-import com.guiji.dispatch.model.DispatchPlan;
-import com.guiji.dispatch.model.ExportFileDto;
-import com.guiji.dispatch.model.ExportFileRecordVo;
-import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.model.*;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.service.IResourcePoolService;
@@ -214,11 +211,14 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<Integer> userIdList) {
+	public ReturnData<Boolean> lineIsUsed(@RequestBody LineIsUseDto lineIsUseDto) {
 		boolean bool = false;
-		logger.info("com.guiji.dispatch.controller.DispatchOutApiController.lineIsUsed, lineId:{}, userIdList:{}", lineId, JsonUtils.bean2Json(userIdList));
+		logger.info("com.guiji.dispatch.controller.DispatchOutApiController.lineIsUsed, lineIsUseDto:{}", JsonUtils.bean2Json(lineIsUseDto));
 		try {
-			if (null != lineId && null != userIdList && userIdList.size() > 0) {
+			if (null != lineIsUseDto && null != lineIsUseDto.getLineId()
+					&& null != lineIsUseDto.getUserIdList() && lineIsUseDto.getUserIdList().size() > 0) {
+				Integer lineId = lineIsUseDto.getLineId();
+				List<Integer> userIdList = lineIsUseDto.getUserIdList();
 				//查询用户、线路关联数据
 				List<DispatchBatchLine> batchLineList = lineService.queryListByUserIdLineId(userIdList, lineId);
 				if (null != batchLineList && batchLineList.size() > 0) {

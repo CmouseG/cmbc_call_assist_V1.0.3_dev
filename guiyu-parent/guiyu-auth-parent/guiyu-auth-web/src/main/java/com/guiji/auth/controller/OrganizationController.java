@@ -36,13 +36,13 @@ public class OrganizationController implements IOrg{
 
 	@Jurisdiction("system_organization_add")
 	@RequestMapping("add")
-	public SysOrganization add(SysOrganization record,@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{
+	public SysOrganization add(SysOrganization record,@RequestHeader long userId,@RequestHeader String orgCode) throws Exception
+	{
 		if(!organizationService.checkName(record.getName())){
 			throw new CheckConditionException("00010009");
 		}
-		int leval = orgCode.length()-orgCode.replaceAll(".", "").length();
-		if(leval > 5)
-		{
+		int leval = orgCode.length()-orgCode.replace(".", "").length();
+		if(leval > 5){
 			throw new GuiyuException("00010018", "对不起，组织结构层级不能超过5层！");
 		}
 		record.setOpen(0);
@@ -57,7 +57,7 @@ public class OrganizationController implements IOrg{
 	
 	@Jurisdiction("system_organization_delete")
 	@RequestMapping("delete")
-	public void delte(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+	public void delte(SysOrganization record,@RequestHeader long userId) throws Exception{
 		if(organizationService.existChildren(record)){
 			throw new CheckConditionException("00010010");
 		}

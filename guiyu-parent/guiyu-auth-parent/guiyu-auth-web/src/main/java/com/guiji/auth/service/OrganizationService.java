@@ -417,7 +417,15 @@ public class OrganizationService {
 	}
 
 	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
-		return sysOrganizationMapper.getOrgByOrgCodeOrgName(orgCode,orgName);
+		SysOrganizationExample example = new SysOrganizationExample();
+		if(!StringUtils.isEmpty(orgCode)){
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
+		if(!StringUtils.isEmpty(orgName)){
+			example.createCriteria().andNameLike("%" + orgName + "%");
+		}
+		example.createCriteria().andDelFlagEqualTo(0);
+		return sysOrganizationMapper.selectByExample(example);
 	}
 
 	/**

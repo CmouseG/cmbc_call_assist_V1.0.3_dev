@@ -59,8 +59,6 @@ public interface SysOrganizationMapper {
 
     List<String> getIndustryByOrgCode(String orgCode);
 
-    public List<SysOrganization> getOrgByOrgCodeOrgName(@Param("orgCode")String orgCode,@Param("orgName")String orgName);
-
 	List<Integer> getSubOrgIdByOrgId(@Param("orgId") Integer orgId);
 
 	List<Integer> getAllOrgId();

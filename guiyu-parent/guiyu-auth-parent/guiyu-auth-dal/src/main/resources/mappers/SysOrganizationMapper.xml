@@ -362,7 +362,7 @@
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id
-	where a.del_flag=0 and a.open='1'
+	where a.del_flag=0 and a.open='1' and a.type = 2
 	<if test="orgName != null">
 		AND a.`name` LIKE CONCAT('%',#{orgName},'%')
 	</if>
@@ -375,7 +375,7 @@
   
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">
-  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag='0' and case type when 2 then OPEN = '1' else OPEN = '0' end
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag='0'
   </select>
   
   <select id="existChildren" resultType="boolean">

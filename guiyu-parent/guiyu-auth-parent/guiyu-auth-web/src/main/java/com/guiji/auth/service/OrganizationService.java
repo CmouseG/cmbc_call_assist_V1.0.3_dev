@@ -239,7 +239,7 @@ public class OrganizationService {
 	
 	public Page<Map> selectOpenByPage(Page<Map> page){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1);
+		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
 		if(!StringUtils.isEmpty(page.getOrgName())) {
 			example.createCriteria().andNameLike("%"+page.getOrgName()+"%");
 		}
@@ -301,7 +301,7 @@ public class OrganizationService {
 	
 	public List<SysOrganization> getOrgNotOpen(){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0).andTypeNotEqualTo(1);
+		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0);
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	

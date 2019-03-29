@@ -542,7 +542,10 @@ public class BotSentenceProcessController {
 	
 	@RequestMapping(value="getTemplateById")
 	public ServerResult<List<BotSentenceProcess>> getTemplateById(String templateId){
-		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
+		BotSentenceProcess process = botSentenceProcessService.getBotsentenceProcessByTemplateId(templateId);
+		List<BotSentenceProcess> result = new ArrayList<>();
+		result.add(process);
+		//List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
 	}
 	

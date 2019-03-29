@@ -7,6 +7,7 @@ public enum DispatchCodeExceptionEnum implements ExceptionEnum {
 
     IN_DATA_EXCEPTION("2000000001","入参错误"),
 
+    IMPORT_FILE_NULL("2000000002","批量导入计划文件为空");
     ;
 
     private String errorCode;

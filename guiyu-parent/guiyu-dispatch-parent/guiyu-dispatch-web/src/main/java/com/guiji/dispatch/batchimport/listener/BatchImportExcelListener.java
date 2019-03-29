@@ -2,6 +2,7 @@ package com.guiji.dispatch.batchimport.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.dispatch.batchimport.BatchImportErrorCodeEnum;
 import com.guiji.dispatch.batchimport.IBatchImportFieRecordErrorService;
 import com.guiji.dispatch.batchimport.IBatchImportQueueHandlerService;
@@ -10,6 +11,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
@@ -210,6 +212,9 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	public void doAfterAllAnalysed(AnalysisContext context)
 	{
 		logger.info("i数量:{}, count数量:{}", i, count);
+		if(i == 0) {
+			throw new GuiyuException(DispatchCodeExceptionEnum.IMPORT_FILE_NULL.getErrorCode(), DispatchCodeExceptionEnum.IMPORT_FILE_NULL.getErrorMsg());
+		}
 		// 更新导入记录
 		FileRecords fileRecord = new FileRecords();
 		fileRecord.setSuccessCount(count);

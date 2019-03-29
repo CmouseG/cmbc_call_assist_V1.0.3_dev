@@ -43,10 +43,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author:liyang
@@ -87,6 +84,14 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
+        if(callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+            List<String> list = callRecordListReq.getExcludeList();
+            List<BigInteger> notInList = new ArrayList<>();
+            for(String callId :list){
+                notInList.add(new BigInteger(callId));
+            }
+
+        }
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), null);
 
         return callOutPlanMapper.countByExample(example);
@@ -239,6 +244,15 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
+        if(callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+            List<String> list = callRecordListReq.getExcludeList();
+            List<BigInteger> notInList = new ArrayList<>();
+            for(String callId :list){
+               notInList.add(new BigInteger(callId));
+            }
+
+        }
+
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), minId);
 
         int limitStart = 0;
@@ -345,6 +359,9 @@ public class BatchExportServiceImpl implements BatchExportService {
         criteria.andCallStateGreaterThanOrEqualTo(Constant.CALLSTATE_HANGUP_OK);
         if (minId != null) {
             criteria.andCallIdLessThan(minId);
+        }
+        if(callOutPlanQueryEntity.getNotInList()!=null && callOutPlanQueryEntity.getNotInList().size()>0){
+            criteria.andCallIdNotIn(callOutPlanQueryEntity.getNotInList());
         }
         return example;
     }

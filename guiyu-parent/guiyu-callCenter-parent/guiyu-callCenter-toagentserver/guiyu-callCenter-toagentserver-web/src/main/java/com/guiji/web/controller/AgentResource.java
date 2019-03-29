@@ -60,7 +60,6 @@ public class AgentResource {
      * 根据customerId获取指定的坐席
      * @return
      */
-    @Jurisdiction("callCenter_workPlatform_defquery")
     @RequestMapping(path = "/user", method = RequestMethod.GET)
     public Result.ReturnData<QueryUser> getUser(@RequestHeader Long userId,@RequestHeader String orgCode){
         log.info("收到根据customerId获取指定的坐席的请求customerId:[{}],orgCode:[{}]",userId,orgCode);

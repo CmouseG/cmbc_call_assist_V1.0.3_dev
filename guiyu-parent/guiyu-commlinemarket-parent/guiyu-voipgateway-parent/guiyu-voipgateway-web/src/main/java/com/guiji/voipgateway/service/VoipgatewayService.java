@@ -22,9 +22,9 @@ import java.util.List;
 public class VoipgatewayService {
 
     //三汇
-    private final static String SANHUI = "sanhui";
+    private final static String SANHUI = "三汇";
     //鼎信
-    private final static String DINGXIN = "dingxin";
+    private final static String DINGXIN = "鼎信";
 
     @Autowired
     @Qualifier("dingxinService")

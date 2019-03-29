@@ -250,7 +250,7 @@ public class VoipGwManager {
 	 * 1、批量分配,分配到人
 	 * 2、如果有单价,调用计费中心开始计费
 	 * @param gwPortList 要分配的端口
-	 * @param userId 分配人
+	 * @param operUserId 分配人
 	 */
 	@Transactional
 	public void assignGwPort(List<VoipGwPort> gwPortList,String operUserId) {
@@ -478,7 +478,7 @@ public class VoipGwManager {
 					this.fillVoipGwDevInfo(voipGwInfo);
 				}
 				//获取设备实时数据
-				if(voipGwInfo.getCompanyId()!=null && voipGwInfo.getDevId()!=null) {
+				if(voipGwInfo.getCompanyId()!=null && voipGwInfo.getDevId()!=null && (!"三汇".equals(voipGwInfo.getGwBrand()) || !"鼎信".equals(voipGwInfo.getGwBrand()))) {
 					ReturnData<GwDevtbl> gwDevtblData = voipGatewayRemote.queryGwDevByDevId(voipGwInfo.getGwBrand(), voipGwInfo.getCompanyId(), voipGwInfo.getDevId());
 					if(gwDevtblData!=null && gwDevtblData.getBody()!=null) {
 						GwDevtbl gwDevtbl = gwDevtblData.getBody();

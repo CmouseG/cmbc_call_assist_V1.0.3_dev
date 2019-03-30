@@ -38,7 +38,7 @@ public class BatchExportController {
 
     private final Logger log = LoggerFactory.getLogger(BatchExportController.class);
 
-    public static ExecutorService executor = Executors.newCachedThreadPool() ;
+    public static ExecutorService executor = Executors.newFixedThreadPool(5) ;
 
     @Autowired
     BatchExportService batchExportService;
@@ -80,13 +80,13 @@ public class BatchExportController {
         }
 
         int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
-        if (checkAll != null && checkAll) {//全选
-            callRecordListReq.setStartCount("1");
-            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
-        } else {//不是全选
+        if (checkAll == null || !checkAll) {//不是全选
             if (totalNum > exportCount) {
                 totalNum = exportCount;
             }
+        }else{//全选
+            callRecordListReq.setStartCount("1");
+            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();
@@ -105,6 +105,7 @@ public class BatchExportController {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("导出通话记录excel，线程开始啦,callRecordListReq[{}]",callRecordListReq);
                     batchExportService.generateExcelFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
                             callRecordListReq, isDesensitization, recordId);
                 }
@@ -128,8 +129,8 @@ public class BatchExportController {
         sheet.setColumnView(7, 10);
         sheet.setColumnView(8, 10);
         sheet.setColumnView(9, 10);
-        sheet.setColumnView(10, 100);
-        sheet.setColumnView(11, 20);
+        sheet.setColumnView(10, 10);
+        sheet.setColumnView(11, 100);
         sheet.setColumnView(12, 20);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
@@ -225,13 +226,13 @@ public class BatchExportController {
         }
 
         int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
-        if (checkAll != null && checkAll) {//全选
-            callRecordListReq.setStartCount("1");
-            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
-        } else {//不是全选
+        if (checkAll == null || !checkAll) {//不是全选
             if (totalNum > exportCount) {
                 totalNum = exportCount;
             }
+        }else{//全选
+            callRecordListReq.setStartCount("1");
+            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();
@@ -250,6 +251,7 @@ public class BatchExportController {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("导出录音文件，线程开始啦,callRecordListReq[{}]",callRecordListReq);
                     batchExportService.generateAudioFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
                             callRecordListReq, isDesensitization, recordId);
                 }

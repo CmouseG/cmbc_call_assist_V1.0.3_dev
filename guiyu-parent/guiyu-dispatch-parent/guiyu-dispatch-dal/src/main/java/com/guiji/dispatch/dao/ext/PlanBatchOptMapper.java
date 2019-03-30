@@ -10,7 +10,24 @@ import java.util.List;
 @Repository
 public interface PlanBatchOptMapper {
 
-    int delPlanBatchById(@Param("planUuidList") List<Long> planUuidList, @Param("delTime") Date delTime);
+    /*删除*/
+    int delPlanBatchById(@Param("planUuidList") List<Long> planUuidList,
+                         @Param("orgIdList") List<Integer> orgIdList,
+                         @Param("delTime") Date delTime);
 
     int delPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("delTime") Date delTime);
+
+    /*暂停*/
+    int suspendPlanBatchById(@Param("planUuidList") List<Long> planUuidList,
+                             @Param("orgIdList") List<Integer> orgIdList,
+                             @Param("updTime") Date updTime);
+
+    int suspendPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
+
+    /*停止*/
+    int stopPlanBatchById(@Param("planUuidList") List<Long> planUuidList,
+                          @Param("orgIdList") List<Integer> orgIdList,
+                          @Param("updTime") Date updTime);
+
+    int stopPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
 }

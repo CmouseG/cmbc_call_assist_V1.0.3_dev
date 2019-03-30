@@ -1139,7 +1139,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		  createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
 	  }
 
-	  if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+	  /*if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
 		  List<Integer> ids = new ArrayList<>();
 		  if (queryPlanDto.getReplayType().contains(",")) {
 			  String[] split = queryPlanDto.getReplayType().split(",");
@@ -1150,7 +1150,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		  } else {
 			  createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
 		  }
-	  }
+	  }*/
 
 	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
 		  createCriteria.andResultIn(queryPlanDto.getResultList());
@@ -1159,22 +1159,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		  createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
 	  }*/
 
+	  //权限过滤
 	  Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 	  String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 	  //String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-	  List<Integer> orgIds = new ArrayList<Integer>();
-	  if(!StringUtils.isEmpty(queryPlanDto.getOrgId())){
-	  	 orgIds.add(Integer.valueOf(queryPlanDto.getOrgId()));
-	  }else {
-	  	 orgIds =getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
-	  }
+	  List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+			  :getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+	  createCriteria.andOrgIdIn(orgIds);
 	  if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
 		  createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 	  }
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-
-			createCriteria.andOrgIdIn(orgIds);
-		}
 
 	  createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
@@ -1283,7 +1277,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
 		}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+		/*if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
 			List<Integer> ids = new ArrayList<>();
 			if (queryPlanDto.getReplayType().contains(",")) {
 				String[] split = queryPlanDto.getReplayType().split(",");
@@ -1294,7 +1288,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			} else {
 				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
 			}
-		}
+		}*/
 
 		if(null != queryPlanDto.getResultList()
 				&& queryPlanDto.getResultList().size()>0){
@@ -1317,14 +1311,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-		List<Integer> orgIds = getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+				:getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+		createCriteria.andOrgIdIn(orgIds);
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){
 			createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria.andOrgIdIn(orgIds);
-		}
-
 
 		List<DownLoadPlanVo> list = dispatchPlanMapper.queryDownloadPlanList(example);
 		return list;
@@ -1372,7 +1364,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
 		}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+		/*if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
 			List<Integer> ids = new ArrayList<>();
 			if (queryPlanDto.getReplayType().contains(",")) {
 				String[] split = queryPlanDto.getReplayType().split(",");
@@ -1383,23 +1375,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			} else {
 				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
 			}
-		}
+		}*/
 
 		if (null != queryPlanDto.getResultList()
 				&& queryPlanDto.getResultList().size() > 0) {
 			createCriteria.andResultIn(queryPlanDto.getResultList());
 		}
 
-
+		//权限过滤
 		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-		List<Integer> orgIds = new ArrayList<Integer>();
-		if(!StringUtils.isEmpty(queryPlanDto.getOrgId())){
-			orgIds.add(Integer.valueOf(queryPlanDto.getOrgId()));
-		}else {
-			orgIds =getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
-		}
+		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+				:getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+		createCriteria.andOrgIdIn(orgIds);
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 		}

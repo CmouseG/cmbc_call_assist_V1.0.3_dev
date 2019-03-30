@@ -57,7 +57,7 @@ public class QueryPlanListDto extends PageDto {
     /**
      * 选择组织ID
      */
-    private String orgId;
+    private List<Integer> orgIdList;
 
     /**
      * 意向标签条件列表
@@ -144,11 +144,11 @@ public class QueryPlanListDto extends PageDto {
         this.resultList = resultList;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public List<Integer> getOrgIdList() {
+        return orgIdList;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setOrgIdList(List<Integer> orgIdList) {
+        this.orgIdList = orgIdList;
     }
 }

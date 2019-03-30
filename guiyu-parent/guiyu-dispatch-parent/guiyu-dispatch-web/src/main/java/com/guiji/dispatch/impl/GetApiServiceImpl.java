@@ -55,13 +55,10 @@ public class GetApiServiceImpl implements GetApiService {
             result = resp.getBody();
         }*/
 
-        if(result == null)
-        {
+        if(result == null){
             result = new ArrayList<>();
+            result.add(orgId);
         }
-
-        result.add(orgId);
-
         return result;
     }
 }

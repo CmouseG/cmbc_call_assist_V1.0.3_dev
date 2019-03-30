@@ -321,10 +321,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
                     //查询该企业是否已注册
                     String orgCode = rechargeDto.getOrgCode();
-                    //如果前端传过来的带后缀点.
+                    /*//如果前端传过来的带后缀点.
                     if(!StringUtils.isEmpty(orgCode) && orgCode.endsWith(AuthConstant.orgSuffix)){
                         orgCode = orgCode.substring(0, orgCode.length()-1);
-                    }
+                    }*/
                     BillingUserAcctBean acctExist = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
                     //企业已注册账户
                     if(null != acctExist){
@@ -435,8 +435,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         chargingRecord.setAccountId(acct.getAccountId());
         chargingRecord.setOperUserId(userId);
         chargingRecord.setOperUserName(user.getUsername());
-        chargingRecord.setOperOrgCode(user.getOrgCode()+ AuthConstant.orgSuffix);   //操作员用户企业编码
-        chargingRecord.setOperUserOrgCode(acct.getOrgCode()+ AuthConstant.orgSuffix);//被充值所属企业orgCode, 从企业账户里面去是不带.,自己拼接
+        chargingRecord.setOperOrgCode(user.getOrgCode());   //操作员用户企业编码
+        chargingRecord.setOperUserOrgCode(acct.getOrgCode());//被充值所属企业orgCode, 从企业账户里面去是不带.,自己拼接
         chargingRecord.setOperBeginTime(time);
         chargingRecord.setOperEndTime(time);
         chargingRecord.setOperDuration(0L);

@@ -68,7 +68,7 @@ public class BillingUserAcctController {
 
     /*********充值    begin***********************/
     //管理员充值(系统侧使用)
-    @Jurisdiction("financeCenter_rechargeManage_recharge")
+  //  @Jurisdiction("financeCenter_rechargeManage_recharge")
     @ApiOperation(value="企业账户充值", notes="企业账户充值")
     @RequestMapping(value = "/recharge", method = {RequestMethod.POST})
     public boolean recharge(@RequestBody RechargeDto rechargeDto,

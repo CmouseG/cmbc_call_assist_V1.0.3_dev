@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.PlanBatchOptMapper" >
+
+    <update id="delPlanBatchById">
+        UPDATE dispatch_plan
+        <set>
+            is_del = 1,
+            gmt_modified = #{delTime}
+        </set>
+        WHERE 1 = 1
+            AND plan_uuid IN
+            <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
+                #{planUuid}
+            </foreach>
+    </update>
+
+    <update id="delPlanBatchByParam">
+        UPDATE dispatch_plan p
+        <set>
+            is_del = 1,
+            gmt_modified = #{delTime}
+        </set>
+        WHERE 1 = 1
+            <if test="optPlanDto != null">
+                <if test="optPlanDto.orgId != null">
+                  AND p.org_id = #{optPlanDto.orgId}
+                </if>
+                <if test="optPlanDto.batchId != null">
+                    AND p.batch_id = #{optPlanDto.batchId}
+                </if>
+                <if test="optPlanDto.startTime != null and optPlanDto.endTime != null">
+                    AND p.gmt_create BETWEEN #{optPlanDto.startTime} AND #{optPlanDto.endTime}
+                </if>
+                <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
+                    AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
+                </if>
+                <if test="optPlanDto.userId != null">
+                    AND p.user_id = #{optPlanDto.userId}
+                </if>
+                <if test="optPlanDto.phone != null">
+                    AND p.phone = #{optPlanDto.phone}
+                </if>
+                <if test="optPlanDto.statusPlanList != null">
+                    AND p.status_plan IN
+                    <foreach collection="optPlanDto.statusPlanList" item="statusPlan" open="(" close=")" separator="," >
+                        #{statusPlan}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.resultList != null">
+                    AND p.result IN
+                    <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator="," >
+                        #{result}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.planUuidList != null">
+                    AND p.plan_uuid NOT IN
+                    <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
+                        #{planUuid}
+                    </foreach>
+                </if>
+            </if>
+    </update>
+</mapper>

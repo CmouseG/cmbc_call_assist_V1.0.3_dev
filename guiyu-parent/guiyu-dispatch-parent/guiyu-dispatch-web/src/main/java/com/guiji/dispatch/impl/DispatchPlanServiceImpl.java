@@ -1119,18 +1119,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		  createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
 	  }
 
-	  if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
-		  List<Integer> ids = new ArrayList<>();
-		  if (queryPlanDto.getPlanStatus().contains(",")) {
-			  String[] split = queryPlanDto.getPlanStatus().split(",");
-			  for (String sp : split) {
-				  ids.add(Integer.valueOf(sp));
-			  }
-			  createCriteria.andStatusPlanIn(ids);
-		  } else {
-			  createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
-		  }
-	  }
+	  	//状态集合
+		if (null != queryPlanDto.getPlanStatusList() && queryPlanDto.getPlanStatusList().size()>0) {
+			createCriteria.andStatusPlanIn(queryPlanDto.getPlanStatusList());
+		}
 	  if (!StringUtils.isEmpty(queryPlanDto.getStartTime())
 			  && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
 		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1170,7 +1162,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 	  String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 	  //String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-	  List<Integer> orgIds = getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+	  List<Integer> orgIds = new ArrayList<Integer>();
+	  if(!StringUtils.isEmpty(queryPlanDto.getOrgId())){
+	  	 orgIds.add(Integer.valueOf(queryPlanDto.getOrgId()));
+	  }else {
+	  	 orgIds =getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+	  }
 	  if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
 		  createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 	  }
@@ -1198,7 +1195,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			  planUuidSet.add(dis.getPlanUuidLong());
 
-			  dis.setOrgId(queryPlanDto.getOperOrgId());
 			  // 转换userName
 			  if (!tmpUserMap.containsKey(dis.getUserId())) {
 				  ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
@@ -1270,17 +1266,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
 		}*/
 
-		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getPlanStatus().contains(",")) {
-				String[] split = queryPlanDto.getPlanStatus().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andStatusPlanIn(ids);
-			} else {
-				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
-			}
+		//状态集合
+		if (null != queryPlanDto.getPlanStatusList() && queryPlanDto.getPlanStatusList().size()>0) {
+			createCriteria.andStatusPlanIn(queryPlanDto.getPlanStatusList());
 		}
 		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1367,17 +1355,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
 		}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getPlanStatus().contains(",")) {
-				String[] split = queryPlanDto.getPlanStatus().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andStatusPlanIn(ids);
-			} else {
-				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
-			}
+		//状态集合
+		if (null != queryPlanDto.getPlanStatusList() && queryPlanDto.getPlanStatusList().size()>0) {
+			createCriteria.andStatusPlanIn(queryPlanDto.getPlanStatusList());
 		}
 		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1414,12 +1394,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-		List<Integer> orgIds = getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+		List<Integer> orgIds = new ArrayList<Integer>();
+		if(!StringUtils.isEmpty(queryPlanDto.getOrgId())){
+			orgIds.add(Integer.valueOf(queryPlanDto.getOrgId()));
+		}else {
+			orgIds =getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
+		}
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
-		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria.andOrgIdIn(orgIds);
 		}
 
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);

@@ -9,27 +9,54 @@ public class QueryPlanListDto extends PageDto {
 
     private static final long serialVersionUID = 6684278788342403419L;
 
+    /**
+     * 号码
+     */
     private String phone;
 
     /**
      * 计划状态
      */
-    private String planStatus;
+    private List<Integer> planStatusList;
 
+    /**
+     * 操作开始时间
+     */
     private String startTime;
 
+    /**
+     * 操作结束时间
+     */
     private String endTime;
 
+    /**
+     * 批次
+     */
     private Integer batchId;
 
+    /**
+     * 重播标识
+     */
     private String replayType;
 
+    /**
+     * 计划开始日期
+     */
     private String startCallData;
 
+    /**
+     * 计划结束日期
+     */
     private String endCallData;
 
+    /**
+     * 所属者用户ID
+     */
     private String userId;
 
+    /**
+     * 选择组织ID
+     */
     private String orgId;
 
     /**
@@ -45,12 +72,12 @@ public class QueryPlanListDto extends PageDto {
         this.phone = phone;
     }
 
-    public String getPlanStatus() {
-        return planStatus;
+    public List<Integer> getPlanStatusList() {
+        return planStatusList;
     }
 
-    public void setPlanStatus(String planStatus) {
-        this.planStatus = planStatus;
+    public void setPlanStatusList(List<Integer> planStatusList) {
+        this.planStatusList = planStatusList;
     }
 
     public String getStartTime() {

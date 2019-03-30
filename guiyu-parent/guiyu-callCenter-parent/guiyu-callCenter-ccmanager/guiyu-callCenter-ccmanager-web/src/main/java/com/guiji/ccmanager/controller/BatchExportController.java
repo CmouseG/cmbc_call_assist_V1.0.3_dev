@@ -89,7 +89,7 @@ public class BatchExportController {
             if(totalNum>1000000){
                 totalNum=1000000;
             }
-            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
+            callRecordListReq.setEndCount(String.valueOf(totalNum));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();
@@ -238,7 +238,7 @@ public class BatchExportController {
             if(totalNum>3000){
                 totalNum=3000;
             };
-            callRecordListReq.setEndCount(String.valueOf(totalNum+1));
+            callRecordListReq.setEndCount(String.valueOf(totalNum));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();

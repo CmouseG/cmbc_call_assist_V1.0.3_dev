@@ -86,6 +86,9 @@ public class BatchExportController {
             }
         }else{//全选
             callRecordListReq.setStartCount("1");
+            if(totalNum>1000000){
+                totalNum=1000000;
+            }
             callRecordListReq.setEndCount(String.valueOf(totalNum+1));
         }
 
@@ -232,6 +235,9 @@ public class BatchExportController {
             }
         }else{//全选
             callRecordListReq.setStartCount("1");
+            if(totalNum>3000){
+                totalNum=3000;
+            };
             callRecordListReq.setEndCount(String.valueOf(totalNum+1));
         }
 

@@ -230,15 +230,16 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
             int orgAiNum = orgData.getBody().getRobot() == null ? 0 : orgData.getBody().getRobot();
             logger.info("用户：{},企业code:{},企业名称：{},企业配置的机器人上限：{}", userAiCfgBaseInfo.getUserId(), orgData.getBody().getCode(), orgData.getBody().getName(), orgAiNum);
             List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
-            int assignAiNum = 0;
+            //本次操作将更新的数量，若为新增，则直接累加，若为修改，则需扣减（加上本次数量，减去原有数量）
+            int assignAiNum = userAiCfgBaseInfo.getAiTotalNum() == null ? 0 : userAiCfgBaseInfo.getAiTotalNum();
             if (ListUtil.isNotEmpty(assignList)) {
                 for (UserAiCfgBaseInfo cfg : assignList) {
                     assignAiNum = assignAiNum + (cfg.getAiTotalNum() == null ? 0 : cfg.getAiTotalNum());
                 }
             }
             if (existUserAiCfgBaseInfo != null) {
-                //如果是修改用户机器人，那么获取变更后的数量
-                assignAiNum = assignAiNum + ((userAiCfgBaseInfo.getAiTotalNum() == null ? 0 : userAiCfgBaseInfo.getAiTotalNum()) - (existUserAiCfgBaseInfo.getAiTotalNum() == null ? 0 : existUserAiCfgBaseInfo.getAiTotalNum()));
+                //如果是修改用户机器人，将之前的累加和再减去原始数据中的数量
+                assignAiNum = assignAiNum - (existUserAiCfgBaseInfo.getAiTotalNum() == null ? 0 : existUserAiCfgBaseInfo.getAiTotalNum());
             }
             //2、查询用户所属企业配置的机器人上限
             logger.info("机构下变更后机器人数量:{},企业配置的机器人数量:{}", assignAiNum, orgAiNum);

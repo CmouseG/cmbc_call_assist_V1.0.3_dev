@@ -89,8 +89,8 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("selectOpenByPage")
-	public Page<Map> selectOpenByPage(Page<Map> page){
-		return organizationService.selectOpenByPage(page);
+	public Page<Map> selectOpenByPage(Page<Map> page,@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.selectOpenByPage(page,userId,authLevel,orgCode);
 	}
 	
 	/**
@@ -119,8 +119,8 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getOrgNotOpen")
-	public List<SysOrganization> getOrgNotOpen(){
-		return organizationService.getOrgNotOpen();
+	public List<SysOrganization> getOrgNotOpen(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.getOrgNotOpen(userId, authLevel, orgCode);
 	}
 	
 	@RequestMapping("getOrgByUserId")

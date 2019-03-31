@@ -366,9 +366,6 @@
 	<if test="orgName != null">
 		AND a.`name` LIKE CONCAT('%',#{orgName},'%')
 	</if>
-	<if test="orgCode != null">
-		AND a.`code` LIKE CONCAT(#{orgCode},'%')
-	</if>
 	ORDER  BY a.update_time desc
 	limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>

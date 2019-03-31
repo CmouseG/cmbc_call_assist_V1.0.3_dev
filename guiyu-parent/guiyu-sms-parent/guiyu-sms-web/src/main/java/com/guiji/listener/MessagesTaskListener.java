@@ -39,7 +39,7 @@ public class MessagesTaskListener
 
 			smsTask = taskMapper.selectByPrimaryKey(taskReq.getTaskId());
 			if(smsTask == null){ 
-				logger.error("没有查到任务");
+				logger.error("没有查到任务：" + taskReq.getTaskId());
 				return;
 			}
 			sendSmsService.preSendMsg(taskReq); // 发送

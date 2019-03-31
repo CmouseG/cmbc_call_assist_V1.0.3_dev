@@ -444,4 +444,20 @@
 	AND t.usable = 1
   </select>
   
+  <select id="getSubOrgByAuthLevel" resultType="java.util.Map">
+  	SELECT t.id, t.`name` FROM `sys_organization` t
+  	<where>
+  		<if test="authLevel == 1">
+  			t.create_id = #{userId}
+  		</if>
+  		<if test="authLevel == 2">
+  			t.code = #{orgCode}
+  		</if>
+  		<if test="authLevel == 3">
+  			t.`code` LIKE CONCAT(#{orgCode},'%')
+  		</if>
+  	</where>
+	AND t.usable = 1
+  </select>
+  
 </mapper>

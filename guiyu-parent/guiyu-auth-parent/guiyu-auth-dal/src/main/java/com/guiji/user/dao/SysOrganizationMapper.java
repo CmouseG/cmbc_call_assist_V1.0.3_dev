@@ -66,4 +66,6 @@ public interface SysOrganizationMapper {
 	void updateUsableByOrgId(@Param("orgId") Integer orgId);
 
 	List<Map> querySubOrgByOrgId(@Param("orgId") Integer orgId);
+
+	List<Map> getSubOrgByAuthLevel(@Param("userId")Long userId, @Param("authLevel")Integer authLevel, @Param("orgCode")String orgCode);
 }

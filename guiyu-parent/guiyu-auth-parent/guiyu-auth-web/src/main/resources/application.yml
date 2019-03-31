@@ -6,7 +6,7 @@ spring:
     name: guiyu-auth-web  
   datasource:  
     type: com.alibaba.druid.pool.DruidDataSource  
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: base
     password: base@1234
     driver-class-name: com.mysql.jdbc.Driver  
@@ -21,7 +21,7 @@ spring:
     testOnReturn: false    
   redis:
     database: 0
-    host: 192.168.1.81
+    host: 192.168.1.57
     password: 123456
     port: 6379  
     pool:
@@ -33,7 +33,7 @@ spring:
     type: redis
     cache-names: shiro.session,shiro.time 
   rabbitmq:
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 5672
     virtual-host: /
     username: guiyu

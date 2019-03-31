@@ -680,4 +680,9 @@ public class OrganizationService {
 	{
 		return sysOrganizationMapper.querySubOrgByOrgId(orgId);
 	}
+
+	public List<Map> getSubOrgByAuthLevel(Long userId, Integer authLevel, String orgCode)
+	{
+		return sysOrganizationMapper.getSubOrgByAuthLevel(userId,authLevel,orgCode);
+	}
 }

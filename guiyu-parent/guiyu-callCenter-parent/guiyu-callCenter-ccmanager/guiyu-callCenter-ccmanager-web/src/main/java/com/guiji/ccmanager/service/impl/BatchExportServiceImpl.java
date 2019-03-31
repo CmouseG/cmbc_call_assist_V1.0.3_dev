@@ -84,13 +84,14 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
-        if(callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+        if(callRecordListReq.getCheckAll()!=null &&callRecordListReq.getCheckAll() &&
+                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
             List<String> list = callRecordListReq.getExcludeList();
             List<BigInteger> notInList = new ArrayList<>();
             for(String callId :list){
                 notInList.add(new BigInteger(callId));
             }
-
+            callOutPlanQueryEntity.setNotInList(notInList);
         }
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), null);
 
@@ -123,7 +124,7 @@ public class BatchExportServiceImpl implements BatchExportService {
         parentDir.mkdir();
 
         for (int i = 1; i <= excelCount; i++) {
-
+            log.info("第[{}]个excel开始生产",i);
             List<BigInteger> idList;
             if (i == excelCount) {
                 idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
@@ -141,6 +142,9 @@ public class BatchExportServiceImpl implements BatchExportService {
                 } catch (Exception e) {
                     log.error("生成excel文件出现异常", e);
                 }
+            }else{
+                log.info("没有数据了，跳出循环");
+                break;
             }
         }
 
@@ -244,13 +248,14 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
-        if(callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+        if(callRecordListReq.getCheckAll()!=null && callRecordListReq.getCheckAll() &&
+                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
             List<String> list = callRecordListReq.getExcludeList();
             List<BigInteger> notInList = new ArrayList<>();
             for(String callId :list){
                notInList.add(new BigInteger(callId));
             }
-
+            callOutPlanQueryEntity.setNotInList(notInList);
         }
 
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), minId);
@@ -260,7 +265,7 @@ public class BatchExportServiceImpl implements BatchExportService {
             String startCount = callRecordListReq.getStartCount();
             if (StringUtils.isNotBlank(startCount)) {
                 int startInt = Integer.valueOf(startCount);
-                limitStart = startInt > 0 ? startInt - 1 : startInt;
+                limitStart = startInt > 0 ? startInt - 1 : 0;
             }
         }
 

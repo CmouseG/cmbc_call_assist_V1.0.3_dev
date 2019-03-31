@@ -33,13 +33,15 @@ public class DingxinServiceImpl implements ThirdGateWayService {
     @Override
     public GwDevtbl queryCompanyByDevName(String devName) {
 
-        String productSn = devName.replace("-", "");
+        TblNeExample tblNeExample = new TblNeExample();
 
-        TblNe tblNe = tblNeMapper.selectByProductSn(productSn);
+        tblNeExample.createCriteria().andAliasEqualTo(devName);
 
-        if (tblNe == null) return null;
+        List<TblNe> tblNes = tblNeMapper.selectByExample(tblNeExample);
 
-        Integer uuid = tblNe.getUuid();
+        if (CollectionUtils.isEmpty(tblNes)) return null;
+
+        Integer uuid = tblNes.get(0).getUuid();
 
         TblGwExample tblGwExample = new TblGwExample();
 
@@ -149,7 +151,7 @@ public class DingxinServiceImpl implements ThirdGateWayService {
             if (tblGwp.getLocalSimUuid() == 0) continue;
             TblSim tblSim = tblSimMapper.selectByPrimaryKey(tblGwp.getLocalSimUuid());
 
-            simPort.setRegStatusId(1);
+            simPort.setRegStatusId(map.get(tblGwp.getPortUuid()).getOprStatus() == 1 ? 1:0 );
             simPort.setWorkStatusId(map.get(tblGwp.getPortUuid()).getRunStatus() == 10 ? 1 : 0);
             simPort.setPortNumber(map.get(tblGwp.getPortUuid()).getPortNo());
             simPort.setLoadType(tblGwp.getModSignalLevel());

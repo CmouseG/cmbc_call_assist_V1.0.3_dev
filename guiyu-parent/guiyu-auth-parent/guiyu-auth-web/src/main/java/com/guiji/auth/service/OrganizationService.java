@@ -433,9 +433,13 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<OrgRoleInfo> getAuthOrgTree(String orgCode,boolean isNeedRole){
+	public List<OrgRoleInfo> getAuthOrgTree(Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andCodeLike(orgCode+"%");
+		if(authLevel == 1 || authLevel == 2){
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else {
+			example.createCriteria().andCodeLike(orgCode+"%");
+		}
 		example.setOrderByClause(" code");
 		List<SysOrganization> allList = sysOrganizationMapper.selectByExample(example);
 		if(allList!=null && !allList.isEmpty()) {

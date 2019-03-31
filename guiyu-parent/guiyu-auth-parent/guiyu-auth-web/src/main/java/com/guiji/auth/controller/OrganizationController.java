@@ -206,8 +206,8 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getAuthOrgTree")
-	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader String orgCode){
-		return Result.ok(organizationService.getAuthOrgTree(orgCode,true));
+	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return Result.ok(organizationService.getAuthOrgTree(userId,authLevel,orgCode,true));
 	}
 	
 	/**

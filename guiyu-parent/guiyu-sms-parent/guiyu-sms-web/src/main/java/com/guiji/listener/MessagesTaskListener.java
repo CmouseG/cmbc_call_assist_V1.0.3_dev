@@ -39,14 +39,14 @@ public class MessagesTaskListener
 
 			smsTask = taskMapper.selectByPrimaryKey(taskReq.getTaskId());
 			if(smsTask == null){ 
-				throw new Exception("没有查到任务");
+				logger.error("没有查到任务");
+				return;
 			}
 			sendSmsService.preSendMsg(taskReq); // 发送
 			smsTask.setSendStatus(SmsConstants.End); // 2-已结束
 		} catch (Exception e) {
-			logger.error("处理失败", e);
-			if(smsTask == null)
-			{
+			e.printStackTrace();
+			if(smsTask == null){
 				smsTask = new SmsTask();
 			}
 			smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败

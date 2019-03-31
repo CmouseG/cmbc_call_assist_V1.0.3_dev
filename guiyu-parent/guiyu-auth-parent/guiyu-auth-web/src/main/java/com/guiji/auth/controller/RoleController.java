@@ -30,7 +30,7 @@ public class RoleController {
 	
 	@Jurisdiction("system_role_add")
 	@RequestMapping("insert")
-	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws CheckConditionException{
+	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws Exception{
 		role.setCreateId(userId);
 		role.setUpdateId(userId);
 		role.setCreateTime(new Date());

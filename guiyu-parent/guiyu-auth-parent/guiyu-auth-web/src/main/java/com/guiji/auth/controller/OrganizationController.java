@@ -218,11 +218,6 @@ public class OrganizationController implements IOrg{
 			orgVo.setOrgName((String) orgMap.get("name"));
 			organizationList.add(orgVo);
 		}
-
-		OrgVO orgVo = new OrgVO();
-		orgVo.setOrgId(organization.getId().intValue());
-		orgVo.setOrgName(organization.getName());
-		organizationList.add(orgVo);
 		return Result.ok(organizationList);
 	}
 

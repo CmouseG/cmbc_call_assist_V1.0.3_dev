@@ -54,15 +54,30 @@ public class AvailableTemplateService {
 	 * 用户可用话术
 	 * @return 
 	 */
-	public List<BotAvailableTemplate> getUserAvailableTemplate( Long userId, String orgCode){
+	public List<BotAvailableTemplate> getUserAvailableTemplate( Long userId, String orgCode, Integer authLevel){
 		List<BotAvailableTemplate> list = new ArrayList<>();
-		if(authService.isAgent(userId)){
+		
+		/*if(authService.isAgent(userId)){
 			BotAvailableTemplateExample example = new BotAvailableTemplateExample();
 			example.createCriteria()
 					.andOrgCodeLike(orgCode+"%");
 			list = botAvailableTemplateMapper.selectByExample(example);
 		}else{
 			list = botAvailableTemplateMapper.getUserAvailableTemplate(userId);
+		}*/
+		
+		
+		if(1 == authLevel) {//查询本人
+			list = botAvailableTemplateMapper.getUserAvailableTemplate(userId);
+		}else if(2 == authLevel) {//查询本组织
+			BotAvailableTemplateExample example = new BotAvailableTemplateExample();
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+			list = botAvailableTemplateMapper.selectByExample(example);
+		}else if(3 == authLevel) {//查询本组织及以下
+			BotAvailableTemplateExample example = new BotAvailableTemplateExample();
+			example.createCriteria()
+					.andOrgCodeLike(orgCode+"%");
+			list = botAvailableTemplateMapper.selectByExample(example);
 		}
 		
 		if(null != list && list.size() > 0) {

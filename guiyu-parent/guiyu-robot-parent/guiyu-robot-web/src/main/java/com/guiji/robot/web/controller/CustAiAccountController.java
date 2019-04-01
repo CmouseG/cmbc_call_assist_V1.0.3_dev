@@ -66,7 +66,7 @@ public class CustAiAccountController {
      * @param userAiCfgInfo
      * @return
      */
-    @Jurisdiction("robotCenter_robotManage_detailAdd,robotCenter_robotManage_detailEdit")
+    @Jurisdiction("system_usr_configResource")
     @RequestMapping(value = "/saveUserAiCfgBaseInfo", method = RequestMethod.POST)
     public Result.ReturnData<UserAiCfgBaseInfo> saveUserAiCfgBaseInfo(
             @RequestBody UserAiCfgBaseInfo userAiCfgBaseInfo,

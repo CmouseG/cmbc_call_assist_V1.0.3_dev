@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.exception.GuiyuExceptionEnum;
 import com.guiji.component.jurisdiction.Jurisdiction;
+import com.guiji.dispatch.dto.JoinPlanDto;
 import com.guiji.dispatch.dto.OptPlanDto;
 import com.guiji.dispatch.service.IPlanBatchService;
 import com.guiji.dispatch.util.Log;
@@ -123,16 +124,16 @@ public class DispatchBatchController {
     @ResponseBody
     public boolean joinPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                      @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                                     @RequestBody OptPlanDto optPlanDto){
-        if(null == optPlanDto){
-            optPlanDto = new OptPlanDto();
+                                     @RequestBody JoinPlanDto joinPlanDto){
+        if(null == joinPlanDto){
+            joinPlanDto = new JoinPlanDto();
         }
-        optPlanDto.setOperUserId(userId);
-        optPlanDto.setOperOrgCode(orgCode);
-        optPlanDto.setOperOrgId(orgId);
-        optPlanDto.setAuthLevel(authLevel);
-        logger.info("/dispatch/batch/controller/joinPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
-        boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
+        joinPlanDto.setOperUserId(userId);
+        joinPlanDto.setOperOrgCode(orgCode);
+        joinPlanDto.setOperOrgId(orgId);
+        joinPlanDto.setAuthLevel(authLevel);
+        logger.info("/dispatch/batch/controller/joinPlanBatch:{}", JsonUtils.bean2Json(joinPlanDto));
+        boolean bool = planBatchService.joinPlanBatch(joinPlanDto);
         if(!bool){
             throw new GuiyuException("恢复计划失败");
         }

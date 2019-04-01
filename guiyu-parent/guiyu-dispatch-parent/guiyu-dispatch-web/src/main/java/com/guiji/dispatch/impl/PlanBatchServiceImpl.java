@@ -1,17 +1,29 @@
 package com.guiji.dispatch.impl;
 
+import com.guiji.common.exception.GuiyuException;
+import com.guiji.component.result.Result;
+import com.guiji.dispatch.batchimport.IBatchImportQueueHandlerService;
+import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.ext.PlanBatchOptMapper;
+import com.guiji.dispatch.dto.JoinPlanDto;
 import com.guiji.dispatch.dto.OptPlanDto;
-import com.guiji.dispatch.enums.AuthLevelEnum;
-import com.guiji.dispatch.enums.PlanOperTypeEnum;
+import com.guiji.dispatch.enums.*;
+import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.GetAuthUtil;
 import com.guiji.dispatch.service.IPlanBatchService;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +40,15 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
     @Autowired
     private GetAuthUtil getAuthUtil;
+
+    @Autowired
+    private GetApiService getApiService;
+
+    @Autowired
+    private IBatchImportQueueHandlerService batchImportQueueHandler;
+
+    @Autowired
+    private DispatchPlanBatchMapper dispatchPlanBatchMapper;
 
     /**
      * 删除计划任务
@@ -52,13 +73,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId());//获取用户ID
-            orgIds = (null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
-                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId());//获取组织ID
-            optPlanDto.setOrgIdList(orgIds);
-            if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
-                optPlanDto.setUserId(userId);
-            }
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
         //全选
@@ -109,13 +126,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId());//获取用户ID
-            orgIds = (null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
-                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId());//获取组织ID
-            optPlanDto.setOrgIdList(orgIds);
-            if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
-                optPlanDto.setUserId(userId);
-            }
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
         //全选
@@ -166,13 +179,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId());//获取用户ID
-            orgIds = (null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
-                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId());//获取组织ID
-            optPlanDto.setOrgIdList(orgIds);
-            if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
-                optPlanDto.setUserId(userId);
-            }
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
         //全选
@@ -223,13 +232,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId());//获取用户ID
-            orgIds = (null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
-                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId());//获取组织ID
-            optPlanDto.setOrgIdList(orgIds);
-            if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
-                optPlanDto.setUserId(userId);
-            }
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
         //全选
@@ -258,9 +263,86 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     }
 
     @Override
-    public boolean joinPlanBatch(OptPlanDto optPlanDto) {
+    public boolean joinPlanBatch(JoinPlanDto joinPlanDto) {
+        boolean bool = false;
+        if(null != joinPlanDto){
+            Long operUserId = Long.valueOf(joinPlanDto.getOperUserId());    //操作用户ID
+            Integer operOrgId = joinPlanDto.getOperOrgId();     //企业组织ID
+            String operOrgCode = joinPlanDto.getOperOrgCode();  //企业编码
+            OptPlanDto optPlanDto = joinPlanDto.getOptPlan();
+            DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
 
+            // 查询用户名称
+            SysUser sysUser = getApiService.getUserById(operUserId+"");
+            if (null == sysUser) {
+                throw new GuiyuException("用户不存在");
+            }
 
-        return false;
+            //线路入库
+            DispatchPlanBatch batchPlan = new DispatchPlanBatch();
+            batchPlan.setUserId(operUserId.intValue());
+            batchPlan.setOrgCode(operOrgCode);
+            batchPlan.setName(submitPlan.getBatchName());
+            batchPlan.setBatchName(submitPlan.getBatchName());
+            batchPlan.setStatusShow(Constant.BATCH_STATUS_SHOW);
+            batchPlan.setStatusNotify(SyncStatusEnum.NO_SYNC.getStatus());
+            batchPlan.setGmtCreate(new Date());
+            batchPlan.setGmtModified(new Date());
+            dispatchPlanBatchMapper.insert(batchPlan);
+
+            //批量加入MQ
+            this.batchJoin(joinPlanDto, batchPlan.getId());
+            bool = true;
+        }
+        return bool;
     }
+
+    @Async("asyncBatchImportExecutor")
+    protected void batchJoin(JoinPlanDto joinPlanDto, Integer batchId){
+        Long operUserId = Long.valueOf(joinPlanDto.getOperUserId());    //操作用户ID
+        Integer oper0rgId = joinPlanDto.getOperOrgId();     //企业组织ID
+        String operOrgCode = joinPlanDto.getOperOrgCode();  //企业编码
+        OptPlanDto optPlanDto = joinPlanDto.getOptPlan();
+        DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
+        //获取权限
+        Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
+        optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+        optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+                :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
+        int limit = 30000;
+        //查询条件列表（注意，号码去重）
+        List<String> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
+        for(String phone : phoneList){
+            this.pushPlanCreateMQ(submitPlan, batchId, phone, operUserId, oper0rgId, operOrgCode);
+        }
+    }
+
+    /**
+     * 推送MQ
+     * @param submitPlan
+     * @param batchId
+     * @param phone
+     * @param userId
+     * @param orgId
+     * @param orgCode
+     */
+    private void pushPlanCreateMQ(DispatchPlan submitPlan, Integer batchId, String phone, Long userId, Integer orgId, String orgCode){
+        try {
+            DispatchPlan newPlan = new DispatchPlan();
+            newPlan.setBatchId(batchId);
+            newPlan.setParams(submitPlan.getParams());
+            newPlan.setAttach(submitPlan.getAttach());
+            newPlan.setPhone(phone);
+
+            newPlan.setBatchId(batchId);
+            newPlan.setUserId(userId.intValue());
+            newPlan.setOrgCode(orgCode);
+            newPlan.setOrgId(orgId);
+
+            batchImportQueueHandler.add(newPlan);
+        }catch(Exception e){
+            logger.error("批量加入计划，单条加入MQ异常", e);
+        }
+    }
+
 }

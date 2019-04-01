@@ -65,14 +65,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean isSeat(Long userId) {
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getName().equals("企业客服")){
-                    return true;
-                }
-            }
+        Result.ReturnData<Boolean> returnData = iAuth.isAgentUser( userId.intValue());
+
+        if(returnData!=null && returnData.getBody()!=null){
+             return returnData.getBody();
         }
         return  false;
     }

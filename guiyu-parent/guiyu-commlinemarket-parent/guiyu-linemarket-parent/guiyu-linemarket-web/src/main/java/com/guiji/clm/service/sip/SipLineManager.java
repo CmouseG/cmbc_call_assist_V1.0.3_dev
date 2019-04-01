@@ -148,6 +148,7 @@ public class SipLineManager {
 		}
 		//调用呼叫中心线路，生成线路ID
 		Integer lineId = this.callcenterLine(sipLineBaseInfo, extSipLineBaseInfo);
+		log.info("调用呼叫中心成功，返回lineId:{}", lineId);
 		if(lineId==null) {
 			log.error("调用线路市场，返回线路lineid为空!");
 			throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());

@@ -20,6 +20,10 @@ public class BotPublishSentenceLog implements Serializable {
 
     private String createName;
 
+    private String orgCode;
+
+    private String orgName;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -86,6 +90,22 @@ public class BotPublishSentenceLog implements Serializable {
         this.createName = createName == null ? null : createName.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName == null ? null : orgName.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -100,6 +120,8 @@ public class BotPublishSentenceLog implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", status=").append(status);
         sb.append(", createName=").append(createName);
+        sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgName=").append(orgName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

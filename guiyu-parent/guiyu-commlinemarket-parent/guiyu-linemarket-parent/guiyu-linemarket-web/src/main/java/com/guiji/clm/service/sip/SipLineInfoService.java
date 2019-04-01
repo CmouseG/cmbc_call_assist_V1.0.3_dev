@@ -2,6 +2,7 @@ package com.guiji.clm.service.sip;
 
 import java.util.List;
 
+import com.guiji.clm.constant.ClmConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,8 +93,6 @@ public class SipLineInfoService {
 	
 	/**
 	 * 根据条件查询第三方线路列表-分页查询
-	 * @param pageNo
-	 * @param pageSize
 	 * @param condition
 	 * @return
 	 */
@@ -129,17 +128,21 @@ public class SipLineInfoService {
 		SipLineBaseInfoExample example = new SipLineBaseInfoExample();
 		if(condition != null) {
 			Criteria criteria = example.createCriteria();
+			//非超管查询
+			if(condition.getAuthLevel() != null) {
+				if(condition.getAuthLevel() == ClmConstants.USER_DATA_AUTH_ME) {
+					criteria.andCrtUserEqualTo(condition.getCrtUser());
+				} else if(condition.getAuthLevel() == ClmConstants.USER_DATA_AUTH_ORG) {
+					criteria.andOrgCodeEqualTo(condition.getOrgCode());
+				} else {
+					criteria.andOrgCodeLike(condition.getOrgCode() + "%");
+				}
+			}
 			if(condition.getSipShareId()!=null) {
 				criteria.andSipShareIdEqualTo(condition.getSipShareId());
 			}
 			if(StrUtils.isNotEmpty(condition.getLineName())) {
 				criteria.andLineNameLike("%"+condition.getLineName()+"%");
-			}
-			if(StrUtils.isNotEmpty(condition.getCrtUser())) {
-				criteria.andCrtUserEqualTo(condition.getCrtUser());
-			}
-			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
-				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}
 			if(condition.getLineId()!=null) {
 				criteria.andLineIdEqualTo(condition.getLineId());

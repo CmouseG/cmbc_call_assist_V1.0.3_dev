@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysRole;
@@ -29,6 +30,12 @@ public class RoleService {
 	
 	@Transactional
 	public void insert(SysRole role,String orgCode,String[] menuIds){
+		SysRoleExample example = new SysRoleExample();
+		example.createCriteria().andNameEqualTo(role.getName()).andOrgCodeEqualTo(orgCode);
+		int num = mapper.countByExample(example);
+		if(num > 0){
+			throw new GuiyuException("改角色名称已存在，请更换角色名称！");
+		}
 		role.setCreateTime(new Date());
 		role.setUpdateTime(new Date());
 		role.setInitRole(1);//接口增加的角色都是非初始化数据，只有初始化才是

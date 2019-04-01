@@ -10,6 +10,8 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, temp_name, template_id, process_id, create_id, create_time, `status`, create_name
+    id, temp_name, template_id, process_id, create_id, create_time, `status`, create_name, 
+    org_code, org_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
     select
@@ -109,10 +112,12 @@
   <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     insert into bot_publish_sentence_log (id, temp_name, template_id, 
       process_id, create_id, create_time, 
-      `status`, create_name)
+      `status`, create_name, org_code, 
+      org_name)
     values (#{id,jdbcType=BIGINT}, #{tempName,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{processId,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{status,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR})
+      #{status,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{orgName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     insert into bot_publish_sentence_log
@@ -141,6 +146,12 @@
       <if test="createName != null" >
         create_name,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="orgName != null" >
+        org_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -166,6 +177,12 @@
       </if>
       <if test="createName != null" >
         #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        #{orgName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -202,6 +219,12 @@
       <if test="record.createName != null" >
         create_name = #{record.createName,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgName != null" >
+        org_name = #{record.orgName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -216,7 +239,9 @@
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       `status` = #{record.status,jdbcType=VARCHAR},
-      create_name = #{record.createName,jdbcType=VARCHAR}
+      create_name = #{record.createName,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      org_name = #{record.orgName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -245,6 +270,12 @@
       <if test="createName != null" >
         create_name = #{createName,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -256,9 +287,12 @@
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       `status` = #{status,jdbcType=VARCHAR},
-      create_name = #{createName,jdbcType=VARCHAR}
+      create_name = #{createName,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
   
   <select id="getLastPublishSentence" resultType="long">
   	select id from bot_publish_sentence_log where template_id=#{tempId} and status="1"
@@ -274,6 +308,6 @@
   	INSERT into bot_available_template(template_id,template_name,user_id,org_code)
 	VALUES(#{templateId},#{templateName},#{userId},#{orgCode})
   </insert>
-
-	
+  
+  
 </mapper>

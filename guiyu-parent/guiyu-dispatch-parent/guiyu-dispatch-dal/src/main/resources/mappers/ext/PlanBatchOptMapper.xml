@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.PlanBatchOptMapper" >
+
+    <!--删除  begin-->
+    <update id="delPlanBatchById">
+        UPDATE dispatch_plan
+            <set>
+                is_del = 1,
+                gmt_modified = #{delTime}
+            </set>
+        WHERE is_del = 0
+            AND plan_uuid IN
+            <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
+                #{planUuid}
+            </foreach>
+            <if test="orgIdList != null">
+                AND org_id IN
+                <foreach collection="orgIdList" item="orgId" open="(" close=")" separator="," >
+                    #{orgId}
+                </foreach>
+            </if>
+    </update>
+
+    <update id="delPlanBatchByParam">
+        UPDATE dispatch_plan p
+            <set>
+                is_del = 1,
+                gmt_modified = #{delTime}
+            </set>
+        WHERE is_del = 0
+            <if test="optPlanDto != null">
+                <if test="optPlanDto.orgIdList != null">
+                    AND p.org_id IN
+                    <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator="," >
+                        #{orgId}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.batchId != null">
+                    AND p.batch_id = #{optPlanDto.batchId}
+                </if>
+                <if test="optPlanDto.startTime != null and optPlanDto.endTime != null">
+                    AND p.gmt_create BETWEEN #{optPlanDto.startTime} AND #{optPlanDto.endTime}
+                </if>
+                <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
+                    AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
+                </if>
+                <if test="optPlanDto.userId != null">
+                    AND p.user_id = #{optPlanDto.userId}
+                </if>
+                <if test="optPlanDto.phone != null">
+                    AND p.phone = #{optPlanDto.phone}
+                </if>
+                <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
+                    AND p.status_plan IN
+                    <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator="," >
+                        #{statusPlan}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.resultList != null and optPlanDto.resultList.size()>0">
+                    AND p.result IN
+                    <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator="," >
+                        #{result}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
+                    AND p.plan_uuid NOT IN
+                    <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                        #{planUuid}
+                    </foreach>
+                </if>
+            </if>
+    </update>
+    <!--删除  end-->
+
+    <!--暂停  begin-->
+    <update id="suspendPlanBatchById">
+        UPDATE dispatch_plan p
+            <set>
+                status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()},
+                gmt_modified = #{updTime}
+            </set>
+        WHERE is_del = 0
+            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            AND plan_uuid IN
+            <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
+                #{planUuid}
+            </foreach>
+            <if test="orgIdList != null">
+                AND org_id IN
+                <foreach collection="orgIdList" item="orgId" open="(" close=")" separator="," >
+                    #{orgId}
+                </foreach>
+            </if>
+    </update>
+
+    <update id="suspendPlanBatchByParam">
+        UPDATE dispatch_plan p
+            <set>
+                status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()},
+                gmt_modified = #{updTime}
+            </set>
+        WHERE is_del = 0
+            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            <if test="optPlanDto != null">
+                <if test="optPlanDto.orgIdList != null">
+                    AND p.org_id IN
+                    <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator="," >
+                        #{orgId}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.batchId != null">
+                    AND p.batch_id = #{optPlanDto.batchId}
+                </if>
+                <if test="optPlanDto.startTime != null and optPlanDto.endTime != null">
+                    AND p.gmt_create BETWEEN #{optPlanDto.startTime} AND #{optPlanDto.endTime}
+                </if>
+                <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
+                    AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
+                </if>
+                <if test="optPlanDto.userId != null">
+                    AND p.user_id = #{optPlanDto.userId}
+                </if>
+                <if test="optPlanDto.phone != null">
+                    AND p.phone = #{optPlanDto.phone}
+                </if>
+                <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
+                    AND p.status_plan IN
+                    <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator="," >
+                        #{statusPlan}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.resultList != null and optPlanDto.resultList.size()>0">
+                    AND p.result IN
+                    <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator="," >
+                        #{result}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
+                    AND p.plan_uuid NOT IN
+                    <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                        #{planUuid}
+                    </foreach>
+                </if>
+            </if>
+    </update>
+    <!--暂停  end-->
+
+    <!--停止  begin-->
+    <update id="stopPlanBatchById">
+        UPDATE dispatch_plan
+            <set>
+                status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@STOP.getStatus()},
+                gmt_modified = #{updTime}
+            </set>
+        WHERE is_del = 0
+            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
+                #{planUuid}
+            </foreach>
+            <if test="orgIdList != null">
+                AND org_id IN
+                <foreach collection="orgIdList" item="orgId" open="(" close=")" separator="," >
+                    #{orgId}
+                </foreach>
+            </if>
+    </update>
+
+    <update id="stopPlanBatchByParam">
+        UPDATE dispatch_plan p
+            <set>
+                status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@STOP.getStatus()},
+                gmt_modified = #{updTime}
+            </set>
+        WHERE is_del = 0
+            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            <if test="optPlanDto != null">
+                <if test="optPlanDto.orgIdList != null">
+                    AND p.org_id IN
+                    <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator="," >
+                        #{orgId}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.batchId != null">
+                    AND p.batch_id = #{optPlanDto.batchId}
+                </if>
+                <if test="optPlanDto.startTime != null and optPlanDto.endTime != null">
+                    AND p.gmt_create BETWEEN #{optPlanDto.startTime} AND #{optPlanDto.endTime}
+                </if>
+                <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
+                    AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
+                </if>
+                <if test="optPlanDto.userId != null">
+                    AND p.user_id = #{optPlanDto.userId}
+                </if>
+                <if test="optPlanDto.phone != null">
+                    AND p.phone = #{optPlanDto.phone}
+                </if>
+                <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
+                    AND p.status_plan IN
+                    <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator="," >
+                        #{statusPlan}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.resultList != null and optPlanDto.resultList.size()>0">
+                    AND p.result IN
+                    <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator="," >
+                        #{result}
+                    </foreach>
+                </if>
+                <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
+                    AND p.plan_uuid NOT IN
+                    <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                        #{planUuid}
+                    </foreach>
+                </if>
+            </if>
+    </update>
+    <!--停止  end-->
+</mapper>

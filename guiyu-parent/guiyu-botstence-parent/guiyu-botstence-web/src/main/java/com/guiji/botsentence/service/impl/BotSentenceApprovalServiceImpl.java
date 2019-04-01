@@ -806,6 +806,8 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		record.setTempName(botSentenceProcess.getTemplateName());
 		record.setCreateName(data.getBody().getUsername());
 		record.setStatus("1");
+		record.setOrgCode(data.getBody().getOrgCode());
+		record.setOrgName(data.getBody().getOrgName());
 		botPublishSentenceLogMapper.insert(record);
 		
 		String dirName = DateUtil.getCurrentTime2() + "-" + templateId;

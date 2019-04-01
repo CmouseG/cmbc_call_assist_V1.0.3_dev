@@ -488,7 +488,7 @@ public class BotSentenceProcessController {
 	
 	
 	@RequestMapping(value="queryIndustryListByOrgCode")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@RequestHeader String orgCode) {
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@JsonParam String orgCode) {
 		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(orgCode,"template");
 		/*
 		if(null != list && list.size() > 0) {

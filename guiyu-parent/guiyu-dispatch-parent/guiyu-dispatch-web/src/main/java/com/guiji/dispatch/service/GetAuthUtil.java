@@ -47,11 +47,11 @@ public class GetAuthUtil {
         if(null != authLevel
                 && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
             List<Integer> orgIds = new ArrayList<Integer>();
-            if(AuthLevelEnum.ORG.getLevel() == authLevel){
+            if(AuthLevelEnum.ORG.getLevel() == authLevel){//本组织
                 orgIds.add(orgId);
             }
 
-            if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
+            if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){//本组织或本组织及以下组织
                 orgIds = getApiService.getSubOrgIdByOrgId(orgId);
             }
             return orgIds;

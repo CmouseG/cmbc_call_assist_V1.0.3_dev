@@ -237,14 +237,18 @@ public class OrganizationService {
 		return rtnPage;
 	}
 	
-	public Page<Map> selectOpenByPage(Page<Map> page){
+	public Page<Map> selectOpenByPage(Page<Map> page,Long userId, Integer authLevel, String orgCode){
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
 		if(!StringUtils.isEmpty(page.getOrgName())) {
 			example.createCriteria().andNameLike("%"+page.getOrgName()+"%");
-		}
-		if(!StringUtils.isEmpty(page.getOrgCode())) {
-			example.createCriteria().andCodeLike(page.getOrgCode()+"%");
 		}
 		int num=sysOrganizationMapper.countByExample(example);
 		List<Map> list=sysOrganizationMapper.selectOpenByPage(page);
@@ -299,9 +303,16 @@ public class OrganizationService {
 		return num==0;
 	}
 	
-	public List<SysOrganization> getOrgNotOpen(){
+	public List<SysOrganization> getOrgNotOpen(Long userId, Integer authLevel, String orgCode){
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0);
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
@@ -433,9 +444,13 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<OrgRoleInfo> getAuthOrgTree(String orgCode,boolean isNeedRole){
+	public List<OrgRoleInfo> getAuthOrgTree(Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andCodeLike(orgCode+"%");
+		if(authLevel == 1 || authLevel == 2){
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else {
+			example.createCriteria().andCodeLike(orgCode+"%");
+		}
 		example.setOrderByClause(" code");
 		List<SysOrganization> allList = sysOrganizationMapper.selectByExample(example);
 		if(allList!=null && !allList.isEmpty()) {
@@ -679,5 +694,10 @@ public class OrganizationService {
 	public List<Map> querySubOrgByOrgId(Integer orgId)
 	{
 		return sysOrganizationMapper.querySubOrgByOrgId(orgId);
+	}
+
+	public List<Map> getSubOrgByAuthLevel(Long userId, Integer authLevel, String orgCode)
+	{
+		return sysOrganizationMapper.getSubOrgByAuthLevel(userId,authLevel,orgCode);
 	}
 }

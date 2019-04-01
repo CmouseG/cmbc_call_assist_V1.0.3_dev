@@ -116,7 +116,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "userId", value = "userId", dataType = "Integer", paramType = "query"),
     })
-    @RequestMapping(value="out/lineIsUsedByUserId", method={RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value="out/lineIsUsedByUserId")
     Result.ReturnData<Boolean> lineIsUsedByUserId(@RequestParam("lineId") Integer lineId,@RequestParam("userId") Integer userId);
     
     
@@ -124,7 +124,7 @@ public interface IDispatchPlanOut {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
     })
-    @RequestMapping(value="out/lineIsUsed", method={RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value="out/lineIsUsed")
     Result.ReturnData<Boolean> lineIsUsed(@RequestBody LineIsUseDto LineIsUseDto);
 
 

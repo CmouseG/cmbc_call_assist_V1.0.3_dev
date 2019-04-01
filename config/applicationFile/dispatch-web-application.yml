@@ -104,5 +104,5 @@ rabbit:
 
 ####临时目录
 file:
-  tmpPath: F:\\apps\\tmp\\      
+  tmpPath: /apps/tmp/   
       

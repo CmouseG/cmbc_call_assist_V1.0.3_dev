@@ -1,5 +1,7 @@
 package com.guiji.dispatch.controller;
 
+import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.exception.GuiyuExceptionEnum;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.dto.OptPlanDto;
 import com.guiji.dispatch.service.IPlanBatchService;
@@ -38,6 +40,9 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
         boolean bool = planBatchService.delPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("删除计划失败");
+        }
         return bool;
     }
 
@@ -58,6 +63,9 @@ public class DispatchBatchController {
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/suspendPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.suspendPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("暂停计划失败");
+        }
         return bool;
     }
 
@@ -77,6 +85,57 @@ public class DispatchBatchController {
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/stopPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.stopPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("停止计划失败");
+        }
+        return bool;
+    }
+
+
+    //
+    @ApiOperation(value="恢复计划任务", notes="恢复计划任务")
+    @Log(info ="恢复计划任务")
+    @RequestMapping(value = "/recoveryPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public boolean recoveryPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
+                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
+                                 @RequestBody OptPlanDto optPlanDto){
+        if(null == optPlanDto){
+            optPlanDto = new OptPlanDto();
+        }
+        optPlanDto.setOperUserId(userId);
+        optPlanDto.setOperOrgCode(orgCode);
+        optPlanDto.setOperOrgId(orgId);
+        optPlanDto.setAuthLevel(authLevel);
+        logger.info("/dispatch/batch/controller/recoveryPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
+        boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("恢复计划失败");
+        }
+        return bool;
+    }
+
+
+    //批量加入
+    @ApiOperation(value="批量加入计划任务", notes="恢复计划任务")
+    @Log(info ="批量计划任务")
+    @RequestMapping(value = "/joinPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public boolean joinPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
+                                     @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
+                                     @RequestBody OptPlanDto optPlanDto){
+        if(null == optPlanDto){
+            optPlanDto = new OptPlanDto();
+        }
+        optPlanDto.setOperUserId(userId);
+        optPlanDto.setOperOrgCode(orgCode);
+        optPlanDto.setOperOrgId(orgId);
+        optPlanDto.setAuthLevel(authLevel);
+        logger.info("/dispatch/batch/controller/joinPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
+        boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("恢复计划失败");
+        }
         return bool;
     }
 }

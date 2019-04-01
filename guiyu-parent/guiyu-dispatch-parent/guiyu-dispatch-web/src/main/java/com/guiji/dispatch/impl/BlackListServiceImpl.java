@@ -301,16 +301,11 @@ public class BlackListServiceImpl implements IBlackListService {
 
 	/**
 	 * 查询黑名单记录列表
-	 * @param pagenum
-	 * @param pagesize
-	 * @param orgCode
+	 * @param queryBlackParam
 	 * @return
 	 */
 	@Override
-	public Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, QueryBlackListDto queryBlackParam) {
-		Page<BlackListRecords> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
+	public ResultPage<BlackListRecords> queryBlackListRecords(QueryBlackListDto queryBlackParam) {
 		/*
 		BlackListRecordsExample example = new BlackListRecordsExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
@@ -327,14 +322,14 @@ public class BlackListServiceImpl implements IBlackListService {
 		/*BlackListRecords blackRecord = new BlackListRecords();
 		blackRecord.setOrgCode(orgCode);*/
 
-		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>(pagenum, pagesize);
+		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>(queryBlackParam);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");
 		List<BlackListRecords> result = blackRecordsMapper.queryBlackListRecords(queryBlackParam, pageRes);
 		int countByExample = blackRecordsMapper.queryBlackRecordsCount(queryBlackParam);
-		page.setRecords(result);
-		page.setTotal(countByExample);
-		return page;
+		pageRes.setList(result);
+		pageRes.setTotalItemAndPageNumber(countByExample);
+		return pageRes;
 	}
 
 }

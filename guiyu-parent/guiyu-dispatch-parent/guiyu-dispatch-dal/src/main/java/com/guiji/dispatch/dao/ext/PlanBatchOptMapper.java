@@ -30,4 +30,11 @@ public interface PlanBatchOptMapper {
                           @Param("updTime") Date updTime);
 
     int stopPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
+
+    /*恢复*/
+    int recoveryPlanBatchById(@Param("planUuidList") List<Long> planUuidList,
+                          @Param("orgIdList") List<Integer> orgIdList,
+                          @Param("updTime") Date updTime);
+
+    int recoveryPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
 }

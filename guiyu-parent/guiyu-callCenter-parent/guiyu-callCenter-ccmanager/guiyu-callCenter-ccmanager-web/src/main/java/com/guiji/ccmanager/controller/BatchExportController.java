@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.BatchExportService;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.DateUtils;
@@ -46,6 +47,8 @@ public class BatchExportController {
     CallDetailService callDetailService;
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
+    @Autowired
+    AuthService authService;
 
 
     @ApiOperation(value = "批量导出通话记录，从第几条开始，到多少条")
@@ -97,6 +100,10 @@ public class BatchExportController {
         exportFileDto.setBusiType("03");
         exportFileDto.setFileType(1);
         exportFileDto.setTotalNum(totalNum);
+        exportFileDto.setUserId(String.valueOf(userId));
+        exportFileDto.setOrgCode(orgCode);
+        exportFileDto.setCreateName(authService.getUserName(userId));
+        exportFileDto.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         Result.ReturnData<ExportFileRecordVo> returnData = iDispatchPlanOut.addExportFile(exportFileDto);
         log.info("请求iDispatchPlanOut.addExportFile返回returnData[{}]",returnData);
         if(returnData.success){
@@ -246,6 +253,10 @@ public class BatchExportController {
         exportFileDto.setBusiType("03");
         exportFileDto.setFileType(1);
         exportFileDto.setTotalNum(totalNum);
+        exportFileDto.setUserId(String.valueOf(userId));
+        exportFileDto.setOrgCode(orgCode);
+        exportFileDto.setCreateName(authService.getUserName(userId));
+        exportFileDto.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         Result.ReturnData<ExportFileRecordVo> returnData = iDispatchPlanOut.addExportFile(exportFileDto);
         log.info("请求iDispatchPlanOut.addExportFile返回returnData[{}]",returnData);
         if(returnData.success){

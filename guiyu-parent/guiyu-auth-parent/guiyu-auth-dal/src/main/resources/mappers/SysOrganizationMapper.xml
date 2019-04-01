@@ -355,20 +355,29 @@
       sub_code = #{subCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  
-  <select id="selectOpenByPage" resultType="map">
-  	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line 
-	from sys_organization a
-	LEFT JOIN sys_user b on a.create_id=b.id
-	LEFT JOIN sys_user c on a.update_id=c.id
-	where a.del_flag=0 and a.open='1' and a.type = 2
-	<if test="orgName != null">
-		AND a.`name` LIKE CONCAT('%',#{orgName},'%')
-	</if>
-	ORDER  BY a.update_time desc
-	limit ${(pageNo-1)*pageSize}, #{pageSize}
-  </select>
+
+	<select id="selectOpenByPage" resultType="map">
+		select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
+		b.username as createName,c.username as updateName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line
+		from sys_organization a
+		LEFT JOIN sys_user b on a.create_id=b.id
+		LEFT JOIN sys_user c on a.update_id=c.id
+		where a.del_flag=0 and a.open='1' and a.type = 2
+		<if test="orgName != null">
+			AND a.`name` LIKE CONCAT('%',#{orgName},'%')
+		</if>
+		<if test="authLevel == 1">
+			and a.create_id = #{userId}
+		</if>
+		<if test="authLevel == 2">
+			and a.code = #{orgCode}
+		</if>
+		<if test="authLevel == 3">
+			and a.`code` LIKE CONCAT(#{orgCode},'%')
+		</if>
+		ORDER BY a.update_time desc
+		limit ${(pageNo-1)*pageSize}, #{pageSize}
+	</select>
   
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">

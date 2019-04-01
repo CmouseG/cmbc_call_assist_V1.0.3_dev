@@ -73,7 +73,7 @@ update sys_organization set code = CONCAT(code,'.') where id <> 1;
 
 update sys_user set org_code='1' where org_code='1.';
 
-update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList');
+update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList','/botsentence/botsentence_approve','/botsentence/botsentence_mytemplate','/botsentence/botsentence_history','/smsCenter/platformManage','/botsentence/botsentence_keywords','/financeCenter/rechargeManage','/botsentence/botsentence_approveKeywords','/system/product','system_noticeList_add');
 
 insert into sys_privilege(auth_id,auth_type,resource_id,resource_type,org_code,crt_user,crt_time,update_time,update_user) select org.id,2,temp.template_id,2,org.code,1,'2019-03-16 00:00:00','2019-03-16 00:00:00',1 from guiyu_base.sys_organization_industry rel,guiyu_base.sys_organization org,guiyu_botstence.bot_sentence_template temp where rel.organization_id=org.id and rel.industry_id=left(temp.industry_id, 4);
 

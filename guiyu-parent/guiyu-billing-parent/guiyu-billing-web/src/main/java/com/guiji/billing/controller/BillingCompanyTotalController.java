@@ -38,7 +38,7 @@ public class BillingCompanyTotalController {
         queryTotalChargingItemDto.setUserId(userId);
         queryTotalChargingItemDto.setOrgCode(orgCode);
         queryTotalChargingItemDto.setAuthLevel(authLevel);
-        logger.info("/totalCompanyChargingItem", JsonUtils.bean2Json(queryTotalChargingItemDto));
+        logger.info("/billing/companyTotal/totalCompanyChargingItem:{}", JsonUtils.bean2Json(queryTotalChargingItemDto));
         ResultPage<TotalChargingItemVo> page = new ResultPage<TotalChargingItemVo>(queryTotalChargingItemDto);
         List<TotalChargingItemVo> list = billingCompanyTotalService.totalCompanyChargingItem(queryTotalChargingItemDto, page);
         page.setList(list);

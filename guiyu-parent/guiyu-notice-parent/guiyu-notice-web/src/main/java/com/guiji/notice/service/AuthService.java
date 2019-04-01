@@ -1,7 +1,8 @@
 package com.guiji.notice.service;
 
 public interface AuthService {
-    boolean isCompanyAdmin(Long userId);
 
-    boolean isCompanyOprater(Long userId);
+    int getAuthLevel(Long userId);
+
+    String getOrgCode(Long userId);
 }

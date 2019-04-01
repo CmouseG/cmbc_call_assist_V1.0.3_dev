@@ -33,6 +33,7 @@ public class CallOutPlanQueryEntity {
     Integer authLevel;
 
     List<BigInteger> notInList;
+    List<BigInteger> inList;
 
 }
 

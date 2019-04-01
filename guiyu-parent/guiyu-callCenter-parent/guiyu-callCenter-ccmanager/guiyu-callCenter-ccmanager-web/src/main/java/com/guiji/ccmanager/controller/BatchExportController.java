@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.Boolean;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,19 +62,8 @@ public class BatchExportController {
 
         log.info("get request 批量导出 batchExportCallRecord，callRecordListReq[{}]",callRecordListReq);
 
-        int exportCount = 0;
         Boolean checkAll = callRecordListReq.getCheckAll();
-        if(checkAll==null || !checkAll){
-            if(StringUtils.isBlank(callRecordListReq.getEndCount()) || StringUtils.isBlank(callRecordListReq.getStartCount())) {
-                return "缺少参数!";
-            }
-            exportCount = Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()+1;
-            if(exportCount>1000000){
-                return "不能超过一百万条!";
-            }else if(exportCount<=0){
-                return "起始值必须小于结束值!";
-            }
-        }
+
         Date end = null;
         Date start = null;
         if(StringUtils.isNotBlank(callRecordListReq.getStartDate())){
@@ -82,12 +73,20 @@ public class BatchExportController {
             end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
         }
 
-        int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+        int totalNum = 0;
         if (checkAll == null || !checkAll) {//不是全选
-            if (totalNum > exportCount) {
-                totalNum = exportCount;
+            List<String> callIds = callRecordListReq.getIncludeList();
+            if (callIds!=null || callIds.size()>0) {
+                totalNum = callIds.size();
+                callRecordListReq.setStartCount("1");
+                callRecordListReq.setEndCount(String.valueOf(totalNum));
+
+            }else{
+                return "缺少参数!";
             }
+
         }else{//全选
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
             callRecordListReq.setStartCount("1");
             if(totalNum>1000000){
                 totalNum=1000000;
@@ -214,17 +213,6 @@ public class BatchExportController {
 
         int exportCount = 0;
         Boolean checkAll = callRecordListReq.getCheckAll();
-        if(checkAll==null || !checkAll){
-            if(StringUtils.isBlank(callRecordListReq.getEndCount()) || StringUtils.isBlank(callRecordListReq.getStartCount())) {
-                return "缺少参数!";
-            }
-            exportCount = Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()+1;
-            if(exportCount>3000){
-                return "不能超过3千条!";
-            }else if(exportCount<=0){
-                return "起始值必须小于结束值!";
-            }
-        }
 
         Date end = null;
         Date start = null;
@@ -235,16 +223,24 @@ public class BatchExportController {
             end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
         }
 
-        int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+        int totalNum = 0;
         if (checkAll == null || !checkAll) {//不是全选
-            if (totalNum > exportCount) {
-                totalNum = exportCount;
+            List<String> callIds = callRecordListReq.getIncludeList();
+            if (callIds!=null || callIds.size()>0) {
+                totalNum = callIds.size();
+                callRecordListReq.setStartCount("1");
+                callRecordListReq.setEndCount(String.valueOf(totalNum));
+
+            }else{
+                return "缺少参数!";
             }
+
         }else{//全选
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
             callRecordListReq.setStartCount("1");
-            if(totalNum>3000){
-                totalNum=3000;
-            };
+            if(totalNum>1000000){
+                totalNum=1000000;
+            }
             callRecordListReq.setEndCount(String.valueOf(totalNum));
         }
 

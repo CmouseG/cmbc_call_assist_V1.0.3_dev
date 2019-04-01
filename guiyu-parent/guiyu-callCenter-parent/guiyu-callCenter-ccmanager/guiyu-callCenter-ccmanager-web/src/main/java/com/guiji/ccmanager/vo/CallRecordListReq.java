@@ -53,4 +53,8 @@ public class CallRecordListReq {
     Boolean checkAll;
     @ApiModelProperty(value = "取消勾选的id列表")
     List<String> excludeList;
+
+    @ApiModelProperty(value = "没有全选的时候，传递的id列表")
+    List<String> includeList;
+
 }

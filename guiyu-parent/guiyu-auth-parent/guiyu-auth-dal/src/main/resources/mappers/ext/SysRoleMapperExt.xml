@@ -35,7 +35,8 @@
   </select>
   
   <select id="existRoleName" resultType="boolean">
-  	select count(1)>0 from sys_role where name=#{name} 
+  	select count(1)>0 from sys_role where name = #{name}
+  	and org_code = #{orgCode} 
   	<if test="id != null">
   		and id!=#{id}
   	</if>

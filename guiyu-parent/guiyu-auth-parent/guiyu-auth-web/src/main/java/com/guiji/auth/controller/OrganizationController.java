@@ -89,7 +89,7 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("selectOpenByPage")
-	public Page<Map> selectOpenByPage(Page<Map> page,@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+	public Page<Map> selectOpenByPage(Page<Map> page, @RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
 		return organizationService.selectOpenByPage(page,userId,authLevel,orgCode);
 	}
 	

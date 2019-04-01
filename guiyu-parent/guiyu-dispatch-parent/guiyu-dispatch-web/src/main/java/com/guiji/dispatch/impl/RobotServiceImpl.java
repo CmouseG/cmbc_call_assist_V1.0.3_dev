@@ -52,13 +52,14 @@ public class RobotServiceImpl implements RobotService {
     private RedisUtil redisUtil;
 
     @Override
-    public List<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page) {
+    public  ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page) {
         List<DispatchRobotOpVo> pageList = new LinkedList<DispatchRobotOpVo>();
+        int len = 0;
+        //获取到用户机器人资源
         Map<Object,Object> map = redisUtil.hmget(RedisConstant.RedisConstantKey.ROBOT_USER_RESOURCE);
         if(null != map){
             //有序treemap
             Map<Object, Object> treeMap = new TreeMap<>(map);
-            int len = 0;
             List<DispatchRobotOpVo> list = new ArrayList<DispatchRobotOpVo>();
             for(Map.Entry<Object, Object> entry: treeMap.entrySet()){
                 String userId = (String)entry.getKey();
@@ -93,6 +94,7 @@ public class RobotServiceImpl implements RobotService {
 
             int pageNo = page.getPageNo();
             int pageSize = page.getPageSize();
+            //获取分页列表
             int startIdx = (pageNo - 1) * pageSize + 1;
             int endIdx = pageNo * pageSize;
             endIdx = endIdx<len?endIdx:(startIdx<len?len:-1);
@@ -102,6 +104,7 @@ public class RobotServiceImpl implements RobotService {
                     pageList.add(list.get(idx-1));
                 }
             }
+
         }
 
         //匹配人工补充机器人数
@@ -118,7 +121,11 @@ public class RobotServiceImpl implements RobotService {
                 }
             }
         }
-        return pageList;
+        //列表
+        page.setList(pageList);
+        //获取总条数和页数
+        page.setTotalItemAndPageNumber(len);
+        return page;
     }
 
     /**

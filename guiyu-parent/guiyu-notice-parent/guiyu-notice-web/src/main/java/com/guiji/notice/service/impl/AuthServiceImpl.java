@@ -1,56 +1,52 @@
 package com.guiji.notice.service.impl;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.model.UserAuth;
 import com.guiji.component.result.Result;
 import com.guiji.notice.service.AuthService;
-import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysOrganization;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
     IAuth auth;
 
-    /**
-     * 判断是否是企业管理员
-     *
-     * @param userId
-     * @return
-     */
-    public boolean isCompanyAdmin(Long userId) {
-        Result.ReturnData<List<SysRole>> result = auth.getRoleByUserId(userId);
-        List<SysRole> list = result.getBody();
-        if (list != null && list.size() > 0) {
-            for (SysRole sysRole : list) {
-                if (sysRole.getId().intValue() == 3) { //企业管理员
-                    return true;
-                }
+    @Override
+    public String getOrgCode(Long userId) {
+        try {
+            Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
+            if (returnData != null && returnData.success) {
+                return returnData.getBody().getCode();
             }
+        } catch (Exception e) {
+            log.error("getOrgByUserId出现异常", e);
         }
-        return false;
+        return null;
     }
 
-    /**
-     * 判断是否是企业操作员
-     *
-     * @param userId
-     * @return
-     */
     @Override
-    public boolean isCompanyOprater(Long userId) {
-        Result.ReturnData<List<SysRole>> result = auth.getRoleByUserId(userId);
-        List<SysRole> list = result.getBody();
-        if (list != null && list.size() > 0) {
-            for (SysRole sysRole : list) {
-                if (sysRole.getId().intValue() == 4) { //企业操作员
-                    return true;
+    public int getAuthLevel(Long userId) {
+        try {
+
+            Result.ReturnData<UserAuth> returnData = auth.queryUserDataAuth(userId);
+            if (returnData != null && returnData.getBody() != null) {
+                UserAuth userAuth = returnData.getBody();
+                if (userAuth != null && userAuth.getAuthLevel() != null) {
+                    return userAuth.getAuthLevel();
                 }
             }
+            //什么都没有，给最低的权限
+            log.info("queryUserDataAuth没有获取到数据，给最低的权限[{}]", userId);
+            return 1;
+        } catch (Exception e) {
+            log.error("queryUserDataAuth出现异常", e);
+            return 1;
         }
-        return false;
     }
+
 }

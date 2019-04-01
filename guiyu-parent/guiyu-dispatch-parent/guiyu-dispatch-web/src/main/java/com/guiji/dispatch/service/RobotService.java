@@ -11,7 +11,7 @@ import java.util.List;
 public interface RobotService {
 
     //查询计划任务列表机器人
-    List<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page);
+    ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page);
 
 
     boolean opUserRobotNum(DispatchRobotOpDto opRobotDto);

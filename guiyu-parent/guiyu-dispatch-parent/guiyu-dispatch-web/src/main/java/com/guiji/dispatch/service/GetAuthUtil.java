@@ -44,9 +44,9 @@ public class GetAuthUtil {
     }
 
     public List<Integer> getOrgIdsByAuthLevel(Integer authLevel, Integer orgId){
+        List<Integer> orgIds = new ArrayList<Integer>();
         if(null != authLevel
                 && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
-            List<Integer> orgIds = new ArrayList<Integer>();
             if(AuthLevelEnum.ORG.getLevel() == authLevel){//本组织
                 orgIds.add(orgId);
             }
@@ -56,7 +56,8 @@ public class GetAuthUtil {
             }
             return orgIds;
         }else{
-            return null;
+            orgIds.add(orgId);
+            return orgIds;
         }
     }
 

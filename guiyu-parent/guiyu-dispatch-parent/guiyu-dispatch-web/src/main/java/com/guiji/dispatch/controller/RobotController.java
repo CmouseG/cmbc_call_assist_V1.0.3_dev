@@ -24,8 +24,7 @@ public class RobotController {
     @ResponseBody
     public ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(@RequestBody DispatchRobotOpDto dispatchRobotOpDto){
         ResultPage<DispatchRobotOpVo> page = new ResultPage<DispatchRobotOpVo>(dispatchRobotOpDto);
-        List<DispatchRobotOpVo> list = robotService.queryDispatchRobotOp(page);
-        page.setList(list);
+        page = robotService.queryDispatchRobotOp(page);
         return page;
     }
 

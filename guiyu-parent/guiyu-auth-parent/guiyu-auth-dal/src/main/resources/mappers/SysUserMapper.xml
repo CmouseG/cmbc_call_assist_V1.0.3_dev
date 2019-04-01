@@ -592,11 +592,11 @@
 		<if test="userName != '' ">
 			and a.username like concat(#{userName},'%')
 		</if>
-		<if test="roleName != '' ">
-			and c.`name` like concat(#{roleName},'%')
-		</if>
 		<if test="orgName != '' ">
 			and f.`name` like concat(#{orgName},'%')
+		</if>
+		<if test="roleName != '' ">
+			and c.`name` like concat(#{roleName},'%')
 		</if>
 		<if test="status != null ">
 			and a.`status` = #{status}

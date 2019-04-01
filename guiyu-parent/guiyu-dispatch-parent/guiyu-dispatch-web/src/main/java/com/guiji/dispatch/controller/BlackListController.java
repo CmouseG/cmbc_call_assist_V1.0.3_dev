@@ -100,14 +100,15 @@ public class BlackListController {
 	}
 
 	/**
-	 * 查询黑名单记录
+	 * 查询黑名单导入列表
 	 * @param pagenum
 	 * @param pagesize
 	 * @param orgCode
 	 * @return
 	 */
 	@Jurisdiction("taskCenter_blackList_batchImportDetail")
-	@PostMapping("selectBlackListRecords")
+	@Log(info = "查询黑名单导入列表")
+	@RequestMapping(value = "selectBlackListRecords", method = {RequestMethod.POST, RequestMethod.GET})
 	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
 														 @RequestParam(required = true, name = "pagesize") int pagesize,
 														 @RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
@@ -117,8 +118,8 @@ public class BlackListController {
 		}
 
 		//过滤权限
-		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryBlackParam.getUserId()+"");//获取用户ID
-		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryBlackParam.getOrgCode());//获取企业组织编码
+		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
 		queryBlackParam.setUserId(null != userId ?Integer.valueOf(userId):null);
 		queryBlackParam.setOrgCode(orgCode);
 		queryBlackParam.setAuthLevel(authLevel);

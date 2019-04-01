@@ -50,7 +50,7 @@ public class LineInfoController {
     @Jurisdiction("callCenter_lineInfoList_defquery")
     @GetMapping(value = "getLineInfos")
     public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader String orgCode,
-                                                                      @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
+                                                                      @RequestHeader Long userId, @RequestHeader Integer authLevel) {
 
         log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
 
@@ -59,8 +59,8 @@ public class LineInfoController {
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(isSuperAdmin, String.valueOf(userId),orgCode, lineName, pageSizeInt, pageNoInt);
-        int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin,String.valueOf(userId),orgCode, lineName);
+        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(authLevel, String.valueOf(userId),orgCode, lineName, pageSizeInt, pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(authLevel,String.valueOf(userId),orgCode, lineName);
 
         Page<LineInfo4Page> page = new Page<LineInfo4Page>();
         page.setPageNo(pageNoInt);

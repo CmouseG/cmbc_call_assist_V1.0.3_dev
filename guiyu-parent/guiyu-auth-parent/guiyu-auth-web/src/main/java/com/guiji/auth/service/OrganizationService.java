@@ -189,6 +189,7 @@ public class OrganizationService {
 		int limitEnd = pageSize;	//查询条数
 		example.setLimitStart(limitStart);
 		example.setLimitEnd(limitEnd);
+		example.setOrderByClause("id desc");
 		List<SysOrganization> orgList = sysOrganizationMapper.selectByExample(example);
 		List<OrganizationVO> voList = new ArrayList<OrganizationVO>();
 		if(orgList!=null && !orgList.isEmpty()) {

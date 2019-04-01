@@ -19,4 +19,7 @@ public interface IPlanBatchService {
 
     //批量加入
     boolean joinPlanBatch(JoinPlanDto joinPlanDto);
+
+    //批量导出
+    boolean exportPlanBatch(OptPlanDto optPlanDto);
 }

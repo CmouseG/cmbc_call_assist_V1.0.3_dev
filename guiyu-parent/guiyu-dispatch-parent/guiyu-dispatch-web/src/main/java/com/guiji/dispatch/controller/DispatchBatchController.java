@@ -48,8 +48,8 @@ public class DispatchBatchController {
     }
 
 
-    @ApiOperation(value="暂停计划任务", notes="暂停计划任务")
-    @Log(info ="暂停计划任务")
+    @ApiOperation(value="批量暂停计划任务", notes="批量暂停计划任务")
+    @Log(info ="批量暂停计划任务")
     @RequestMapping(value = "/suspendPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean suspendPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -70,8 +70,8 @@ public class DispatchBatchController {
         return bool;
     }
 
-    @ApiOperation(value="停止计划任务", notes="停止计划任务")
-    @Log(info ="停止计划任务")
+    @ApiOperation(value="批量停止计划任务", notes="批量停止计划任务")
+    @Log(info ="批量停止计划任务")
     @RequestMapping(value = "/stopPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean stopPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -87,15 +87,15 @@ public class DispatchBatchController {
         logger.info("/dispatch/batch/controller/stopPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.stopPlanBatch(optPlanDto);
         if(!bool){
-            throw new GuiyuException("停止计划失败");
+            throw new GuiyuException("批量停止计划任务失败");
         }
         return bool;
     }
 
 
     //
-    @ApiOperation(value="恢复计划任务", notes="恢复计划任务")
-    @Log(info ="恢复计划任务")
+    @ApiOperation(value="批量恢复计划任务", notes="恢复计划任务")
+    @Log(info ="批量恢复计划任务")
     @RequestMapping(value = "/recoveryPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean recoveryPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -111,7 +111,7 @@ public class DispatchBatchController {
         logger.info("/dispatch/batch/controller/recoveryPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
         if(!bool){
-            throw new GuiyuException("恢复计划失败");
+            throw new GuiyuException("批量恢复计划任务失败");
         }
         return bool;
     }
@@ -135,7 +135,30 @@ public class DispatchBatchController {
         logger.info("/dispatch/batch/controller/joinPlanBatch:{}", JsonUtils.bean2Json(joinPlanDto));
         boolean bool = planBatchService.joinPlanBatch(joinPlanDto);
         if(!bool){
-            throw new GuiyuException("恢复计划失败");
+            throw new GuiyuException("批量加入计划任务失败");
+        }
+        return bool;
+    }
+
+
+    @ApiOperation(value="批量导出计划任务", notes="批量导出计划任务")
+    @Log(info ="批量导出计划任务")
+    @RequestMapping(value = "/exportPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public boolean exportPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
+                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
+                                   @RequestBody OptPlanDto optPlanDto){
+        if(null == optPlanDto){
+            optPlanDto = new OptPlanDto();
+        }
+        optPlanDto.setOperUserId(userId);
+        optPlanDto.setOperOrgCode(orgCode);
+        optPlanDto.setOperOrgId(orgId);
+        optPlanDto.setAuthLevel(authLevel);
+        logger.info("/dispatch/batch/controller/exportPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
+        boolean bool = planBatchService.exportPlanBatch(optPlanDto);
+        if(!bool){
+            throw new GuiyuException("批量导出计划任务失败");
         }
         return bool;
     }

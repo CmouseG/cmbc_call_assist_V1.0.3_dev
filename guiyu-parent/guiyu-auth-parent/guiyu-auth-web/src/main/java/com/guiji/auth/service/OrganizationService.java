@@ -304,14 +304,15 @@ public class OrganizationService {
 		return num==0;
 	}
 	
-	public List<SysOrganization> getOrgNotOpen(Long userId, Integer authLevel, String orgCode){
-		SysOrganizationExample example=new SysOrganizationExample();
+	public List<SysOrganization> getOrgNotOpen(Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0);
-		if(authLevel == 1) {
+		if (authLevel == 1){
 			example.createCriteria().andCreateIdEqualTo(userId);
-		} else if(authLevel == 2) {
+		} else if (authLevel == 2){
 			example.createCriteria().andCodeEqualTo(orgCode);
-		}else if(authLevel == 3) {
+		} else if (authLevel == 3){
 			example.createCriteria().andCodeLike(orgCode + "%");
 		}
 		return sysOrganizationMapper.selectByExample(example);

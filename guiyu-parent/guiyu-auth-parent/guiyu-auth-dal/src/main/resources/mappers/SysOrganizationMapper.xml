@@ -367,13 +367,13 @@
 			AND a.`name` LIKE CONCAT('%',#{orgName},'%')
 		</if>
 		<if test="authLevel == 1">
-			and t.create_id = #{userId}
+			and a.create_id = #{userId}
 		</if>
 		<if test="authLevel == 2">
-			and t.code = #{orgCode}
+			and a.code = #{orgCode}
 		</if>
 		<if test="authLevel == 3">
-			and t.`code` LIKE CONCAT(#{orgCode},'%')
+			and a.`code` LIKE CONCAT(#{orgCode},'%')
 		</if>
 		ORDER BY a.update_time desc
 		limit ${(pageNo-1)*pageSize}, #{pageSize}

@@ -291,14 +291,19 @@ public class BatchExportServiceImpl implements BatchExportService {
 
         long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
         if(authService.isSeat(userId)){//具有人工坐席权限
-            String userName = authService.getUserName(userId);
-            AgentExample agentExample = new AgentExample();
-            agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
-            List<Agent> listAgent = agentMapper.selectByExample(agentExample);
-            Long agentId = listAgent.get(0).getUserId();
-            CallOutPlanExample.Criteria criteria2 = example.or();
-            criteria2.andAgentIdEqualTo(String.valueOf(agentId));
-            getCriteria(criteria2, callOutPlanQueryEntity, queryUser, minId,true);
+            try{
+                String userName = authService.getUserName(userId);
+                AgentExample agentExample = new AgentExample();
+                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+                List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+                Long agentId = listAgent.get(0).getUserId();
+                CallOutPlanExample.Criteria criteria2 = example.or();
+                criteria2.andAgentIdEqualTo(String.valueOf(agentId));
+                getCriteria(criteria2, callOutPlanQueryEntity, queryUser, minId,true);
+            }catch (Exception e){
+                log.error("人工坐席权限查询出现异常",e);
+            }
+
         }
 
         return example;

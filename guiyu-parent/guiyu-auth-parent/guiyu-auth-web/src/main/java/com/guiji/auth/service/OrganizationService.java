@@ -34,6 +34,7 @@ import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysOrganizationExample;
+import com.guiji.user.dao.entity.SysOrganizationExample.Criteria;
 import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -167,7 +168,7 @@ public class OrganizationService {
 	public Page<OrganizationVO> selectByPage(Page<Object> page, Long userId, Integer authLevel, String orgCode,String orgName,Integer type){
 		Page<OrganizationVO> rtnPage = new Page<OrganizationVO>();
 		SysOrganizationExample example=new SysOrganizationExample();
-		com.guiji.user.dao.entity.SysOrganizationExample.Criteria criteria = example.createCriteria();
+		Criteria criteria = example.createCriteria();
 		criteria.andDelFlagEqualTo(0);
 		if(authLevel == 1) {
 			criteria.andCreateIdEqualTo(userId);
@@ -238,25 +239,26 @@ public class OrganizationService {
 		return rtnPage;
 	}
 	
-	public Page<Map> selectOpenByPage(Page<Map> page,Long userId, Integer authLevel, String orgCode){
-		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
-		if(authLevel == 1) {
-			example.createCriteria().andCreateIdEqualTo(userId);
-		} else if(authLevel == 2) {
-			example.createCriteria().andCodeEqualTo(orgCode);
-		}else if(authLevel == 3) {
-			example.createCriteria().andCodeLike(orgCode + "%");
+	public Page<Map> selectOpenByPage(Page<Map> page, Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
+		if (authLevel == 1){
+			criteria.andCreateIdEqualTo(userId);
+		} else if (authLevel == 2){
+			criteria.andCodeEqualTo(orgCode);
+		} else if (authLevel == 3){
+			criteria.andCodeLike(orgCode + "%");
 		}
-		if(!StringUtils.isEmpty(page.getOrgName())) {
-			example.createCriteria().andNameLike("%"+page.getOrgName()+"%");
+		if (!StringUtils.isEmpty(page.getOrgName())){
+			criteria.andNameLike("%" + page.getOrgName() + "%");
 		}
-		int num=sysOrganizationMapper.countByExample(example);
-		List<Map> list=sysOrganizationMapper.selectOpenByPage(page);
-		for(Map map : list)
-		{
+		int num = sysOrganizationMapper.countByExample(example);
+		List<Map> list = sysOrganizationMapper.selectOpenByPage(page);
+		for (Map map : list){
 			ServerResult<Integer> result = botSentenceProcess.countTemplateByOrgCode((String) map.get("code"));
-			if(result != null) {
+			if (result != null){
 				map.put("botstence", result.getData());
 			}
 		}
@@ -307,13 +309,14 @@ public class OrganizationService {
 	public List<SysOrganization> getOrgNotOpen(Long userId, Integer authLevel, String orgCode)
 	{
 		SysOrganizationExample example = new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0);
+		Criteria criteria = example.createCriteria();
+		criteria.andDelFlagEqualTo(0).andOpenEqualTo(0);
 		if (authLevel == 1){
-			example.createCriteria().andCreateIdEqualTo(userId);
+			criteria.andCreateIdEqualTo(userId);
 		} else if (authLevel == 2){
-			example.createCriteria().andCodeEqualTo(orgCode);
+			criteria.andCodeEqualTo(orgCode);
 		} else if (authLevel == 3){
-			example.createCriteria().andCodeLike(orgCode + "%");
+			criteria.andCodeLike(orgCode + "%");
 		}
 		return sysOrganizationMapper.selectByExample(example);
 	}

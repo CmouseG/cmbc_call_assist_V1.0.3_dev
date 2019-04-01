@@ -363,7 +363,7 @@
 		LEFT JOIN sys_user b on a.create_id=b.id
 		LEFT JOIN sys_user c on a.update_id=c.id
 		where a.del_flag=0 and a.open='1' and a.type = 2
-		<if test="orgName != null">
+		<if test="orgName != ''">
 			AND a.`name` LIKE CONCAT('%',#{orgName},'%')
 		</if>
 		<if test="authLevel == 1">

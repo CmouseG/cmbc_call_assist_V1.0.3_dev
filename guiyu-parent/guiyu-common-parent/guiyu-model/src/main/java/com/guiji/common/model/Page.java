@@ -25,8 +25,8 @@ public class Page<T> implements java.io.Serializable{
 	
 	private Long userId;
 	private Integer authLevel;
-	private String orgCode;
-	private String orgName;
+	private String orgCode="";
+	private String orgName="";
 	
 	private List<T> records;
 

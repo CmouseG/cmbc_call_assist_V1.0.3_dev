@@ -284,28 +284,39 @@ public class BatchExportServiceImpl implements BatchExportService {
         return listIds;
     }
 
-    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity, String queryUser, BigInteger minId) {
+    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity,String queryUser, BigInteger minId) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
+        getCriteria(criteria, callOutPlanQueryEntity, queryUser,minId, false);
+
+        long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
+        if(authService.isSeat(userId)){//具有人工坐席权限
+            String userName = authService.getUserName(userId);
+            AgentExample agentExample = new AgentExample();
+            agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+            List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+            Long agentId = listAgent.get(0).getUserId();
+            CallOutPlanExample.Criteria criteria2 = example.or();
+            criteria2.andAgentIdEqualTo(String.valueOf(agentId));
+            getCriteria(criteria2, callOutPlanQueryEntity, queryUser, minId,true);
+        }
+
+        return example;
+    }
+
+    public CallOutPlanExample.Criteria getCriteria(CallOutPlanExample.Criteria criteria , CallOutPlanQueryEntity callOutPlanQueryEntity,
+                                                   String queryUser, BigInteger minId, boolean isSeat) {
         if (callOutPlanQueryEntity.getStartDate() != null) {
             criteria.andCreateTimeGreaterThan(callOutPlanQueryEntity.getStartDate());
         }
         if (callOutPlanQueryEntity.getEndDate() != null) {
             criteria.andCreateTimeLessThan(callOutPlanQueryEntity.getEndDate());
         }
-        long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
-        if (authService.isSeat(userId)) {//客服
-            String userName = authService.getUserName(userId);
-            AgentExample agentExample = new AgentExample();
-            agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
-            List<Agent> listAgent = agentMapper.selectByExample(agentExample);
-            Long agentId = listAgent.get(0).getUserId();
-            criteria.andAgentIdEqualTo(String.valueOf(agentId));
-        } else  if (callOutPlanQueryEntity.getAuthLevel() == 1) {
+        if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 1) {
             criteria.andCustomerIdEqualTo(Integer.valueOf(callOutPlanQueryEntity.getCustomerId()));
-        } else if (callOutPlanQueryEntity.getAuthLevel() == 2) {
+        } else if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 2) {
             criteria.andOrgCodeEqualTo(callOutPlanQueryEntity.getOrgCode());
-        } else if (callOutPlanQueryEntity.getAuthLevel() == 3) {
+        } else if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 3) {
             criteria.andOrgCodeLike(callOutPlanQueryEntity.getOrgCode() + "%");
         }
         if (StringUtils.isNotBlank(queryUser)) {
@@ -368,7 +379,7 @@ public class BatchExportServiceImpl implements BatchExportService {
         if(callOutPlanQueryEntity.getNotInList()!=null && callOutPlanQueryEntity.getNotInList().size()>0){
             criteria.andCallIdNotIn(callOutPlanQueryEntity.getNotInList());
         }
-        return example;
+        return criteria;
     }
 
 

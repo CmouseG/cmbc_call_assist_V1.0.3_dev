@@ -31,6 +31,9 @@ public class RoleController {
 	@Jurisdiction("system_role_add")
 	@RequestMapping("insert")
 	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws Exception{
+		if(roleService.existRoleName(role)){
+			throw new GuiyuException("角色名已存在，请更换角色名！");
+		}
 		role.setCreateId(userId);
 		role.setUpdateId(userId);
 		role.setCreateTime(new Date());

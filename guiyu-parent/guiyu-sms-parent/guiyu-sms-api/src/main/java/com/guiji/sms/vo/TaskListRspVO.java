@@ -13,7 +13,7 @@ import lombok.Data;
 public class TaskListRspVO
 {
 	@ApiModelProperty(value="总条数")
-	private int totalCount;
+	private Long totalCount;
 	@ApiModelProperty(value="配置列表")
 	private List<SmsTask> smsTaskList;
 }

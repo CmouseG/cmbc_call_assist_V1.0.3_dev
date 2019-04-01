@@ -275,7 +275,7 @@ public class PrivilegeService {
 	public PrivlegeAuth getUserAuthLevel(Integer userId,String myOrgCode,String targetOrgCode){
 		if(userId!=null && StrUtils.isNotEmpty(myOrgCode)) {
 			PrivlegeAuth privlegeAuth = new PrivlegeAuth();
-			if(myOrgCode.equals(targetOrgCode)) {
+			if(!myOrgCode.equals(targetOrgCode)) {
 				//如果操作人不是目标企业的，那么权限最大就是目标企业的权限
 				SysOrganization sysOrganization = organizationService.getOrgByCode(targetOrgCode);
 				privlegeAuth.setAuthId(sysOrganization.getId().toString()); //目标企业ID

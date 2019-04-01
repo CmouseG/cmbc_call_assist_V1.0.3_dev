@@ -187,7 +187,9 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             Long sysUserId = sysUserRoleVo.getSysUser().getId();
             user.setId(sysUserId);
             user.setUsername(sysUserRoleVo.getSysUser().getUsername());
-            user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
+            if(sysUserRoleVo.getSysRoleList()!=null && sysUserRoleVo.getSysRoleList().size()>0){
+                user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
+            }
             returnList.add(user);
         }
         return returnList;

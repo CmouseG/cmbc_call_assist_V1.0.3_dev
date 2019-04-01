@@ -50,7 +50,6 @@ public class TaskServiceImpl implements TaskService
 		TaskListRspVO taskListRsp = new TaskListRspVO();
 		
 		SmsTaskExample example = new SmsTaskExample();
-		Criteria criteria = example.createCriteria();
 		if(authLevel == 1) {
 			example.createCriteria().andCreateIdEqualTo(userId.intValue());
 		} else if(authLevel == 2) {
@@ -59,20 +58,20 @@ public class TaskServiceImpl implements TaskService
 			example.createCriteria().andOrgCodeLike(orgCode + "%");
 		}
 		if(taskListReq.getStatus() != null){
-			criteria.andSendStatusEqualTo(taskListReq.getStatus()); //任务状态
+			example.createCriteria().andSendStatusEqualTo(taskListReq.getStatus()); //任务状态
 		}
 		if(StringUtils.isNotEmpty(taskListReq.getTaskName())){
-			criteria.andTaskNameLike(taskListReq.getTaskName()); //任务名称
+			example.createCriteria().andTaskNameLike(taskListReq.getTaskName()); //任务名称
 		}
 		if(StringUtils.isNotEmpty(taskListReq.getStartDate())){
-			criteria.andSendDateGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+			example.createCriteria().andSendDateGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 														.parse(taskListReq.getStartDate()+" 00:00:00"));
 		}
 		if(StringUtils.isNotEmpty(taskListReq.getEndDate())){
-			criteria.andSendDateLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+			example.createCriteria().andSendDateLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 														.parse(taskListReq.getEndDate()+" 23:59:59"));
 		}
-		taskListRsp.setTotalCount(taskMapper.selectByExampleWithBLOBs(example).size()); //总条数
+		taskListRsp.setTotalCount(taskMapper.countByExample(example)); //总条数
 		
 		example.setLimitStart((taskListReq.getPageNum() - 1) * taskListReq.getPageSize());
 		example.setLimitEnd(taskListReq.getPageSize());

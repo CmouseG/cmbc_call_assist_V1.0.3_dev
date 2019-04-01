@@ -366,9 +366,6 @@
 	<if test="orgName != null">
 		AND a.`name` LIKE CONCAT('%',#{orgName},'%')
 	</if>
-	<if test="orgCode != null">
-		AND a.`code` LIKE CONCAT(#{orgCode},'%')
-	</if>
 	ORDER  BY a.update_time desc
 	limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>
@@ -441,6 +438,22 @@
   <select id="querySubOrgByOrgId" parameterType="java.lang.Integer" resultType="java.util.Map">
   	SELECT t.id, t.`name` FROM `sys_organization` t
 	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'%')
+	AND t.usable = 1
+  </select>
+  
+  <select id="getSubOrgByAuthLevel" resultType="java.util.Map">
+  	SELECT t.id, t.`name` FROM `sys_organization` t
+  	<where>
+  		<if test="authLevel == 1">
+  			t.create_id = #{userId}
+  		</if>
+  		<if test="authLevel == 2">
+  			t.code = #{orgCode}
+  		</if>
+  		<if test="authLevel == 3">
+  			t.`code` LIKE CONCAT(#{orgCode},'%')
+  		</if>
+  	</where>
 	AND t.usable = 1
   </select>
   

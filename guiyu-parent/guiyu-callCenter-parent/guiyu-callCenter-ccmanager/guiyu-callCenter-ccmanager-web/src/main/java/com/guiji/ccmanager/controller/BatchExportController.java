@@ -76,7 +76,7 @@ public class BatchExportController {
         int totalNum = 0;
         if (checkAll == null || !checkAll) {//不是全选
             List<String> callIds = callRecordListReq.getIncludeList();
-            if (callIds!=null || callIds.size()>0) {
+            if (callIds!=null && callIds.size()>0) {
                 totalNum = callIds.size();
                 callRecordListReq.setStartCount("1");
                 callRecordListReq.setEndCount(String.valueOf(totalNum));
@@ -226,7 +226,7 @@ public class BatchExportController {
         int totalNum = 0;
         if (checkAll == null || !checkAll) {//不是全选
             List<String> callIds = callRecordListReq.getIncludeList();
-            if (callIds!=null || callIds.size()>0) {
+            if (callIds!=null && callIds.size()>0) {
                 totalNum = callIds.size();
                 callRecordListReq.setStartCount("1");
                 callRecordListReq.setEndCount(String.valueOf(totalNum));

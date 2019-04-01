@@ -1,6 +1,7 @@
 package com.guiji.dispatch.service;
 
 import com.guiji.dispatch.dto.QueryBlackListDto;
+import com.guiji.dispatch.sys.ResultPage;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.common.model.Page;
@@ -23,6 +24,6 @@ public interface IBlackListService {
 	boolean setBlackPhoneStatus(DispatchPlan dispatchPlan);
 
 	Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId, Integer authLevel);
-	
-	Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, QueryBlackListDto queryBlackParam);
+
+	ResultPage<BlackListRecords> queryBlackListRecords(QueryBlackListDto queryBlackParam);
 }

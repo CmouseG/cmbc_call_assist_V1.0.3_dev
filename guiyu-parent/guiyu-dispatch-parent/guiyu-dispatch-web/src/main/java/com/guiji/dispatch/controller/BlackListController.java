@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.dto.QueryBlackListDto;
 import com.guiji.dispatch.service.GetAuthUtil;
+import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,13 +107,11 @@ public class BlackListController {
 	 * @param orgCode
 	 * @return
 	 */
-	@Jurisdiction("taskCenter_blackList_batchImportDetail")
+//	@Jurisdiction("taskCenter_blackList_batchImportDetail")
 	@Log(info = "查询黑名单导入列表")
 	@RequestMapping(value = "selectBlackListRecords", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
-														 @RequestParam(required = true, name = "pagesize") int pagesize,
-														 @RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
-														 @RequestBody QueryBlackListDto queryBlackParam){
+	public ResultPage<BlackListRecords> selectBlackListRecords(@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+															   @RequestBody QueryBlackListDto queryBlackParam){
 		if(queryBlackParam == null){
 			queryBlackParam = new QueryBlackListDto();
 		}
@@ -125,7 +124,7 @@ public class BlackListController {
 		queryBlackParam.setAuthLevel(authLevel);
 
 		logger.info("/selectBlackListRecords:{}", JsonUtils.bean2Json(queryBlackParam));
-		return blackListService.queryBlackListRecords(pagenum, pagesize,queryBlackParam);
+		return blackListService.queryBlackListRecords(queryBlackParam);
 	}
 
 	

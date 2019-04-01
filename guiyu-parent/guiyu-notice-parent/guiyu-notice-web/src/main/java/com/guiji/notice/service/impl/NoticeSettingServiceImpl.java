@@ -138,14 +138,14 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         NoticeSettingExample example = new NoticeSettingExample();
         example.createCriteria().andOrgCodeEqualTo(orgCode)
                 .andNoticeTypeNotEqualTo(NoticeType.intentional_customer.getValue());
-        noticeSettingMapper.updateByExample(noticeSetting, example);
+        noticeSettingMapper.updateByExampleSelective(noticeSetting, example);
 
 
         NoticeSettingExample noticeSettingExample = new NoticeSettingExample();
         noticeSettingExample.createCriteria().andOrgCodeEqualTo(orgCode)
                 .andNoticeTypeEqualTo(NoticeType.intentional_customer.getValue());
         noticeSetting.setIsSendMail(false);
-        noticeSettingMapper.updateByExample(noticeSetting, noticeSettingExample);
+        noticeSettingMapper.updateByExampleSelective(noticeSetting, noticeSettingExample);
         //重置意向标签
         Result.ReturnData returnData = null;
         try {

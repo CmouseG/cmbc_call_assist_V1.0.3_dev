@@ -242,9 +242,9 @@
       <if test="record.isSendSms != null" >
         is_send_sms = #{record.isSendSms,jdbcType=BIT},
       </if>
-      <if test="record.receivers != null" >
+
         receivers = #{record.receivers,jdbcType=VARCHAR},
-      </if>
+
       <if test="record.updateUser != null" >
         update_user = #{record.updateUser,jdbcType=INTEGER},
       </if>

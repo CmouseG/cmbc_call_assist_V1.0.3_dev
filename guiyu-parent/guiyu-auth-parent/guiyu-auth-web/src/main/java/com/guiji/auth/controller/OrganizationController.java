@@ -39,7 +39,7 @@ public class OrganizationController implements IOrg{
 	public SysOrganization add(SysOrganization record,@RequestHeader long userId, @RequestHeader String orgCode) throws Exception
 	{
 		if(!organizationService.checkName(record.getName())){
-			throw new CheckConditionException("00010009");
+			throw new GuiyuException("组织名称已存在，请您更换组织名称！");
 		}
 		int leval = record.getCode().length() - record.getCode().replace(".", "").length();
 		if (leval > 5) {

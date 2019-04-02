@@ -16,11 +16,11 @@ import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.MenuTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
-import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.auth.util.AuthUtil;
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.model.SipLineVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.notice.api.INoticeSetting;
@@ -178,7 +178,7 @@ public class UserService {
 	}
 	
 	
-	public void changePassword(String newPass,String oldPass,Long userId) throws CheckConditionException{
+	public void changePassword(String newPass,String oldPass,Long userId) throws Exception{
 		newPass=AuthUtil.encrypt(newPass);
 		oldPass=AuthUtil.encrypt(oldPass);
 		SysUser sysUser =mapper.selectByPrimaryKey(userId);
@@ -187,7 +187,7 @@ public class UserService {
 			sysUser.setUpdateTime(new Date());
 			mapper.updateByPrimaryKeySelective(sysUser);
 		}else{
-			throw new CheckConditionException("00010006");
+			throw new GuiyuException("旧密码与原密码不符");
 		}
 	}
 	

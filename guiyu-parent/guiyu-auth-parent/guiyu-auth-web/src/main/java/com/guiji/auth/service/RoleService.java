@@ -31,7 +31,7 @@ public class RoleService {
 	@Transactional
 	public void insert(SysRole role,String orgCode,String[] menuIds){
 		SysRoleExample example = new SysRoleExample();
-		example.createCriteria().andNameEqualTo(role.getName()).andOrgCodeEqualTo(orgCode);
+		example.createCriteria().andNameEqualTo(role.getName()).andOrgCodeEqualTo(role.getOrgCode());
 		int num = mapper.countByExample(example);
 		if(num > 0){
 			throw new GuiyuException("改角色名称已存在，请更换角色名称！");
@@ -45,7 +45,7 @@ public class RoleService {
 		//角色绑定菜单
 		if(menuIds!=null && menuIds.length>0) {
 			List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
-			privilegeService.savePrivlegeTree(role.getCreateId().intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
+			privilegeService.savePrivlegeTree(role.getCreateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 		}
 	}
 	
@@ -62,7 +62,7 @@ public class RoleService {
 //		mapperExt.addMenus(role.getId(),menuIds);
 		//角色绑定菜单
 		List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
-		privilegeService.savePrivlegeTree(role.getUpdateId().intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
+		privilegeService.savePrivlegeTree(role.getUpdateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 	}
 	
 	public SysRole getRoleId(Long id){

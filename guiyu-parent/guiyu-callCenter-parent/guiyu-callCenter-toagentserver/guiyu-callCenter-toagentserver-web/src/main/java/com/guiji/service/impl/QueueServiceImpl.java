@@ -1,6 +1,7 @@
 package com.guiji.service.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.guiji.auth.api.IOrg;
 import com.guiji.callcenter.dao.AgentMapper;
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.QueueMapper;
@@ -8,6 +9,8 @@ import com.guiji.callcenter.dao.TierMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.helper.PageExample;
 import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
+import com.guiji.component.result.Result;
 import com.guiji.config.FsBotConfig;
 import com.guiji.entity.EAnswerType;
 import com.guiji.entity.EUserState;
@@ -18,6 +21,7 @@ import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
 import com.guiji.service.AgentService;
 import com.guiji.service.QueueService;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.util.DateUtil;
 import com.guiji.util.FileUtil;
 import com.guiji.web.request.AgentInfo;
@@ -64,15 +68,17 @@ public class QueueServiceImpl implements QueueService {
     LineMarketRemote lineMarketRemote;
     @Autowired
     AgentService agentService;
+    @Autowired
+    IOrg iOrg;
 
     @Override
-    public boolean addQueue(QueueInfo queueInfo, String orgCode,Long customerId) throws Exception{
+    public boolean addQueue(QueueInfo queueInfo, String orgCode, Long customerId) throws Exception {
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(orgCode).andQueueNameEqualTo(queueInfo.getQueueName());
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        if (queueList != null&&queueList.size()>0) {
-            log.info("不能创建同名坐席[{}]",queueInfo.getQueueName());
-          //  throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+        if (queueList != null && queueList.size() > 0) {
+            log.info("不能创建同名坐席[{}]", queueInfo.getQueueName());
+            //  throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
             throw new Exception("0307007");
         }
         Date date = new Date();
@@ -81,7 +87,7 @@ public class QueueServiceImpl implements QueueService {
         AgentExample example = new AgentExample();
         example.createCriteria().andCustomerIdEqualTo(customerId);
         List<Agent> agentList = agentMapper.selectByExample(example);
-        if(agentList.size()>0){
+        if (agentList.size() > 0) {
             Agent agent = agentList.get(0);
             queue.setCreator(agent.getUserId());
             queue.setUpdateUser(agent.getUserId());
@@ -95,26 +101,26 @@ public class QueueServiceImpl implements QueueService {
         List<String> queueIdList = new ArrayList<>();
         QueueExample queueExample1 = new QueueExample();
         List<Queue> queueList1 = queueMapper.selectByExample(queueExample1);
-        for (Queue queues:queueList1) {
-            queueIdList.add(queues.getQueueId()+"");
+        for (Queue queues : queueList1) {
+            queueIdList.add(queues.getQueueId() + "");
         }
         //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
-        fsManager.initCallcenter(null,queueIdList,null);
+        fsManager.initCallcenter(null, queueIdList, null);
         // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = FileUtil.uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml",eurekaManager.getAppName());
+        String fileUrl = FileUtil.uploadConfig(1L, fsBotConfig.getHomeDir() + "/callcenter.conf.xml", eurekaManager.getAppName());
         String other = "reload+mod_callcenter";
-        fsManager.syncCallcenter(fileUrl,other);
+        fsManager.syncCallcenter(fileUrl, other);
         return true;
     }
 
     @Override
-    public boolean deleteQueue(String queueId){
+    public boolean deleteQueue(String queueId) {
         TierExample tierExample = new TierExample();
         tierExample.createCriteria().andQueueIdEqualTo(Long.parseLong(queueId));
         List<Tier> tierList = tierMapper.selectByExample(tierExample);
         //第一步删除callcenter中该队列的绑定关系
-        for(int i=0;i<tierList.size();i++){
-            TierInfo tierInfo = new TierInfo(queueId, tierList.get(i).getUserId()+"");
+        for (int i = 0; i < tierList.size(); i++) {
+            TierInfo tierInfo = new TierInfo(queueId, tierList.get(i).getUserId() + "");
             fsManager.deleteTier(tierInfo);
         }
         //第二步删除数据库中该队列的绑定关系
@@ -125,25 +131,25 @@ public class QueueServiceImpl implements QueueService {
         List<String> queueIdList = new ArrayList<>();
         QueueExample queueExample = new QueueExample();
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        for (Queue queues:queueList) {
-            queueIdList.add(queues.getQueueId()+"");
+        for (Queue queues : queueList) {
+            queueIdList.add(queues.getQueueId() + "");
         }
         //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
-        fsManager.initCallcenter(null,queueIdList,null);
+        fsManager.initCallcenter(null, queueIdList, null);
         // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = FileUtil.uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml",eurekaManager.getAppName());
+        String fileUrl = FileUtil.uploadConfig(1L, fsBotConfig.getHomeDir() + "/callcenter.conf.xml", eurekaManager.getAppName());
         String other = "reload+mod_callcenter";
-        fsManager.syncCallcenter(fileUrl,other);
+        fsManager.syncCallcenter(fileUrl, other);
         return true;
     }
 
     @Override
-    public void updateQueue(String queueId, QueueInfo queueInfo,Long customerId,String orgCode)throws Exception{
+    public void updateQueue(String queueId, QueueInfo queueInfo, Long customerId, String orgCode) throws Exception {
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(orgCode).andQueueNameEqualTo(queueInfo.getQueueName()).andQueueIdNotEqualTo(Long.parseLong(queueId));
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        if (queueList != null&&queueList.size()>0) {
-            log.info("不能修改为同名坐席[{}]",queueInfo.getQueueName());
+        if (queueList != null && queueList.size() > 0) {
+            log.info("不能修改为同名坐席[{}]", queueInfo.getQueueName());
             //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
             throw new Exception("0307007");
         }
@@ -156,27 +162,27 @@ public class QueueServiceImpl implements QueueService {
         AgentExample example = new AgentExample();
         example.createCriteria().andCustomerIdEqualTo(customerId);
         List<Agent> agentList = agentMapper.selectByExample(example);
-        if(agentList.size()>0){
+        if (agentList.size() > 0) {
             Agent agent = agentList.get(0);
             queue.setUpdateUser(agent.getUserId());
         }
 
-        if(queue.getLineId()==null||queue.getLineId()!=queueInfo.getLineId()){
+        if (queue.getLineId() == null || queue.getLineId() != queueInfo.getLineId()) {
             FsLineVO fsLineVO = fsLineManager.getFsLine();
             queue.setLineId(queueInfo.getLineId());
             TierExample tierExample = new TierExample();
             tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
             List<Tier> tierList = tierMapper.selectByExample(tierExample);
-            for (Tier tier:tierList) {
-               Agent user = agentMapper.selectByPrimaryKey(tier.getUserId());
-               if(user.getAnswerType()== EAnswerType.MOBILE.ordinal()){
-                   AgentInfo agentInfo = new AgentInfo();
-                   agentInfo.setAgentId(user.getUserId() + "");
-                   String[] ip = fsLineVO.getFsIp().split(":");
-                   String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",queueInfo.getLineId(),user.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
-                   agentInfo.setContact(contact);
-                   fsManager.updateAgent(agentInfo);
-               }
+            for (Tier tier : tierList) {
+                Agent user = agentMapper.selectByPrimaryKey(tier.getUserId());
+                if (user.getAnswerType() == EAnswerType.MOBILE.ordinal()) {
+                    AgentInfo agentInfo = new AgentInfo();
+                    agentInfo.setAgentId(user.getUserId() + "");
+                    String[] ip = fsLineVO.getFsIp().split(":");
+                    String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", queueInfo.getLineId(), user.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
+                    agentInfo.setContact(contact);
+                    fsManager.updateAgent(agentInfo);
+                }
             }
         }
         queueMapper.updateByPrimaryKey(queue);
@@ -185,7 +191,7 @@ public class QueueServiceImpl implements QueueService {
     @Override
     public Paging queryQueues(String queueName, Integer page, Integer size, String systemUserId, String orgCode, int authLevel, Long customerId) throws Exception {
         Agent agent = agentService.getAgentByCustomerId(customerId);
-        if(agent==null){
+        if (agent == null) {
             throw new Exception("0307014");
         }
         Paging paging = new Paging();
@@ -199,16 +205,17 @@ public class QueueServiceImpl implements QueueService {
             Queue queue = queueMapper.selectByPrimaryKey(tier.getQueueId());
             QueryQueue queryQueue = new QueryQueue();
             BeanUtils.copyProperties(queue, queryQueue);
-            if(queue.getUpdateUser()!=null){
-             Agent create = agentMapper.selectByPrimaryKey(queue.getUpdateUser());
-             if(create!=null){
-                 queryQueue.setUserName(create.getUserName());
-             }
+            //查询得到坐席组对应的企业名
+            queryQueue.setOrgName(orgName(queue.getOrgCode()));
+            if (queue.getUpdateUser() != null) {
+                Agent create = agentMapper.selectByPrimaryKey(queue.getUpdateUser());
+                if (create != null) {
+                    queryQueue.setUserName(create.getUserName());
+                }
             }
             queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
             if (queryQueue.getLineId() != null) {
-                LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-                queryQueue.setLineName(lineInfo.getLineName());
+                queryQueue.setLineName(getLineName(queryQueue.getLineId(),systemUserId));
             }
             TierExample tierExample1 = new TierExample();
             tierExample1.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -220,50 +227,23 @@ public class QueueServiceImpl implements QueueService {
             paging.setTotalRecord(1L);
             paging.setRecords((List<Object>) (Object) list);
         } else {// authLevel大于1的
-            List<Queue> queueListDb = queryQueuesSub(page,size,queueName, orgCode, authLevel);
+            List<Queue> queueListDb = queryQueuesSub(page, size, queueName, orgCode, authLevel);
             PageInfo<Queue> pageInfo = new PageInfo<>(queueListDb);
             List<Queue> queueList = pageInfo.getList();
             for (Queue queue : queueList) {
                 QueryQueue queryQueue = new QueryQueue();
                 BeanUtils.copyProperties(queue, queryQueue);
-                if(queue.getUpdateUser()!=null){
+                //查询得到坐席组对应的企业名
+                queryQueue.setOrgName(orgName(queue.getOrgCode()));
+                if (queue.getUpdateUser() != null) {
                     Agent create = agentMapper.selectByPrimaryKey(queue.getUpdateUser());
-                    if(create!=null){
+                    if (create != null) {
                         queryQueue.setUserName(create.getUserName());
                     }
                 }
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
-                    LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-                    if (lineInfo != null) {
-                        queryQueue.setLineName(lineInfo.getLineName());
-                    }
-//                    Result.ReturnData<SipLineVO> result;
-//                    try {
-//                        result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, queryQueue.getLineId());
-//                        if (result.getCode().equals("0")) {
-//                            SipLineVO sipLineVO = result.getBody();
-//                            if (sipLineVO != null) {
-//                                queryQueue.setLineName(sipLineVO.getLineName());
-//                            } else {
-//                                LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-//                                if (lineInfo != null) {
-//                                    queryQueue.setLineName(lineInfo.getLineName());
-//                                }
-//                            }
-//                        } else {
-//                            LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-//                            if (lineInfo != null) {
-//                                queryQueue.setLineName(lineInfo.getLineName());
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//                        log.info("调用线路市场获取线路名称失败");
-//                        LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-//                        if (lineInfo != null) {
-//                            queryQueue.setLineName(lineInfo.getLineName());
-//                        }
-//                    }
+                    queryQueue.setLineName(getLineName(queryQueue.getLineId(),systemUserId));
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -287,7 +267,7 @@ public class QueueServiceImpl implements QueueService {
      * @param authLevel
      * @return
      */
-    public List<Queue> queryQueuesSub(Integer page, Integer size,String queueName, String orgCode, int authLevel) {
+    public List<Queue> queryQueuesSub(Integer page, Integer size, String queueName, String orgCode, int authLevel) {
         PageExample testPage = new PageExample();
         testPage.setPageNum(page);
         testPage.setPageSize(size);
@@ -316,10 +296,10 @@ public class QueueServiceImpl implements QueueService {
     public QueryQueue getQueue(String queueId) {
         Queue queue = queueMapper.selectByPrimaryKey(Long.parseLong(queueId));
         QueryQueue queryQueue = new QueryQueue();
-        BeanUtils.copyProperties(queue,queryQueue);
+        BeanUtils.copyProperties(queue, queryQueue);
         Agent agent = agentMapper.selectByPrimaryKey(queue.getUpdateUser());
         queryQueue.setUserName(agent.getUserName());
-        queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+        queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
         TierExample tierExample = new TierExample();
         tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
         queryQueue.setAgentCount(tierMapper.countByExample(tierExample));
@@ -343,19 +323,19 @@ public class QueueServiceImpl implements QueueService {
         //1、根据lineId查询所有的坐席组
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andLineIdEqualTo(Integer.parseInt(lineId));
-         List<Queue> queues =queueMapper.selectByExample(queueExample);
-        for (Queue queue:queues) {
+        List<Queue> queues = queueMapper.selectByExample(queueExample);
+        for (Queue queue : queues) {
             //遍历队列，解绑线路
             queue.setLineId(null);
             queueMapper.updateByPrimaryKey(queue);
             //遍历队列，查询绑定关系
             TierExample tierExample = new TierExample();
             tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
-            List<Tier> tierList =tierMapper.selectByExample(tierExample);
+            List<Tier> tierList = tierMapper.selectByExample(tierExample);
             //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听改为网页接听并置成离线
-            for (Tier tier:tierList) {
-                 Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
-                if(agent.getAnswerType()==1){
+            for (Tier tier : tierList) {
+                Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
+                if (agent.getAnswerType() == 1) {
                     AgentInfo agentInfo = new AgentInfo();
                     agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
                     agentInfo.setStatus(AgentStatus.Logged_Out);
@@ -367,5 +347,51 @@ public class QueueServiceImpl implements QueueService {
                 }
             }
         }
+    }
+
+    /**
+     * 查询得到线路的名称
+     * @param lineId
+     * @param systemUserId
+     * @return
+     */
+    public String getLineName(int lineId, String systemUserId) {
+        Result.ReturnData<SipLineVO> result;
+        try {
+            result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, lineId);
+            if (result.getCode().equals("0")&&result.getBody()!=null) {
+                return result.getBody().getLineName();
+            } else {
+                LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);
+                if (lineInfo != null) {
+                    return lineInfo.getLineName();
+                }
+            }
+        } catch (Exception e) {
+            log.info("调用线路市场获取线路名称失败");
+            LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);
+            if (lineInfo != null) {
+                return lineInfo.getLineName();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 根据orgCode查询orgName
+     * @param orgCode
+     * @return
+     */
+    public String orgName(String orgCode){
+        try {
+            Result.ReturnData<SysOrganization> result = iOrg.getOrgByCode(orgCode);
+            if (result.getCode().equals("0") && result.getBody() != null) {
+               return result.getBody().getName();
+            }
+        } catch (Exception e) {
+            log.error("调用auth接口获取企业名接口失败[{}]",e.toString());
+            return "";
+        }
+        return "";
     }
 }

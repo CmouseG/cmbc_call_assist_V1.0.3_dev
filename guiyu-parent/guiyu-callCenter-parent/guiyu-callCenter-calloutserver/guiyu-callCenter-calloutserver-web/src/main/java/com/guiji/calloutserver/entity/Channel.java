@@ -60,6 +60,11 @@ public class Channel {
     private Date endPlayTime;
 
     /**
+     * 预期结束播放时间
+     */
+    private Long expectEndPlayTime;
+
+    /**
      * 当前通道是否正在播放媒体
      * @return
      */

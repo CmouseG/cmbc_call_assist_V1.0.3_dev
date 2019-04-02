@@ -86,7 +86,9 @@ public class Constant {
 
 
 
-	public static final Integer BLACK_LIST_IMPORT_UNIDENTIFIED=1;
-	public static final Integer BLACK_LIST_IMPORT_DUPLICATE=2;
-	public static final Integer BLACK_LIST_IMPORT_INDB=3;
+	public static final Integer BLACK_LIST_IMPORT_UNIDENTIFIED=1;//未知号码
+	public static final Integer BLACK_LIST_IMPORT_DUPLICATE=2;	//已包含
+	public static final Integer BLACK_LIST_IMPORT_INDB=3;		//号码黑名单已存在
+	public static final Integer BLACK_LIST_IMPORT_WRONGFUL=4;//不合法
+	public static final Integer BLACK_LIST_IMPORT_LENGTH=5;//长度不正确
 }

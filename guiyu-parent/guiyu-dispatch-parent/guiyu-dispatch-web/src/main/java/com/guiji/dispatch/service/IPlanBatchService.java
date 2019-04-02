@@ -1,5 +1,6 @@
 package com.guiji.dispatch.service;
 
+import com.guiji.dispatch.dto.JoinPlanDto;
 import com.guiji.dispatch.dto.OptPlanDto;
 
 public interface IPlanBatchService {
@@ -17,5 +18,8 @@ public interface IPlanBatchService {
     boolean recoveryPlanBatch(OptPlanDto optPlanDto);
 
     //批量加入
-    boolean joinPlanBatch(OptPlanDto optPlanDto);
+    boolean joinPlanBatch(JoinPlanDto joinPlanDto);
+
+    //批量导出
+    boolean exportPlanBatch(OptPlanDto optPlanDto);
 }

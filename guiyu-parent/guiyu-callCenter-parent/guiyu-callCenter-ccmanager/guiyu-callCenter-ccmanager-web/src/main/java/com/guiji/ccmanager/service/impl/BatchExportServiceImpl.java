@@ -257,6 +257,15 @@ public class BatchExportServiceImpl implements BatchExportService {
             }
             callOutPlanQueryEntity.setNotInList(notInList);
         }
+        if(callRecordListReq.getCheckAll()==null || !callRecordListReq.getCheckAll()){
+            List<String> list = callRecordListReq.getIncludeList();
+            List<BigInteger> inList = new ArrayList<>();
+            for(String callId :list){
+                inList.add(new BigInteger(callId));
+            }
+            callOutPlanQueryEntity.setInList(inList);
+
+        }
 
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), minId);
 
@@ -383,6 +392,9 @@ public class BatchExportServiceImpl implements BatchExportService {
         }
         if(callOutPlanQueryEntity.getNotInList()!=null && callOutPlanQueryEntity.getNotInList().size()>0){
             criteria.andCallIdNotIn(callOutPlanQueryEntity.getNotInList());
+        }
+        if(callOutPlanQueryEntity.getInList()!=null && callOutPlanQueryEntity.getInList().size()>0){
+            criteria.andCallIdIn(callOutPlanQueryEntity.getInList());
         }
         return criteria;
     }

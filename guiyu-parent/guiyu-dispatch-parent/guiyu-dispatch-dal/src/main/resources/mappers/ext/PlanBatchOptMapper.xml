@@ -293,10 +293,10 @@
 
     <!--恢复  end-->
 
-    <!--获取批量加入手机号-->
+    <!--获取批量加入手机号   /*DISTINCT(p.phone)*/-->
     <select id="getDisPhone" resultType="java.lang.String">
       SELECT
-        DISTINCT(p.phone)
+        p.phone
       FROM dispatch_plan p
         WHERE p.is_del = 0
         AND (SELECT COUNT(id) FROM black_list b WHERE b.phone=p.phone )=0
@@ -341,6 +341,7 @@
                 </foreach>
             </if>
         </if>
+        GROUP BY p.phone
         LIMIT 0, #{limit}
     </select>
 

@@ -154,7 +154,8 @@
                 gmt_modified = #{updTime}
             </set>
         WHERE is_del = 0
-            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            AND status_plan IN (${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()},
+                                ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()})
             AND plan_uuid IN
             <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
                 #{planUuid}
@@ -174,7 +175,8 @@
                 gmt_modified = #{updTime}
             </set>
         WHERE is_del = 0
-            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            AND status_plan IN (${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()},
+                                ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()})
             <if test="optPlanDto != null">
                 <if test="optPlanDto.orgIdList != null">
                     AND p.org_id IN

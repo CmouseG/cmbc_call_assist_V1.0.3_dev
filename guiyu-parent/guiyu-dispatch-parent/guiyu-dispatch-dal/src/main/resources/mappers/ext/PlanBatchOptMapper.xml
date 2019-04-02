@@ -349,7 +349,7 @@
                 </foreach>
             </if>
         </if>
-        GROUP BY p.phone
+        <!--GROUP BY p.phone-->
         LIMIT 0, #{limit}
     </select>
 

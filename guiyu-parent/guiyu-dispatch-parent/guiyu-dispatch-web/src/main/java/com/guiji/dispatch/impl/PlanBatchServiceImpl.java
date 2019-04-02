@@ -343,6 +343,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         int limit = 30000;
         //查询条件列表（注意，号码去重）
         List<String> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
+        logger.info(">>>>>加入数量:{}", null != phoneList?phoneList.size():0);
         for(String phone : phoneList){
             this.pushPlanCreateMQ(submitPlan, batchId, phone, operUserId, oper0rgId, operOrgCode);
         }

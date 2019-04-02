@@ -91,16 +91,17 @@ public class BlackListServiceImpl implements IBlackListService {
 			if (isNull(row.getCell(0))) {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
+				phone = null != phone?phone.trim():null;
 				if (phone == null || phone == "") {
 					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
 					continue;
 				}
 				if (!isNumLegal(phone)) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_WRONGFUL, userId, orgCode);
 					continue;
 				}
 				if (phone.length() != 11) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_LENGTH, userId, orgCode);
 					continue;
 				}
 				if (phones.contains(phone)) {

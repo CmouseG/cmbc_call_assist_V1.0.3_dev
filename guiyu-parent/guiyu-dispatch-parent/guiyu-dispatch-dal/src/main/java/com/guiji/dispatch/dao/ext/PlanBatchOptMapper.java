@@ -1,6 +1,8 @@
 package com.guiji.dispatch.dao.ext;
 
+import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dto.OptPlanDto;
+import com.guiji.dispatch.vo.DownLoadPlanVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +39,21 @@ public interface PlanBatchOptMapper {
                           @Param("updTime") Date updTime);
 
     int recoveryPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
+
+    /*批量加入*/
+    List<String> getDisPhone(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("limit") Integer limit);
+
+  //  int batchJoinPlan(@Param("plan") DispatchPlan plan, @Param("limit") Integer limit);
+
+    /*批量导出*/
+    List<DownLoadPlanVo> queryExportPlanById(@Param("planUuidList") List<Long> planUuidList,
+                          @Param("orgIdList") List<Integer> orgIdList,
+                          @Param("limit") Integer limit);
+
+    int queryExportPlanCountById(@Param("planUuidList") List<Long> planUuidList,
+                                 @Param("orgIdList") List<Integer> orgIdList);
+
+    List<DownLoadPlanVo> queryExportPlanList(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("limit") Integer limit);
+
+    int queryExportPlanCountList(@Param("optPlanDto") OptPlanDto optPlanDto);
 }

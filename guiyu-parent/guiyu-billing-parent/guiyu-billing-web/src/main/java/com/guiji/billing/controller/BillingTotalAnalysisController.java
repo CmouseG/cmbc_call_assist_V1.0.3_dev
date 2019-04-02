@@ -40,7 +40,7 @@ public class BillingTotalAnalysisController {
         queryAcctChargingTotalDto.setUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
-        logger.info("/totalChargingByDate", JsonUtils.bean2Json(queryAcctChargingTotalDto));
+        logger.info("/billing/totalAnalysis/totalChargingByDate:{}", JsonUtils.bean2Json(queryAcctChargingTotalDto));
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByDate(queryAcctChargingTotalDto, page);
         page.setList(list);
@@ -60,7 +60,7 @@ public class BillingTotalAnalysisController {
         queryAcctChargingTotalDto.setUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
-        logger.info("/totalChargingByMonth", JsonUtils.bean2Json(queryAcctChargingTotalDto));
+        logger.info("/billing/totalAnalysis/totalChargingByMonth:{}", JsonUtils.bean2Json(queryAcctChargingTotalDto));
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByMonth(queryAcctChargingTotalDto, page);
         page.setList(list);

@@ -25,7 +25,7 @@
             AND c.org_code = #{orgCode}
           </if>
           <if test="authLevel == 3 and orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
           </if>
           <if test="authLevel == 1 and operUserId != null">
             AND r.oper_user_id = #{operUserId}
@@ -67,7 +67,7 @@
               AND c.org_code = #{orgCode}
             </if>
             <if test="authLevel == 3 and orgCode != null">
-              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
             </if>
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}
@@ -106,7 +106,7 @@
               AND c.org_code = #{orgCode}
             </if>
             <if test="authLevel == 3 and orgCode != null">
-              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
             </if>
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}
@@ -148,7 +148,7 @@
               AND c.org_code = #{orgCode}
             </if>
             <if test="authLevel == 3 and orgCode != null">
-              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
             </if>
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}

@@ -24,7 +24,7 @@
         AND a.org_code = #{orgCode}
       </if>
       <if test="authLevel == 3 and orgCode != null and orgCode != ''">
-        AND  (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+        AND  (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
       </if>
       <if test="type != null">
         AND r.type = #{type}
@@ -56,7 +56,7 @@
         AND a.org_code = #{orgCode}
       </if>
       <if test="authLevel == 3 and orgCode != null and orgCode != ''">
-        AND  (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+        AND  (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
       </if>
       <if test="type != null">
         AND r.type = #{type}

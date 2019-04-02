@@ -204,6 +204,9 @@
 			<if test="queryRecord.authLevel == 3 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
 				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
 			</if>
+			<if test="queryRecord.addTime != null">
+				AND DATE_FORMAT(add_time, '%Y-%m-%d') = #{queryRecord.addTime}
+			</if>
 		</if>
 		ORDER BY add_time DESC
 		<if test="page != null and page.isPage ">
@@ -249,6 +252,9 @@
 			</if>
 			<if test="queryRecord.authLevel == 3 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
 				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
+			</if>
+			<if test="queryRecord.addTime != null">
+				AND DATE_FORMAT(add_time, '%Y-%m-%d') = #{queryRecord.addTime}
 			</if>
 		</if>
 	</select>

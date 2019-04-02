@@ -23,17 +23,16 @@ public class DispatchPlanBatch implements Serializable {
     private String orgCode;
     
     private String batchName;
-    
-    
+
     public String getBatchName() {
-		return batchName;
-	}
+        return batchName;
+    }
 
-	public void setBatchName(String batchName) {
-		this.batchName = batchName;
-	}
+    public void setBatchName(String batchName) {
+        this.batchName = batchName;
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     public Integer getId() {
         return id;

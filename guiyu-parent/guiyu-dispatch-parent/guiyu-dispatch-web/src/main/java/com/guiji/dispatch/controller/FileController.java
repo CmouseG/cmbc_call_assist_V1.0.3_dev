@@ -19,6 +19,7 @@ import com.guiji.dispatch.enums.FileTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.ExportFileDto;
 import com.guiji.dispatch.service.FileInterface;
+import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.sys.ResultPage;
@@ -26,6 +27,7 @@ import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.HttpDownload;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.FileRecordsListVo;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.NasUtil;
@@ -79,6 +81,9 @@ public class FileController {
 
 	@Autowired
 	private IExportFileService exportFileService;
+
+	@Autowired
+	private GetApiService getApiService;
 
 	@Value("${file.tmpPath}")
 	private String tmpPath;
@@ -616,10 +621,13 @@ public class FileController {
 			int batchCount = dispatchPlanService.queryPlanCountByBatch(batchId);
 			data.setTotalNum(batchCount);
 		}
+		SysUser user = getApiService.getUserById(userId);
 		data.setUserId(userId);
 		data.setOrgCode(orgCode);
-		data.setCreateName(fileRecords.getUserName());
-		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(fileRecords.getCreateTime()));
+		data.setCreateName(null != user?user.getUsername():null);
+		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(new Date()));
+		/*data.setCreateName(fileRecords.getUserName());
+		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(fileRecords.getCreateTime()));*/
 		return data;
 	}
 

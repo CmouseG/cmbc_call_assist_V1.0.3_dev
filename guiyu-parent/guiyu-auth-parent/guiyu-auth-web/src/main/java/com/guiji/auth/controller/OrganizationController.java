@@ -80,7 +80,7 @@ public class OrganizationController implements IOrg{
 		}
 		record.setUpdateId(userId);
 		record.setUpdateTime(new Date());
-		organizationService.update(record,userId,orgCode);
+		organizationService.update(record,userId);
 	}
 	
 	@RequestMapping("selectByPage")

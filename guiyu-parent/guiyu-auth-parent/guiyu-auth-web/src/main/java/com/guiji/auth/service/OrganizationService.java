@@ -3,6 +3,7 @@ package com.guiji.auth.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -143,7 +144,8 @@ public class OrganizationService {
 	}
 	
 	@Transactional
-	public void update(SysOrganization record,Long updateUser,String orgCode){
+	public void update(SysOrganization record,Long updateUser){
+		
 		
 		
 		
@@ -731,5 +733,23 @@ public class OrganizationService {
 	public List<SysOrganization> queryChildrenOrg(String orgCode)
 	{
 		return sysOrganizationMapper.queryChildrenOrg(orgCode);
+	}
+	
+	/**
+	 * 获取兄弟（同级）组织
+	 */
+	public List<SysOrganization> queryBrotherOrg(String orgCode)
+	{
+		SysOrganization parentOrg = getParentOrg(orgCode);
+		List<SysOrganization> brothers = queryChildrenOrg(parentOrg.getCode());
+		Iterator<SysOrganization> iterator = brothers.iterator();
+		while(iterator.hasNext())
+		{
+			SysOrganization org = iterator.next();
+			if(org.getCode().equals(orgCode)){
+				iterator.remove();
+			}
+		}
+		return brothers;
 	}
 }

@@ -125,7 +125,7 @@ public class OrganizationService {
 		role.setSuperAdmin(1);//接口增加的角色都是非超级管理员，只有初始化才是
 		mapper.insert(role);
 		//为新增的角色赋默认组织的菜单
-		privilegeService.savePrivlege(userId.intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+		privilegeService.savePrivlege(userId.intValue(), subCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 		try {
 			noticeSetting.addNoticeSetting(record.getCode());
 		} catch (Exception e) {
@@ -151,11 +151,11 @@ public class OrganizationService {
 			}
 			if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
 				//给企业绑定行业资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), orgCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
 			}
 			if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
 				//给企业绑定菜单资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), orgCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 			}
 		}else {
 			//系统不需要通过前端绑定行业/菜单资源
@@ -282,9 +282,16 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<SysOrganization> getAuthOrgList(String orgCode){
-		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andCodeLike(orgCode+"%");
+	public List<SysOrganization> getAuthOrgList(Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	

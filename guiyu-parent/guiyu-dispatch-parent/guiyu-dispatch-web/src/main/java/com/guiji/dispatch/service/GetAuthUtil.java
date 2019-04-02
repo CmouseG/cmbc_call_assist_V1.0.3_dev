@@ -24,7 +24,7 @@ public class GetAuthUtil {
      * @return
      */
     public String getUserIdByAuthLevel(Integer authLevel, String userId){
-        if(null != authLevel && AuthLevelEnum.USER.getLevel() == authLevel){
+        if(AuthLevelEnum.USER.getLevel() == authLevel){
         //    return null != userId ? userId : AuthConstant.superUserId;
             return userId;
         }else{
@@ -35,12 +35,11 @@ public class GetAuthUtil {
     /**
      * 根据权限等级，不是本组织或者本组织以下，则返回null
      * @param authLevel
-     * @param userId
      * @param orgCode
      * @return
      */
     public String getOrgCodeByAuthLevel(Integer authLevel, String orgCode){
-        if(null != authLevel && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
+        if(AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
             /*if(StringUtils.isEmpty(orgCode)){
                 //获取用户ID
                 userId = null != userId ? userId : AuthConstant.superUserId;
@@ -58,20 +57,14 @@ public class GetAuthUtil {
 
     public List<Integer> getOrgIdsByAuthLevel(Integer authLevel, Integer orgId){
         List<Integer> orgIds = new ArrayList<Integer>();
-        if(null != authLevel
-                && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
-            if(AuthLevelEnum.ORG.getLevel() == authLevel){//本组织
-                orgIds.add(orgId);
-            }
-
-            if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){//本组织或本组织及以下组织
-                orgIds = getApiService.getSubOrgIdByOrgId(orgId);
-            }
-            return orgIds;
+        if(AuthLevelEnum.ORG.getLevel() == authLevel){//本组织
+            orgIds.add(orgId);
+        }else if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){//本组织或本组织及以下组织
+            orgIds = getApiService.getSubOrgIdByOrgId(orgId);
         }else{
             orgIds.add(orgId);
-            return orgIds;
         }
+        return orgIds;
     }
 
 }

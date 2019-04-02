@@ -13,7 +13,7 @@ public class BaseDto implements Serializable {
     /**
      * 企业组织编码
      */
-    private int operOrgId;
+    private Integer operOrgId;
 
     /**
      * 企业用户ID
@@ -67,13 +67,11 @@ public class BaseDto implements Serializable {
         this.isDesensitization = isDesensitization;
     }
 
-    public int getOperOrgId()
-    {
+    public Integer getOperOrgId() {
         return operOrgId;
     }
 
-    public void setOperOrgId(int operOrgId)
-    {
+    public void setOperOrgId(Integer operOrgId) {
         this.operOrgId = operOrgId;
     }
 

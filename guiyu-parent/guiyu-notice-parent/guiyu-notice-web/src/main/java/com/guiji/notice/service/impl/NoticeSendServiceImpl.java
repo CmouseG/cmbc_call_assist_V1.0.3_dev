@@ -88,25 +88,33 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 String[] receiverArray =  receivers.split(",");
 
                 List<String> receiverList = new ArrayList<>();
-                if(messageSend.getUserId()!=null){
-                    long userId = messageSend.getUserId().longValue();
-                    if(authService.isCompanyOprater(userId)){//假如是企业操作员,需要将其他操作员从接收者中去除
-                        for(String userIdString:receiverArray){
-                            if(userIdString.equals(String.valueOf(userId)) || !authService.isCompanyOprater(Long.valueOf(userIdString))){ //是操作员
+                if (messageSend.getUserId() != null) {  //传递了userId
+                    long userId = messageSend.getUserId();
+                    for (String userIdString : receiverArray) {
+                        long receiveId = Long.valueOf(userIdString);
+                        int authLevel = authService.getAuthLevel(receiveId);
+                        logger.info("receiveId[{}]的authLevel[{}]",receiveId,authLevel);
+                        if (authLevel == 1) {//本人权限
+                            if (userId == receiveId) {
                                 receiverList.add(userIdString);
                             }
-                        }
-                    }else{//管理员
-                        for(String userIdString:receiverArray){
-                            if(!authService.isCompanyOprater(Long.valueOf(userIdString))){ //是操作员
-                                receiverList.add(userIdString);
+                        } else {
+                            String receiveCode = authService.getOrgCode(receiveId);
+                            if (authLevel == 2) { //当前orgCode
+                                if (receiveCode.equals(orgCode)) {
+                                    receiverList.add(userIdString);
+                                }
+                            } else if (authLevel == 3) {
+                                if (orgCode.startsWith(receiveCode)) {
+                                    receiverList.add(userIdString);
+                                }
                             }
                         }
                     }
-                }else{
+                } else {  //没有传递userId ，所有都发送消息
                     receiverList = Arrays.asList(receiverArray);
                 }
-
+                logger.info("消息接收者receiverList[{}]",receiverList);
                 //是否发送站内信
                 boolean isSendMail = noticeSetting.getIsSendMail();
                 if(isSendMail){

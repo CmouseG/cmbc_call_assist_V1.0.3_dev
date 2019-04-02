@@ -39,7 +39,7 @@ public class BillingSysRechargeController {
         queryRechargeDto.setUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
-        logger.info("/queryCompanyRechargeTotal", JsonUtils.bean2Json(queryRechargeDto));
+        logger.info("/billing/sysRecharge/queryCompanyRechargeTotal:{}", JsonUtils.bean2Json(queryRechargeDto));
         ResultPage<SysRechargeTotalVo> page = new ResultPage<SysRechargeTotalVo>(queryRechargeDto);
         List<SysRechargeTotalVo> list = billingSysRechargeService.queryCompanyRechargeTotal(queryRechargeDto, page);
         page.setList(list);

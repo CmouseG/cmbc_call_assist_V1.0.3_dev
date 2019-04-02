@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.dto.QueryBlackListDto;
 import com.guiji.dispatch.service.GetAuthUtil;
+import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,31 +101,30 @@ public class BlackListController {
 	}
 
 	/**
-	 * 查询黑名单记录
+	 * 查询黑名单导入列表
 	 * @param pagenum
 	 * @param pagesize
 	 * @param orgCode
 	 * @return
 	 */
-	@Jurisdiction("taskCenter_blackList_batchImportDetail")
-	@PostMapping("selectBlackListRecords")
-	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
-														 @RequestParam(required = true, name = "pagesize") int pagesize,
-														 @RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
-														 @RequestBody QueryBlackListDto queryBlackParam){
+//	@Jurisdiction("taskCenter_blackList_batchImportDetail")
+	@Log(info = "查询黑名单导入列表")
+	@RequestMapping(value = "selectBlackListRecords", method = {RequestMethod.POST, RequestMethod.GET})
+	public ResultPage<BlackListRecords> selectBlackListRecords(@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+															   @RequestBody QueryBlackListDto queryBlackParam){
 		if(queryBlackParam == null){
 			queryBlackParam = new QueryBlackListDto();
 		}
 
 		//过滤权限
-		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryBlackParam.getUserId()+"");//获取用户ID
-		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryBlackParam.getOrgCode());//获取企业组织编码
+		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
 		queryBlackParam.setUserId(null != userId ?Integer.valueOf(userId):null);
 		queryBlackParam.setOrgCode(orgCode);
 		queryBlackParam.setAuthLevel(authLevel);
 
 		logger.info("/selectBlackListRecords:{}", JsonUtils.bean2Json(queryBlackParam));
-		return blackListService.queryBlackListRecords(pagenum, pagesize,queryBlackParam);
+		return blackListService.queryBlackListRecords(queryBlackParam);
 	}
 
 	

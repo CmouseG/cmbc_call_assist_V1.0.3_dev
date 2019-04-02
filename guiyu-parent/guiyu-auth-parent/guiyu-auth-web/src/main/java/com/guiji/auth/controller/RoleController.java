@@ -30,7 +30,10 @@ public class RoleController {
 	
 	@Jurisdiction("system_role_add")
 	@RequestMapping("insert")
-	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws CheckConditionException{
+	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws Exception{
+		if(roleService.existRoleName(role)){
+			throw new GuiyuException("角色名已存在，请更换角色名！");
+		}
 		role.setCreateId(userId);
 		role.setUpdateId(userId);
 		role.setCreateTime(new Date());
@@ -41,12 +44,13 @@ public class RoleController {
 	
 	@Jurisdiction("system_role_delete")
 	@RequestMapping("delete")
-	public void delete(Long id,@RequestHeader Long userId){
+	public void delete(Long id, @RequestHeader Long userId)
+	{
 		List<SysUser> users = userService.queryUserByRoleId(id.intValue());
-		if(users.size() > 0) {
+		if (users != null && users.size() > 0){
 			throw new GuiyuException("该角色下存在绑定用户，请先将用户解绑再删除！");
 		}
-		roleService.delete(id,userId);
+		roleService.delete(id, userId);
 	}
 	
 	@Jurisdiction("system_role_edit")

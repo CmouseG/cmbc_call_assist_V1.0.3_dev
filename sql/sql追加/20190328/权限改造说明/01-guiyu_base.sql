@@ -73,7 +73,7 @@ update sys_organization set code = CONCAT(code,'.') where id <> 1;
 
 update sys_user set org_code='1' where org_code='1.';
 
-update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList');
+update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList','/botsentence/botsentence_approve','/botsentence/botsentence_mytemplate','/botsentence/botsentence_history','/smsCenter/platformManage','/botsentence/botsentence_keywords','/financeCenter/rechargeManage','/botsentence/botsentence_approveKeywords','/system/product','system_noticeList_add');
 
 insert into sys_privilege(auth_id,auth_type,resource_id,resource_type,org_code,crt_user,crt_time,update_time,update_user) select org.id,2,temp.template_id,2,org.code,1,'2019-03-16 00:00:00','2019-03-16 00:00:00',1 from guiyu_base.sys_organization_industry rel,guiyu_base.sys_organization org,guiyu_botstence.bot_sentence_template temp where rel.organization_id=org.id and rel.industry_id=left(temp.industry_id, 4);
 
@@ -83,3 +83,5 @@ INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (1, '放款王', '放款王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (2, '房产王', '房产王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (3, '招行-马拉松', '招行-马拉松', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
+
+UPDATE sys_organization t SET t.`open` = 1 WHERE t.type = 1

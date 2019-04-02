@@ -254,28 +254,21 @@ public class SendNoticeServiceImpl implements SendNoticeService {
      */
     public String getSendLables(Integer userId) {
 
-        Object value = redisUtil.get("callCenter_notice_label_userId_" + userId);
-        if (value != null) {
-            return (String) value;
-        } else {
-            Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(Long.valueOf(userId));
-            String orgCode = returnOrg.getBody().getCode();//企业orgcode
+        Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(Long.valueOf(userId));
+        String orgCode = returnOrg.getBody().getCode();//企业orgcode
 
-            Object orgValue = redisUtil.get("callCenter_notice_label_orgCode_" + orgCode);
-            if (orgValue != null) {
-                String orgLables = (String) orgValue;
-                redisUtil.set("callCenter_notice_label_userId_" + userId, orgLables);
-                return orgLables;
-            } else {
-                NoticeSendLabelExample example = new NoticeSendLabelExample();
-                example.createCriteria().andOrgCodeEqualTo(orgCode);
-                List<NoticeSendLabel> listNotices = noticeSendLabelMapper.selectByExample(example);
-                if (listNotices != null && listNotices.size() > 0) {
-                    String label = listNotices.get(0).getLabel();
-                    redisUtil.set("callCenter_notice_label_orgCode_" + orgCode, label);
-                    redisUtil.set("callCenter_notice_label_userId_" + userId, label);
-                    return label;
-                }
+        Object orgValue = redisUtil.get("callCenter_notice_label_orgCode_" + orgCode);
+        if (orgValue != null) {
+            String orgLables = (String) orgValue;
+            return orgLables;
+        } else {
+            NoticeSendLabelExample example = new NoticeSendLabelExample();
+            example.createCriteria().andOrgCodeEqualTo(orgCode);
+            List<NoticeSendLabel> listNotices = noticeSendLabelMapper.selectByExample(example);
+            if (listNotices != null && listNotices.size() > 0) {
+                String label = listNotices.get(0).getLabel();
+                redisUtil.set("callCenter_notice_label_orgCode_" + orgCode, label);
+                return label;
             }
         }
         return null;

@@ -92,7 +92,7 @@ public class BillingUserAcctController {
         queryRechargeDto.setUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
-        logger.info("/queryUserRechargeTotal", JsonUtils.bean2Json(queryRechargeDto));
+        logger.info("/billing/userAcct/queryUserRechargeTotal:{}", JsonUtils.bean2Json(queryRechargeDto));
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
         List<UserRechargeTotalVo> list = billingUserAcctService.queryUserRechargeTotal(queryRechargeDto, page);
         page.setList(list);

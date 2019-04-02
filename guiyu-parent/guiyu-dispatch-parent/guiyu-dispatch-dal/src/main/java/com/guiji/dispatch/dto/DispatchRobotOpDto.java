@@ -1,8 +1,8 @@
 package com.guiji.dispatch.dto;
 
-import com.guiji.dispatch.sys.BaseDto;
+import com.guiji.dispatch.sys.PageDto;
 
-public class DispatchRobotOpDto extends BaseDto {
+public class DispatchRobotOpDto extends PageDto {
 
     /**
      * 话术用户ID

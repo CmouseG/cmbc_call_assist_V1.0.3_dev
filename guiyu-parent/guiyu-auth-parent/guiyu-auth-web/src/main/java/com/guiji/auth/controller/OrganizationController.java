@@ -18,6 +18,7 @@ import com.guiji.auth.model.OrgVO;
 import com.guiji.auth.model.OrganizationVO;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.UserService;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
@@ -35,11 +36,19 @@ public class OrganizationController implements IOrg{
 
 	@Jurisdiction("system_organization_add")
 	@RequestMapping("add")
-	public SysOrganization add(SysOrganization record,@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{
+	public SysOrganization add(SysOrganization record,@RequestHeader long userId, @RequestHeader String orgCode) throws Exception
+	{
 		if(!organizationService.checkName(record.getName())){
-			throw new CheckConditionException("00010009");
+			throw new GuiyuException("组织名称已存在，请您更换组织名称！");
+		}
+		int leval = record.getCode().length() - record.getCode().replace(".", "").length();
+		if (leval > 5) {
+			throw new GuiyuException("00010018", "对不起，组织结构层级不能超过5层！");
 		}
 		record.setOpen(0);
+		if(record.getType() == 1){
+			record.setOpen(1);
+		}
 		record.setDelFlag(0);
 		record.setCreateId(userId);
 		record.setUpdateId(userId);
@@ -51,7 +60,7 @@ public class OrganizationController implements IOrg{
 	
 	@Jurisdiction("system_organization_delete")
 	@RequestMapping("delete")
-	public void delte(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+	public void delte(SysOrganization record,@RequestHeader long userId) throws Exception{
 		if(organizationService.existChildren(record)){
 			throw new CheckConditionException("00010010");
 		}
@@ -80,8 +89,11 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("selectOpenByPage")
-	public Page<Map> selectOpenByPage(Page<Map> page){
-		return organizationService.selectOpenByPage(page);
+	public Page<Map> selectOpenByPage(Page<Map> page, @RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		page.setUserId(userId);
+		page.setAuthLevel(authLevel);
+		page.setOrgCode(orgCode);
+		return organizationService.selectOpenByPage(page,userId,authLevel,orgCode);
 	}
 	
 	/**
@@ -101,8 +113,8 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getAuthOrgList")
-	public List<SysOrganization> getAuthOrgList(@RequestHeader String orgCode){
-		return organizationService.getAuthOrgList(orgCode);
+	public List<SysOrganization> getAuthOrgList(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.getAuthOrgList(userId, authLevel, orgCode);
 	}
 	
 	/**
@@ -110,8 +122,8 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getOrgNotOpen")
-	public List<SysOrganization> getOrgNotOpen(){
-		return organizationService.getOrgNotOpen();
+	public List<SysOrganization> getOrgNotOpen(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.getOrgNotOpen(userId, authLevel, orgCode);
 	}
 	
 	@RequestMapping("getOrgByUserId")
@@ -197,10 +209,13 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getAuthOrgTree")
-	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader String orgCode){
-		return Result.ok(organizationService.getAuthOrgTree(orgCode,true));
+	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return Result.ok(organizationService.getAuthOrgTree(userId,authLevel,orgCode,true));
 	}
-		
+	
+	/**
+	 * 没有数据权限控制的获取本组织及下级组织
+	 */
 	@RequestMapping("queryAllOrgByUserId")
 	public ReturnData<List<OrgVO>> queryAllOrgByUserId(@RequestHeader Long userId) {
 		List<OrgVO> organizationList = new ArrayList<>();
@@ -212,11 +227,22 @@ public class OrganizationController implements IOrg{
 			orgVo.setOrgName((String) orgMap.get("name"));
 			organizationList.add(orgVo);
 		}
-
-		OrgVO orgVo = new OrgVO();
-		orgVo.setOrgId(organization.getId().intValue());
-		orgVo.setOrgName(organization.getName());
-		organizationList.add(orgVo);
+		return Result.ok(organizationList);
+	}
+	
+	/**
+	 * 根据数据权限控制获取本人，本组织及下级组织
+	 */
+	@RequestMapping("getAllOrgByUserId")
+	public ReturnData<List<OrgVO>> getAllOrgByUserId(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
+		List<OrgVO> organizationList = new ArrayList<>();
+		List<Map> orgVOMap = organizationService.getSubOrgByAuthLevel(userId,authLevel,orgCode);
+		for (Map orgMap : orgVOMap) {
+			OrgVO orgVo = new OrgVO();
+			orgVo.setOrgId((Integer) orgMap.get("id"));
+			orgVo.setOrgName((String) orgMap.get("name"));
+			organizationList.add(orgVo);
+		}
 		return Result.ok(organizationList);
 	}
 

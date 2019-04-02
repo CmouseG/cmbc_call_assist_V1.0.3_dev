@@ -27,5 +27,7 @@ public class SipLineInfoQueryCondition {
 	//线路状态
 	private Integer status; 
 	//线路状态（多选）
-	private List<Integer> statusList; 
+	private List<Integer> statusList;
+	//authlevel
+	private Integer authLevel;
 }

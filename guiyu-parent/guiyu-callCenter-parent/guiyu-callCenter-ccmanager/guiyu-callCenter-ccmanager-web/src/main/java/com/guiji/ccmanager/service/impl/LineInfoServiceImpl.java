@@ -57,15 +57,15 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     AuthService authService;
 
-    public LineInfoExample getExample(Boolean isSuperAdmin, String customerId, String orgCode, String lineName) {
+    public LineInfoExample getExample(Integer authLevel, String customerId, String orgCode, String lineName) {
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        if (!isSuperAdmin) {
-            if (authService.isAgent(Long.valueOf(customerId))) {
-                criteria.andOrgCodeLike(orgCode+"%");
-            } else {
-                criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
-            }
+        if(authLevel==1){
+            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+        }else if(authLevel==2){
+            criteria.andOrgCodeEqualTo(orgCode);
+        }else if(authLevel==3){
+            criteria.andOrgCodeLike(orgCode+"%");
         }
         if (StringUtils.isNotBlank(lineName)) {
             criteria.andLineNameEqualTo(lineName);
@@ -76,9 +76,9 @@ public class LineInfoServiceImpl implements LineInfoService {
 
 
 
-    public List<LineInfo4Page> getLineInfoByCustom(Boolean isSuperAdmin,String customerId,String orgCode, String lineName, int pageSize, int pageNo) {
+    public List<LineInfo4Page> getLineInfoByCustom(Integer authLevel,String customerId,String orgCode, String lineName, int pageSize, int pageNo) {
 
-        LineInfoExample example = getExample(isSuperAdmin,customerId, orgCode, lineName);
+        LineInfoExample example = getExample(authLevel,customerId, orgCode, lineName);
 
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
@@ -110,8 +110,8 @@ public class LineInfoServiceImpl implements LineInfoService {
 
 
     @Override
-    public int getLineInfoByCustomCount(Boolean isSuperAdmin,String customerId,String orgCode, String lineName) {
-        LineInfoExample example = getExample(isSuperAdmin,customerId, orgCode, lineName);
+    public int getLineInfoByCustomCount(Integer authLevel,String customerId,String orgCode, String lineName) {
+        LineInfoExample example = getExample(authLevel,customerId, orgCode, lineName);
         return lineInfoMapper.countByExample(example);
     }
 

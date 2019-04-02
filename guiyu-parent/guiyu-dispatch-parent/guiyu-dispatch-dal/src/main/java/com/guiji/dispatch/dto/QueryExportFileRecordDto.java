@@ -1,6 +1,8 @@
 package com.guiji.dispatch.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.guiji.dispatch.sys.PageDto;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -51,7 +53,8 @@ public class QueryExportFileRecordDto extends PageDto {
     /**
      * 创建日期
      */
-    private Date addTime;
+    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
+    private String addTime;
 
     public String getRecordId() {
         return recordId;
@@ -93,11 +96,11 @@ public class QueryExportFileRecordDto extends PageDto {
         this.userName = userName;
     }
 
-    public Date getAddTime() {
+    public String getAddTime() {
         return addTime;
     }
 
-    public void setAddTime(Date addTime) {
+    public void setAddTime(String addTime) {
         this.addTime = addTime;
     }
 

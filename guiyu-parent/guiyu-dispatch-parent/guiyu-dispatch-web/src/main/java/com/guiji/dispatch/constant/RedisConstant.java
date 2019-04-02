@@ -29,5 +29,10 @@ public class RedisConstant {
         public final static String TEMPLATE_NO_READY = "TEMPLATE_NO_READY_";
         //有效时间 5分钟
         public final static long TEMPLATE_NO_READY_TIMELONG = 300L;
+
+        //临时话术模板名称  TMP_BOTSTENCENAME_ + botstence_id
+        public final static String TMP_BOTSTENCENAME = "TMP_BOTSTENCENAME_";
+        //临时话术模板名称数据有效时间 一小时
+        public final static long TMP_BOTSTENCENAME_TIMEOUT = 3600L;
     }
 }

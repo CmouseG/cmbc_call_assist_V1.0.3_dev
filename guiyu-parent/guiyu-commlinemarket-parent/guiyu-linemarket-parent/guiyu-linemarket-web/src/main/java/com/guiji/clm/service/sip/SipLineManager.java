@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guiji.dispatch.model.LineIsUseDto;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,6 +148,7 @@ public class SipLineManager {
 		}
 		//调用呼叫中心线路，生成线路ID
 		Integer lineId = this.callcenterLine(sipLineBaseInfo, extSipLineBaseInfo);
+		log.info("调用呼叫中心成功，返回lineId:{}", lineId);
 		if(lineId==null) {
 			log.error("调用线路市场，返回线路lineid为空!");
 			throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());
@@ -200,8 +202,11 @@ public class SipLineManager {
 			/**1、检查是否有在使用**/
 			if(sipLineBaseInfo.getLineId()!=null && inUseUserList!=null && !inUseUserList.isEmpty()) {
 				//调用调度中心检查线路是否在使用
-				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId(),inUseUserList);
-				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果：",sipLineBaseInfo.getLineId(),inUsedFlag);
+				LineIsUseDto lineIsUseDto = new LineIsUseDto();
+				lineIsUseDto.setLineId(sipLineBaseInfo.getLineId());
+				lineIsUseDto.setUserIdList(inUseUserList);
+				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(lineIsUseDto);
+				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果:{}",sipLineBaseInfo.getLineId(),inUsedFlag);
 				if(inUsedFlag.getBody().booleanValue()) {
 					//在使用抛出异常，不能直接删除
 					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());

@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.BatchExportService;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.DateUtils;
@@ -24,7 +25,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.Boolean;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +41,7 @@ public class BatchExportController {
 
     private final Logger log = LoggerFactory.getLogger(BatchExportController.class);
 
-    private static ExecutorService executor = Executors.newCachedThreadPool() ;
+    public static ExecutorService executor = Executors.newFixedThreadPool(5) ;
 
     @Autowired
     BatchExportService batchExportService;
@@ -45,45 +49,20 @@ public class BatchExportController {
     CallDetailService callDetailService;
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
+    @Autowired
+    AuthService authService;
 
 
     @ApiOperation(value = "批量导出通话记录，从第几条开始，到多少条")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "phoneNum", value = "电话号码", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "durationMin", value = "拨打时长，最小值", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "durationMax", value = "拨打时长，最大值", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "billSecMin", value = "接听时长，最小值", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "billSecMax", value = "接听时长，最大值", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "accurateIntent", value = "意向标签，以逗号分隔", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "startCount", value = "从第几条记录开始，默认从第一条开始", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "endCount", value = "到多少条", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
-    })
     @Jurisdiction("callCenter_callHistory_batcnExportData")
     @PostMapping(value = "batchExportCallRecord")
     public String batchExportCallRecord(@RequestBody CallRecordListReq callRecordListReq,
                                         @RequestHeader Long userId, @RequestHeader Integer authLevel,
                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
 
-        log.info("get request 批量导出 getCallRecord，callRecordListReq[{}]",callRecordListReq);
+        log.info("get request 批量导出 batchExportCallRecord，callRecordListReq[{}]",callRecordListReq);
 
-        if(StringUtils.isBlank(callRecordListReq.getEndCount()) || StringUtils.isBlank(callRecordListReq.getStartCount()) ){
-            return "缺少参数!";
-        }
-        int exportCount = Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()+1;
-        if(exportCount>1000000){
-            return "不能超过一百万条!";
-        }else if(exportCount<=0){
-            return "起始值必须小于结束值!";
-        }
+        Boolean checkAll = callRecordListReq.getCheckAll();
 
         Date end = null;
         Date start = null;
@@ -94,9 +73,25 @@ public class BatchExportController {
             end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
         }
 
-        int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
-        if(totalNum>exportCount){
-            totalNum = exportCount;
+        int totalNum = 0;
+        if (checkAll == null || !checkAll) {//不是全选
+            List<String> callIds = callRecordListReq.getIncludeList();
+            if (callIds!=null && callIds.size()>0) {
+                totalNum = callIds.size();
+                callRecordListReq.setStartCount("1");
+                callRecordListReq.setEndCount(String.valueOf(totalNum));
+
+            }else{
+                return "缺少参数!";
+            }
+
+        }else{//全选
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+            callRecordListReq.setStartCount("1");
+            if(totalNum>1000000){
+                totalNum=1000000;
+            }
+            callRecordListReq.setEndCount(String.valueOf(totalNum));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();
@@ -104,6 +99,10 @@ public class BatchExportController {
         exportFileDto.setBusiType("03");
         exportFileDto.setFileType(1);
         exportFileDto.setTotalNum(totalNum);
+        exportFileDto.setUserId(String.valueOf(userId));
+        exportFileDto.setOrgCode(orgCode);
+        exportFileDto.setCreateName(authService.getUserName(userId));
+        exportFileDto.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         Result.ReturnData<ExportFileRecordVo> returnData = iDispatchPlanOut.addExportFile(exportFileDto);
         log.info("请求iDispatchPlanOut.addExportFile返回returnData[{}]",returnData);
         if(returnData.success){
@@ -115,11 +114,12 @@ public class BatchExportController {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("导出通话记录excel，线程开始啦,callRecordListReq[{}]",callRecordListReq);
                     batchExportService.generateExcelFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
                             callRecordListReq, isDesensitization, recordId);
                 }
             });
-            return  "已开始下载数据，可到下载页面查看！";
+            return  "已创建导出任务！";
 
         }
         return  "系统繁忙，请稍后重试！";
@@ -138,8 +138,8 @@ public class BatchExportController {
         sheet.setColumnView(7, 10);
         sheet.setColumnView(8, 10);
         sheet.setColumnView(9, 10);
-        sheet.setColumnView(10, 100);
-        sheet.setColumnView(11, 20);
+        sheet.setColumnView(10, 10);
+        sheet.setColumnView(11, 100);
         sheet.setColumnView(12, 20);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
@@ -211,15 +211,8 @@ public class BatchExportController {
 
         log.info("get request 批量导出音频文件 batchExportCallAudio，callRecordListReq[{}]",callRecordListReq);
 
-        if(StringUtils.isBlank(callRecordListReq.getEndCount()) || StringUtils.isBlank(callRecordListReq.getStartCount()) ){
-            return "缺少参数!";
-        }
-        int exportCount = Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()+1;
-        if(exportCount>1000000){
-            return "不能超过一百万条!";
-        }else if(exportCount<=0){
-            return "起始值必须小于结束值!";
-        }
+        int exportCount = 0;
+        Boolean checkAll = callRecordListReq.getCheckAll();
 
         Date end = null;
         Date start = null;
@@ -230,9 +223,25 @@ public class BatchExportController {
             end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
         }
 
-        int totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
-        if(totalNum>exportCount){
-            totalNum = exportCount;
+        int totalNum = 0;
+        if (checkAll == null || !checkAll) {//不是全选
+            List<String> callIds = callRecordListReq.getIncludeList();
+            if (callIds!=null && callIds.size()>0) {
+                totalNum = callIds.size();
+                callRecordListReq.setStartCount("1");
+                callRecordListReq.setEndCount(String.valueOf(totalNum));
+
+            }else{
+                return "缺少参数!";
+            }
+
+        }else{//全选
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+            callRecordListReq.setStartCount("1");
+            if(totalNum>1000000){
+                totalNum=1000000;
+            }
+            callRecordListReq.setEndCount(String.valueOf(totalNum));
         }
 
         ExportFileDto exportFileDto = new ExportFileDto();
@@ -240,6 +249,10 @@ public class BatchExportController {
         exportFileDto.setBusiType("03");
         exportFileDto.setFileType(1);
         exportFileDto.setTotalNum(totalNum);
+        exportFileDto.setUserId(String.valueOf(userId));
+        exportFileDto.setOrgCode(orgCode);
+        exportFileDto.setCreateName(authService.getUserName(userId));
+        exportFileDto.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         Result.ReturnData<ExportFileRecordVo> returnData = iDispatchPlanOut.addExportFile(exportFileDto);
         log.info("请求iDispatchPlanOut.addExportFile返回returnData[{}]",returnData);
         if(returnData.success){
@@ -251,11 +264,12 @@ public class BatchExportController {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    log.info("导出录音文件，线程开始啦,callRecordListReq[{}]",callRecordListReq);
                     batchExportService.generateAudioFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
                             callRecordListReq, isDesensitization, recordId);
                 }
             });
-            return  "已开始下载数据，可到下载页面查看！";
+            return  "已创建导出任务！";
 
         }
         return  "系统繁忙，请稍后重试！";

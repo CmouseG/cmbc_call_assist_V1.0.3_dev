@@ -9,28 +9,55 @@ public class QueryPlanListDto extends PageDto {
 
     private static final long serialVersionUID = 6684278788342403419L;
 
+    /**
+     * 号码
+     */
     private String phone;
 
     /**
      * 计划状态
      */
-    private String planStatus;
+    private List<Integer> planStatusList;
 
+    /**
+     * 操作开始时间
+     */
     private String startTime;
 
+    /**
+     * 操作结束时间
+     */
     private String endTime;
 
+    /**
+     * 批次
+     */
     private Integer batchId;
 
+    /**
+     * 重播标识
+     */
     private String replayType;
 
+    /**
+     * 计划开始日期
+     */
     private String startCallData;
 
+    /**
+     * 计划结束日期
+     */
     private String endCallData;
 
+    /**
+     * 所属者用户ID
+     */
     private String userId;
 
-    private String orgId;
+    /**
+     * 选择组织ID
+     */
+    private List<Integer> orgIdList;
 
     /**
      * 意向标签条件列表
@@ -45,12 +72,12 @@ public class QueryPlanListDto extends PageDto {
         this.phone = phone;
     }
 
-    public String getPlanStatus() {
-        return planStatus;
+    public List<Integer> getPlanStatusList() {
+        return planStatusList;
     }
 
-    public void setPlanStatus(String planStatus) {
-        this.planStatus = planStatus;
+    public void setPlanStatusList(List<Integer> planStatusList) {
+        this.planStatusList = planStatusList;
     }
 
     public String getStartTime() {
@@ -117,11 +144,11 @@ public class QueryPlanListDto extends PageDto {
         this.resultList = resultList;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public List<Integer> getOrgIdList() {
+        return orgIdList;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setOrgIdList(List<Integer> orgIdList) {
+        this.orgIdList = orgIdList;
     }
 }

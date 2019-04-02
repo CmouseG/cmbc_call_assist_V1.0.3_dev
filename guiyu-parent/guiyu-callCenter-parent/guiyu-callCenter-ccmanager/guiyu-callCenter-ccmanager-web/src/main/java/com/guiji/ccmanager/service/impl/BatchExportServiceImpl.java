@@ -43,10 +43,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * author:liyang
@@ -87,6 +84,15 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
+        if(callRecordListReq.getCheckAll()!=null &&callRecordListReq.getCheckAll() &&
+                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+            List<String> list = callRecordListReq.getExcludeList();
+            List<BigInteger> notInList = new ArrayList<>();
+            for(String callId :list){
+                notInList.add(new BigInteger(callId));
+            }
+            callOutPlanQueryEntity.setNotInList(notInList);
+        }
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), null);
 
         return callOutPlanMapper.countByExample(example);
@@ -118,7 +124,7 @@ public class BatchExportServiceImpl implements BatchExportService {
         parentDir.mkdir();
 
         for (int i = 1; i <= excelCount; i++) {
-
+            log.info("第[{}]个excel开始生产",i);
             List<BigInteger> idList;
             if (i == excelCount) {
                 idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
@@ -136,6 +142,9 @@ public class BatchExportServiceImpl implements BatchExportService {
                 } catch (Exception e) {
                     log.error("生成excel文件出现异常", e);
                 }
+            }else{
+                log.info("没有数据了，跳出循环");
+                break;
             }
         }
 
@@ -239,6 +248,25 @@ public class BatchExportServiceImpl implements BatchExportService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setAuthLevel(authLevel);
+        if(callRecordListReq.getCheckAll()!=null && callRecordListReq.getCheckAll() &&
+                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+            List<String> list = callRecordListReq.getExcludeList();
+            List<BigInteger> notInList = new ArrayList<>();
+            for(String callId :list){
+               notInList.add(new BigInteger(callId));
+            }
+            callOutPlanQueryEntity.setNotInList(notInList);
+        }
+        if(callRecordListReq.getCheckAll()==null || !callRecordListReq.getCheckAll()){
+            List<String> list = callRecordListReq.getIncludeList();
+            List<BigInteger> inList = new ArrayList<>();
+            for(String callId :list){
+                inList.add(new BigInteger(callId));
+            }
+            callOutPlanQueryEntity.setInList(inList);
+
+        }
+
         CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), minId);
 
         int limitStart = 0;
@@ -246,7 +274,7 @@ public class BatchExportServiceImpl implements BatchExportService {
             String startCount = callRecordListReq.getStartCount();
             if (StringUtils.isNotBlank(startCount)) {
                 int startInt = Integer.valueOf(startCount);
-                limitStart = startInt > 0 ? startInt - 1 : startInt;
+                limitStart = startInt > 0 ? startInt - 1 : 0;
             }
         }
 
@@ -265,28 +293,44 @@ public class BatchExportServiceImpl implements BatchExportService {
         return listIds;
     }
 
-    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity, String queryUser, BigInteger minId) {
+    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity,String queryUser, BigInteger minId) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
+        getCriteria(criteria, callOutPlanQueryEntity, queryUser,minId, false);
+
+        long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
+        if(authService.isSeat(userId)){//具有人工坐席权限
+            try{
+                String userName = authService.getUserName(userId);
+                AgentExample agentExample = new AgentExample();
+                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+                List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+                Long agentId = listAgent.get(0).getUserId();
+                CallOutPlanExample.Criteria criteria2 = example.or();
+                criteria2.andAgentIdEqualTo(String.valueOf(agentId));
+                getCriteria(criteria2, callOutPlanQueryEntity, queryUser, minId,true);
+            }catch (Exception e){
+                log.error("人工坐席权限查询出现异常",e);
+            }
+
+        }
+
+        return example;
+    }
+
+    public CallOutPlanExample.Criteria getCriteria(CallOutPlanExample.Criteria criteria , CallOutPlanQueryEntity callOutPlanQueryEntity,
+                                                   String queryUser, BigInteger minId, boolean isSeat) {
         if (callOutPlanQueryEntity.getStartDate() != null) {
             criteria.andCreateTimeGreaterThan(callOutPlanQueryEntity.getStartDate());
         }
         if (callOutPlanQueryEntity.getEndDate() != null) {
             criteria.andCreateTimeLessThan(callOutPlanQueryEntity.getEndDate());
         }
-        long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
-        if (authService.isSeat(userId)) {//客服
-            String userName = authService.getUserName(userId);
-            AgentExample agentExample = new AgentExample();
-            agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
-            List<Agent> listAgent = agentMapper.selectByExample(agentExample);
-            Long agentId = listAgent.get(0).getUserId();
-            criteria.andAgentIdEqualTo(String.valueOf(agentId));
-        } else  if (callOutPlanQueryEntity.getAuthLevel() == 1) {
+        if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 1) {
             criteria.andCustomerIdEqualTo(Integer.valueOf(callOutPlanQueryEntity.getCustomerId()));
-        } else if (callOutPlanQueryEntity.getAuthLevel() == 2) {
+        } else if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 2) {
             criteria.andOrgCodeEqualTo(callOutPlanQueryEntity.getOrgCode());
-        } else if (callOutPlanQueryEntity.getAuthLevel() == 3) {
+        } else if (!isSeat && callOutPlanQueryEntity.getAuthLevel() == 3) {
             criteria.andOrgCodeLike(callOutPlanQueryEntity.getOrgCode() + "%");
         }
         if (StringUtils.isNotBlank(queryUser)) {
@@ -346,7 +390,13 @@ public class BatchExportServiceImpl implements BatchExportService {
         if (minId != null) {
             criteria.andCallIdLessThan(minId);
         }
-        return example;
+        if(callOutPlanQueryEntity.getNotInList()!=null && callOutPlanQueryEntity.getNotInList().size()>0){
+            criteria.andCallIdNotIn(callOutPlanQueryEntity.getNotInList());
+        }
+        if(callOutPlanQueryEntity.getInList()!=null && callOutPlanQueryEntity.getInList().size()>0){
+            criteria.andCallIdIn(callOutPlanQueryEntity.getInList());
+        }
+        return criteria;
     }
 
 

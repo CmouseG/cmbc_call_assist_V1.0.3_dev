@@ -1,12 +1,10 @@
 package com.guiji.botsentence.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import com.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import com.guiji.botsentence.dao.entity.BotPublishSentenceLogExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface BotPublishSentenceLogMapper {
     int countByExample(BotPublishSentenceLogExample example);

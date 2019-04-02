@@ -13,10 +13,10 @@ public class MessageSend implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "用户ID")
+    @ApiModelProperty(value = "用户ID，注意用户的业务必须传递用户id")
     private Long userId;
-    //传了orgCode将忽略掉userId字段
-    @ApiModelProperty(value = "企业orgCode,传了orgCode可以不传用户id。因为传用户id其实也是为了得到企业orgCode")
+    //userId字段如果传递，将忽略orgCode字段
+    @ApiModelProperty(value = "企业orgCode,整个组织的消息传递orgCode")
     private String orgCode;
 
     @ApiModelProperty(value = "通知类型")

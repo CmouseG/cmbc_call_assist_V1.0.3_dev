@@ -7,6 +7,7 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.util.ResHandler;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,13 +56,26 @@ public class GetApiServiceImpl implements GetApiService {
             result = resp.getBody();
         }*/
 
-        if(result == null)
-        {
+        if(result == null){
             result = new ArrayList<>();
+            result.add(orgId);
         }
-
-        result.add(orgId);
-
         return result;
+    }
+
+    @Override
+    public SysUser getUserById(String userId) {
+        logger.info("根据用户ID:{}查询企业组织",userId);
+        if(!StringUtils.isEmpty(userId)) {
+            SysUser user = null;
+            try {
+                user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
+            }catch (Exception e){
+                logger.error("", e);
+            }
+            return user;
+        }else{
+            return null;
+        }
     }
 }

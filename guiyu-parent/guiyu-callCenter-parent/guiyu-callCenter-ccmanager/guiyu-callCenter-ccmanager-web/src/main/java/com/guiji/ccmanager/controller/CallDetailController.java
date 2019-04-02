@@ -204,7 +204,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
         CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
         //修改状态为已读
-        if(!isSuperAdmin && !authService.isAgent(userId)){
+        if(!isSuperAdmin){
             if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
                 callDetailService.updateIsRead(callId);
             }

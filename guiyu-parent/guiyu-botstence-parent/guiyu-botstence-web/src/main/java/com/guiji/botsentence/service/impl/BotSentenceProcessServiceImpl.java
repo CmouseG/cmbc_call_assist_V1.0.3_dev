@@ -217,6 +217,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		String orgCode=data.getBody().getOrgCode();
 		String orgName=data.getBody().getOrgName();
 		
+		if(StringUtils.isNotBlank(paramVO.getOrgCode())) {
+			orgCode = paramVO.getOrgCode();
+			orgName = paramVO.getOrgName();
+		}
+		
+		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
 		if(null == paramVO || StringUtils.isBlank(paramVO.getProcessId())) {
@@ -4729,70 +4735,93 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryTradeListByTemplateIdList(List<String> templateIdList) {
-		List<String> tradeIdList = new ArrayList<>();
-		/*for(String temp : templateIdList) {
-			BotSentenceTemplateExample example = new BotSentenceTemplateExample();
-			example.createCriteria().andTemplateIdEqualTo(temp);
-			List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(example);
-			if(null != list && list.size() > 0) {
-				BotSentenceTemplate process = list.get(0);
-				String industryId = process.getIndustryId();
-				BotSentenceTradeExample tradeExample = new BotSentenceTradeExample();
-				tradeExample.createCriteria().andIndustryIdEqualTo(industryId);
-				List<BotSentenceTrade> tradeList = botSentenceTradeMapper.selectByExample(tradeExample);
-				if(null != tradeList && tradeList.size() > 0) {
-					tradeIdList.add(tradeList.get(0).getParentId());
+		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
+		
+		List<String> parentIndustryIdList = new ArrayList<>();
+		List<String> industryIdList2 = new ArrayList<>();
+		List<String> industryIdList3 = new ArrayList<>();
+		
+		if(null == templateIdList || templateIdList.size() == 0) {
+			return null;
+		}
+		for(String templateId : templateIdList) {
+			//根据模板获取行业
+			BotSentenceTemplate template = botSentenceTemplateService.getBotSentenceTemplateByTemplateId(templateId);
+			if(null != template) {
+				//获取一级行业
+				if(!parentIndustryIdList.contains(template.getIndustryId().substring(0, 2))) {
+					parentIndustryIdList.add(template.getIndustryId().substring(0, 2));
+				}
+				//获取二级行业
+				if(!industryIdList2.contains(template.getIndustryId().substring(0, 4))) {
+					industryIdList2.add(template.getIndustryId().substring(0, 4));
+				}
+				//获取三级行业
+				if(!industryIdList3.contains(template.getIndustryId())) {
+					industryIdList3.add(template.getIndustryId());
 				}
 			}
-		}*/
+		}
 		
-		tradeIdList = botSentenceTradeExtMapper.queryParentIdListByTemplateIdList(templateIdList);
 		
-		if(null != tradeIdList && tradeIdList.size() > 0) {
-			List<BotSentenceTemplateTradeVO> result =  this.queryTradeListByTradeIdList(tradeIdList);
+		for(String industryId : parentIndustryIdList) {
+			//获取上级行业
+			BotSentenceTrade parentTrade = getBotSentenceTrade(industryId);
 			
-			if(null != result && result.size() > 0) {
-				for(BotSentenceTemplateTradeVO trade : result) {
-					if(null != trade.getChildren()) {
-						List<BotSentenceTemplateTradeVO> trade1List = trade.getChildren();
-						for(int j = trade1List.size()-1 ; j >= 0 ; j--) {
-							BotSentenceTemplateTradeVO trade1 = trade1List.get(j);
-						//for(BotSentenceTemplateTradeVO trade1 : trade.getChildren()) {
-							if(null != trade1.getChildren()) {
-								List<BotSentenceTemplateTradeVO> trade2List = trade1.getChildren();
-								for(int i = trade2List.size()-1 ; i >= 0 ; i--) {
-									//查询第3级行业下属的模板
-									BotSentenceTemplateTradeVO trade2 = trade2List.get(i);
-									List<BotSentenceTemplate> templateList = botSentenceTemplateService.queryTemplateByIndustry(trade2.getValue());
-									if(null != templateList && templateList.size() > 0) {
-										List<BotSentenceTemplateTradeVO> children = new ArrayList<>();
-										for(BotSentenceTemplate template : templateList) {
-											if(templateIdList.contains(template.getTemplateId())) {
-												BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
-												vo.setLabel(template.getTemplateName());
-												vo.setValue(template.getTemplateId());
-												children.add(vo);
-											}
-										}
-										trade2.setChildren(children);
-									}else {
-										//过滤第3级行业
-										trade2List.remove(i);
+			BotSentenceTemplateTradeVO parentVo = new BotSentenceTemplateTradeVO();
+			parentVo.setValue(parentTrade.getIndustryId());
+			parentVo.setLabel(parentTrade.getIndustryName());
+			parentVo.setLevel(parentTrade.getLevel());
+			//获取下级行业
+			List<BotSentenceTrade> trades = getChildIndustryList(parentTrade.getIndustryId());
+			if(null != trades && trades.size() > 0) {
+				List<BotSentenceTemplateTradeVO> tradeVOList = new ArrayList<>();
+				for(BotSentenceTrade trade : trades) {
+					if(!industryIdList2.contains(trade.getIndustryId())) {
+						continue;
+					}
+					BotSentenceTemplateTradeVO tradeVO = new BotSentenceTemplateTradeVO();
+					tradeVO.setValue(trade.getIndustryId());
+					tradeVO.setLabel(trade.getIndustryName());
+					tradeVO.setLevel(trade.getLevel());
+					List<BotSentenceTrade> childIndustryList = getChildIndustryList(trade.getIndustryId());
+					if(null != childIndustryList && childIndustryList.size() > 0) {
+						List<BotSentenceTemplateTradeVO> childVOList = new ArrayList<>();
+						for(BotSentenceTrade childTrade : childIndustryList) {
+							if(!industryIdList3.contains(childTrade.getIndustryId())) {
+								continue;
+							}
+							BotSentenceTemplateTradeVO childVo = new BotSentenceTemplateTradeVO();
+							childVo.setValue(childTrade.getIndustryId());
+							childVo.setLabel(childTrade.getIndustryName());
+							childVo.setLevel(childTrade.getLevel());
+							childVOList.add(childVo);
+							//查询模板
+							List<BotSentenceTemplate> templateList = botSentenceTemplateService.queryTemplateByIndustry(childTrade.getIndustryId());
+							if(null != templateList && templateList.size() > 0) {
+								List<BotSentenceTemplateTradeVO> templateVOList = new ArrayList<>();
+								for(BotSentenceTemplate temp : templateList) {
+									if(templateIdList.contains(temp.getTemplateId())) {
+										BotSentenceTemplate tempalte = botSentenceTemplateService.getBotSentenceTemplateByTemplateId(temp.getTemplateId());
+										BotSentenceTemplateTradeVO templateVo = new BotSentenceTemplateTradeVO();
+										templateVo.setValue(tempalte.getTemplateId());
+										templateVo.setLabel(tempalte.getTemplateName());
+										templateVOList.add(templateVo);
 									}
 								}
-							}
-							
-							if(!tradeIdList.contains(trade1.getValue())) {
-								//过滤第不包含的行业
-								trade1List.remove(j);
+								childVo.setChildren(templateVOList);
 							}
 						}
+						tradeVO.setChildren(childVOList);
 					}
+					tradeVOList.add(tradeVO);
 				}
+				parentVo.setChildren(tradeVOList);
 			}
-			return result;
+			results.add(parentVo);
 		}
-		return null;
+		return results;
+	
 	}
 
 	@Override

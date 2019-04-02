@@ -5,91 +5,34 @@ import com.guiji.ccmanager.service.AuthService;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
     IAuth iAuth;
 
-    /**
-     * 是否是代理商
-     * @param userId
-     * @return
-     */
-    @Override
-    public boolean isAgent(Long userId){
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getId()==2){
-                    return true;
-                }
-            }
-        }
-        return  false;
-    }
-
-    @Override
-    public boolean isCompanyAdmin(Long userId) {
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getId()==3){
-                    return true;
-                }
-            }
-        }
-        return  false;
-    }
-
-    @Override
-    public boolean isAgentOrCompanyAdmin(Long userId) {
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getId()==2 || sysRole.getId()==3){
-                    return true;
-                }
-            }
-        }
-        return  false;
-    }
 
     @Override
     public boolean isSeat(Long userId) {
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getName().equals("企业客服")){
-                    return true;
-                }
+        try {
+            Result.ReturnData<Boolean> returnData = iAuth.isAgentUser(userId.intValue());
+
+            if (returnData != null && returnData.getBody() != null) {
+                return returnData.getBody();
             }
+        }catch (Exception e){
+            log.error("调用接口isAgentUser出现异常",e);
         }
         return  false;
     }
 
-    @Override
-    public boolean isSeatOrAgent(Long userId) {
-        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
-        List<SysRole> listRole = result.getBody();
-        if(listRole!=null && listRole.size()>0){
-            for(SysRole sysRole:listRole){
-                if(sysRole.getId()==5 || sysRole.getId()==2){
-                    return true;
-                }
-            }
-        }
-        return  false;
-    }
 
     @Override
     public String getUserName(Long userId) {

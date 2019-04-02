@@ -33,6 +33,7 @@ import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.UserService;
 import com.guiji.auth.util.AuthUtil;
 import com.guiji.auth.util.DataLocalCacheUtil;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
@@ -83,7 +84,7 @@ public class UserController implements IAuth {
 		user.setOrgCode(param.getOrgCode());
 		user.setDelFlag(0);
 		if (service.existUserName(user)) {
-			throw new CheckConditionException("00010005");
+			throw new GuiyuException("用户名已存在！");
 		}
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		user.setCreateId(userId);

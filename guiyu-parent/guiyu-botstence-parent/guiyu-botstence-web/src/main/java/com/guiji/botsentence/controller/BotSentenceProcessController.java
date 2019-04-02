@@ -488,7 +488,7 @@ public class BotSentenceProcessController {
 	
 	
 	@RequestMapping(value="queryIndustryListByOrgCode")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@RequestHeader String orgCode) {
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@JsonParam String orgCode) {
 		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(orgCode,"template");
 		/*
 		if(null != list && list.size() > 0) {
@@ -542,7 +542,10 @@ public class BotSentenceProcessController {
 	
 	@RequestMapping(value="getTemplateById")
 	public ServerResult<List<BotSentenceProcess>> getTemplateById(String templateId){
-		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
+		BotSentenceProcess process = botSentenceProcessService.getBotsentenceProcessByTemplateId(templateId);
+		List<BotSentenceProcess> result = new ArrayList<>();
+		result.add(process);
+		//List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
 	}
 	

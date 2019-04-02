@@ -321,7 +321,7 @@
     WHERE r.del_flag = 0
       AND r.account_id = c.account_id
       <if test="orgCode != null and orgCode != ''">
-        AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+        AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
       </if>
       <if test="accountId != null">
         AND r.account_id = #{accountId}
@@ -353,7 +353,7 @@
     WHERE r.del_flag = 0
       AND r.account_id = c.account_id
       <if test="orgCode != null and orgCode != ''">
-        AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+        AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
       </if>
       <if test="accountId != null">
         AND r.account_id = #{accountId}

@@ -157,7 +157,13 @@ public class LineMarketController {
 	 * @return
 	 */
 	@RequestMapping(value = "/querySipLineBaseForPageByCondition", method = RequestMethod.POST)
-	public Result.ReturnData<Page<SipLineBaseInfoVO>> querySipLineBaseForPageByCondition(@RequestBody SipLineInfoQueryCondition condition){
+	public Result.ReturnData<Page<SipLineBaseInfoVO>> querySipLineBaseForPageByCondition(
+			@RequestBody SipLineInfoQueryCondition condition,
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode,
+			@RequestHeader Integer authLevel,
+			@RequestHeader Boolean isSuperAdmin){
+
 		//分页查询申请线路列表
 		if(condition==null) {
 			condition = new SipLineInfoQueryCondition();
@@ -166,6 +172,14 @@ public class LineMarketController {
 			//默认查询未生效和正常数据
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.INIT.getCode());add(SipLineStatusEnum.OK.getCode());}});
 		}
+
+		if(!isSuperAdmin) {
+			//如果数据查询权限是本人，那么查询本人线路数据，其他查询企业线路
+			condition.setCrtUser(userId.toString());
+			condition.setOrgCode(orgCode);
+			condition.setAuthLevel(authLevel);
+		}
+
 		Page<SipLineBaseInfo> sipLineBasePage = sipLineInfoService.querySipLineBaseForPageByCondition(condition);
 		Page<SipLineBaseInfoVO> rtnPage = new Page<SipLineBaseInfoVO>(condition.getPageNo(),sipLineBasePage.getTotalRecord(),this.baseLine2VO(sipLineBasePage.getRecords()));
 		return Result.ok(rtnPage);

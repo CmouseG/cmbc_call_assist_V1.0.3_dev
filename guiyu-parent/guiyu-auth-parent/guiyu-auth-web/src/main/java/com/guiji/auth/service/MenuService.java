@@ -87,6 +87,20 @@ public class MenuService {
 		if(privlegeAuth!=null) {
 			//查询当前用户菜单范围列表
 			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(privlegeAuth.getAuthType(), privlegeAuth.getAuthId());
+			if(!targetOrgCode.equals("1")){  // 非系统下角色
+				Iterator<SysMenu> iterator = allMenus.iterator();
+				while(iterator.hasNext()){
+					SysMenu menu = iterator.next();
+					String url = menu.getUrl();
+					if(url.equals("/botsentence/botsentence_approve") ||  // 话术审核
+					   url.equals("/botsentence/botsentence_mytemplate")||  // 行业模板
+					   url.equals("/botsentence/botsentence_history") ||  // 发布历史
+					   url.equals("/botsentence/botsentence_keywords") ||   // 关键词库
+					   url.equals("/botsentence/botsentence_approveKeywords")){  // 关键词审核
+						iterator.remove();
+					}
+				}
+			}
 			//拼装树形结构
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));

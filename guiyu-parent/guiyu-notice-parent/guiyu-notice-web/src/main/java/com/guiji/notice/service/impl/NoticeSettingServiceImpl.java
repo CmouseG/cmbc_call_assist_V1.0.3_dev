@@ -7,7 +7,6 @@ import com.guiji.ccmanager.api.INoticeLabel;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.notice.constant.NoticeExceptionEnum;
-import com.guiji.notice.controller.NoticeSettingController;
 import com.guiji.notice.dao.NoticeSettingExtMapper;
 import com.guiji.notice.dao.NoticeSettingMapper;
 import com.guiji.notice.dao.entity.NoticeSetting;
@@ -19,8 +18,6 @@ import com.guiji.notice.entity.User;
 import com.guiji.notice.service.AuthService;
 import com.guiji.notice.service.NoticeSettingService;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -59,7 +56,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         return noticeSettingMapper.selectByExample(example);
     }
 
-    private String getReceivers(String orgCode) {
+   /* private String getReceivers(String orgCode) {
         //查询改企业的所有管理员
         Result.ReturnData<List<SysUserRoleVo>> result = auth.getAllUserRoleByOrgCode(orgCode);
         List<SysUserRoleVo> userList = result.getBody();
@@ -82,7 +79,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             return receiver.substring(1);
         }
         return null;
-    }
+    }*/
 
     @Override
     @Transactional
@@ -105,10 +102,10 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             noticeSetting.setOrgCode(orgCode);
 
             //查询改企业的所有管理员
-            String receiver = getReceivers(orgCode);
-            if (receiver != null) {
-                noticeSetting.setReceivers(receiver);
-            }
+//            String receiver = getReceivers(orgCode);
+//            if (receiver != null) {
+//                noticeSetting.setReceivers(receiver);
+//            }
             noticeSetting.setCreateTime(date);
             list.add(noticeSetting);
         }
@@ -131,10 +128,10 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         noticeSetting.setIsSendMail(true);
 
         //查询改企业的所有管理员
-        String receiver = getReceivers(orgCode);
-        if (receiver != null) {
-            noticeSetting.setReceivers(receiver);
-        }
+//        String receiver = getReceivers(orgCode);
+//        if (receiver != null) {
+//            noticeSetting.setReceivers(receiver);
+//        }
         Date date = new Date();
         noticeSetting.setUpdateTime(date);
 
@@ -187,7 +184,9 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             Long sysUserId = sysUserRoleVo.getSysUser().getId();
             user.setId(sysUserId);
             user.setUsername(sysUserRoleVo.getSysUser().getUsername());
-            user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
+            if(sysUserRoleVo.getSysRoleList()!=null && sysUserRoleVo.getSysRoleList().size()>0){
+                user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
+            }
             returnList.add(user);
         }
         return returnList;

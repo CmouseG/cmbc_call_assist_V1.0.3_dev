@@ -64,6 +64,7 @@ public class ExportFileServiceImpl implements IExportFileService {
             record.setFileGenerateUrl(foUrl);
             record.setTotalNum(exportFileDto.getTotalNum());
             record.setUserId(exportFileDto.getUserId());            //操作者ID
+            record.setUserName(exportFileDto.getCreateName());    //所属者
             record.setOrgCode(exportFileDto.getOrgCode());          //操作者组织
             record.setCreateName(exportFileDto.getCreateName());    //所属者
             record.setCreateTime(exportFileDto.getCreateTime());    //创建日期

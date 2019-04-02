@@ -14,7 +14,7 @@ public class ResHandler {
     }
 
     public static <T> T getBotsentenceResObj(ServerResult<T> res){
-        if(null != res && "000000".equals(res.getRspCode())){
+        if(null != res && null != res.getData()){
             return res.getData();
         }else{
             return null;

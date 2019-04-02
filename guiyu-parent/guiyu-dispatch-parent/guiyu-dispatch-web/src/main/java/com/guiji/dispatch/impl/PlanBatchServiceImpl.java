@@ -99,7 +99,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
             optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                    optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
@@ -151,7 +152,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
             optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                    optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
@@ -203,7 +205,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
             optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                    optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
@@ -255,7 +258,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
             optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                    optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
@@ -333,7 +337,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         //获取权限
         Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
         optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-        optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+        optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                optPlanDto.getOrgIdList()
                 :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         int limit = 30000;
         //查询条件列表（注意，号码去重）
@@ -389,7 +394,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
             optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList())?optPlanDto.getOrgIdList()
+            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
+                    optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 

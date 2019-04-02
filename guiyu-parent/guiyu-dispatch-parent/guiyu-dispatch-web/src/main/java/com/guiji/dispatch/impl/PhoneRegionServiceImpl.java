@@ -57,6 +57,7 @@ public class PhoneRegionServiceImpl implements IPhoneRegionService{
 				log.error("手机号{}归属地查询,缓存中查不到,开始到本地DB中查询",phone7);
 				region = this.queryDbRegionByPhone7(phone7);
 				if(StrUtils.isEmpty(region)) {
+					/*
 					//3、从第三方查询
 					log.error("手机号{}归属地查询,本地DB中查不到,开始到第三方查询",phone7);
 					MobileFromUtil mobileFromUtil = new MobileFromUtil();
@@ -77,6 +78,7 @@ public class PhoneRegionServiceImpl implements IPhoneRegionService{
 						log.error("手机号{}归属地查询,第三方也查不到,返回异常。。",phoneNo);
 						this.saveError(phoneNo);
 					}
+					*/
 				}else {
 					//本地查询不为空，放入redis
 					Map<String,Object> map = new HashMap<String,Object>();

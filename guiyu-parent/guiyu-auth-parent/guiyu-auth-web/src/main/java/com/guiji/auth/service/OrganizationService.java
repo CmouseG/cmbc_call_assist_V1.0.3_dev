@@ -23,6 +23,7 @@ import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.IBotSentenceTradeService;
 import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.QueueSender;
@@ -146,8 +147,24 @@ public class OrganizationService {
 	@Transactional
 	public void update(SysOrganization record,Long updateUser){
 		
-		
-		
+		SysOrganization parentOrg = getParentOrg(record.getCode());
+		List<SysOrganization> brothers = queryBrotherOrg(record.getCode());
+		int i = 0;
+		for(SysOrganization org : brothers){
+			i += org.getRobot();
+		}
+		if(record.getRobot() + i > parentOrg.getRobot()){
+			throw new GuiyuException("配置机器人数之和超过父及企业！");
+		}
+		List<SysOrganization> children = queryChildrenOrg(record.getCode());
+		int j = 0;
+		for(SysOrganization org : children){
+			j += org.getRobot();
+		}
+		if(record.getRobot() < j)
+		{
+			throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+		}
 		
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
@@ -743,8 +760,7 @@ public class OrganizationService {
 		SysOrganization parentOrg = getParentOrg(orgCode);
 		List<SysOrganization> brothers = queryChildrenOrg(parentOrg.getCode());
 		Iterator<SysOrganization> iterator = brothers.iterator();
-		while(iterator.hasNext())
-		{
+		while(iterator.hasNext()){
 			SysOrganization org = iterator.next();
 			if(org.getCode().equals(orgCode)){
 				iterator.remove();

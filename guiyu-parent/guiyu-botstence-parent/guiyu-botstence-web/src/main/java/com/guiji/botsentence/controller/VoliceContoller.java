@@ -116,6 +116,7 @@ public class VoliceContoller {
 	@ResponseBody
 	public ServerResult<String> uploadOneVolice(MultipartFile multipartFile,@RequestParam("processId") String processId, @RequestParam("voliceId") String voliceId,@RequestParam("type") String type, @RequestHeader String userId){
 		try {
+			logger.info("上传单个录音文件...");
 			if(null != multipartFile && StringUtils.isNotBlank(voliceId)) {
 				String fileName = multipartFile.getOriginalFilename();
 				String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -129,6 +130,7 @@ public class VoliceContoller {
 				}
 				
 				String voliceUrl = null;
+				logger.info("准备上传录音 ...");
 				//InputStream inStream = multipartFile.getInputStream();
 				if(offline) {
 					voliceUrl = service.uploadOneVoliceOffline(processId, voliceId, multipartFile, type, userId);
@@ -146,7 +148,7 @@ public class VoliceContoller {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("上传单个录音文件异常...", e);
 		}
 		return ServerResult.createByError();
 	}

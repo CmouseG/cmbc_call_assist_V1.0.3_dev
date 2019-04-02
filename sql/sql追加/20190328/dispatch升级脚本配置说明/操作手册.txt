@@ -1,0 +1,7 @@
+操作步骤
+1、执行脚本
+
+2、在dispatch-web-application.yml文件最底下加入临时文件配置地址
+####临时目录
+file:
+  tmpPath: /apps/tmp/

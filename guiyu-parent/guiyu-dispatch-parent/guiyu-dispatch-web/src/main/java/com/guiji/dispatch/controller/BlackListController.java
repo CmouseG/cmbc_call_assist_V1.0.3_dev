@@ -118,7 +118,7 @@ public class BlackListController {
 
 		//过滤权限
 		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
-		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
 		queryBlackParam.setUserId(null != userId ?Integer.valueOf(userId):null);
 		queryBlackParam.setOrgCode(orgCode);
 		queryBlackParam.setAuthLevel(authLevel);

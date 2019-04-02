@@ -45,7 +45,7 @@ public class ExportFileController {
         }
         //权限过滤
         userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId);//获取用户ID
-        orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
+        orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
         queryDto.setUserId(userId);
         queryDto.setOrgCode(orgCode);
         queryDto.setAuthLevel(authLevel);

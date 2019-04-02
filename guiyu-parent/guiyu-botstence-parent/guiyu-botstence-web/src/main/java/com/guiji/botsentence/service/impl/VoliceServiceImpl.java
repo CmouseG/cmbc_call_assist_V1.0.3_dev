@@ -1769,6 +1769,7 @@ public class VoliceServiceImpl implements IVoliceService {
 	@Override
 	public String uploadOneVolice(String processId, String voliceId, MultipartFile multipartFile, String type, String userId) throws IOException {
 		File dir = new File(tempPath);
+		logger.info("临时目录: " + tempPath);
 		File file = File.createTempFile(voliceId + "-" + String.valueOf(System.currentTimeMillis()), ".wav", dir);
 		FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), file);
 		int times = 0;

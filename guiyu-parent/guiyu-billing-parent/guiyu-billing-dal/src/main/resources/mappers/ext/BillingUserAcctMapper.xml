@@ -329,6 +329,9 @@
       <if test="type != null">
         AND r.type = #{type}
       </if>
+      <if test="userId != null and userId != ''">
+        AND r.oper_user_id = #{userId}
+      </if>
       <if test="feeMode != null">
         AND r.fee_mode = #{feeMode}
       </if>
@@ -360,6 +363,9 @@
       </if>
       <if test="type != null">
         AND r.type = #{type}
+      </if>
+      <if test="userId != null and userId != ''">
+        AND r.oper_user_id = #{userId}
       </if>
       <if test="feeMode != null">
         AND r.fee_mode = #{feeMode}

@@ -45,10 +45,10 @@
                 <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                     AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
                 </if>
-                <if test="optPlanDto.userId != null">
+                <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                     AND p.user_id = #{optPlanDto.userId}
                 </if>
-                <if test="optPlanDto.phone != null">
+                <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                     AND p.phone = #{optPlanDto.phone}
                 </if>
                 <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -118,10 +118,10 @@
                 <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                     AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
                 </if>
-                <if test="optPlanDto.userId != null">
+                <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                     AND p.user_id = #{optPlanDto.userId}
                 </if>
-                <if test="optPlanDto.phone != null">
+                <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                     AND p.phone = #{optPlanDto.phone}
                 </if>
                 <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -154,7 +154,8 @@
                 gmt_modified = #{updTime}
             </set>
         WHERE is_del = 0
-            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            AND status_plan IN (${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()},
+                                ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()})
             AND plan_uuid IN
             <foreach collection="planUuidList" item="planUuid" open="(" close=")" separator="," >
                 #{planUuid}
@@ -174,7 +175,8 @@
                 gmt_modified = #{updTime}
             </set>
         WHERE is_del = 0
-            AND status_plan = ${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()}
+            AND status_plan IN (${@com.guiji.dispatch.enums.PlanStatusEnum@DOING.getStatus()},
+                                ${@com.guiji.dispatch.enums.PlanStatusEnum@SUSPEND.getStatus()})
             <if test="optPlanDto != null">
                 <if test="optPlanDto.orgIdList != null">
                     AND p.org_id IN
@@ -191,10 +193,10 @@
                 <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                     AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
                 </if>
-                <if test="optPlanDto.userId != null">
+                <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                     AND p.user_id = #{optPlanDto.userId}
                 </if>
-                <if test="optPlanDto.phone != null">
+                <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                     AND p.phone = #{optPlanDto.phone}
                 </if>
                 <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -264,10 +266,10 @@
             <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                 AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
             </if>
-            <if test="optPlanDto.userId != null">
+            <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                 AND p.user_id = #{optPlanDto.userId}
             </if>
-            <if test="optPlanDto.phone != null">
+            <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                 AND p.phone = #{optPlanDto.phone}
             </if>
             <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -316,10 +318,10 @@
             <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                 AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
             </if>
-            <if test="optPlanDto.userId != null">
+            <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                 AND p.user_id = #{optPlanDto.userId}
             </if>
-            <if test="optPlanDto.phone != null">
+            <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                 AND p.phone = #{optPlanDto.phone}
             </if>
             <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -455,10 +457,10 @@
             <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                 AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
             </if>
-            <if test="optPlanDto.userId != null">
+            <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                 AND p.user_id = #{optPlanDto.userId}
             </if>
-            <if test="optPlanDto.phone != null">
+            <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                 AND p.phone = #{optPlanDto.phone}
             </if>
             <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
@@ -504,10 +506,10 @@
             <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
                 AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
             </if>
-            <if test="optPlanDto.userId != null">
+            <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
                 AND p.user_id = #{optPlanDto.userId}
             </if>
-            <if test="optPlanDto.phone != null">
+            <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
                 AND p.phone = #{optPlanDto.phone}
             </if>
             <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">

@@ -458,13 +458,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId) {
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel) {
 		// 批量信息
 		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
-		if (!isSuperAdmin) {
-			// createCriteria.andUserIdEqualTo(userId.intValue());
-			createCriteria.andOrgCodeLike(orgCode + "%");
+		//权限过滤
+		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
+		String operOrgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
+		if(AuthLevelEnum.ORG.getLevel() == authLevel){
+			createCriteria.andOrgCodeEqualTo(operOrgCode);
+		}else if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
+			createCriteria.andOrgCodeLike(operOrgCode);
+		}
+		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
+			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
 
 		createCriteria.andStatusShowEqualTo(Constant.BATCH_STATUS_SHOW);

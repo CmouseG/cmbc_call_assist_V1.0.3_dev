@@ -230,7 +230,7 @@ public class BlackListServiceImpl implements IBlackListService {
 		page.setPageSize((pagesize));
 
 		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
-		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, operUserId, orgCode);//获取企业组织编码
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
 
 		QueryBlackListDto blackParam = new QueryBlackListDto();
 		blackParam.setPhone(phone);

@@ -17,6 +17,12 @@ public class GetAuthUtil {
     @Autowired
     private GetApiService getApiService;
 
+    /**
+     * 根据权限等级，如果不是本人，则返回null
+     * @param authLevel
+     * @param userId
+     * @return
+     */
     public String getUserIdByAuthLevel(Integer authLevel, String userId){
         if(null != authLevel && AuthLevelEnum.USER.getLevel() == authLevel){
         //    return null != userId ? userId : AuthConstant.superUserId;
@@ -26,7 +32,14 @@ public class GetAuthUtil {
         }
     }
 
-    public String getOrgCodeByAuthLevel(Integer authLevel, String userId, String orgCode){
+    /**
+     * 根据权限等级，不是本组织或者本组织以下，则返回null
+     * @param authLevel
+     * @param userId
+     * @param orgCode
+     * @return
+     */
+    public String getOrgCodeByAuthLevel(Integer authLevel, String orgCode){
         if(null != authLevel && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
             /*if(StringUtils.isEmpty(orgCode)){
                 //获取用户ID

@@ -468,7 +468,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if(AuthLevelEnum.ORG.getLevel() == authLevel){
 			createCriteria.andOrgCodeEqualTo(operOrgCode);
 		}else if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
-			createCriteria.andOrgCodeLike(operOrgCode);
+			createCriteria.andOrgCodeLike(operOrgCode + "%");
 		}
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));

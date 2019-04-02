@@ -331,6 +331,10 @@ public class UserController implements IAuth {
 		service.userUnBindWechat(userId);
 	}
 
-
-
+	@Override
+	@RequestMapping("/user/getUserByOpenId")
+	public ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("openId") String openId)
+	{
+		return Result.ok(service.getUserByOpenId(openId));
+	}
 }

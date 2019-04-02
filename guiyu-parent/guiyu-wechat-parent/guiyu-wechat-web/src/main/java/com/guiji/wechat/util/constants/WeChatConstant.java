@@ -2,6 +2,9 @@ package com.guiji.wechat.util.constants;
 
 public class WeChatConstant {
 
+    private WeChatConstant() {
+    }
+
     public static final String DEFAULT_SUCCESS = "success";
 
     public static final String DEFAULT_SUBSCRIBE_REPLY = "欢迎关注硅语电话机器人，智能、高效、快捷，在此过程中，我们将竭诚为您服务。";
@@ -39,4 +42,10 @@ public class WeChatConstant {
     public static final String TEMPLATE_PARAM_MINI_PROGRAM = "miniprogram";
 
     public static final String TEMPLATE_PARAM_DATA = "data";
+
+    public static final String PARAM_SCOPE = "scope";
+
+    public static final String PARAM_STATE = "state";
+
+    public static final String PARAM_CODE = "code";
 }

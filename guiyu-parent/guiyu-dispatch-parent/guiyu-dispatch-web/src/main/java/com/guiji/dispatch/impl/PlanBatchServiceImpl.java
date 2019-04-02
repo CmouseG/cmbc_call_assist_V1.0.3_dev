@@ -494,10 +494,13 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         try {
             //生成execl
             execlFile = this.generateDownloadExcel(planList, 1);
+            logger.info(">>>>>>>>>>>>>>生成execl success");
             //压缩文件
             zipFile = this.generateZipFile(execlFile);
+            logger.info(">>>>>>>>>>>>>>生成zip success");
             //上传压缩文件
-        //    resFile = this.uploadFile(zipFile);
+            resFile = this.uploadFile(zipFile);
+            logger.info(">>>>>>>>>>>>>>上传 success :{}", JsonUtils.bean2Json(resFile));
             bool = true;
         } catch (WriteException e) {
             e.printStackTrace();

@@ -144,6 +144,9 @@ public class OrganizationService {
 	
 	@Transactional
 	public void update(SysOrganization record,Long updateUser,String orgCode){
+		
+		
+		
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
 			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
@@ -711,5 +714,22 @@ public class OrganizationService {
 	public List<Map> getSubOrgByAuthLevel(Long userId, Integer authLevel, String orgCode)
 	{
 		return sysOrganizationMapper.getSubOrgByAuthLevel(userId,authLevel,orgCode);
+	}
+	
+	/**
+	 * 获取上一级组织
+	 */
+	public SysOrganization getParentOrg(String orgCode)
+	{
+		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
+		return this.getOrgByCode(parentOrgCode);
+	}
+	
+	/**
+	 * 获取所有下一级组织
+	 */
+	public List<SysOrganization> queryChildrenOrg(String orgCode)
+	{
+		return sysOrganizationMapper.queryChildrenOrg(orgCode);
 	}
 }

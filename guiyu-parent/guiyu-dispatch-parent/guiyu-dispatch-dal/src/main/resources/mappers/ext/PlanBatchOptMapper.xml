@@ -336,6 +336,12 @@
                     #{result}
                 </foreach>
             </if>
+            <if test="optPlanDto.checkPlanUuid != null and optPlanDto.checkPlanUuid.size()>0">
+                AND p.plan_uuid IN
+                <foreach collection="optPlanDto.checkPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                    #{planUuid}
+                </foreach>
+            </if>
             <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
                 AND p.plan_uuid NOT IN
                 <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator="," >

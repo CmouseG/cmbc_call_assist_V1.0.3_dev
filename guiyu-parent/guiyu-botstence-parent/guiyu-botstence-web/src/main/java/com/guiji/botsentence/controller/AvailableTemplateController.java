@@ -34,8 +34,8 @@ public class AvailableTemplateController {
 	 * 企业可用话术
 	 */
 	@RequestMapping("getOrgAvailableTemplate")
-	public ServerResult getOrgAvailableTemplate(@RequestHeader Long userId){
-		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId);
+	public ServerResult getOrgAvailableTemplate(@RequestHeader Long userId, @RequestHeader Integer authLevel){
+		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId, authLevel);
 		return ServerResult.createBySuccess(list);
 	}
 	
@@ -43,8 +43,8 @@ public class AvailableTemplateController {
 	 * 企业可用话术
 	 */
 	@RequestMapping("getAdminOrgAvailableTemplate")
-	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId){
-		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId);
+	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId, @RequestHeader Integer authLevel){
+		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId, authLevel);
 		return ServerResult.createBySuccess(list);
 	}
 

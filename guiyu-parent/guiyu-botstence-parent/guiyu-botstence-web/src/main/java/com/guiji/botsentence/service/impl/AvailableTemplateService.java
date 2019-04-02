@@ -34,12 +34,20 @@ public class AvailableTemplateService {
 	/**
 	 * 企业可用话术
 	 */
-	public List<BotAvailableTemplate>  getOrgAvailableTemplate(Long userId){
+	public List<BotAvailableTemplate>  getOrgAvailableTemplate(Long userId, int authLevel){
 		ReturnData<SysOrganization> data=iAuth.getOrgByUserId(userId);
-		//ReturnData<SysUser> data=iAuth.getUserById(userId);
 		String orgCode=data.getBody().getCode();
 		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
-		example.createCriteria().andOrgCodeLike(orgCode+"%");
+		//example.createCriteria().andOrgCodeLike(orgCode+"%");
+		
+		if(1 == authLevel) {//查询本人
+			example.createCriteria().andUserIdEqualTo(userId);
+		}else if(2 == authLevel) {//查询本组织
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(3 == authLevel) {//查询本组织及以下
+			example.createCriteria().andOrgCodeLike(orgCode+"%");
+		}
+		
 		List<BotAvailableTemplate> list = botAvailableTemplateMapper.selectByExample(example);
 		if(null != list && list.size() > 0) {
 			for(BotAvailableTemplate template : list) {

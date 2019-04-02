@@ -1,7 +1,7 @@
 操作步骤
 1、执行脚本dispatch-plan_table.sql
 
-2、在dispatch-web-application.yml文件最底下加入如下临时文件配置地址
+2、在dispatch-web-application.yml文件最底部加入如下临时文件配置地址
 ####临时目录
 file:
   tmpPath: /apps/tmp/

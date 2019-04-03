@@ -1,5 +1,7 @@
 USE guiyu_dispatch;
 
+ALTER TABLE dispatch_plan
+MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';
 
 ALTER TABLE dispatch_plan_0
 MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';
@@ -8,7 +10,4 @@ ALTER TABLE dispatch_plan_1
 MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';
 
 ALTER TABLE dispatch_plan_2
-MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';
-
-ALTER TABLE dispatch_plan
 MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';

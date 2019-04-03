@@ -170,8 +170,7 @@ public class UserController implements IAuth {
 
 	@Jurisdiction("personCenter_myselfInfo_basicInfo_revisePwd")
 	@RequestMapping("/user/changePassword")
-	public void changePassword(String newPass, String oldPass, @RequestHeader Long userId)
-			throws CheckConditionException {
+	public void changePassword(String newPass, String oldPass, @RequestHeader Long userId) throws Exception {
 		service.changePassword(newPass, oldPass, userId);
 	}
 

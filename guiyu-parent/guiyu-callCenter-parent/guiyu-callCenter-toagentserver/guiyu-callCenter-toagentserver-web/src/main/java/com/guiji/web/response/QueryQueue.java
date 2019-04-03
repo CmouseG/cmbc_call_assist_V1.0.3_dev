@@ -11,5 +11,6 @@ public class QueryQueue {
     private Integer lineId;
     private String lineName;
     private Integer agentCount;
+    private String orgName;
 
 }

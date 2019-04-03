@@ -68,8 +68,9 @@ public class DispatchPlanController {
 	@PostMapping("queryDispatchPlanBatch")
 	@Log(info = "查询批量信息")
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer orgId) {
-		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin, orgCode, orgId);
+			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer orgId,
+			@RequestHeader Integer authLevel) {
+		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin, orgCode, orgId, authLevel);
 	}
 
 	/**

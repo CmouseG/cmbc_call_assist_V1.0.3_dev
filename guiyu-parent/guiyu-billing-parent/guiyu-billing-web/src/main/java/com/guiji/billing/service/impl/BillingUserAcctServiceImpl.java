@@ -475,7 +475,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }else if(null == beginDate && null != endDate){
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
-        return billingUserAcctMapper.queryUserRechargeTotal(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+        return billingUserAcctMapper.queryUserRechargeTotal(accountId, orgCode, userId, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
                 beginDate, endDate, page);
     }
 
@@ -497,7 +497,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }else if(null == beginDate && null != endDate){
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
-        return billingUserAcctMapper.queryUserRechargeCount(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+        return billingUserAcctMapper.queryUserRechargeCount(accountId, orgCode, userId, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
                 beginDate, endDate);
     }
 

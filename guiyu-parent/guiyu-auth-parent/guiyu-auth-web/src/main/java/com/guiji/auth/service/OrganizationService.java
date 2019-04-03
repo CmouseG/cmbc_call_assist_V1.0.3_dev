@@ -3,6 +3,7 @@ package com.guiji.auth.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.IBotSentenceTradeService;
 import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.QueueSender;
@@ -125,7 +127,7 @@ public class OrganizationService {
 		role.setSuperAdmin(1);//接口增加的角色都是非超级管理员，只有初始化才是
 		mapper.insert(role);
 		//为新增的角色赋默认组织的菜单
-		privilegeService.savePrivlege(userId.intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+		privilegeService.savePrivlege(userId.intValue(), subCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 		try {
 			noticeSetting.addNoticeSetting(record.getCode());
 		} catch (Exception e) {
@@ -143,7 +145,27 @@ public class OrganizationService {
 	}
 	
 	@Transactional
-	public void update(SysOrganization record,Long updateUser,String orgCode){
+	public void update(SysOrganization record,Long updateUser){
+		
+		SysOrganization parentOrg = getParentOrg(record.getCode());
+		List<SysOrganization> brothers = queryBrotherOrg(record.getCode());
+		int i = 0;
+		for(SysOrganization org : brothers){
+			i += org.getRobot();
+		}
+		if(record.getRobot() + i > parentOrg.getRobot()){
+			throw new GuiyuException("配置机器人数之和超过父及企业！");
+		}
+		List<SysOrganization> children = queryChildrenOrg(record.getCode());
+		int j = 0;
+		for(SysOrganization org : children){
+			j += org.getRobot();
+		}
+		if(record.getRobot() < j)
+		{
+			throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+		}
+		
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
 			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
@@ -151,11 +173,11 @@ public class OrganizationService {
 			}
 			if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
 				//给企业绑定行业资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), orgCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
 			}
 			if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
 				//给企业绑定菜单资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), orgCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 			}
 		}else {
 			//系统不需要通过前端绑定行业/菜单资源
@@ -282,9 +304,16 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<SysOrganization> getAuthOrgList(String orgCode){
-		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andCodeLike(orgCode+"%");
+	public List<SysOrganization> getAuthOrgList(Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
@@ -704,5 +733,39 @@ public class OrganizationService {
 	public List<Map> getSubOrgByAuthLevel(Long userId, Integer authLevel, String orgCode)
 	{
 		return sysOrganizationMapper.getSubOrgByAuthLevel(userId,authLevel,orgCode);
+	}
+	
+	/**
+	 * 获取上一级组织
+	 */
+	public SysOrganization getParentOrg(String orgCode)
+	{
+		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
+		return this.getOrgByCode(parentOrgCode);
+	}
+	
+	/**
+	 * 获取所有下一级组织
+	 */
+	public List<SysOrganization> queryChildrenOrg(String orgCode)
+	{
+		return sysOrganizationMapper.queryChildrenOrg(orgCode);
+	}
+	
+	/**
+	 * 获取兄弟（同级）组织
+	 */
+	public List<SysOrganization> queryBrotherOrg(String orgCode)
+	{
+		SysOrganization parentOrg = getParentOrg(orgCode);
+		List<SysOrganization> brothers = queryChildrenOrg(parentOrg.getCode());
+		Iterator<SysOrganization> iterator = brothers.iterator();
+		while(iterator.hasNext()){
+			SysOrganization org = iterator.next();
+			if(org.getCode().equals(orgCode)){
+				iterator.remove();
+			}
+		}
+		return brothers;
 	}
 }

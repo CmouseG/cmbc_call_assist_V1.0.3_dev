@@ -458,13 +458,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId) {
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel) {
 		// 批量信息
 		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
-		if (!isSuperAdmin) {
-			// createCriteria.andUserIdEqualTo(userId.intValue());
-			createCriteria.andOrgCodeLike(orgCode + "%");
+		//权限过滤
+		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
+		String operOrgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
+		if(AuthLevelEnum.ORG.getLevel() == authLevel){
+			createCriteria.andOrgCodeEqualTo(operOrgCode);
+		}else if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
+			createCriteria.andOrgCodeLike(operOrgCode + "%");
+		}
+		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
+			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
 
 		createCriteria.andStatusShowEqualTo(Constant.BATCH_STATUS_SHOW);
@@ -1163,9 +1170,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 	  String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 	  //String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-	  List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+	  List<Integer> orgIds = (null != queryPlanDto.getOrgIdList() && queryPlanDto.getOrgIdList().size()>0)?
+			  queryPlanDto.getOrgIdList()
 			  :getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
-	  createCriteria.andOrgIdIn(orgIds);
+	  if(null != orgIds && orgIds.size()>0) {
+		  createCriteria.andOrgIdIn(orgIds);
+	  }
 	  if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人
 		  createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 	  }
@@ -1311,7 +1321,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList() && queryPlanDto.getOrgIdList().size()>0)?
+				queryPlanDto.getOrgIdList()
 				:getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
 		createCriteria.andOrgIdIn(orgIds);
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){
@@ -1386,7 +1397,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
 		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
-		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList())?queryPlanDto.getOrgIdList()
+		List<Integer> orgIds = (null != queryPlanDto.getOrgIdList() && queryPlanDto.getOrgIdList().size()>0)?
+				queryPlanDto.getOrgIdList()
 				:getAuthUtil.getOrgIdsByAuthLevel(authLevel, queryPlanDto.getOperOrgId());//获取组织ID
 		createCriteria.andOrgIdIn(orgIds);
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){//本人

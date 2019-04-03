@@ -1,16 +1,7 @@
 package com.guiji.clm.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.guiji.clm.constant.ClmConstants;
 import com.guiji.clm.dao.entity.SipLineApply;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
@@ -19,32 +10,22 @@ import com.guiji.clm.dao.entity.SipLineShare;
 import com.guiji.clm.dao.entity.ext.SipLineQuery;
 import com.guiji.clm.dao.ext.SipLineExclusiveMapperExt;
 import com.guiji.clm.enm.SipLineStatusEnum;
-import com.guiji.clm.service.sip.SipLineApplyService;
-import com.guiji.clm.service.sip.SipLineExclusiveService;
-import com.guiji.clm.service.sip.SipLineInfoService;
-import com.guiji.clm.service.sip.SipLineManager;
-import com.guiji.clm.service.sip.SipLineShareService;
+import com.guiji.clm.service.sip.*;
 import com.guiji.clm.util.AreaDictUtil;
 import com.guiji.clm.util.DataLocalCacheUtil;
-import com.guiji.clm.vo.SipLineApplyQueryCondition;
-import com.guiji.clm.vo.SipLineApplyVO;
-import com.guiji.clm.vo.SipLineBaseInfoVO;
-import com.guiji.clm.vo.SipLineExclusiveQueryCondition;
-import com.guiji.clm.vo.SipLineExclusiveVO;
-import com.guiji.clm.vo.SipLineInfoQueryCondition;
-import com.guiji.clm.vo.SipLineShareQueryCondition;
-import com.guiji.clm.vo.SipLineShareVO;
+import com.guiji.clm.vo.*;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
-
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
 * @Description: 线路市场Controller 
@@ -248,7 +229,14 @@ public class LineMarketController {
 	@RequestMapping(value = "/queryApplyLinePage", method = RequestMethod.POST)
 	public Result.ReturnData<Page<SipLineApplyVO>> queryApplyLinePage(
 			@RequestBody SipLineApplyQueryCondition condition,
-			@RequestHeader Long userId){
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode,
+			@RequestHeader Integer authLevel){
+
+		condition.setApplyUserId(userId.toString());
+		condition.setApplyOrgCode(orgCode);
+		condition.setAuthLevel(authLevel);
+
 		Page<SipLineApply> page = sipLineApplyService.querySipLineApplyForPageByCondition(condition);
 		Page<SipLineApplyVO> rtnPage = new Page<SipLineApplyVO>(page.getPageNo(),page.getTotalRecord(),this.applyLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);

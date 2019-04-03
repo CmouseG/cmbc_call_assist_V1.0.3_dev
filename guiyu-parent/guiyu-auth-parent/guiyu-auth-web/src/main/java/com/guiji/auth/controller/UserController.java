@@ -286,6 +286,15 @@ public class UserController implements IAuth {
 	public ReturnData<List<SysUser>> getAllUserByOrgCode(@RequestParam("orgCode") String orgCode) {
 		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCode(orgCode));
 	}
+	
+	/**
+	 * 通过userId，查询其组织或者下级组织的所有用户列表
+	 */
+	@RequestMapping("/user/getAllUserByUserId")
+	public ReturnData<List<SysUser>> getAllUserByUserId(@RequestParam("userId") Long userId)
+	{
+		return Result.ok(service.getAllUserByUserId(userId));
+	}
 
 	@RequestMapping("/user/getAllUserRoleByOrgCode")
 	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode) {

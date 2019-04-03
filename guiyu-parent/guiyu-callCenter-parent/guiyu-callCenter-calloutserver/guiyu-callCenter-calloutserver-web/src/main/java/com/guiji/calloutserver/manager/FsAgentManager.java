@@ -52,7 +52,7 @@ public interface FsAgentManager {
      * 获取缓存的录音文件时长
      * @return
      */
-    Double getWavDruation(String tempId, String filename, String uuid);
+    double getWavDruation(String tempId, String filename, String uuid);
 
     /**
      * 下载tts语音合成文件

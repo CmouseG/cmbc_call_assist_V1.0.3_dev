@@ -122,6 +122,8 @@ public class FsBotHandler {
                     callPlanUpdate.setReason("606");
                 }
                 callOutPlanService.update(callPlanUpdate);
+                //挂断电话
+                localFsServer.hangup(uuid);
 //                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                 return;
             }

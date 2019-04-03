@@ -77,4 +77,6 @@ public interface SysUserMapper {
     void addUserExt(@Param("userId")Long userId);
 
     SysUserExt getSysUserExtByUserId(Long id);
+
+	Integer getAuthLevelByUserId(Long userId);
 }

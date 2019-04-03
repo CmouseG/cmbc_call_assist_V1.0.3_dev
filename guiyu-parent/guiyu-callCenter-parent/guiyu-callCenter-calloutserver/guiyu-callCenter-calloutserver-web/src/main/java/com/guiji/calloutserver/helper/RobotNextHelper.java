@@ -140,8 +140,8 @@ public class RobotNextHelper {
                                 aiResponse.setKeyWords(sellbotResponse.getKeywords());
                                 aiResponse.setWordSegmentResult(sellbotResponse.getWord_segment_result());
 
-                                Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
-                                Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+                                double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
+//                                Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
                                 aiResponse.setWavDuration(wavDruation);
                                 dealWithResponse(aiResponse, agentGroupId);
                             }

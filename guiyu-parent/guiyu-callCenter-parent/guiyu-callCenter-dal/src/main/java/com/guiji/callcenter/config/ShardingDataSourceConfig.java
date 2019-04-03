@@ -7,6 +7,8 @@ import com.guiji.callcenter.sharding.RangeShardingInt;
 import com.guiji.callcenter.sharding.RangeShardingString;
 import io.shardingsphere.api.config.TableRuleConfiguration;
 import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfiguration;
+import io.shardingsphere.core.keygen.DefaultKeyGenerator;
+import io.shardingsphere.core.keygen.KeyGenerator;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -33,6 +35,8 @@ public class ShardingDataSourceConfig {
 	private String jdbc_username0;
 	@Value("${jdbc_password0}")
 	private String jdbc_password0;
+	@Value("${server.id}")
+	private String workId;
 
 	@Bean(name = "dataSourcePrimary")
 	@Primary
@@ -79,6 +83,7 @@ public class ShardingDataSourceConfig {
 		result.setActualDataNodes("guiyu_callcenter.call_out_plan_0,guiyu_callcenter.call_out_plan_1");
 		result.setTableShardingStrategyConfig( new StandardShardingStrategyConfiguration(
 				"phone_num", new PreciseShardingString(), new RangeShardingString()));
+		DefaultKeyGenerator.setWorkerId(Long.valueOf(workId));
 		result.setKeyGeneratorColumnName("call_id");
 
 		TableRuleConfiguration result2 = new TableRuleConfiguration();

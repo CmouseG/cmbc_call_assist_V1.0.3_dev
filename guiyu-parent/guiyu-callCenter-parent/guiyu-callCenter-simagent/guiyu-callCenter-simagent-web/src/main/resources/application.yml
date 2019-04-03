@@ -1,4 +1,5 @@
 server:
+  id: 1  #不同simagent需修改为不一样的，取值范围1至1024
   port: 18009
 
 spring:

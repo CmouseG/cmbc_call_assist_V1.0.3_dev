@@ -1,0 +1,3 @@
+ALTER TABLE call_out_plan MODIFY COLUMN params VARCHAR(512);
+ALTER TABLE call_out_plan_0 MODIFY COLUMN params VARCHAR(512);
+ALTER TABLE call_out_plan_1 MODIFY COLUMN params VARCHAR(512);

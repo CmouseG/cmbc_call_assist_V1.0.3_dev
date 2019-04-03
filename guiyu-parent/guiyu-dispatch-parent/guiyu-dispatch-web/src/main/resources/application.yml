@@ -97,6 +97,9 @@ rabbit:
       exchange: fanout.dispatch.BatchImportSaveDB|fanout.dispatch.creatOrgDone #交换机名称
       queue: fanout.dispatch.BatchImportSaveDB.SAVEDB|fanout.dispatch.creatOrgDone.add #队列名称
 
+### 集群节点需要配置，新节点ID+1
+IdGengerator:
+  workerId: 1
 ####临时目录
 file:
   tmpPath: /apps/jars/

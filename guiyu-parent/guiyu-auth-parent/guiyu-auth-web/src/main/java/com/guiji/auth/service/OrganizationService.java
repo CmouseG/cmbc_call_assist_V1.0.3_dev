@@ -741,6 +741,7 @@ public class OrganizationService {
 	public SysOrganization getParentOrg(String orgCode)
 	{
 		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
+		parentOrgCode = "1.".equals(parentOrgCode)? "1" : parentOrgCode;
 		return this.getOrgByCode(parentOrgCode);
 	}
 	

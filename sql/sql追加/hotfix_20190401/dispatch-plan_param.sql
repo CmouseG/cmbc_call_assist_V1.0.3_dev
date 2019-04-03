@@ -1,3 +1,6 @@
+USER guiyu_dispatch;
+
+
 ALTER TABLE dispatch_plan_0
 MODIFY params VARCHAR(512) DEFAULT NULL COMMENT '参数';
 

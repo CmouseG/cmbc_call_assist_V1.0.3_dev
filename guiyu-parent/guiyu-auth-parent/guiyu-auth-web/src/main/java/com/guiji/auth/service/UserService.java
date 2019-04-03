@@ -426,7 +426,7 @@ public class UserService {
 			userList.add(user);
 		}else if(authLevel == 2){ // 本组织
 			userList = getAllUserByOrgCode(getOrgByUserId(userId).getCode());
-		}else if(authLevel == 2) { // 本组织及下级组织
+		}else if(authLevel == 3) { // 本组织及下级组织
 			List<Map> orgMap = organizationService.getSubOrgByAuthLevel(userId,authLevel,getOrgByUserId(userId).getCode());
 			for(Map org : orgMap){
 				String orgCode = (String) org.get("code");

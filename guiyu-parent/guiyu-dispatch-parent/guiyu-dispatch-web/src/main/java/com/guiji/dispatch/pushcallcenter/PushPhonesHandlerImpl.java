@@ -85,7 +85,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
 						try {
-							if (distributedLockHandler.tryLock(queueLock, 1000L))
+							if (distributedLockHandler.tryLock(queueLock, 100L))
 							{
 								Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
 								if (redisUserIdCount == null) {

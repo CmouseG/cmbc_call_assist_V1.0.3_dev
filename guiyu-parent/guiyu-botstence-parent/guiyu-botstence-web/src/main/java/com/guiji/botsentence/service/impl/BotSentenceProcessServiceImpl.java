@@ -4869,7 +4869,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryTemplateTreeByOrgCode(String orgCode, String queryType) {
-
+		logger.info("根据机构查询行业模板树结构...");
 		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
 		
 		List<String> templateIdList = new ArrayList<>();
@@ -4880,12 +4880,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		ReturnData<List<String>> returnData= orgService.getIndustryByOrgCode(orgCode);
 		templateIdList = returnData.getBody();
 		if(null == templateIdList || templateIdList.size() == 0) {
+			logger.info("根据机构"+orgCode+"查询模板编号列表为空!");
 			return null;
 		}
+		logger.info("模板列表: " + templateIdList.toString());
 		for(String templateId : templateIdList) {
+			logger.info("当前模板编号: " + templateId);
 			//根据模板获取行业
 			BotSentenceTemplate template = botSentenceTemplateService.getBotSentenceTemplateByTemplateId(templateId);
 			if(null != template) {
+				logger.info("当前模板["+templateId+"]存在..");
 				//获取一级行业
 				if(!parentIndustryIdList.contains(template.getIndustryId().substring(0, 2))) {
 					parentIndustryIdList.add(template.getIndustryId().substring(0, 2));
@@ -4898,10 +4902,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				if(!industryIdList3.contains(template.getIndustryId())) {
 					industryIdList3.add(template.getIndustryId());
 				}
+			}else {
+				logger.info("当前模板["+templateId+"]不存在..");
 			}
 		}
 		
-		
+		logger.info("一级行业列表: " + parentIndustryIdList.toString());
 		for(String industryId : parentIndustryIdList) {
 			//获取上级行业
 			BotSentenceTrade parentTrade = getBotSentenceTrade(industryId);

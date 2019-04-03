@@ -55,6 +55,11 @@ public class QueryPlanListDto extends PageDto {
     private String userId;
 
     /**
+     * 企业组织Code
+     */
+    private String orgCode;
+
+    /**
      * 选择组织ID
      */
     private List<Integer> orgIdList;
@@ -150,5 +155,13 @@ public class QueryPlanListDto extends PageDto {
 
     public void setOrgIdList(List<Integer> orgIdList) {
         this.orgIdList = orgIdList;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 }

@@ -295,17 +295,21 @@
 
     <!--恢复  end-->
 
-    <!--获取批量加入手机号   /*DISTINCT(p.phone)*/-->
+    <!--获取批量加入手机号   /*DISTINCT(p.phone)分表不支持*/-->
+
     <select id="getDisPhone" resultType="java.lang.String">
       SELECT
-        p.phone
-      FROM dispatch_plan p
+        a.phone
+      FROM
+      (
+        SELECT
+          p.phone
+        FROM dispatch_plan p
         WHERE p.is_del = 0
-        AND (SELECT COUNT(id) FROM black_list b WHERE b.phone=p.phone )=0
         <if test="optPlanDto != null">
             <if test="optPlanDto.orgIdList != null">
                 AND p.org_id IN
-                <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator="," >
+                <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator=",">
                     #{orgId}
                 </foreach>
             </if>
@@ -326,32 +330,52 @@
             </if>
             <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
                 AND p.status_plan IN
-                <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator="," >
+                <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator=",">
                     #{statusPlan}
                 </foreach>
             </if>
             <if test="optPlanDto.resultList != null and optPlanDto.resultList.size()>0">
                 AND p.result IN
-                <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator="," >
+                <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator=",">
                     #{result}
                 </foreach>
             </if>
             <if test="optPlanDto.checkPlanUuid != null and optPlanDto.checkPlanUuid.size()>0">
                 AND p.plan_uuid IN
-                <foreach collection="optPlanDto.checkPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                <foreach collection="optPlanDto.checkPlanUuid" item="planUuid" open="(" close=")" separator=",">
                     #{planUuid}
                 </foreach>
             </if>
             <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
                 AND p.plan_uuid NOT IN
-                <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator="," >
+                <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator=",">
                     #{planUuid}
                 </foreach>
             </if>
         </if>
-        <!--GROUP BY p.phone-->
+        GROUP BY p.phone
         LIMIT 0, #{limit}
+      ) a
+      <!--  因为在MQ消费流程中已经过滤黑名单，所以此处不需要关联过滤黑名单
+      WHERE
+      (SELECT COUNT(b.id) FROM black_list b
+        WHERE b.status = 0
+        AND b.phone = a.phone
+        <if test="optPlanDto != null">
+            <if test="optPlanDto.authLevel == @com.guiji.dispatch.enums.AuthLevelEnum@USER.getLevel() and optPlanDto.userId != null">
+              AND b.user_id = #{optPlanDto.userId}
+            </if>
+            <if test="optPlanDto.authLevel == @com.guiji.dispatch.enums.AuthLevelEnum@ORG.getLevel() and optPlanDto.orgCode != null">
+              AND b.org_code = #{optPlanDto.orgCode}
+            </if>
+            <if test="optPlanDto.authLevel == @com.guiji.dispatch.enums.AuthLevelEnum@ORG_EXT.getLevel() and optPlanDto.orgCode != null">
+              AND b.org_code LIKE CONCAT(#{optPlanDto.orgCode},'%')
+            </if>
+        </if>
+      )=0
+      -->
     </select>
+
 
     <!--<insert id="batchJoinPlan">
       INSERT INTO

@@ -309,7 +309,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 throw new GuiyuException("用户不存在");
             }
 
-            //线路入库
+            //批次入库
             DispatchPlanBatch batchPlan = new DispatchPlanBatch();
             batchPlan.setUserId(operUserId.intValue());
             batchPlan.setOrgCode(operOrgCode);
@@ -321,22 +321,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             batchPlan.setGmtModified(new Date());
             dispatchPlanBatchMapper.insert(batchPlan);
             Integer batchId = batchPlan.getId();
-            //获取权限
-            Integer authLevel = joinPlanDto.getAuthLevel();//操作用户权限等级
-            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, operUserId+""));//获取用户ID,如果不是本人权限，则为null
-            optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
-                    optPlanDto.getOrgIdList()
-                    :getAuthUtil.getOrgIdsByAuthLevel(authLevel,operOrgId));//获取组织ID
-            int limit = 30000;
-            //查询条件列表（注意，号码去重）
-            List<String> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
-            logger.info(">>>>>加入数量:{}", null != phoneList?phoneList.size():0);
-            for(String phone : phoneList){
-                this.pushPlanCreateMQ(submitPlan, batchId, phone, operUserId, operOrgId, operOrgCode);
-            }
 
             //批量加入MQ
-        //    this.batchJoin(joinPlanDto, batchPlan.getId());
+            this.batchJoin(joinPlanDto, batchId);
             bool = true;
         }
         return bool;
@@ -350,7 +337,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
         //获取权限
         Integer authLevel = joinPlanDto.getAuthLevel();//操作用户权限等级
+        optPlanDto.setAuthLevel(authLevel);
         optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, operUserId+""));//获取用户ID,如果不是本人权限，则为null
+        optPlanDto.setOrgCode(getAuthUtil.getOrgCodeByAuthLevel(authLevel, operOrgCode));//获取企业组织编码
         optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                 optPlanDto.getOrgIdList()
                 :getAuthUtil.getOrgIdsByAuthLevel(authLevel,operOrgId));//获取组织ID

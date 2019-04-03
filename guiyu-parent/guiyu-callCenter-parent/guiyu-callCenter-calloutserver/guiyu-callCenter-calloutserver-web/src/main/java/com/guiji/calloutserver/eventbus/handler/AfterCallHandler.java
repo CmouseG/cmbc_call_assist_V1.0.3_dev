@@ -99,7 +99,7 @@ public class AfterCallHandler {
         for (CallOutDetailRecord detailRecord : callOutDetailRecords) {
             log.info("开始上传客户录音,callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
             //上传客户说话录音
-            if (!Strings.isNullOrEmpty(detailRecord.getCustomerRecordFile())) {
+            if (!Strings.isNullOrEmpty(detailRecord.getCustomerRecordFile()) && Strings.isNullOrEmpty(detailRecord.getCustomerRecordUrl())) {
                 String fileId = "customer_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
                 RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getCustomerRecordFile(), busiType, userId, null, null);
                 log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getCustomerRecordFile(), recordVO);
@@ -111,7 +111,7 @@ public class AfterCallHandler {
 
             log.info("开始上传座席录音， callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
             //上传座席说话录音
-            if (!Strings.isNullOrEmpty(detailRecord.getAgentRecordFile())) {
+            if (!Strings.isNullOrEmpty(detailRecord.getAgentRecordFile()) && Strings.isNullOrEmpty(detailRecord.getAgentRecordUrl())) {
                 String fileId = "agent_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
                 RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getAgentRecordFile(), busiType, userId, null ,null);
                 log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getAgentRecordFile(), recordVO);

@@ -2,8 +2,10 @@ package com.guiji.wechat.scheduler;
 
 import com.alibaba.fastjson.JSON;
 import com.guiji.wechat.dtos.AccessTokenRpsDto;
+import com.guiji.wechat.util.AccessToken;
 import com.guiji.wechat.util.constants.WeChatConstant;
-import com.guiji.wechat.util.properties.WeChatProperty;
+import com.guiji.wechat.util.properties.WeChatEnvProperties;
+import com.guiji.wechat.util.properties.WeChatUrlProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,8 +32,13 @@ public class AccessTokenScheduler {
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private WeChatProperty weChatProperty;
+    private WeChatUrlProperty weChatUrlProperty;
 
+    @Resource
+    private WeChatEnvProperties weChatEnvProperties;
+
+    @Resource
+    private AccessToken accessToken;
     /**
      * 微信AccessToken 会在2小时失效
      * 定时任务每100分钟执行一次，刷新AccessToken
@@ -41,13 +48,12 @@ public class AccessTokenScheduler {
         updateAccessToken();
     }
 
-
     public ResponseEntity<String> updateAccessToken(){
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(weChatProperty.getAccessTokenUrl())
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(weChatUrlProperty.getAccessTokenUrl())
                 .queryParam(WeChatConstant.PARAM_GRANT_TYPE, WeChatConstant.ACCESS_TOKEN_GRANT_TYPE)
-                .queryParam(WeChatConstant.PARAM_APPID, weChatProperty.getAppId())
-                .queryParam(WeChatConstant.PARAM_SECRET, weChatProperty.getAppSecret());
+                .queryParam(WeChatConstant.PARAM_APPID, weChatEnvProperties.getAppId())
+                .queryParam(WeChatConstant.PARAM_SECRET, weChatEnvProperties.getAppSecret());
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 
@@ -59,6 +65,7 @@ public class AccessTokenScheduler {
 
         stringRedisTemplate.opsForValue().set(WeChatConstant.ACCESS_TOKEN_CACHE_KEY, accessTokenRpsDto.getAccess_token(), 2, TimeUnit.HOURS);
 
+        accessToken.setValue(accessTokenRpsDto.getAccess_token());
         logger.info("access token response entity:{}", JSON.toJSONString(responseEntity));
         return responseEntity;
     }

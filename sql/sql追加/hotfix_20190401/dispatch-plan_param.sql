@@ -1,4 +1,4 @@
-USER guiyu_dispatch;
+USE guiyu_dispatch;
 
 
 ALTER TABLE dispatch_plan_0

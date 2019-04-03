@@ -18,6 +18,7 @@ import com.guiji.notice.entity.User;
 import com.guiji.notice.service.AuthService;
 import com.guiji.notice.service.NoticeSettingService;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -171,24 +172,22 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
     @Override
     public List<User> getUserList4Receive(Long userId) {
 
-        Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
-        String orgCode = returnData.getBody().getCode();
+        Result.ReturnData<List<SysUser>> result = auth.getAllUserByUserId(userId);
 
-        Result.ReturnData<List<SysUserRoleVo>> result = auth.getAllUserRoleByOrgCode(orgCode);
-        List<SysUserRoleVo> list = result.getBody();
+        List<SysUser> list = result.getBody();
 
         List<User> returnList = new ArrayList<>();
 
-        for (SysUserRoleVo sysUserRoleVo : list) {
-            User user = new User();
-            Long sysUserId = sysUserRoleVo.getSysUser().getId();
-            user.setId(sysUserId);
-            user.setUsername(sysUserRoleVo.getSysUser().getUsername());
-            if(sysUserRoleVo.getSysRoleList()!=null && sysUserRoleVo.getSysRoleList().size()>0){
-                user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
+        if(list!=null && list.size()>0){
+            for (SysUser sysUser : list) {
+                User user = new User();
+                Long sysUserId = sysUser.getId();
+                user.setId(sysUserId);
+                user.setUsername(sysUser.getUsername());
+                returnList.add(user);
             }
-            returnList.add(user);
         }
+
         return returnList;
 
     }

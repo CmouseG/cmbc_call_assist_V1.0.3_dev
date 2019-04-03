@@ -26,7 +26,7 @@ public class FeignBuildUtil {
                .encoder(new JacksonEncoder())
                .decoder(new JacksonDecoder())
                .contract(new SpringMvcContract())
-               .options(new Request.Options(90000, 90000))// 超时时间  90s
+               .options(new Request.Options(180000, 180000))// 超时时间  180s
                .retryer(Retryer.NEVER_RETRY) //重试机制，重试次数，重试间隔
                .target( apiType,  url);
 

@@ -415,4 +415,25 @@ public class UserService {
 		}
 		return mapper.countByExample(example);
 	}
+
+	public List<SysUser> getAllUserByUserId(Long userId)
+	{
+		List<SysUser> userList = new ArrayList<>();
+		// 根据用户查数据权限等级
+		Integer authLevel = mapper.getAuthLevelByUserId(userId);
+		if(authLevel == 1){ // 本人
+			SysUser user = this.getUserById(userId);
+			userList.add(user);
+		}else if(authLevel == 2){ // 本组织
+			userList = getAllUserByOrgCode(getOrgByUserId(userId).getCode());
+		}else if(authLevel == 2) { // 本组织及下级组织
+			List<Map> orgMap = organizationService.getSubOrgByAuthLevel(userId,authLevel,getOrgByUserId(userId).getCode());
+			for(Map org : orgMap){
+				String orgCode = (String) org.get("code");
+				List<SysUser> users = getAllUserByOrgCode(orgCode);
+				userList.addAll(users);
+			}
+		}
+		return userList;
+	}
 }

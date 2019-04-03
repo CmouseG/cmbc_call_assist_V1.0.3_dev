@@ -452,7 +452,7 @@
   </select>
   
   <select id="getSubOrgByAuthLevel" resultType="java.util.Map">
-  	SELECT t.id, t.`name` FROM `sys_organization` t
+  	SELECT t.id, t.`name`, t.code FROM `sys_organization` t
   	<where>
   		<if test="authLevel == 1">
   			t.create_id = #{userId}

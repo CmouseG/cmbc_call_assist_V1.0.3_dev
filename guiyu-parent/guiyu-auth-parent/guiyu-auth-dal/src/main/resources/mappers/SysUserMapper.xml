@@ -681,4 +681,10 @@
 		a.user_id=#{userId}
 	</select>
 
+	<select id="getAuthLevelByUserId" resultType="java.lang.Integer">
+		SELECT c.data_auth_level FROM sys_user a
+		LEFT JOIN sys_role_user b ON a.id = b.user_id
+		LEFT JOIN sys_role c ON b.role_id = c.id
+		WHERE a.id = #{userId}
+	</select>
 </mapper>

@@ -116,8 +116,8 @@ public class AIManagerImpl implements AIManager {
         aiResponse.setWavFile(wavFilename);
         aiResponse.setAiId(aiCallNext.getAiNo());
         aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-        Double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
-        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+        double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
+//        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
         aiResponse.setWavDuration(wavDruation);
         return aiResponse;
     }

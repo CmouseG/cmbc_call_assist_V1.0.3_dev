@@ -201,6 +201,7 @@ public class ChannelHelper {
         callMedia.setIsPrologue(isPrologue);
         callMedia.setIsMediaLock(isLock);
         callMedia.setStartPlayTime(new Date());
+        callMedia.setExpectEndPlayTime(new Date().getTime()+(long)Math.ceil(mediaFileDuration*1000)+200);
         channelService.save(callMedia);
 
         //把之前的定时器停掉

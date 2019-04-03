@@ -12,7 +12,7 @@ import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
-import com.guiji.calloutserver.service.DispatchLogService;
+//import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.calloutserver.util.CommonUtil;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
@@ -46,8 +46,8 @@ public class AIManagerImpl implements AIManager {
     @Autowired
     FsAgentManager fsAgentManager;
 
-    @Autowired
-    DispatchLogService dispatchLogService;
+//    @Autowired
+//    DispatchLogService dispatchLogService;
     @Autowired
     RobotNextHelper robotNextHelper;
 
@@ -65,7 +65,7 @@ public class AIManagerImpl implements AIManager {
         aiCallStartReq.setUserId(aiRequest.getUserId());
         aiCallStartReq.setDisSeqId(aiRequest.getPlanUuid());
 
-        dispatchLogService.startServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallStart");
+//        dispatchLogService.startServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallStart");
         Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
             @Override
             public Result.ReturnData execute() {
@@ -85,7 +85,7 @@ public class AIManagerImpl implements AIManager {
                 return false;
             }
         }, 4, 1, 1, 60, true);
-        dispatchLogService.endServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");
+//        dispatchLogService.endServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");
 
         if (returnData == null) {
             log.warn("请求ai资源失败");
@@ -116,8 +116,8 @@ public class AIManagerImpl implements AIManager {
         aiResponse.setWavFile(wavFilename);
         aiResponse.setAiId(aiCallNext.getAiNo());
         aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-        Double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
-        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+        double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
+//        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
         aiResponse.setWavDuration(wavDruation);
         return aiResponse;
     }
@@ -143,9 +143,9 @@ public class AIManagerImpl implements AIManager {
             aiFlowMsgPushReq.setTemplateId(callPlan.getTempId());
             aiFlowMsgPushReq.setTimestamp(new Date().getTime());
             aiFlowMsgPushReq.setUserId(String.valueOf(callPlan.getCustomerId()));
-            dispatchLogService.startServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口flowMsgPush");
+//            dispatchLogService.startServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口flowMsgPush");
             Result.ReturnData returnData = robotRemote.flowMsgPush(aiFlowMsgPushReq);
-            dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口flowMsgPush");
+//            dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口flowMsgPush");
 
         } catch (Exception ex) {
             log.warn("sellbot的flowMsgPush出现异常", ex);
@@ -164,7 +164,7 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setTemplateId(callOutPlan.getTempId());
 
         log.info("释放机器人资源，aiId[{}]", callOutPlan.getAiId());
-        dispatchLogService.startServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");
+//        dispatchLogService.startServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");
         Result.ReturnData returnData = null;
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -190,7 +190,7 @@ public class AIManagerImpl implements AIManager {
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
         }
-        dispatchLogService.endServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求挂断");
+//        dispatchLogService.endServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求挂断");
 
         log.info("------------------- releaseAi success aino:" + hangupReq.getAiNo());
     }

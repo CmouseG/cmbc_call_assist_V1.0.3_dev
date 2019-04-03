@@ -116,7 +116,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     @Override
     public Map<String, Double> refreshWavLength(String tempId) {
 
-        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
+        String key = "calloutserver_wavlength_"+tempId;
 
         if (tempId.endsWith("_en")) {
             tempId = tempId.substring(0,tempId.length()-3)+"_rec";
@@ -144,7 +144,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     @Override
     public Map<String, Double> getwavlength(String tempId){
 
-        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
+        String key = "calloutserver_wavlength_"+tempId;
 
         if(redisUtil.get(key)==null){
 
@@ -172,7 +172,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public Double getWavDruation(String tempId, String filename, String callId){
+    public double getWavDruation(String tempId, String filename, String callId){
 
         if(filename.contains(",")){
             String[] fileArr = filename.split(",");
@@ -190,7 +190,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
     }
 
-    public Double getOneWavDruation(String tempId, String filename, String callId){
+    public double getOneWavDruation(String tempId, String filename, String callId){
 
         if(filename.contains("/")){
             String[] arr = filename.split("/");
@@ -213,16 +213,19 @@ public class FsAgentManagerImpl implements FsAgentManager {
             }
         }
 
-        Object map = redisUtil.get("calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId);
+        Object map = redisUtil.get("calloutserver_wavlength_"+tempId);
 
-        if (map != null && ((Map<String, Double>) map).get(filename) != null) {
-            return ((Map<String, Double>) map).get(filename);
+        if (map != null) {
+            if(((Map<String, Double>) map).get(filename) != null){ //获取不到文件时长的时候，无需刷新，mq已经监听了
+                return ((Map<String, Double>) map).get(filename);
+            }
         } else {
             map = refreshWavLength(tempId);
-            if (map != null)
+            if (map != null && ((Map<String, Double>) map).get(filename)!=null){
                 return ((Map<String, Double>) map).get(filename);
+            }
         }
-        return null;
+        return 0d;
     }
 
     @Override

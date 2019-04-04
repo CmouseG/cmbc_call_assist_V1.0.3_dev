@@ -68,7 +68,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	@Override
 	public void pushHandler() {
 
-		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (true) {
 			try {
 				Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
@@ -86,28 +85,28 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 						String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
 								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
-						try {
-							if (distributedLockHandler.tryLock(queueLock, 100L))
-							{
+						if (distributedLockHandler.tryLock(queueLock, 100L)) {
+							try {
+
 								Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
 								if (redisUserIdCount == null) {
 									redisUserIdCount = 0;
 								}
 
-								Integer callMax = null !=dto.getMaxRobotCount()?dto.getMaxRobotCount():0;
-							//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
+								Integer callMax = null != dto.getMaxRobotCount() ? dto.getMaxRobotCount() : 0;
+								//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
 
 								//判断用户模板是否有可用机器人
-								if(!checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
+								if (!checkUserAvailableRobot(dto.getUserId() + "", dto.getBotenceName())) {
 									continue;
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
-								if(null != obj) {
-								//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+								if (null != obj) {
+									//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
@@ -115,7 +114,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
 
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
-                                GateWayLineOccupyVo occupyLine = null;
+								GateWayLineOccupyVo occupyLine = null;
 								try {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
 									callBean.setTempId(dispatchRedis.getRobot());
@@ -124,34 +123,34 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									List<Integer> lines = new ArrayList<>();
 									boolean isSimPush = false;//是否是SIM卡推送
 									for (DispatchLines line : dispatchRedis.getLines()) {
-									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
-									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
-										//	logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
-									    	callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
-									        Integer lineId = line.getLineId();
-                                            GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey+lineId);
-                                            if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
-                                                lines.add(line.getLineId());
-                                                occupyLine = gateWayLine;
+										//判断是否网关路线，如果是网关路线则需要判断线路是否被占用
+										if (PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()) {//网关路线
+											//	logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
+											callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
+											Integer lineId = line.getLineId();
+											GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey + lineId);
+											if (GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()) {//状态闲置未被占用   0-闲置  1-占用
+												lines.add(line.getLineId());
+												occupyLine = gateWayLine;
 												isSimPush = true;
-                                        //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
-                                                break;//有闲置，则推送，网关路线只能推送一个
-                                            }
-                                        }else {
-                                            lines.add(line.getLineId());
+												//        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+												break;//有闲置，则推送，网关路线只能推送一个
+											}
+										} else {
+											lines.add(line.getLineId());
 											callBean.setSimCall(false);
-                                        }
+										}
 									}
 
 									//SIM网关路线，不推送呼叫中，重新入栈推送队列
-									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()
-										&& !isSimPush){
+									if (PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()
+											&& !isSimPush) {
 										redisUtil.leftPush(queue, dispatchRedis);
 									}
 
-									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板
-                                        continue;
-                                    }
+									if (null == lines || lines.size() == 0) {//没有需要推送的线路,继续循环下条任务计划 用户模板
+										continue;
+									}
 									callBean.setLineList(lines);
 								} catch (IllegalAccessException e) {
 									updateStatusSync(dispatchRedis.getPlanUuid());
@@ -164,15 +163,15 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								List<String> userIdList = (List<String>) redisUtil.get("USER_BILLING_DATA");
-								if(userIdList!=null){
+								if (userIdList != null) {
 									if (userIdList.contains(String.valueOf(callBean.getUserId()))) {
 										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + callBean.getUserId());
 										updateStatusSync(dispatchRedis.getPlanUuid());
 										continue;
 									}
 								}
-								
-								if(userIdList == null){
+
+								if (userIdList == null) {
 									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
 									Thread.sleep(2000);
 									updateStatusSync(dispatchRedis.getPlanUuid());
@@ -193,20 +192,22 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									//休眠10S
 									Thread.sleep(10000);
 									continue;
-								}else{
-								    //推送成功，则标识网关SIM卡路线被占用
-									occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName());
-                                }
+								} else {
+									//推送成功，则标识网关SIM卡路线被占用
+									occupyGateWayLine(occupyLine, dto.getUserId() + "", dto.getBotenceName());
+								}
 							}
-						} finally {
-							distributedLockHandler.releaseLock(queueLock); // 释放锁
+							catch (Exception e) {
+								logger.info("pushHandler代码异常了", e);
+							}
+							finally {
+								distributedLockHandler.releaseLock(queueLock); // 释放锁
+							}
 						}
 					}
 				}
 			} catch (Exception e) {
 				logger.info("pushHandler代码异常了", e);
-			} finally {
-				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
 			}
 		}
 	}

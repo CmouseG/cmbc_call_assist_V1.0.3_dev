@@ -1,5 +1,5 @@
 server:
-  id: 1  #不同toagent需修改为不一样的，取值范围1至1024
+  id: 301  #不同toagent需修改为不一样的，取值范围301至600
   port: 18025
 
 spring:

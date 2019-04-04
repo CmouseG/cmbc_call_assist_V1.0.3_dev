@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.HongLian95;
 import com.guiji.platfrom.Junlong;
+import com.guiji.platfrom.QiYeBao;
 import com.guiji.platfrom.Qyxs;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.XuanWu;
@@ -98,6 +100,12 @@ public class SendSmsServiceImpl implements SendSmsService
 		} else if ("xw".equals(identification)) {
 			logger.info("通过<玄武科技>群发短信...");
 			records = new XuanWu().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("qyb".equals(identification)){
+			logger.info("通过<企业宝>群发短信...");
+			records = new QiYeBao().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("hl95".equals(identification)){
+			logger.info("通过<鸿联九五>群发短信...");
+			records = new HongLian95().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录

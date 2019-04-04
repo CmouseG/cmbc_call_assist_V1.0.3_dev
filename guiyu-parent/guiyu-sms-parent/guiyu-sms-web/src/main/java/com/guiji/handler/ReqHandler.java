@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.HongLian95;
 import com.guiji.platfrom.Junlong;
+import com.guiji.platfrom.QiYeBao;
 import com.guiji.platfrom.Qyxs;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.XuanWu;
@@ -82,6 +84,12 @@ public class ReqHandler
 		} else if ("xw".equals(identification)) {
 			logger.info("通过<玄武科技>发送短信...");
 			record = new XuanWu().sendMessage(params, phone, smsContent);
+		} else if ("qyb".equals(identification)){
+			logger.info("通过<企业宝>发送短信...");
+			record = new QiYeBao().sendMessage(params, phone, smsContent);
+		} else if ("hl95".equals(identification)){
+			logger.info("通过<鸿联九五>发送短信...");
+			record = new HongLian95().sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录

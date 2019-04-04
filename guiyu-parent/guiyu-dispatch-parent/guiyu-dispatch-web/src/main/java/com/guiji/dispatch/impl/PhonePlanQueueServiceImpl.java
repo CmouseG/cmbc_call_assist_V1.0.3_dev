@@ -61,9 +61,10 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 //						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
 						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
-						try {
-							if (distributedLockHandler.tryLock(queueLock, 1000L))
-							{
+						if (distributedLockHandler.tryLock(queueLock, 1000L))
+						{
+							try {
+
 								long currentQueueSize = redisUtil.lGetListSize(queue);
 								if (currentQueueSize < systemMaxPlan *2) {
 									if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
@@ -90,11 +91,12 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										}
 									}
 							}
-						} catch (Exception e) {
-                            logger.info("PhonePlanQueueServiceImpl#execute:",e);
-							e.printStackTrace();
-                        } finally{
-							distributedLockHandler.releaseLock(queueLock); // 释放锁
+							catch (Exception e) {
+								logger.info("PhonePlanQueueServiceImpl#execute:",e);
+								e.printStackTrace();
+							} finally{
+								distributedLockHandler.releaseLock(queueLock); // 释放锁
+							}
 						}
 					}
 				}
@@ -117,28 +119,29 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
 				//1.获取redis锁，将拨打计划的redis锁住
-				Lock queueLock = new Lock("dispatch.lock" + queueKey,"dispatch.lock" + queueKey);
-				try {
-					if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
+				Lock queueLock = new Lock("dispatch.lock" + queueKey, "dispatch.lock" + queueKey);
+				if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
+					try {
+
 						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
 						List<String> planUuids = new ArrayList<String>();
 						while (true) {
-							DispatchPlan dispatchPlan = (DispatchPlan)redisUtil.lrightPop(queueKey);
-							if(dispatchPlan == null) {
+							DispatchPlan dispatchPlan = (DispatchPlan) redisUtil.lrightPop(queueKey);
+							if (dispatchPlan == null) {
 								break;
 							} else {
 								planUuids.add(dispatchPlan.getPlanUuid());
 							}
 						}
-						if(planUuids.size()>0){
+						if (planUuids.size() > 0) {
 							getPhonesInterface.resetPhoneSyncStatus(planUuids);
 						}
+					} catch (Exception e) {
+						logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
+						continue;
+					} finally {
+						distributedLockHandler.releaseLock(queueLock);
 					}
-				} catch (Exception e) {
-					logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-					continue;
-				} finally {
-					distributedLockHandler.releaseLock(queueLock);
 				}
 			}
 		}
@@ -152,28 +155,29 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
 				//1.获取redis锁，将拨打计划的redis锁住
-				Lock queueLock = new Lock("dispatch.lock" + queueKey,"dispatch.lock" + queueKey);
-				try {
-					if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
+				Lock queueLock = new Lock("dispatch.lock" + queueKey, "dispatch.lock" + queueKey);
+				if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
+					try {
+
 						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
 						List<String> planUuids = new ArrayList<String>();
 						while (true) {
-							DispatchPlan dispatchPlan = (DispatchPlan)redisUtil.lrightPop(queueKey);
-							if(dispatchPlan == null) {
+							DispatchPlan dispatchPlan = (DispatchPlan) redisUtil.lrightPop(queueKey);
+							if (dispatchPlan == null) {
 								break;
 							} else {
 								planUuids.add(dispatchPlan.getPlanUuid());
 							}
 						}
-						if(planUuids.size()>0){
+						if (planUuids.size() > 0) {
 							getPhonesInterface.resetPhoneSyncStatus(planUuids);
 						}
+					} catch (Exception e) {
+						logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
+						continue;
+					} finally {
+						distributedLockHandler.releaseLock(queueLock);
 					}
-				} catch (Exception e) {
-					logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-					continue;
-				} finally {
-					distributedLockHandler.releaseLock(queueLock);
 				}
 			}
 		}

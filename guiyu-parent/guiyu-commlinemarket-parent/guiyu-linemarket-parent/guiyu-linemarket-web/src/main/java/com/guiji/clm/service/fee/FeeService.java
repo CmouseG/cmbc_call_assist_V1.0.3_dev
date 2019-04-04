@@ -93,12 +93,23 @@ public class FeeService {
 		feeItem.setChargingType(1); //按时长计费
 		feeItem.setPrice(sipLineExclusive.getUnivalent().multiply(new BigDecimal(100)).toString());	//计费（分）
 		feeItem.setUnitPrice(2); //计费单位-分钟
-		feeItem.setUserId(sipLineExclusive.getBelongUser()); 
+		feeItem.setUserId(sipLineExclusive.getBelongUser());
+
 		if(sipLineExclusive.getLineFeeType()!=null&&SipLineFeeTypeEnum.DO_FEE.getCode()==sipLineExclusive.getLineFeeType()){
 			feeItem.setIsDeducted(0); //扣费
 		}else {
 			feeItem.setIsDeducted(1); //不扣费
 		}
+
+		if(sipLineExclusive.getFeeOrNot() != null ) {
+			if(sipLineExclusive.getFeeOrNot()) {
+				//扣费
+				feeItem.setIsDeducted(0);
+			} else {
+				feeItem.setIsDeducted(1);
+			}
+		}
+
 		return feeItem;
 	}
 	

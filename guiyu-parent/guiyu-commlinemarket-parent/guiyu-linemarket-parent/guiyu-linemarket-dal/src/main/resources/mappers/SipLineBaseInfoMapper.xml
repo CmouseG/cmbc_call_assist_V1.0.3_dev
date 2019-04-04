@@ -30,6 +30,7 @@
     <result column="except_areas" property="exceptAreas" jdbcType="VARCHAR" />
     <result column="contract_univalent" property="contractUnivalent" jdbcType="DECIMAL" />
     <result column="univalent" property="univalent" jdbcType="DECIMAL" />
+    <result column="fee_or_not" property="feeOrNot" jdbcType="BIT" />
     <result column="line_fee_type" property="lineFeeType" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="sip_share_id" property="sipShareId" jdbcType="INTEGER" />
@@ -38,6 +39,7 @@
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="belong_user" property="belongUser" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -101,8 +103,8 @@
     id, line_name, line_id, supplier, line_status, sip_ip, sip_port, sip_domain, sip_account, 
     sip_psd, codec, reg_flag, caller_num, belong_org_code, destination_prefix, max_concurrent_calls, 
     use_concurrent_calls, call_direc, begin_date, end_date, time_begin, time_end, overt_area, 
-    industrys, areas, except_areas, contract_univalent, univalent, line_fee_type, remark, 
-    sip_share_id, org_code, crt_user, crt_time, update_time, update_user
+    industrys, areas, except_areas, contract_univalent, univalent, fee_or_not, line_fee_type, 
+    remark, sip_share_id, org_code, crt_user, crt_time, update_time, update_user, belong_user
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfoExample" >
     select
@@ -138,35 +140,42 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
-    insert into sip_line_base_info (line_name, line_id, supplier, 
-      line_status, sip_ip, sip_port, 
-      sip_domain, sip_account, sip_psd, 
-      codec, reg_flag, caller_num, 
-      belong_org_code, destination_prefix, max_concurrent_calls, 
-      use_concurrent_calls, call_direc, begin_date, 
-      end_date, time_begin, time_end, 
-      overt_area, industrys, areas, 
-      except_areas, contract_univalent, univalent, 
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" >
+    insert into sip_line_base_info (id, line_name, line_id, 
+      supplier, line_status, sip_ip, 
+      sip_port, sip_domain, sip_account, 
+      sip_psd, codec, reg_flag, 
+      caller_num, belong_org_code, destination_prefix, 
+      max_concurrent_calls, use_concurrent_calls, 
+      call_direc, begin_date, end_date, 
+      time_begin, time_end, overt_area, 
+      industrys, areas, except_areas, 
+      contract_univalent, univalent, fee_or_not, 
       line_fee_type, remark, sip_share_id, 
       org_code, crt_user, crt_time, 
-      update_time, update_user)
-    values (#{lineName,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{supplier,jdbcType=VARCHAR}, 
-      #{lineStatus,jdbcType=INTEGER}, #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, 
-      #{sipDomain,jdbcType=VARCHAR}, #{sipAccount,jdbcType=VARCHAR}, #{sipPsd,jdbcType=VARCHAR}, 
-      #{codec,jdbcType=VARCHAR}, #{regFlag,jdbcType=BIT}, #{callerNum,jdbcType=VARCHAR}, 
-      #{belongOrgCode,jdbcType=VARCHAR}, #{destinationPrefix,jdbcType=VARCHAR}, #{maxConcurrentCalls,jdbcType=INTEGER}, 
-      #{useConcurrentCalls,jdbcType=INTEGER}, #{callDirec,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, 
-      #{endDate,jdbcType=VARCHAR}, #{timeBegin,jdbcType=VARCHAR}, #{timeEnd,jdbcType=VARCHAR}, 
-      #{overtArea,jdbcType=VARCHAR}, #{industrys,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, 
-      #{exceptAreas,jdbcType=VARCHAR}, #{contractUnivalent,jdbcType=DECIMAL}, #{univalent,jdbcType=DECIMAL}, 
+      update_time, update_user, belong_user
+      )
+    values (#{id,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, 
+      #{supplier,jdbcType=VARCHAR}, #{lineStatus,jdbcType=INTEGER}, #{sipIp,jdbcType=VARCHAR}, 
+      #{sipPort,jdbcType=INTEGER}, #{sipDomain,jdbcType=VARCHAR}, #{sipAccount,jdbcType=VARCHAR}, 
+      #{sipPsd,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, #{regFlag,jdbcType=BIT}, 
+      #{callerNum,jdbcType=VARCHAR}, #{belongOrgCode,jdbcType=VARCHAR}, #{destinationPrefix,jdbcType=VARCHAR}, 
+      #{maxConcurrentCalls,jdbcType=INTEGER}, #{useConcurrentCalls,jdbcType=INTEGER}, 
+      #{callDirec,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, 
+      #{timeBegin,jdbcType=VARCHAR}, #{timeEnd,jdbcType=VARCHAR}, #{overtArea,jdbcType=VARCHAR}, 
+      #{industrys,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, #{exceptAreas,jdbcType=VARCHAR}, 
+      #{contractUnivalent,jdbcType=DECIMAL}, #{univalent,jdbcType=DECIMAL}, #{feeOrNot,jdbcType=BIT}, 
       #{lineFeeType,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{sipShareId,jdbcType=INTEGER}, 
       #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{belongUser,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" >
     insert into sip_line_base_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="lineName != null" >
         line_name,
       </if>
@@ -248,6 +257,9 @@
       <if test="univalent != null" >
         univalent,
       </if>
+      <if test="feeOrNot != null" >
+        fee_or_not,
+      </if>
       <if test="lineFeeType != null" >
         line_fee_type,
       </if>
@@ -272,8 +284,14 @@
       <if test="updateUser != null" >
         update_user,
       </if>
+      <if test="belongUser != null" >
+        belong_user,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="lineName != null" >
         #{lineName,jdbcType=VARCHAR},
       </if>
@@ -355,6 +373,9 @@
       <if test="univalent != null" >
         #{univalent,jdbcType=DECIMAL},
       </if>
+      <if test="feeOrNot != null" >
+        #{feeOrNot,jdbcType=BIT},
+      </if>
       <if test="lineFeeType != null" >
         #{lineFeeType,jdbcType=INTEGER},
       </if>
@@ -378,6 +399,9 @@
       </if>
       <if test="updateUser != null" >
         #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        #{belongUser,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -474,6 +498,9 @@
       <if test="record.univalent != null" >
         univalent = #{record.univalent,jdbcType=DECIMAL},
       </if>
+      <if test="record.feeOrNot != null" >
+        fee_or_not = #{record.feeOrNot,jdbcType=BIT},
+      </if>
       <if test="record.lineFeeType != null" >
         line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
       </if>
@@ -497,6 +524,9 @@
       </if>
       <if test="record.updateUser != null" >
         update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.belongUser != null" >
+        belong_user = #{record.belongUser,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -533,6 +563,7 @@
       except_areas = #{record.exceptAreas,jdbcType=VARCHAR},
       contract_univalent = #{record.contractUnivalent,jdbcType=DECIMAL},
       univalent = #{record.univalent,jdbcType=DECIMAL},
+      fee_or_not = #{record.feeOrNot,jdbcType=BIT},
       line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
       remark = #{record.remark,jdbcType=VARCHAR},
       sip_share_id = #{record.sipShareId,jdbcType=INTEGER},
@@ -540,7 +571,8 @@
       crt_user = #{record.crtUser,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      update_user = #{record.updateUser,jdbcType=VARCHAR}
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      belong_user = #{record.belongUser,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -629,6 +661,9 @@
       <if test="univalent != null" >
         univalent = #{univalent,jdbcType=DECIMAL},
       </if>
+      <if test="feeOrNot != null" >
+        fee_or_not = #{feeOrNot,jdbcType=BIT},
+      </if>
       <if test="lineFeeType != null" >
         line_fee_type = #{lineFeeType,jdbcType=INTEGER},
       </if>
@@ -652,6 +687,9 @@
       </if>
       <if test="updateUser != null" >
         update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        belong_user = #{belongUser,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -685,6 +723,7 @@
       except_areas = #{exceptAreas,jdbcType=VARCHAR},
       contract_univalent = #{contractUnivalent,jdbcType=DECIMAL},
       univalent = #{univalent,jdbcType=DECIMAL},
+      fee_or_not = #{feeOrNot,jdbcType=BIT},
       line_fee_type = #{lineFeeType,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
       sip_share_id = #{sipShareId,jdbcType=INTEGER},
@@ -692,7 +731,8 @@
       crt_user = #{crtUser,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=VARCHAR}
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      belong_user = #{belongUser,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

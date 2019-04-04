@@ -15,6 +15,7 @@
     <result column="max_concurrent_calls" property="maxConcurrentCalls" jdbcType="INTEGER" />
     <result column="begin_date" property="beginDate" jdbcType="VARCHAR" />
     <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="fee_or_not" property="feeOrNot" jdbcType="BIT" />
     <result column="line_fee_type" property="lineFeeType" jdbcType="INTEGER" />
     <result column="univalent" property="univalent" jdbcType="DECIMAL" />
     <result column="overt_area" property="overtArea" jdbcType="VARCHAR" />
@@ -90,7 +91,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, sip_line_id, apply_id, agent_line_id, line_id, line_name, line_type, line_status, 
-    supplier, call_direc, max_concurrent_calls, begin_date, end_date, line_fee_type, 
+    supplier, call_direc, max_concurrent_calls, begin_date, end_date, fee_or_not, line_fee_type, 
     univalent, overt_area, industrys, templates, areas, belong_user, belong_org_code, 
     except_areas, remark, crt_user, crt_time, update_time, update_user
   </sql>
@@ -128,29 +129,34 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineExclusive" useGeneratedKeys="true" keyProperty="id" >
-    insert into sip_line_exclusive (sip_line_id, apply_id, agent_line_id, 
-      line_id, line_name, line_type, 
-      line_status, supplier, call_direc, 
-      max_concurrent_calls, begin_date, end_date, 
-      line_fee_type, univalent, overt_area, 
-      industrys, templates, areas, 
-      belong_user, belong_org_code, except_areas, 
-      remark, crt_user, crt_time, 
-      update_time, update_user)
-    values (#{sipLineId,jdbcType=INTEGER}, #{applyId,jdbcType=INTEGER}, #{agentLineId,jdbcType=INTEGER}, 
-      #{lineId,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, #{lineType,jdbcType=INTEGER}, 
-      #{lineStatus,jdbcType=INTEGER}, #{supplier,jdbcType=VARCHAR}, #{callDirec,jdbcType=INTEGER}, 
-      #{maxConcurrentCalls,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, 
-      #{lineFeeType,jdbcType=INTEGER}, #{univalent,jdbcType=DECIMAL}, #{overtArea,jdbcType=VARCHAR}, 
-      #{industrys,jdbcType=VARCHAR}, #{templates,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, 
-      #{belongUser,jdbcType=VARCHAR}, #{belongOrgCode,jdbcType=VARCHAR}, #{exceptAreas,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineExclusive" >
+    insert into sip_line_exclusive (id, sip_line_id, apply_id, 
+      agent_line_id, line_id, line_name, 
+      line_type, line_status, supplier, 
+      call_direc, max_concurrent_calls, begin_date, 
+      end_date, fee_or_not, line_fee_type, 
+      univalent, overt_area, industrys, 
+      templates, areas, belong_user, 
+      belong_org_code, except_areas, remark, 
+      crt_user, crt_time, update_time, 
+      update_user)
+    values (#{id,jdbcType=INTEGER}, #{sipLineId,jdbcType=INTEGER}, #{applyId,jdbcType=INTEGER}, 
+      #{agentLineId,jdbcType=INTEGER}, #{lineId,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, 
+      #{lineType,jdbcType=INTEGER}, #{lineStatus,jdbcType=INTEGER}, #{supplier,jdbcType=VARCHAR}, 
+      #{callDirec,jdbcType=INTEGER}, #{maxConcurrentCalls,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, 
+      #{endDate,jdbcType=VARCHAR}, #{feeOrNot,jdbcType=BIT}, #{lineFeeType,jdbcType=INTEGER}, 
+      #{univalent,jdbcType=DECIMAL}, #{overtArea,jdbcType=VARCHAR}, #{industrys,jdbcType=VARCHAR}, 
+      #{templates,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, #{belongUser,jdbcType=VARCHAR}, 
+      #{belongOrgCode,jdbcType=VARCHAR}, #{exceptAreas,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineExclusive" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineExclusive" >
     insert into sip_line_exclusive
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="sipLineId != null" >
         sip_line_id,
       </if>
@@ -186,6 +192,9 @@
       </if>
       <if test="endDate != null" >
         end_date,
+      </if>
+      <if test="feeOrNot != null" >
+        fee_or_not,
       </if>
       <if test="lineFeeType != null" >
         line_fee_type,
@@ -231,6 +240,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="sipLineId != null" >
         #{sipLineId,jdbcType=INTEGER},
       </if>
@@ -266,6 +278,9 @@
       </if>
       <if test="endDate != null" >
         #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="feeOrNot != null" >
+        #{feeOrNot,jdbcType=BIT},
       </if>
       <if test="lineFeeType != null" >
         #{lineFeeType,jdbcType=INTEGER},
@@ -359,6 +374,9 @@
       <if test="record.endDate != null" >
         end_date = #{record.endDate,jdbcType=VARCHAR},
       </if>
+      <if test="record.feeOrNot != null" >
+        fee_or_not = #{record.feeOrNot,jdbcType=BIT},
+      </if>
       <if test="record.lineFeeType != null" >
         line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
       </if>
@@ -421,6 +439,7 @@
       max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
       begin_date = #{record.beginDate,jdbcType=VARCHAR},
       end_date = #{record.endDate,jdbcType=VARCHAR},
+      fee_or_not = #{record.feeOrNot,jdbcType=BIT},
       line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
       univalent = #{record.univalent,jdbcType=DECIMAL},
       overt_area = #{record.overtArea,jdbcType=VARCHAR},
@@ -477,6 +496,9 @@
       </if>
       <if test="endDate != null" >
         end_date = #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="feeOrNot != null" >
+        fee_or_not = #{feeOrNot,jdbcType=BIT},
       </if>
       <if test="lineFeeType != null" >
         line_fee_type = #{lineFeeType,jdbcType=INTEGER},
@@ -537,6 +559,7 @@
       max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
       begin_date = #{beginDate,jdbcType=VARCHAR},
       end_date = #{endDate,jdbcType=VARCHAR},
+      fee_or_not = #{feeOrNot,jdbcType=BIT},
       line_fee_type = #{lineFeeType,jdbcType=INTEGER},
       univalent = #{univalent,jdbcType=DECIMAL},
       overt_area = #{overtArea,jdbcType=VARCHAR},

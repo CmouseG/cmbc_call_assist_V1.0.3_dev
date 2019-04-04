@@ -20,4 +20,13 @@ public interface IKeywordsVerifyService {
      * 3、与所有业务问答的关键词不能重复
      */
     void verifyCommonDialogBranch(List<BotSentenceIntentVO> intentVOList, String processId, String currentBranchId);
+
+
+    /**
+     * 通用对话关键词校验
+     * 1、当前业务问答所有意图的关键词不能重复
+     * 2、与其他业务问答的关键词不能重复
+     * 3、与限定的通用对话所有关键词不能重复
+     */
+    void verifyBusinessAnswerBranch(List<BotSentenceIntentVO> intentVOList, String processId, String currentBranchId);
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
         // 1、当前分支所有意图的关键词不能重复
         Map<String, String> keywordToIntentNameMap = Maps.newHashMap();
-        verifyCurrentBranchIntents(intentVOList, keywordToIntentNameMap, errorSb);
+        compareWithCurrentBranchIntents(intentVOList, keywordToIntentNameMap, errorSb);
 
 //        2、同级分支所有关键词不能重复
         BotSentenceBranchExample example = new BotSentenceBranchExample();
@@ -97,15 +96,72 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
         // 1、当前分支所有意图的关键词不能重复
         Map<String, String> keywordToIntentNameMap = Maps.newHashMap();
-        verifyCurrentBranchIntents(intentVOList, keywordToIntentNameMap, errorSb);
+        compareWithCurrentBranchIntents(intentVOList, keywordToIntentNameMap, errorSb);
 
         // 2、与限定的通用对话所有关键词不能重复
+        compareWithCommonDialog(keywordToIntentNameMap, errorSb, processId, currentBranchId);
+
+//      3、与所有业务问答的关键词不能重复
+        compareWithBusinessAnswer(keywordToIntentNameMap, errorSb, processId, currentBranchId);
+
+        String errorMessage = errorSb.toString();
+        if(StringUtils.isNotBlank(errorMessage)){
+            throw new CommonException(errorMessage);
+        }
+    }
+
+    @Override
+    public void verifyBusinessAnswerBranch(List<BotSentenceIntentVO> intentVOList, String processId, String currentBranchId) {
+        if(CollectionUtils.isEmpty(intentVOList)){
+            return;
+        }
+        StringBuilder errorSb = new StringBuilder();
+
+        // 1、当前分支所有意图的关键词不能重复
+        Map<String, String> keywordToIntentNameMap = Maps.newHashMap();
+        compareWithCurrentBranchIntents(intentVOList, keywordToIntentNameMap, errorSb);
+
+        // 2、与所有业务问答的关键词不能重复(排除自身)
+        compareWithBusinessAnswer(keywordToIntentNameMap, errorSb, processId, currentBranchId);
+
+        //3、与限定的通用对话所有关键词不能重复
+        compareWithCommonDialog(keywordToIntentNameMap, errorSb, processId, currentBranchId);
+    }
+
+    /**
+     * 当前分支所有意图的关键词不能重复
+     * @param intentVOList 当前分支所有意图
+     * @param keywordToIntentNameMap
+     * @param errorSb
+     */
+    private void compareWithCurrentBranchIntents(List<BotSentenceIntentVO> intentVOList, Map<String, String> keywordToIntentNameMap, StringBuilder errorSb){
+        intentVOList.forEach(intentVO -> {
+            List<String> keywords = KeywordsUtil.getAllKeywordsFromIntentVO(intentVO);
+            keywords.forEach(originKeyword -> {
+                if(keywordToIntentNameMap.containsKey(originKeyword)){
+                    KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
+                    errorSb.append(String.format(INTENT_ERROR_FORMAT, intentVO.getName(), keywordToIntentNameMap.get(originKeyword), keyword.getDisplayKeyword()));
+                }else {
+                    keywordToIntentNameMap.put(originKeyword, intentVO.getName());
+                }
+            });
+        });
+    }
+
+    /**
+     * 与限定的通用对话所有关键词不能重复(排除自身)
+     * @param keywordToIntentNameMap
+     * @param errorSb
+     * @param processId
+     * @param currentBranchId
+     */
+    private void compareWithCommonDialog(Map<String, String> keywordToIntentNameMap, StringBuilder errorSb, String processId, String currentBranchId) {
+
         List<BotSentenceBranch> specialCommonDialogBranches = Lists.newArrayList();
 
         BotSentenceBranchExample negativeBranchExample = new BotSentenceBranchExample();
         negativeBranchExample.createCriteria()
                 .andProcessIdEqualTo(processId)
-                .andBranchIdNotEqualTo(currentBranchId)
                 .andIntentsIsNotNull()
                 .andDomainIn(Arrays.asList("在忙","投诉","拒绝","用户不清楚"))
                 .andBranchNameEqualTo("negative");
@@ -116,7 +172,6 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
         BotSentenceBranchExample specialBranchExample = new BotSentenceBranchExample();
         specialBranchExample.createCriteria()
                 .andProcessIdEqualTo(processId)
-                .andBranchIdNotEqualTo(currentBranchId)
                 .andIntentsIsNotNull()
                 .andDomainEqualTo("号码过滤")
                 .andBranchNameEqualTo("special");
@@ -124,6 +179,10 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
         specialCommonDialogBranches.addAll(botSentenceBranchMapper.selectByExample(specialBranchExample));
 
         specialCommonDialogBranches.forEach(branch -> {
+            if(branch.getBranchId().equals(currentBranchId)){
+                return;
+            }
+
             String intentIds = branch.getIntents();
             if(StringUtils.isBlank(intentIds)){
                 return;
@@ -139,11 +198,21 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
                 });
             });
         });
+    }
 
-//      3、与所有业务问答的关键词不能重复
+
+    /**
+     * 与所有业务问答的关键词不能重复(排除自身)
+     */
+    private void compareWithBusinessAnswer(Map<String, String> keywordToIntentNameMap, StringBuilder errorSb, String processId, String currentBranchId){
+
         List<BusinessAnswerTaskExt> businessAnswerBranches = businessAnswerTaskExtMapper.queryBusinessAnswerTaskExtById(processId);
         Integer index = 1;
         for (BusinessAnswerTaskExt branch: businessAnswerBranches) {
+            if(branch.getBranchId().equals(currentBranchId)){
+                continue;
+            }
+
             String intentIds = branch.getIntentId();
             if(StringUtils.isBlank(intentIds)){
                 index++;
@@ -161,31 +230,6 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
             }
             index++;
         }
-
-        String errorMessage = errorSb.toString();
-        if(StringUtils.isNotBlank(errorMessage)){
-            throw new CommonException(errorMessage);
-        }
-    }
-
-    /**
-     * 当前分支所有意图的关键词不能重复
-     * @param intentVOList 当前分支所有意图
-     * @param keywordToIntentNameMap
-     * @param errorSb
-     */
-    private void verifyCurrentBranchIntents(List<BotSentenceIntentVO> intentVOList, Map<String, String> keywordToIntentNameMap, StringBuilder errorSb){
-        intentVOList.forEach(intentVO -> {
-            List<String> keywords = KeywordsUtil.getAllKeywordsFromIntentVO(intentVO);
-            keywords.forEach(originKeyword -> {
-                if(keywordToIntentNameMap.containsKey(originKeyword)){
-                    KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
-                    errorSb.append(String.format(INTENT_ERROR_FORMAT, intentVO.getName(), keywordToIntentNameMap.get(originKeyword), keyword.getDisplayKeyword()));
-                }else {
-                    keywordToIntentNameMap.put(originKeyword, intentVO.getName());
-                }
-            });
-        });
     }
 
     private List<BotSentenceIntent> getIntentsByIntentIds(String intentIds){

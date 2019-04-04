@@ -406,7 +406,14 @@ public class UserController implements IAuth {
 		boolean isAgent = service.isAgentUser(userId);
 		return Result.ok(isAgent);
 	}
-	
+
+	@Override
+	@RequestMapping("/user/getUserByOpenId")
+	public ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("openId") String openId)
+	{
+		return Result.ok(service.getUserByOpenId(openId));
+	}
+
 	/**
 	 * 获取首页账号数
 	 */

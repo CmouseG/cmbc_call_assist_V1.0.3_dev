@@ -687,4 +687,10 @@
 		LEFT JOIN sys_role c ON b.role_id = c.id
 		WHERE a.id = #{userId}
 	</select>
+
+	<select id="getUserByOpenId" resultType="com.guiji.user.dao.entity.SysUser">
+		SELECT * FROM sys_user a
+		LEFT JOIN sys_user_ext b ON a.id = b.user_id
+		WHERE b.wechat_openid = #{openId}
+  	</select>
 </mapper>

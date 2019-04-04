@@ -77,14 +77,15 @@ public class XiaoYa implements ISendMsgByContent
 		String[] returnData = result.split(",");
 		// 返回参数
 		String respcode = returnData[0];
-		String respdesc = returnData[5];
-
+		String respdesc = "";
 		if ("0".equals(respcode))
 		{
+			respdesc = returnData[5];
 			logger.info("发送成功:respcode:{},respdesc:{}", respcode, respdesc);
 			record.setSendStatus(1);
 		} else
 		{
+			respdesc = returnData[1];
 			logger.info("发送失败:respcode:{},respdesc:{}", respcode, respdesc);
 			record.setSendStatus(0);
 		}
@@ -110,7 +111,7 @@ public class XiaoYa implements ISendMsgByContent
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "-1,2019040414411233782075296,0,1,0,调用接口异常";
+			result = "-1,调用接口异常";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

@@ -1,5 +1,5 @@
 server:
-  id: 1  #不同calloutsrver需修改为不一样的，取值范围1至300
+  id: 1  #所有calloutserver和toagentserver需修改为不一样的，取值范围1至1024
   port: 18024
   tomcat:
     max-threads: 800

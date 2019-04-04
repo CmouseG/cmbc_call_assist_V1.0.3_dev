@@ -29,7 +29,7 @@ public class MessagesTaskListener
 	RedisUtil redisUtil;
 	
 	@RabbitHandler
-	public void process(String message) throws Exception
+	public void process(String message)
 	{
 		SmsTask smsTask = null;
 		try

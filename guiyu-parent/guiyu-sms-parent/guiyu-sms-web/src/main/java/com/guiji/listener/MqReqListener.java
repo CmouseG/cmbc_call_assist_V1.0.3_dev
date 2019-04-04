@@ -22,7 +22,7 @@ public class MqReqListener
 	ReqHandler reqHandler;
 	
 	@RabbitHandler
-	public void process(String message) throws Exception
+	public void process(String message)
 	{
 		try
 		{

@@ -140,7 +140,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" >
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id">
     insert into sip_line_base_info (id, line_name, line_id, 
       supplier, line_status, sip_ip, 
       sip_port, sip_domain, sip_account, 

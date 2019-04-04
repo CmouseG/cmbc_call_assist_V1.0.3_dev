@@ -30,15 +30,17 @@ public class ReportScheduler {
 
         log.info("----------- start reportCallDayScheduler -----------");
         Lock lock = new Lock("ReportScheduler.reportCallDayScheduler", "ReportScheduler.reportCallDayScheduler");
-        try {
-            if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+        if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+
+            try {
                 reportSchedulerService.reportCallDayScheduler();
+            } catch (Exception e) {
+                log.info("reportCallDayScheduler error", e);
+            } finally {
+                distributedLockHandler.releaseLock(lock);// 释放锁
             }
-        } catch (Exception e) {
-            log.info("reportCallDayScheduler error", e);
-        } finally {
-            distributedLockHandler.releaseLock(lock);// 释放锁
         }
+
         log.info("----------- end reportCallDayScheduler -----------");
 
     }
@@ -49,15 +51,17 @@ public class ReportScheduler {
 
         log.info("----------- start reportCallHourScheduler -----------");
           Lock lock = new Lock("ReportScheduler.reportCallHourScheduler", "ReportScheduler.reportCallHourScheduler");
-          try {
-              if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-                  reportSchedulerService.reportCallHourScheduler();
-              }
-          } catch (Exception e) {
-              log.info("reportCallHourScheduler error", e);
-          } finally {
-              distributedLockHandler.releaseLock(lock);// 释放锁
-          }
+        if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+
+            try {
+                reportSchedulerService.reportCallHourScheduler();
+            } catch (Exception e) {
+                log.info("reportCallHourScheduler error", e);
+            } finally {
+                distributedLockHandler.releaseLock(lock);// 释放锁
+            }
+        }
+
         log.info("----------- end reportCallHourScheduler -----------");
 
     }
@@ -68,15 +72,17 @@ public class ReportScheduler {
 
         log.info("----------- start reportCallTodayTruncate -----------");
         Lock lock = new Lock("ReportScheduler.reportCallTodayTruncate", "ReportScheduler.reportCallTodayTruncate");
-        try {
-            if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+        if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+
+            try {
                 reportSchedulerService.reportCallTodayTruncate();
+            } catch (Exception e) {
+                log.info("reportCallTodayTruncate error", e);
+            } finally {
+                distributedLockHandler.releaseLock(lock);// 释放锁
             }
-        } catch (Exception e) {
-            log.info("reportCallTodayTruncate error", e);
-        } finally {
-            distributedLockHandler.releaseLock(lock);// 释放锁
         }
+
         log.info("----------- end reportCallTodayTruncate -----------");
 
     }

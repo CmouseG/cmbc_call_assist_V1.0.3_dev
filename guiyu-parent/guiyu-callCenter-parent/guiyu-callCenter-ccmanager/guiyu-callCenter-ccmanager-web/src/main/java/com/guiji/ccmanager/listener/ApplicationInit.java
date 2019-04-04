@@ -39,17 +39,18 @@ public class ApplicationInit {
         }*/
 
         Lock lockDay = new Lock("ApplicationInit.isDaySheduleSuccess", "ApplicationInit.isDaySheduleSuccess");
-        try {
-            if (distributedLockHandler.tryLock(lockDay)) {
+        if (distributedLockHandler.tryLock(lockDay)) {
+
+            try {
                 if (!reportSchedulerService.isDaySheduleSuccess()) {  //假如统计天表失败了。则重新统计昨天的数据
                     log.info("----------day count task has not done suceess----------");
                     reportSchedulerService.reportCallDayScheduler();
                 }
+            } catch (Exception e) {
+                log.error("检查清空当天统计表失败", e);
+            } finally {
+                distributedLockHandler.releaseLock(lockDay);// 释放锁
             }
-        }catch (Exception e){
-            log.error("检查清空当天统计表失败",e);
-        }finally {
-            distributedLockHandler.releaseLock(lockDay);// 释放锁
         }
 
         log.info("----------application init end check----------");

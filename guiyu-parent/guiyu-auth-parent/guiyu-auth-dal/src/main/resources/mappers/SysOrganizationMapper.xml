@@ -470,5 +470,4 @@
   <select id="queryChildrenOrg" resultType="com.guiji.user.dao.entity.SysOrganization">
   	SELECT t.* FROM sys_organization t WHERE t.`code` REGEXP CONCAT(#{orgCode},'[0-9]+\\.$');
   </select>
-  
 </mapper>

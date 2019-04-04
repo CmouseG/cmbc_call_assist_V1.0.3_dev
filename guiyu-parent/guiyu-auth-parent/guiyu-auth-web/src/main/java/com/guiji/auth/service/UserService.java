@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -436,4 +437,24 @@ public class UserService {
 		}
 		return userList;
 	}
+
+
+	public List<SysUser> getUserByOpenId(String openId)
+	{
+		return mapper.getUserByOpenId(openId);
+	}
+
+	public Long getUserIdByCheckLogin(String userName, String password)
+	{
+		SysUserExample example = new SysUserExample();
+		example.createCriteria().andUsernameEqualTo(userName).andPasswordEqualTo(AuthUtil.encrypt(password));
+		List<SysUser> sysUsers = mapper.selectByExample(example);
+
+		if(CollectionUtils.isEmpty(sysUsers)){
+			return null;
+		}
+
+		return sysUsers.get(0).getId();
+	}
+
 }

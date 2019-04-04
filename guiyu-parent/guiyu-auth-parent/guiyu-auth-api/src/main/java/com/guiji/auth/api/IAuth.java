@@ -60,7 +60,7 @@ public interface IAuth {
 
 	@RequestMapping("/user/getUserExtByUserId")
 	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId) throws UnsupportedEncodingException;
-	
+
 	/**
 	 * 查询某个用户的菜单或者按钮
 	 * @param userId
@@ -88,4 +88,7 @@ public interface IAuth {
 	 */
 	@RequestMapping("/user/isAgentUser")
 	public ReturnData<Boolean> isAgentUser(@RequestParam("userId") Integer userId);
+
+	@RequestMapping("/user/getUserByOpenId")
+	ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("openId") String openId);
 }

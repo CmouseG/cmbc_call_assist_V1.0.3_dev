@@ -6,7 +6,7 @@ import com.guiji.component.result.Result;
 import com.guiji.wechat.api.WeChatApi;
 import com.guiji.wechat.dtos.QRCodeReqDto;
 import com.guiji.wechat.util.constants.WeChatConstant;
-import com.guiji.wechat.util.properties.WeChatProperty;
+import com.guiji.wechat.util.properties.WeChatUrlProperty;
 import com.guiji.wechat.vo.QRCodeReqVO;
 import com.guiji.wechat.vo.QRCodeRpsVO;
 import com.guiji.wechat.vo.SendMsgReqVO;
@@ -41,9 +41,9 @@ public class WeChatController implements WeChatApi {
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private WeChatProperty weChatProperty;
+    private WeChatUrlProperty weChatUrlProperty;
 
-    @PostMapping("show/qrcode")
+    @PostMapping("wechat/show/qrcode")
     public void show(@RequestBody QRCodeReqVO qrCodeReqVO, HttpServletResponse response) throws Exception {
 
         Result.ReturnData<QRCodeRpsVO> returnData = getQRCode(qrCodeReqVO);
@@ -69,7 +69,7 @@ public class WeChatController implements WeChatApi {
         httpHeaders.setContentType(MediaType.IMAGE_JPEG);
         HttpEntity<Resource> httpEntity = new HttpEntity<>(httpHeaders);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatProperty.getQrCodeShowUrl())
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatUrlProperty.getQrCodeShowUrl())
                 .queryParam(WeChatConstant.PARAM_TICKET, qrCodeRpsVO.getTicket());
 
         try{
@@ -94,7 +94,7 @@ public class WeChatController implements WeChatApi {
 
         String accessToken = stringRedisTemplate.opsForValue().get(WeChatConstant.ACCESS_TOKEN_CACHE_KEY);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatProperty.getTemplateMessageUrl())
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatUrlProperty.getTemplateMessageUrl())
                 .queryParam(WeChatConstant.PARAM_ACCESS_TOKEN, accessToken);
 
         HttpHeaders headers = new HttpHeaders();
@@ -113,10 +113,17 @@ public class WeChatController implements WeChatApi {
         return Result.ok();
     }
 
+    @PostMapping(value = "wechat/send/message")
+    @ResponseBody
+    public Result.ReturnData<String> sendMessage(@RequestBody SendMsgReqVO sendMsgReqVO) {
+        return send(sendMsgReqVO);
+    }
+
+
     private QRCodeRpsVO generateQRCodeTicket(QRCodeReqVO qrCodeReqVO) {
         String accessToken = stringRedisTemplate.opsForValue().get(WeChatConstant.ACCESS_TOKEN_CACHE_KEY);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatProperty.getQrCodeCreateUrl())
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatUrlProperty.getQrCodeCreateUrl())
                 .queryParam(WeChatConstant.PARAM_ACCESS_TOKEN, accessToken);
 
         HttpHeaders headers = new HttpHeaders();

@@ -79,4 +79,6 @@ public interface SysUserMapper {
     SysUserExt getSysUserExtByUserId(Long id);
 
 	Integer getAuthLevelByUserId(Long userId);
+
+	List<SysUser> getUserByOpenId(@Param("openId") String openId);
 }

@@ -11,5 +11,13 @@ public interface IKeywordsVerifyService {
      * 1、当前分支所有意图的关键词不能重复
      * 2、同级分支所有关键词不能重复
      */
-    void verifyMainProcessBranch(String nowBranchId, List<BotSentenceIntentVO> intentVOList, String processId, String domainName);
+    void verifyMainProcessBranch(List<BotSentenceIntentVO> intentVOList, String processId, String domainName, String currentBranchId);
+
+    /**
+     * 通用对话关键词校验
+     * 1、当前通用对话所有意图的关键词不能重复
+     * 2、与限定的通用对话所有关键词不能重复
+     * 3、与所有业务问答的关键词不能重复
+     */
+    void verifyCommonDialogBranch(List<BotSentenceIntentVO> intentVOList, String processId, String currentBranchId);
 }

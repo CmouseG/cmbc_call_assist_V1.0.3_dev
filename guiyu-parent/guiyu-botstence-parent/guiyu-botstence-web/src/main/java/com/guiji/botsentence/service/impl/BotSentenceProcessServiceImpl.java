@@ -1570,11 +1570,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		BotSentenceBranch branch = botSentenceBranchMapper.selectByPrimaryKey(branchId);
 		
-		//与除主流程之外的所有关键字去重
-		List<Long> intentIds = new ArrayList<>();
-		
-		//获取所有关键词库对应关键词集合
-		
 		//不需要校验关键词的域
 		List<String> notValidateList = new ArrayList<>();
 		notValidateList.add("失败邀约");
@@ -1583,22 +1578,20 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		notValidateList.add("失败结束");
 		notValidateList.add("强制结束");
 		notValidateList.add("结束_未匹配");
-		
-		
+
 		if(!notValidateList.contains(commonDialog.getYujin())) {
-			if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
-				for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
-					if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
-						temp.setIntentDomain(commonDialog.getIntentDomain());
-					}else {
-						temp.setIntentDomain(commonDialog.getDomain());
-					}
-					if(null != temp.getId()) {
-						intentIds.add(new Long(temp.getId()));
-					}
+			if(!CollectionUtils.isEmpty(commonDialog.getIntentList())){
+				iKeywordsVerifyService.verifyCommonDialogBranch(commonDialog.getIntentList(), commonDialog.getProcessId(), commonDialog.getBranchId());
+			}
+			//更新branch的意图
+			if(null != branch) {
+				if(CollectionUtils.isEmpty(commonDialog.getIntentList())){
+					branch.setIntents(null);
+				}else {
+					//新增意图
+					String intentIds2 = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
+					branch.setIntents(intentIds2);
 				}
-				//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
-				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 			}
 		}
 		
@@ -1694,20 +1687,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			BotSentenceBranch failed_enter_branch = this.getFailEnterBranch(branch.getProcessId(), branch.getDomain());
 			failed_enter_branch.setResponse(resp);
 			botSentenceBranchMapper.updateByPrimaryKey(failed_enter_branch);
-		}
-		
-		
-		//更新branch的意图
-		if(!notValidateList.contains(commonDialog.getYujin())) {
-			if(null != branch) {
-				if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
-					//新增意图
-					String intentIds2 = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
-					branch.setIntents(intentIds2);
-				}else {
-					branch.setIntents(null);
-				}
-			}
 		}
 		
 		branch.setLstUpdateTime(new Date(System.currentTimeMillis()));
@@ -2438,7 +2417,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 		if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {
 
-			iKeywordsVerifyService.verifyMainProcessBranch(null, edge.getIntentList(), processId, source.getDomainName());
+			iKeywordsVerifyService.verifyMainProcessBranch(edge.getIntentList(), processId, source.getDomainName(), null);
 
 			if(!CollectionUtils.isEmpty(edge.getIntentList())) {
 				String intents = botSentenceKeyWordsService.saveIntent(source.getDomainName(), process.getProcessId(), process.getTemplateId(), edge.getIntentList(), "01", null, userId);
@@ -2514,7 +2493,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {//如果是一般类型
 				List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
 
-				iKeywordsVerifyService.verifyMainProcessBranch(branchId, intentVOS, processId, botSentenceBranch.getDomain());
+				iKeywordsVerifyService.verifyMainProcessBranch(intentVOS, processId, botSentenceBranch.getDomain(), branchId);
 
 				if(!CollectionUtils.isEmpty(intentVOS)){
 					String intentIds = botSentenceKeyWordsService.saveIntent(new_sourceDomain.getDomainName(), processId, botSentenceBranch.getTemplateId(), intentVOS, "01", botSentenceBranch, userId);
@@ -4243,10 +4222,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public List<Object> getAvailableTemplateBySelf(String accountNo) {
 		return botSentenceProcessExtMapper.getAvailableTemplateBySelf(accountNo);
 	}
-	
-	public void test() {
-		
-	}
 
 	@Override
 	public BotSentenceProcess getBotsentenceProcessByTemplateId(String templateId) {
@@ -4258,7 +4233,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		return null;
 	}
-	
 	
 
 	@Override

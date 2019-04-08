@@ -251,6 +251,18 @@ public class RobotRemoteController implements IRobotRemote{
 		}
 		return Result.ok();
 	}
+
+	/**
+	 * 查询用户机器人配置信息
+	 */
+	@Override
+	public Result.ReturnData<UserResourceCacheWithVersion> queryUserResourceCacheWithVersion(@RequestParam(value="userId",required=true) String userId){
+		if(StrUtils.isNotEmpty(userId)) {
+			UserResourceCacheWithVersion userResourceCache = aiCacheService.getUserResourceWithVersion(userId);
+			return Result.ok(userResourceCache);
+		}
+		return Result.ok();
+	}
 	
 	
 	/**

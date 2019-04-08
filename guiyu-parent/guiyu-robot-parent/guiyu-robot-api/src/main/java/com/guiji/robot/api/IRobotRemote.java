@@ -3,28 +3,13 @@ package com.guiji.robot.api;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.robot.model.*;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.component.result.Result;
-import com.guiji.robot.model.AiCallApplyReq;
-import com.guiji.robot.model.AiCallLngKeyMatchReq;
-import com.guiji.robot.model.AiCallNext;
-import com.guiji.robot.model.AiCallNextReq;
-import com.guiji.robot.model.AiCallStartReq;
-import com.guiji.robot.model.AiFlowMsgPushReq;
-import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckParamsReq;
-import com.guiji.robot.model.CheckResult;
-import com.guiji.robot.model.TtsCallback;
-import com.guiji.robot.model.TtsComposeCheckRsp;
-import com.guiji.robot.model.TtsVoice;
-import com.guiji.robot.model.TtsVoiceReq;
-import com.guiji.robot.model.UserAiCfgBaseInfoVO;
-import com.guiji.robot.model.UserAiCfgVO;
-import com.guiji.robot.model.UserResourceCache;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -154,6 +139,10 @@ public interface IRobotRemote {
 	@ApiOperation(value = "查询用户机器人配置信息")
     @PostMapping(value = "/remote/queryUserResourceCache")
 	Result.ReturnData<UserResourceCache> queryUserResourceCache(@RequestParam(value="userId",required=true) String userId);
+
+	@ApiOperation(value = "查询用户机器人配置信息带版本")
+	@PostMapping(value = "/remote/queryUserResourceCacheWithVersion")
+	Result.ReturnData<UserResourceCacheWithVersion> queryUserResourceCacheWithVersion(@RequestParam(value="userId",required=true) String userId);
 	
 	
 	@ApiOperation(value = "查询所有用户机器人配置信息")

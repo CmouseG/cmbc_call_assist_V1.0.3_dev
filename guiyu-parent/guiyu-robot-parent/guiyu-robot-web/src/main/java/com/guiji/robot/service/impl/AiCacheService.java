@@ -1,6 +1,7 @@
 package com.guiji.robot.service.impl;
 
 import java.io.File;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.guiji.robot.model.TemplateInfo;
+import com.guiji.robot.model.UserResourceCacheWithVersion;
+import com.guiji.utils.BeanUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +93,42 @@ public class AiCacheService {
 			return (UserResourceCache)cacheObj;
 		}
 	}
+	/************************************用户资源begin******************************************/
+	/**
+	 * 根据用户id查询用户的资源缓存信息
+	 * 如果用户缓存不存在，那么重新查询后设置环境
+	 * @param userId
+	 * @return
+	 */
+	public UserResourceCacheWithVersion getUserResourceWithVersion(String userId) {
+
+		UserResourceCache cache = getUserResource(userId);
+
+		UserResourceCacheWithVersion cacheWithVersion = new UserResourceCacheWithVersion();
+
+		BeanUtil.copyProperties(cache, cacheWithVersion);
+
+		Map<String, TemplateInfo> map = new HashMap<>();
+
+		cache.getTempAiNumMap().forEach((k, v) -> {
+			HsReplace hsReplace = aiCacheService.queyHsReplace(k);
+
+			TemplateInfo templateInfo = new TemplateInfo();
+			templateInfo.setTemplateId(k);
+			templateInfo.setNum(v);
+			templateInfo.setVersion(hsReplace.getVersion());
+
+			map.put(k, templateInfo);
+		});
+
+		cacheWithVersion.setTempInfoMap(map);
+
+		return cacheWithVersion;
+	}
+
+	@Autowired
+	AiCacheService aiCacheService;
+
 	
 	/**
 	 * 查询所有用户资源--只查缓存中数据

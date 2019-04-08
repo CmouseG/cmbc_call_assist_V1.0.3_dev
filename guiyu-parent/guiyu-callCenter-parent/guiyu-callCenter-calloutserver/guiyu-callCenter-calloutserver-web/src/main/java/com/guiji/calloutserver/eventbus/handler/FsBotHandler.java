@@ -333,14 +333,14 @@ public class FsBotHandler {
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callId);
 
-            Long duration = event.getAsrDuration();
-            if (event.getAsrDuration() == null || event.getAsrDuration() <= 0) {
-                duration = 1000L;
-            }
+//            Long duration = event.getAsrDuration();
+//            if (event.getAsrDuration() == null || event.getAsrDuration() <= 0) {
+//                duration = 1000L;
+//            }
 
             //估算用户说话时间 = 当前时间 - asr识别时长
             LocalDateTime currentTime = LocalDateTime.now();
-            currentTime = currentTime.minus(duration, ChronoField.MILLI_OF_DAY.getBaseUnit());
+//            currentTime = currentTime.minus(duration, ChronoField.MILLI_OF_DAY.getBaseUnit());
             callDetail.setCustomerSayTime(java.sql.Timestamp.valueOf(currentTime));
 
             callDetail.setCustomerSayText(event.getAsrText());

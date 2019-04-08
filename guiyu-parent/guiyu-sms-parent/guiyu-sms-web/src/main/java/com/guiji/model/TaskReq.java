@@ -17,11 +17,10 @@ public class TaskReq
 	private Date sendTime;
 	private Long userId;
 	private String companyName;
-	private int taskId;
+	private String taskId;
 	
 	public TaskReq()
-	{
-	}
+	{}
 	
 	public TaskReq(String taskName,Integer sendType,List<String> phoneList,String tunnelName,Integer smsTemplateId,String smsContent)
 	{

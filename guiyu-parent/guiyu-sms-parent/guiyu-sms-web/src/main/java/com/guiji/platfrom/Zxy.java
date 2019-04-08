@@ -58,8 +58,8 @@ public class Zxy implements ISendMsgByContent
 	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
 	{
 		SmsRecord record = null;
-		String appKey = MapUtil.getString(params, "appKey", 0);
-		String appSecret = MapUtil.getString(params, "appSecret", 0);
+		String appKey = MapUtil.getString(params, "app_key", 0);
+		String appSecret = MapUtil.getString(params, "app_secret", 0);
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 		paramsList.add(new BasicNameValuePair("appKey", appKey));
 		paramsList.add(new BasicNameValuePair("appSecret", appSecret));

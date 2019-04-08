@@ -16,7 +16,6 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
 import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.MapUtil;
@@ -89,23 +88,17 @@ public class HongLian95 implements ISendMsgByContent
 	{
 		SmsRecord record = new SmsRecord();
 		String result = doGet(pstr); // 发送请求
-		JSONObject returnData = JSONObject.parseObject(result);
-		// 返回参数
-		String respcode = returnData.getString("respcode");
-		String respdesc = returnData.getString("respdesc");
+		logger.info("===========================>> "+result);
 
-		if ("00".equals(respcode))
+		if ("00".equals(result))
 		{
-			logger.info("发送成功:respcode:{},respdesc:{}", respcode, respdesc);
+			logger.info("发送成功:result:{}",result);
 			record.setSendStatus(1);
 		} else
 		{
-			logger.info("发送失败:respcode:{},respdesc:{}", respcode, respdesc);
+			logger.info("发送失败:result:{}",result);
 			record.setSendStatus(0);
 		}
-
-		record.setStatusCode(respcode);
-		record.setStatusMsg(respdesc);
 		return record;
 	}
 
@@ -123,7 +116,7 @@ public class HongLian95 implements ISendMsgByContent
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"respcode\":\"404\",\"respdesc\":\"调用接口异常\"}";
+			result = "404";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

@@ -42,7 +42,7 @@ public class QiYeBao implements ISendMsgByContent
 		{
 			List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 			paramsList.add(new BasicNameValuePair("username", username));
-			paramsList.add(new BasicNameValuePair("password", passwd));
+			paramsList.add(new BasicNameValuePair("passwd", passwd));
 			paramsList.add(new BasicNameValuePair("phone", phone));
 			paramsList.add(new BasicNameValuePair("msg", msgContent));
 			paramsList.add(new BasicNameValuePair("needstatus", "false"));

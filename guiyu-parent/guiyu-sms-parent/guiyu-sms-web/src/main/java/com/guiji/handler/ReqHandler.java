@@ -115,12 +115,6 @@ public class ReqHandler
 		if(config == null) {
 			throw new GuiyuException("没有短信配置，不发送短信");
 		}
-		if (config.getAuditingStatus() == 0) {
-			throw new GuiyuException("短信内容未审核，暂不能发送短信");
-		} 
-		if (config.getRunStatus() == 0) {
-			throw new GuiyuException("停止状态，不再发送短信");
-		}
 		// 获取通道
 		SmsTunnel tunnel = (SmsTunnel) redisUtil.get(config.getTunnelName());
 		if (tunnel == null){

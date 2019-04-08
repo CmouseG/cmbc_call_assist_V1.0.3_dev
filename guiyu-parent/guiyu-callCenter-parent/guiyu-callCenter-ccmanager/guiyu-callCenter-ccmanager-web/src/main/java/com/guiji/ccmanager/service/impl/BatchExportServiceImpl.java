@@ -284,7 +284,7 @@ public class BatchExportServiceImpl implements BatchExportService {
 
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("call_id desc");
+        example.setOrderByClause("create_time desc");
         example.setIsDesensitization(isDesensitization);
 
         List<BigInteger> listIds = callOutPlanMapper.selectCallIds4Encrypt(example);

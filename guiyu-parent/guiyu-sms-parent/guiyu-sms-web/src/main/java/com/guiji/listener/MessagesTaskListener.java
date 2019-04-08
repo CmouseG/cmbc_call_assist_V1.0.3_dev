@@ -29,7 +29,7 @@ public class MessagesTaskListener
 	RedisUtil redisUtil;
 	
 	@RabbitHandler
-	public void process(String message) throws Exception
+	public void process(String message)
 	{
 		SmsTask smsTask = null;
 		try
@@ -37,7 +37,7 @@ public class MessagesTaskListener
 			TaskReq taskReq = JsonUtils.json2Bean(message, TaskReq.class);
 			logger.info(taskReq.toString());
 
-			smsTask = taskMapper.selectByPrimaryKey(taskReq.getTaskId());
+			smsTask = taskMapper.selectByPrimaryKey(Integer.parseInt(taskReq.getTaskId()));
 			if(smsTask == null){ 
 				logger.error("没有查到任务：" + taskReq.getTaskId());
 				return;
@@ -51,7 +51,14 @@ public class MessagesTaskListener
 			}
 			smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
 		}
-		redisUtil.del(smsTask.getId().toString());
-		taskMapper.updateByPrimaryKeySelective(smsTask);
+		try
+		{
+			redisUtil.del(smsTask.getId().toString());
+			taskMapper.updateByPrimaryKeySelective(smsTask);
+		} catch (Exception e)
+		{
+			logger.error("处理失败！");
+		}
+		
 	}
 }

@@ -143,8 +143,8 @@ public class PlatformServiceImpl implements PlatformService
 		redisUtil.del(platName);
 	}
 	
-	public String getUserName(String userId) {
-        String cacheName = LocalCacheUtil.getT(userId);
+	private String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT("USERNAME_"+userId);
         if (cacheName != null) {
             return cacheName;
         } else {

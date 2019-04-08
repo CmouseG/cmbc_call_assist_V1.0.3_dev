@@ -72,7 +72,7 @@ public class SnowflakeIdWorker {
 
     }
 
-    @Value("${IdGengerator.workerId:1}")
+    @Value("${server.id:1}")
     public void setWorkerId(long workerId)
     {
         SnowflakeIdWorker.workerId = workerId;

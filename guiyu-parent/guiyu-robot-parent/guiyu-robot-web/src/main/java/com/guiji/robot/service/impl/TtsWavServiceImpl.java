@@ -407,10 +407,10 @@ public class TtsWavServiceImpl implements ITtsWavService {
                 //将参数逐个替换，替换参数含 $特殊符号，使用Matcher.quoteReplacement消除字符的特殊含义
                 content = content.replaceAll(Matcher.quoteReplacement(param), Matcher.quoteReplacement(ttsVoiceReq.getParamMap().get(param)));
             }
-            if (content.contains("$")) {
-                logger.error("模板{}的参数替换失败！", ttsVoiceReq.getTemplateId());
-                throw new RobotException(AiErrorEnum.AI00060010.getErrorCode(), AiErrorEnum.AI00060010.getErrorMsg());
-            }
+//            if (content.contains("$")) {
+//                logger.error("模板{}的参数替换失败！", ttsVoiceReq.getTemplateId());
+//                throw new RobotException(AiErrorEnum.AI00060010.getErrorCode(), AiErrorEnum.AI00060010.getErrorMsg());
+//            }
             data.setTtsContent(content);
             ttsTempDataMap.put(ttsPosEntry.getKey(), content);
             contents.add(content);

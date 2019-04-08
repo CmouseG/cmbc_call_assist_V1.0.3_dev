@@ -517,6 +517,14 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
+            if(null != execlFile && execlFile.exists() && execlFile.isFile()){
+                execlFile.delete();
+            }
+
+            if(null != zipFile && zipFile.exists() && zipFile.delete()){
+                zipFile.delete();
+            }
+
             //导出结果变更
             exportFileService.endExportFile(recordRes.getRecordId(),
                     bool ? ExportFileStatusEnum.FINISH.getStatus() : ExportFileStatusEnum.FAIL.getStatus(),

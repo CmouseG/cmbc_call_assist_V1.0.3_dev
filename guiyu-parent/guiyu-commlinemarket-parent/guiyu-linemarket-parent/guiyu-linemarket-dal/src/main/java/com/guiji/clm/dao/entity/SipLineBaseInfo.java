@@ -61,6 +61,8 @@ public class SipLineBaseInfo implements Serializable {
 
     private BigDecimal univalent;
 
+    private Boolean feeOrNot;
+
     private Integer lineFeeType;
 
     private String remark;
@@ -76,6 +78,8 @@ public class SipLineBaseInfo implements Serializable {
     private Date updateTime;
 
     private String updateUser;
+
+    private String belongUser;
 
     private static final long serialVersionUID = 1L;
 
@@ -303,6 +307,14 @@ public class SipLineBaseInfo implements Serializable {
         this.univalent = univalent;
     }
 
+    public Boolean getFeeOrNot() {
+        return feeOrNot;
+    }
+
+    public void setFeeOrNot(Boolean feeOrNot) {
+        this.feeOrNot = feeOrNot;
+    }
+
     public Integer getLineFeeType() {
         return lineFeeType;
     }
@@ -367,6 +379,14 @@ public class SipLineBaseInfo implements Serializable {
         this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 
+    public String getBelongUser() {
+        return belongUser;
+    }
+
+    public void setBelongUser(String belongUser) {
+        this.belongUser = belongUser == null ? null : belongUser.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -401,6 +421,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", exceptAreas=").append(exceptAreas);
         sb.append(", contractUnivalent=").append(contractUnivalent);
         sb.append(", univalent=").append(univalent);
+        sb.append(", feeOrNot=").append(feeOrNot);
         sb.append(", lineFeeType=").append(lineFeeType);
         sb.append(", remark=").append(remark);
         sb.append(", sipShareId=").append(sipShareId);
@@ -409,6 +430,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", crtTime=").append(crtTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", updateUser=").append(updateUser);
+        sb.append(", belongUser=").append(belongUser);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

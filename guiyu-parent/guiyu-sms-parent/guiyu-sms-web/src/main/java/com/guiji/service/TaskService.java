@@ -26,6 +26,8 @@ public interface TaskService
 
 	/**
 	 * 新增/编辑短信任务
+	 * @param userId 
+	 * @throws Exception 
 	 */
 	void addTask(TaskReqVO taskReq, Long userId) throws Exception;
 

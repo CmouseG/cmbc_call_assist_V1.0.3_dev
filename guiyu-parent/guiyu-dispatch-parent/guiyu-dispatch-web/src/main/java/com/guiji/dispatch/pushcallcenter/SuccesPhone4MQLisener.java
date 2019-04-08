@@ -8,6 +8,7 @@ import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.enums.IsNotifyMsgEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,9 +71,9 @@ public class SuccesPhone4MQLisener {
 
 	@Autowired
 	private RedisUtil redisUtil;
-
+	
 	@Autowired
-	private ISms sms;
+	QueueSender queueSender;
 
 	@Autowired
 	private INoticeSend sendMsg;
@@ -116,7 +117,7 @@ public class SuccesPhone4MQLisener {
 				vo.setUserId(dispatchPlan.getUserId());
 				vo.setIntentionTag(mqSuccPhoneDto.getLabel());
 				vo.setTemplateId(dispatchPlan.getRobot());
-				sms.sendMessage(vo);
+				queueSender.send("SendMessageMQ.Sms", JsonUtils.bean2Json(vo));
 			}
 		} catch (Exception e) {
 			logger.info("SuccesPhone4MQLisener消费数据有问题" + message);

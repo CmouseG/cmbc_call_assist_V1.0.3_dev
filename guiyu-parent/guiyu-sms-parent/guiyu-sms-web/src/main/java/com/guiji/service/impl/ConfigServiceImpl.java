@@ -182,6 +182,7 @@ public class ConfigServiceImpl implements ConfigService
 		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%")
 								.andOrgCodeLike(orgCode+"%")
 								.andRunStatusEqualTo(1)
+								.andAuditingStatusEqualTo(1)
 								.andTemplateIdEqualTo(templateId);
 		List<SmsConfig> configs = configMapper.selectByExampleWithBLOBs(example);
 		if (configs == null || configs.isEmpty()){
@@ -201,8 +202,8 @@ public class ConfigServiceImpl implements ConfigService
 		return count.intValue();
 	}
 	
-	public String getUserName(String userId) {
-        String cacheName = LocalCacheUtil.getT(userId);
+	private String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT("USERNAME_"+userId);
         if (cacheName != null) {
             return cacheName;
         } else {

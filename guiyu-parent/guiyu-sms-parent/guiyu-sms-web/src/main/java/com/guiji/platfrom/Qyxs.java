@@ -91,11 +91,12 @@ public class Qyxs implements ISendMsgByContent
 		SmsRecord record = new SmsRecord();
 		String result = doPost(paramsList, url); // 发送请求
 		JSONObject jsonResult = XML.toJSONObject(result);
+		logger.info("=======================>>" + jsonResult.toString());
 		// 返回参数
 		JSONObject returnsms = jsonResult.getJSONObject("returnsms");
 		String returnstatus = returnsms.getString("returnstatus");
 		String message = returnsms.getString("message");
-		String taskID = returnsms.getString("taskID");
+		String taskID = returnsms.get("taskID").toString();
 
 		if ("Success".equals(returnstatus) && "ok".equals(message))
 		{

@@ -7,8 +7,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.handler.ReqHandler;
+import com.guiji.service.ConfigService;
 import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.JsonUtils;
 
@@ -20,19 +20,20 @@ public class MqReqListener
 	
 	@Autowired
 	ReqHandler reqHandler;
+	@Autowired
+	ConfigService configService;
 	
 	@RabbitHandler
-	public void process(String message) throws Exception
+	public void process(String message)
 	{
 		try
 		{
 			SendMReqVO sendMReq = JsonUtils.json2Bean(message, SendMReqVO.class);
+			Integer count = configService.hasConfig(sendMReq.getIntentionTag(), sendMReq.getOrgCode(), sendMReq.getTemplateId());
+			if(count == null || count <= 0) {return;}
 			logger.info(sendMReq.toString());
 			reqHandler.handleReq(sendMReq);
-		} 
-		catch (GuiyuException e){
-			logger.error(e.getErrorMessage());
-		}catch (Exception e){
+		} catch (Exception e){
 			logger.error("处理失败!", e);
 		}
 	}

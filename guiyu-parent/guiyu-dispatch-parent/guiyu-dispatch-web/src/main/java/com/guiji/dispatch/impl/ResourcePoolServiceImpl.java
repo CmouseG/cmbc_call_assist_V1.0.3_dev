@@ -41,6 +41,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private static final String REDIS_SYSTEM_MAX_ROBOT = "REDIS_SYSTEM_MAX_ROBOT";
     private static final String REDIS_SYSTEM_MAX_LINE = "REDIS_SYSTEM_MAX_LINE";
     private static final String REDIS_SYSTEM_MAX_PLAN_BY = "REDIS_SYSTEM_MAX_PLAN_BY";
+    private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
     @Autowired
     private RedisUtil redisUtil;
@@ -89,9 +90,9 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     @Override
     public boolean distributeByUser() throws Exception{
         Lock lock = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
-        try {
-            if (distributedLockHandler.tryLock(lock, 1000L))
-            {
+        if (distributedLockHandler.tryLock(lock, 1000L)) {
+            try {
+
                 logger.info("根据用户模板线路分配拨打号码比例#start");
                 //查询当前时间段有拨打计划的[用户|线路|模板]
                 String hour = String.valueOf(DateUtil.getCurrentHour());
@@ -168,9 +169,9 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 }
 
                 logger.info("根据用户模板线路分配拨打号码比例#end");
+            } finally {
+                distributedLockHandler.releaseLock(lock);
             }
-        }finally {
-            distributedLockHandler.releaseLock(lock);
         }
 
         return true;

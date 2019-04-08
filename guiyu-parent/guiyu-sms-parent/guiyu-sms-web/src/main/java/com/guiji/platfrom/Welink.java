@@ -29,6 +29,17 @@ public class Welink implements ISendMsgByContent
 	private static String url = "http://api.51welink.com/json/sms/g_Submit";
 
 	@Override
+	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
+	{
+		SmsRecord record = null;
+		JSONObject json = setRequestParams(params, msgContent);
+		json.put("sdst", phone);
+		record = send(json);
+		record.setPhone(phone);
+		return record;
+	}
+	
+	@Override
 	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent) throws Exception
 	{
 		List<SmsRecord> records = new ArrayList<>();
@@ -43,17 +54,6 @@ public class Welink implements ISendMsgByContent
 			records.add(record);
 		}
 		return records;
-	}
-	
-	@Override
-	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
-	{
-		SmsRecord record = null;
-		JSONObject json = setRequestParams(params, msgContent);
-		json.put("sdst", phone);
-		record = send(json);
-		record.setPhone(phone);
-		return record;
 	}
 
 	private SmsRecord send(JSONObject json)

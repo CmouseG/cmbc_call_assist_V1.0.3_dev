@@ -10,11 +10,13 @@ import org.springframework.stereotype.Component;
 
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.DaiYi;
 import com.guiji.platfrom.HongLian95;
 import com.guiji.platfrom.Junlong;
 import com.guiji.platfrom.QiYeBao;
 import com.guiji.platfrom.Qyxs;
 import com.guiji.platfrom.Welink;
+import com.guiji.platfrom.XiaoYa;
 import com.guiji.platfrom.XuanWu;
 import com.guiji.platfrom.Ytx;
 import com.guiji.platfrom.Zxy;
@@ -90,6 +92,12 @@ public class ReqHandler
 		} else if ("hl95".equals(identification)){
 			logger.info("通过<鸿联九五>发送短信...");
 			record = new HongLian95().sendMessage(params, phone, smsContent);
+		} else if ("dydx".equals(identification)){
+			logger.info("通过<岱亿短信>发送短信...");
+			record = new DaiYi().sendMessage(params, phone, smsContent);
+		} else if ("xy".equals(identification)){
+			logger.info("通过<小丫短信平台>发送短信...");
+			record = new XiaoYa().sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录
@@ -106,12 +114,6 @@ public class ReqHandler
 		SmsConfig config = configService.getConfigToSend(sendMReq.getIntentionTag(),sendMReq.getOrgCode(),sendMReq.getTemplateId());
 		if(config == null) {
 			throw new GuiyuException("没有短信配置，不发送短信");
-		}
-		if (config.getAuditingStatus() == 0) {
-			throw new GuiyuException("短信内容未审核，暂不能发送短信");
-		} 
-		if (config.getRunStatus() == 0) {
-			throw new GuiyuException("停止状态，不再发送短信");
 		}
 		// 获取通道
 		SmsTunnel tunnel = (SmsTunnel) redisUtil.get(config.getTunnelName());

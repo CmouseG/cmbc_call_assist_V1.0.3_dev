@@ -85,7 +85,7 @@ public class NasServiceImpl implements NasService {
 			skFile.setSkThumbImageUrl(thumbUrl); //缩略图url
 			skFile.setCrtTime(new Date());	//创建时间
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
-			sysFileMapper.insert(skFile);
+			//sysFileMapper.insert(skFile);
 			SysFileRspVO rsp = new SysFileRspVO();
 			//拷贝返回信息
 			BeanUtil.copyProperties(skFile, rsp);

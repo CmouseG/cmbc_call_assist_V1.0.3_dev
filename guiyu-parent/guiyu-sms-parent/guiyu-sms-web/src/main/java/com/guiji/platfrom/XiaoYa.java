@@ -17,36 +17,34 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
 import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.MapUtil;
 
 /**
- * 专信云
+ * 小丫短信平台
  */
-public class Zxy implements ISendMsgByContent
+public class XiaoYa implements ISendMsgByContent
 {
-	private static final Logger logger = LoggerFactory.getLogger(Zxy.class);
-	
-	private String url = "https://api.zhuanxinyun.com/api/v2/sendSms.json";
+	private static final Logger logger = LoggerFactory.getLogger(XiaoYa.class);
+	private String url = "http://sms.duoduo100.cn/api/sms/send";
 
 	@Override
-	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent) throws Exception
+	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent)throws Exception
 	{
 		List<SmsRecord> records = new ArrayList<>();
 		SmsRecord record = null;
-		
-		String appKey = MapUtil.getString(params, "app_key", 0);
-		String appSecret = MapUtil.getString(params, "app_secret", 0);
-		
+		String account = MapUtil.getString(params, "account", 0);
+		String pwd = MapUtil.getString(params, "pwd", 0);
+		String sign = MapUtil.getString(params, "sign", 0);
 		for(String phone : phoneList)
 		{
 			List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
-			paramsList.add(new BasicNameValuePair("appKey", appKey));
-			paramsList.add(new BasicNameValuePair("appSecret", appSecret));
-			paramsList.add(new BasicNameValuePair("phones", phone));
+			paramsList.add(new BasicNameValuePair("account", account));
+			paramsList.add(new BasicNameValuePair("pwd", pwd));
+			paramsList.add(new BasicNameValuePair("mobile", phone));
 			paramsList.add(new BasicNameValuePair("content", msgContent));
+			paramsList.add(new BasicNameValuePair("sign", sign));
 			record = send(paramsList);
 			record.setPhone(phone);
 			records.add(record);
@@ -58,13 +56,15 @@ public class Zxy implements ISendMsgByContent
 	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
 	{
 		SmsRecord record = null;
-		String appKey = MapUtil.getString(params, "app_key", 0);
-		String appSecret = MapUtil.getString(params, "app_secret", 0);
+		String account = MapUtil.getString(params, "account", 0);
+		String pwd = MapUtil.getString(params, "pwd", 0);
+		String sign = MapUtil.getString(params, "sign", 0);
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
-		paramsList.add(new BasicNameValuePair("appKey", appKey));
-		paramsList.add(new BasicNameValuePair("appSecret", appSecret));
-		paramsList.add(new BasicNameValuePair("phones", phone));
+		paramsList.add(new BasicNameValuePair("account", account));
+		paramsList.add(new BasicNameValuePair("pwd", pwd));
+		paramsList.add(new BasicNameValuePair("mobile", phone));
 		paramsList.add(new BasicNameValuePair("content", msgContent));
+		paramsList.add(new BasicNameValuePair("sign", sign));
 		record = send(paramsList);
 		record.setPhone(phone);
 		return record;
@@ -74,23 +74,24 @@ public class Zxy implements ISendMsgByContent
 	{
 		SmsRecord record = new SmsRecord();
 		String result = doPost(paramsList); // 发送请求
-		JSONObject returnData = JSONObject.parseObject(result);
+		String[] returnData = result.split(",");
 		// 返回参数
-		String errorCode = returnData.getString("errorCode");
-		String errorMsg = returnData.getString("errorMsg");
-
-		if ("000000".equals(errorCode))
+		String respcode = returnData[0];
+		String respdesc = "";
+		if ("0".equals(respcode))
 		{
-			logger.info("发送成功:errorCode:{},errorMsg:{}", errorCode, errorMsg);
+			respdesc = returnData[5];
+			logger.info("发送成功:respcode:{},respdesc:{}", respcode, respdesc);
 			record.setSendStatus(1);
 		} else
 		{
-			logger.info("发送失败:errorCode:{},errorMsg:{}", errorCode, errorMsg);
+			respdesc = returnData[1];
+			logger.info("发送失败:respcode:{},respdesc:{}", respcode, respdesc);
 			record.setSendStatus(0);
 		}
 
-		record.setStatusCode(errorCode);
-		record.setStatusMsg(errorMsg);
+		record.setStatusCode(respcode);
+		record.setStatusMsg(respdesc);
 		return record;
 	}
 
@@ -104,13 +105,13 @@ public class Zxy implements ISendMsgByContent
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setEntity(new UrlEncodedFormEntity(paramsList, "UTF-8"));
 			response = httpClient.execute(httpPost); // 执行请求
-			HttpEntity entity = response.getEntity();
-			result = EntityUtils.toString(entity, "utf-8");
-			EntityUtils.consume(entity);
+			HttpEntity responseEntity = response.getEntity();
+			result = EntityUtils.toString(responseEntity, "utf-8");
+			EntityUtils.consume(responseEntity);
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"errorCode\":\"404\",\"errorMsg\":\"调用接口异常\"}";
+			result = "-1,调用接口异常";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

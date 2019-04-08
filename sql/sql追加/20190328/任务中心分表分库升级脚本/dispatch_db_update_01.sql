@@ -270,16 +270,6 @@ WHERE O.planuuid=P.plan_uuid
 -- ----------------------------
 -- 4、初始化 plan_uuid_create表， 可以提前几天执行
 -- ----------------------------
-DROP TABLE IF EXISTS `plan_uuid_create`;
-CREATE TABLE `plan_uuid_create` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `planuuid_old` varchar(32) NOT NULL,
-  `planuuid_new` bigint(20) unsigned NOT NULL,
-  `create_time` datetime NOT NULL,
-  `org_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3011781 DEFAULT CHARSET=utf8;
-
 
 insert into plan_uuid_create
 (planuuid_old,planuuid_new, create_time,org_id

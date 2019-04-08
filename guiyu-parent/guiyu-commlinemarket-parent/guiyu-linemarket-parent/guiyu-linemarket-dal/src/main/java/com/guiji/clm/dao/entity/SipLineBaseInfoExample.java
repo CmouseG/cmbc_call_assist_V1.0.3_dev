@@ -1986,6 +1986,66 @@ public class SipLineBaseInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andFeeOrNotIsNull() {
+            addCriterion("fee_or_not is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotIsNotNull() {
+            addCriterion("fee_or_not is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotEqualTo(Boolean value) {
+            addCriterion("fee_or_not =", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotNotEqualTo(Boolean value) {
+            addCriterion("fee_or_not <>", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotGreaterThan(Boolean value) {
+            addCriterion("fee_or_not >", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("fee_or_not >=", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotLessThan(Boolean value) {
+            addCriterion("fee_or_not <", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotLessThanOrEqualTo(Boolean value) {
+            addCriterion("fee_or_not <=", value, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotIn(List<Boolean> values) {
+            addCriterion("fee_or_not in", values, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotNotIn(List<Boolean> values) {
+            addCriterion("fee_or_not not in", values, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("fee_or_not between", value1, value2, "feeOrNot");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeOrNotNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("fee_or_not not between", value1, value2, "feeOrNot");
+            return (Criteria) this;
+        }
+
         public Criteria andLineFeeTypeIsNull() {
             addCriterion("line_fee_type is null");
             return (Criteria) this;
@@ -2503,6 +2563,76 @@ public class SipLineBaseInfoExample {
 
         public Criteria andUpdateUserNotBetween(String value1, String value2) {
             addCriterion("update_user not between", value1, value2, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserIsNull() {
+            addCriterion("belong_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserIsNotNull() {
+            addCriterion("belong_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserEqualTo(String value) {
+            addCriterion("belong_user =", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserNotEqualTo(String value) {
+            addCriterion("belong_user <>", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserGreaterThan(String value) {
+            addCriterion("belong_user >", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserGreaterThanOrEqualTo(String value) {
+            addCriterion("belong_user >=", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserLessThan(String value) {
+            addCriterion("belong_user <", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserLessThanOrEqualTo(String value) {
+            addCriterion("belong_user <=", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserLike(String value) {
+            addCriterion("belong_user like", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserNotLike(String value) {
+            addCriterion("belong_user not like", value, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserIn(List<String> values) {
+            addCriterion("belong_user in", values, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserNotIn(List<String> values) {
+            addCriterion("belong_user not in", values, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserBetween(String value1, String value2) {
+            addCriterion("belong_user between", value1, value2, "belongUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongUserNotBetween(String value1, String value2) {
+            addCriterion("belong_user not between", value1, value2, "belongUser");
             return (Criteria) this;
         }
     }

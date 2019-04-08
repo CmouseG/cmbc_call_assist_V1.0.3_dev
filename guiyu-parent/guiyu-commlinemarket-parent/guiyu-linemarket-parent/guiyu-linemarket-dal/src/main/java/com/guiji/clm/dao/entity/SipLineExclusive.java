@@ -31,6 +31,8 @@ public class SipLineExclusive implements Serializable {
 
     private String endDate;
 
+    private Boolean feeOrNot;
+
     private Integer lineFeeType;
 
     private BigDecimal univalent;
@@ -165,6 +167,14 @@ public class SipLineExclusive implements Serializable {
         this.endDate = endDate == null ? null : endDate.trim();
     }
 
+    public Boolean getFeeOrNot() {
+        return feeOrNot;
+    }
+
+    public void setFeeOrNot(Boolean feeOrNot) {
+        this.feeOrNot = feeOrNot;
+    }
+
     public Integer getLineFeeType() {
         return lineFeeType;
     }
@@ -296,6 +306,7 @@ public class SipLineExclusive implements Serializable {
         sb.append(", maxConcurrentCalls=").append(maxConcurrentCalls);
         sb.append(", beginDate=").append(beginDate);
         sb.append(", endDate=").append(endDate);
+        sb.append(", feeOrNot=").append(feeOrNot);
         sb.append(", lineFeeType=").append(lineFeeType);
         sb.append(", univalent=").append(univalent);
         sb.append(", overtArea=").append(overtArea);

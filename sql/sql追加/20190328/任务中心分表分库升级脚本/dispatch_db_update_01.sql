@@ -41,6 +41,14 @@ ALTER TABLE `dispatch_lines_4_tmp`
 ADD COLUMN `org_id`  int NULL AFTER `line_type`;
 
 
+DELETE B from dispatch_plan_0_tmp A, dispatch_plan_1_tmp B
+WHERE A.plan_uuid=B.plan_uuid;
+
+DELETE B from dispatch_plan_0_tmp A, dispatch_plan_2_tmp B
+WHERE A.plan_uuid=B.plan_uuid;
+
+DELETE B from dispatch_plan_1_tmp A, dispatch_plan_2_tmp B
+WHERE A.plan_uuid=B.plan_uuid;
 
 -- ----------------------------
 -- 2.1、设置dispatch_plan_0_tmp的ORG_CODE
@@ -174,116 +182,88 @@ WHERE O.USER_ID=P.USER_ID;
 -- 3.1、设置dispatch_lines_0_tmp的ORG_CODE
 -- ----------------------------
 
-UPDATE dispatch_lines_0_tmp O,(
-SELECT plan_uuid, org_id
-from dispatch_plan_0_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_1_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_2_tmp
-)P
-SET  O.org_id=P.org_id
-WHERE O.planuuid=P.plan_uuid
-;
+UPDATE dispatch_lines_0_tmp O,dispatch_plan_0_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
+
+UPDATE dispatch_lines_0_tmp O,dispatch_plan_1_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
+
+UPDATE dispatch_lines_0_tmp O,dispatch_plan_2_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
 
 -- ----------------------------
 -- 3.2、设置dispatch_lines_1_tmp的ORG_CODE
 -- ----------------------------
+UPDATE dispatch_lines_1_tmp O,dispatch_plan_0_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
-UPDATE dispatch_lines_1_tmp O,(
+UPDATE dispatch_lines_1_tmp O,dispatch_plan_1_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
-SELECT plan_uuid, org_id
-from dispatch_plan_0_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_1_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_2_tmp
-)P
-SET  O.org_id=P.org_id
-WHERE O.planuuid=P.plan_uuid
-;
+UPDATE dispatch_lines_1_tmp O,dispatch_plan_2_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
 
 -- ----------------------------
 -- 3.3、设置dispatch_lines_2_tmp的ORG_CODE
 -- ----------------------------
 
-UPDATE dispatch_lines_2_tmp O,(
+UPDATE dispatch_lines_2_tmp O,dispatch_plan_0_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
-SELECT plan_uuid, org_id
-from dispatch_plan_0_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_1_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_2_tmp
-)P
-SET  O.org_id=P.org_id
-WHERE O.planuuid=P.plan_uuid
-;
+UPDATE dispatch_lines_2_tmp O,dispatch_plan_1_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
+
+UPDATE dispatch_lines_2_tmp O,dispatch_plan_2_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
 -- ----------------------------
 -- 3.4、设置dispatch_lines_3_tmp的ORG_CODE
 -- ----------------------------
 
-UPDATE dispatch_lines_3_tmp O,(
+UPDATE dispatch_lines_3_tmp O,dispatch_plan_0_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
-SELECT plan_uuid, org_id
-from dispatch_plan_0_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_1_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_2_tmp
-)P
-SET  O.org_id=P.org_id
-WHERE O.planuuid=P.plan_uuid
-;
+UPDATE dispatch_lines_3_tmp O,dispatch_plan_1_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
+
+UPDATE dispatch_lines_3_tmp O,dispatch_plan_2_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
 -- ----------------------------
 -- 3.5、设置dispatch_lines_4_tmp的ORG_CODE
 -- ----------------------------
 
-UPDATE dispatch_lines_4_tmp O,(
+UPDATE dispatch_lines_4_tmp O,dispatch_plan_0_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
-SELECT plan_uuid, org_id
-from dispatch_plan_0_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_1_tmp
-UNION
-SELECT plan_uuid, org_id
-from dispatch_plan_2_tmp
-)P
-SET  O.org_id=P.org_id
-WHERE O.planuuid=P.plan_uuid
-;
+UPDATE dispatch_lines_4_tmp O,dispatch_plan_1_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
+UPDATE dispatch_lines_4_tmp O,dispatch_plan_2_tmp P
+set O.org_id=P.org_id
+WHERE O.planuuid=P.plan_uuid;
 
 -- ----------------------------
 -- 4、初始化 plan_uuid_create表， 可以提前几天执行
 -- ----------------------------
 
-insert into plan_uuid_create
-(planuuid_old,planuuid_new, create_time,org_id
-)
-select P.plan_uuid,0,P.gmt_create,P.org_id FROM
-(
-select plan_uuid,gmt_create,org_id from dispatch_plan_0_tmp
-UNION
-select plan_uuid,gmt_create,org_id from dispatch_plan_1_tmp
-UNION
-select plan_uuid,gmt_create,org_id from dispatch_plan_2_tmp
 
-) P
-ORDER BY P.gmt_create ASC;
 
 
 

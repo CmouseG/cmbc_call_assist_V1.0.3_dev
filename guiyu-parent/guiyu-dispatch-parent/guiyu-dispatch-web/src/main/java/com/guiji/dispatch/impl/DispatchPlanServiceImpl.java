@@ -767,11 +767,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
 			String orgCode, Integer orgId, Integer authLevel) {
+		logger.info("userId:{},orgId:{},authLevel:{},orgCode:{}",userId, orgId, authLevel,orgCode);
 		//权限过滤
 		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
 		List<Integer> orgIds = getAuthUtil.getOrgIdsByAuthLevel(authLevel, orgId);//获取组织ID
-
+		logger.info("userId:{},orgIds:{},authLevel:{}",userId, JsonUtils.bean2Json(orgIds), authLevel);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria createCriteria = ex.createCriteria();
 		if (startTime != null && startTime != "" && endTime != null && endTime != "") {

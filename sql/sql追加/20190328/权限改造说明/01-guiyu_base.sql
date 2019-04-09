@@ -82,7 +82,7 @@ INSERT INTO sys_menu (id, name, description, url, pid, permission, is_show, crea
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (0, '大B', '大B', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (1, '放款王', '放款王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (2, '房产王', '房产王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
-INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (3, '招行-马拉松', '招行-马拉松', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
+INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (3, '招行马拉松', '招行-马拉松', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (4, '翼看', '翼看', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 
 UPDATE sys_organization t SET t.`open` = 1 WHERE t.type = 1

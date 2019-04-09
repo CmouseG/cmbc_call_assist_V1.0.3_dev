@@ -17,7 +17,7 @@ CREATE TABLE
         PRIMARY KEY (id),
         INDEX sys_product_idx1 (product_status)
     )
-    ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统产品表';
+    ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='系统产品表';
     
 CREATE TABLE
     sys_privilege
@@ -83,5 +83,6 @@ INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (1, '放款王', '放款王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (2, '房产王', '房产王', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (3, '招行-马拉松', '招行-马拉松', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
+INSERT INTO sys_product (id, name, product_desc, product_status, style, sys_name, logo, crt_user, crt_time, update_time, update_user) VALUES (4, '翼看', '翼看', 1, null, null, null, 1, '2019-03-27 00:00:00', '2019-03-27 00:00:00', 1);
 
 UPDATE sys_organization t SET t.`open` = 1 WHERE t.type = 1

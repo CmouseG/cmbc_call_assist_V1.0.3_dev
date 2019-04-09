@@ -2,13 +2,11 @@ package com.guiji.botsentence.util;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.guiji.botsentence.util.enums.KeywordsType;
 import com.guiji.botsentence.vo.BotSentenceIntentVO;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Set;
 
 public class KeywordsUtil {
 
@@ -59,7 +57,7 @@ public class KeywordsUtil {
     }
 
     public static List<String> getAllKeywordsFromIntentVO(BotSentenceIntentVO botSentenceIntentVO){
-        Set<String> allKeywords = Sets.newHashSet();
+        List<String> allKeywords = Lists.newArrayList();
         if(null == botSentenceIntentVO){
             return Lists.newArrayList(allKeywords);
         }
@@ -88,7 +86,7 @@ public class KeywordsUtil {
             });
         }
 
-        return Lists.newArrayList(allKeywords);
+        return allKeywords;
     }
 
     public static Keyword buildKeywordFromOrigin(String originKeyword){

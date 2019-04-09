@@ -23,13 +23,13 @@ import java.util.Map;
 @Service
 public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
-    private static String INTENT_ERROR_FORMAT = "意图'%'与'%'的关键词【%】重复<br/>";
+    private static String INTENT_ERROR_FORMAT = "意图【%s】与【%s】的关键词【%s】重复<br/>";
 
-    private static String BRANCH_ERROR_FORMAT = "意图'%'与【分支'%'-'%'】的关键词【%】重复<br/>";
+    private static String BRANCH_ERROR_FORMAT = "意图【%s】与【分支%s-%s】的关键词【%s】重复<br/>";
 
-    private static String COMMON_DIALOG_ERROR_FORMAT = "意图'%'与【通用对话'%'-'%'】的关键词【%】重复<br/>";
+    private static String COMMON_DIALOG_ERROR_FORMAT = "意图【%s】与【通用对话%s-%s】的关键词【%s】重复<br/>";
 
-    private static String BUSINESS_ANSWER_ERROR_FORMAT = "意图'%'与【业务问答'%'-'%'】的关键词【%】重复<br/>";
+    private static String BUSINESS_ANSWER_ERROR_FORMAT = "意图【%s】与【业务问答%s-%s】的关键词【%s】重复<br/>";
 
     @Resource
     private BotSentenceBranchMapper botSentenceBranchMapper;
@@ -126,6 +126,11 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
         //3、与限定的通用对话所有关键词不能重复
         compareWithCommonDialog(keywordToIntentNameMap, errorSb, processId, currentBranchId);
+
+        String errorMessage = errorSb.toString();
+        if(StringUtils.isNotBlank(errorMessage)){
+            throw new CommonException(errorMessage);
+        }
     }
 
     /**
@@ -207,15 +212,15 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
     private void compareWithBusinessAnswer(Map<String, String> keywordToIntentNameMap, StringBuilder errorSb, String processId, String currentBranchId){
 
         List<BusinessAnswerTaskExt> businessAnswerBranches = businessAnswerTaskExtMapper.queryBusinessAnswerTaskExtById(processId);
-        Integer index = 1;
+        int index = 0;
         for (BusinessAnswerTaskExt branch: businessAnswerBranches) {
+            index++;
             if(branch.getBranchId().equals(currentBranchId)){
                 continue;
             }
 
             String intentIds = branch.getIntentId();
             if(StringUtils.isBlank(intentIds)){
-                index++;
                 continue;
             }
             List<BotSentenceIntent> botSentenceIntents = getIntentsByIntentIds(intentIds);
@@ -228,7 +233,6 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
                     }
                 }
             }
-            index++;
         }
     }
 

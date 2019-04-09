@@ -144,7 +144,6 @@ public class OrganizationService {
         redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
-	@Transactional
 	public void update(SysOrganization record,Long updateUser){
 		
 		SysOrganization parentOrg = getParentOrg(record.getCode());

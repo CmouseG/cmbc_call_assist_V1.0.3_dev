@@ -151,6 +151,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getIsRead())) {
             criteria.andIsreadEqualTo(Integer.valueOf(callOutPlanQueryEntity.getIsRead()));
         }
+        if (callOutPlanQueryEntity.getBatchId()!=null) {
+            criteria.andBatchIdEqualTo(callOutPlanQueryEntity.getBatchId());
+        }
         if (callOutPlanQueryEntity.getIntervened()!=null) {
             if(callOutPlanQueryEntity.getIntervened().equals("1")){
                 criteria.andIntervenedEqualTo(true);
@@ -222,7 +225,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("call_id desc");
+        example.setOrderByClause("create_time desc");
         example.setIsDesensitization(isDesensitization);
 
         List<CallOutPlan> list = null;
@@ -233,7 +236,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             if(listIds!=null && listIds.size()>0){
                 CallOutPlanExample exampleIds = new CallOutPlanExample();
                 exampleIds.createCriteria().andCallIdIn(listIds);
-                exampleIds.setOrderByClause("call_id desc");
+                exampleIds.setOrderByClause("create_time desc");
 
                 list = callOutPlanMapper.selectByExample4Encrypt(exampleIds);
             }

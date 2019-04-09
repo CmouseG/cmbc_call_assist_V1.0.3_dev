@@ -659,9 +659,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria.andOrgIdIn(orgIds);
-		}
+		createCriteria.andOrgIdIn(orgIds);//本组织或本组织及以下组织
+
 		countNums = dispatchPlanMapper.countByExample(ex);
 
 		ex = new DispatchPlanExample();
@@ -682,9 +681,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria.andOrgIdIn(orgIds);
-		}
+		createCriteria.andOrgIdIn(orgIds);//本组织或本组织及以下组织
+
 		int noCallNums = dispatchPlanMapper.countByExample(ex);
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
@@ -703,9 +701,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			andStatusPlanEqualTo2.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			andStatusPlanEqualTo2.andOrgIdIn(orgIds);
-		}
+		andStatusPlanEqualTo2.andOrgIdIn(orgIds);//本组织或本组织及以下组织
 		ex1.setOrderByClause("`plan_uuid` ASC");
 		ex1.setLimitStart(0);
 		ex1.setLimitEnd(1);
@@ -732,9 +728,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			andStatusPlanEqualTo3.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			andStatusPlanEqualTo3.andOrgIdIn(orgIds);
-		}
+		andStatusPlanEqualTo3.andOrgIdIn(orgIds);//本组织或本组织及以下组织
 		ex2.setOrderByClause("`plan_uuid` DESC");
 		ex2.setLimitStart(0);
 		ex2.setLimitEnd(1);
@@ -767,11 +761,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
 			String orgCode, Integer orgId, Integer authLevel) {
+		logger.info("userId:{},orgId:{},authLevel:{},orgCode:{}",userId, orgId, authLevel,orgCode);
 		//权限过滤
 		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
 		//String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
 		List<Integer> orgIds = getAuthUtil.getOrgIdsByAuthLevel(authLevel, orgId);//获取组织ID
-
+		logger.info("userId:{},orgIds:{},authLevel:{}",userId, JsonUtils.bean2Json(orgIds), authLevel);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria createCriteria = ex.createCriteria();
 		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
@@ -785,25 +780,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 
-		/*List<Integer> allOrgIds = getAllOrgIds();
-		List<Integer> subOrgIds = getSubOrgIds(orgId);*/
-
-		/*if (!isSuperAdmin) {
-			createCriteria.andOrgIdIn(subOrgIds);
-			if (StringUtils.isNotEmpty(orgCode)) {
-				createCriteria.andOrgCodeLike(orgCode + "%");
-			}
-		}
-		else
-		{
-			createCriteria.andOrgIdIn(allOrgIds);
-		}*/
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria.andOrgIdIn(orgIds);
-		}
+		createCriteria.andOrgIdIn(orgIds);//本组织或本组织及以下组织
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
 		Criteria createCriteria1 = ex1.createCriteria();
@@ -819,22 +799,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				logger.error("error", e);
 			}
 		}
-		/*if (!isSuperAdmin) {
-			createCriteria1.andOrgIdIn(subOrgIds);
-			if (StringUtils.isNotEmpty(orgCode)) {
-				createCriteria1.andOrgCodeLike(orgCode + "%");
-			}
-		}
-		else
-		{
-			createCriteria1.andOrgIdIn(allOrgIds);
-		}*/
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria1.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
-		if(AuthLevelEnum.USER.getLevel() != authLevel && null != orgIds){//本组织或本组织及以下组织
-			createCriteria1.andOrgIdIn(orgIds);
-		}
+		createCriteria1.andOrgIdIn(orgIds);//本组织或本组织及以下组织
 
 		int taskCount = dispatchPlanMapper.countByExample(ex);
 		int calledCount = dispatchPlanMapper.countByExample(ex1);

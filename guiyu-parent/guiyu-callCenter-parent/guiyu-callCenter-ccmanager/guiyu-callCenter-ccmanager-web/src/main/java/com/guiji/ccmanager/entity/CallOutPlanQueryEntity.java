@@ -31,6 +31,7 @@ public class CallOutPlanQueryEntity {
     Boolean isSuperAdmin;
     String intervened;
     Integer authLevel;
+    Integer batchId;
 
     List<BigInteger> notInList;
     List<BigInteger> inList;

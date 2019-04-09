@@ -284,7 +284,7 @@ public class BatchExportServiceImpl implements BatchExportService {
 
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("call_id desc");
+        example.setOrderByClause("create_time desc");
         example.setIsDesensitization(isDesensitization);
 
         List<BigInteger> listIds = callOutPlanMapper.selectCallIds4Encrypt(example);
@@ -377,6 +377,9 @@ public class BatchExportServiceImpl implements BatchExportService {
         }
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getIsRead())) {
             criteria.andIsreadEqualTo(Integer.valueOf(callOutPlanQueryEntity.getIsRead()));
+        }
+        if (callOutPlanQueryEntity.getBatchId()!=null) {
+            criteria.andBatchIdEqualTo(callOutPlanQueryEntity.getBatchId());
         }
         if (callOutPlanQueryEntity.getIntervened() != null) {
             if (callOutPlanQueryEntity.getIntervened().equals("1")) {

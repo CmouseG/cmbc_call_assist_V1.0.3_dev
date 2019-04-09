@@ -48,6 +48,8 @@ public class CallRecordListReq {
     String startCount;
     @ApiModelProperty(value = "到多少条")
     String endCount;
+    @ApiModelProperty(value = "批次号")
+    Integer batchId;
 
     @ApiModelProperty(value = "全选导出,如果为true，将忽略startCount和endCount")
     Boolean checkAll;

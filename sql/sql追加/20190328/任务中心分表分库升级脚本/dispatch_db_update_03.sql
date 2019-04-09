@@ -12,7 +12,7 @@ BEGIN
 	
 	-- 定义游标	查询组织ID
 	DECLARE cur_org_id CURSOR FOR
-		SELECT DISTINCT org_id from plan_uuid_create 	;
+		SELECT DISTINCT o.org_id from plan_uuid_create  o	;
 	
 	-- 将结束标志绑定到游标
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
@@ -42,6 +42,7 @@ BEGIN
 		PREPARE del_sql FROM @del_sql;   
 		EXECUTE del_sql; 
 		
+		-- 插入新数据
 		-- 插入新数据
 		SET @insert_sql = CONCAT(
 		'INSERT INTO ', tab_name,
@@ -114,125 +115,166 @@ BEGIN
 				a.city_code       , 
 				a.line_type      
 			FROM 
-			(
-			SELECT 
-				p.plan_uuid  , 
-				p.user_id         , 
-				p.batch_id        , 
-				p.phone           , 
-				p.attach          , 
-				p.params          , 
-				p.status_plan     , 
-				p.status_sync     , 
-				p.recall          , 
-				p.recall_params   , 
-				p.robot           , 
-				p.line            , 
-				p.result          , 
-				p.call_agent      , 
-				p.clean           , 
-				p.call_data       , 
-				p.call_hour       , 
-				p.gmt_create      , 
-				p.gmt_modified    , 
-				p.is_tts          , 
-				p.replay_type     , 
-				p.is_del          , 
-				p.username        , 
-				p.line_name       , 
-				p.robot_name      , 
-				p.batch_name      , 
-				p.flag            , 
-				p.org_code        ,
-				" , org_id , " AS org_id, 
-				p.city_name       , 
-				p.city_code       , 
-				p.line_type       
-			FROM dispatch_plan_0_tmp p 
-				WHERE p.org_id = ",org_id,"
-				
-			UNION
-			SELECT 
-				p.plan_uuid  , 
-				p.user_id         , 
-				p.batch_id        , 
-				p.phone           , 
-				p.attach          , 
-				p.params          , 
-				p.status_plan     , 
-				p.status_sync     , 
-				p.recall          , 
-				p.recall_params   , 
-				p.robot           , 
-				p.line            , 
-				p.result          , 
-				p.call_agent      , 
-				p.clean           , 
-				p.call_data       , 
-				p.call_hour       , 
-				p.gmt_create      , 
-				p.gmt_modified    , 
-				p.is_tts          , 
-				p.replay_type     , 
-				p.is_del          , 
-				p.username        , 
-				p.line_name       , 
-				p.robot_name      , 
-				p.batch_name      , 
-				p.flag            , 
-				p.org_code        , 
-				" , org_id , " AS org_id,
-				p.city_name       , 
-				p.city_code       , 
-				p.line_type      
-			FROM dispatch_plan_1_tmp p 
-				WHERE p.org_id = ",org_id,"
-				
-			UNION
-			SELECT 
-			
-				p.plan_uuid  , 
-				p.user_id         , 
-				p.batch_id        , 
-				p.phone           , 
-				p.attach          , 
-				p.params          , 
-				p.status_plan     , 
-				p.status_sync     , 
-				p.recall          , 
-				p.recall_params   , 
-				p.robot           , 
-				p.line            , 
-				p.result          , 
-				p.call_agent      , 
-				p.clean           , 
-				p.call_data       , 
-				p.call_hour       , 
-				p.gmt_create      , 
-				p.gmt_modified    , 
-				p.is_tts          , 
-				p.replay_type     , 
-				p.is_del          , 
-				p.username        , 
-				p.line_name       , 
-				p.robot_name      , 
-				p.batch_name      , 
-				p.flag            , 
-				p.org_code        , 
-				" , org_id , " AS org_id,
-				p.city_name       , 
-				p.city_code       , 
-				p.line_type      
-			FROM dispatch_plan_2_tmp p
-				WHERE p.org_id = ",org_id,"	
-			) a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old  and q.planuuid_new>0
-			order by a.gmt_create asc
-		");
+			dispatch_plan_0_tmp a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old  and q.planuuid_new>0 
+			where a.org_id=" , org_id);
 		
 		PREPARE insert_sql FROM @insert_sql;   
 		EXECUTE insert_sql; 
 		
+	SET @insert_sql_1 = CONCAT(
+		'INSERT INTO ', tab_name,
+		"
+		(
+			   plan_uuid,
+			   user_id         , 
+			   batch_id        , 
+			   phone           , 
+			   attach          , 
+			   params          , 
+			   status_plan     , 
+			   status_sync     , 
+			   recall          , 
+			   recall_params   , 
+			   robot           , 
+			   line            , 
+			   result          , 
+			   call_agent      , 
+			   clean           , 
+			   call_data       , 
+			   call_hour       , 
+			   gmt_create      , 
+			   gmt_modified    , 
+			   is_tts          , 
+			   replay_type     , 
+			   is_del          , 
+			   username        , 
+			   line_name       , 
+			   robot_name      , 
+			   batch_name      , 
+			   flag            , 
+			   org_code        , 
+			   org_id,		    
+			   city_name       , 
+			   city_code       , 
+			   line_type       
+			)
+			SELECT
+				q.planuuid_new , 
+				a.user_id         , 
+				a.batch_id        , 
+				a.phone           , 
+				a.attach          , 
+				a.params          , 
+				a.status_plan     , 
+				a.status_sync     , 
+				a.recall          , 
+				a.recall_params   , 
+				a.robot           , 
+				a.line            , 
+				a.result          , 
+				a.call_agent      , 
+				a.clean           , 
+				a.call_data       , 
+				a.call_hour       , 
+				a.gmt_create      , 
+				a.gmt_modified    , 
+				a.is_tts          , 
+				a.replay_type     , 
+				a.is_del          , 
+				a.username        , 
+				a.line_name       , 
+				a.robot_name      , 
+				a.batch_name      , 
+				a.flag            , 
+				a.org_code        , 
+				" , org_id , " AS org_id,
+				a.city_name       , 
+				a.city_code       , 
+				a.line_type      
+			FROM 
+			dispatch_plan_1_tmp a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old  and q.planuuid_new>0 
+			where a.org_id=" , org_id);
 		
+		PREPARE insert_sql_1 FROM @insert_sql_1;   
+		EXECUTE insert_sql_1; 
+		
+
+SET @insert_sql_2 = CONCAT(
+		'INSERT INTO ', tab_name,
+		"
+		(
+			   plan_uuid,
+			   user_id         , 
+			   batch_id        , 
+			   phone           , 
+			   attach          , 
+			   params          , 
+			   status_plan     , 
+			   status_sync     , 
+			   recall          , 
+			   recall_params   , 
+			   robot           , 
+			   line            , 
+			   result          , 
+			   call_agent      , 
+			   clean           , 
+			   call_data       , 
+			   call_hour       , 
+			   gmt_create      , 
+			   gmt_modified    , 
+			   is_tts          , 
+			   replay_type     , 
+			   is_del          , 
+			   username        , 
+			   line_name       , 
+			   robot_name      , 
+			   batch_name      , 
+			   flag            , 
+			   org_code        , 
+			   org_id,		    
+			   city_name       , 
+			   city_code       , 
+			   line_type       
+			)
+			SELECT
+				q.planuuid_new , 
+				a.user_id         , 
+				a.batch_id        , 
+				a.phone           , 
+				a.attach          , 
+				a.params          , 
+				a.status_plan     , 
+				a.status_sync     , 
+				a.recall          , 
+				a.recall_params   , 
+				a.robot           , 
+				a.line            , 
+				a.result          , 
+				a.call_agent      , 
+				a.clean           , 
+				a.call_data       , 
+				a.call_hour       , 
+				a.gmt_create      , 
+				a.gmt_modified    , 
+				a.is_tts          , 
+				a.replay_type     , 
+				a.is_del          , 
+				a.username        , 
+				a.line_name       , 
+				a.robot_name      , 
+				a.batch_name      , 
+				a.flag            , 
+				a.org_code        , 
+				" , org_id , " AS org_id,
+				a.city_name       , 
+				a.city_code       , 
+				a.line_type      
+			FROM 
+			dispatch_plan_2_tmp a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old  and q.planuuid_new>0 
+			where a.org_id=" , org_id);
+		
+		PREPARE insert_sql_2 FROM @insert_sql_2;   
+		EXECUTE insert_sql_2; 
 		
 	END LOOP;	-- 遍历结束
 	-- 关闭游标

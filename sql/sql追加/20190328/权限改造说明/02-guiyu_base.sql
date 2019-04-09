@@ -159,3 +159,5 @@ INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`,
 
 
 INSERT INTO sys_menu (name, description, url, pid, permission, is_show, create_id, create_time, update_id, update_time, type, level, appid, remarks, del_flag, sys_type) select s2.name, s2.description, s2.url, s1.id, s2.permission, s2.is_show, s2.create_id, s2.create_time, s2.update_id, s2.update_time, s2.type, s2.level, s2.appid, s2.remarks, s2.del_flag, s2.sys_type from sys_menu s1,temp_menu s2 where s1.url=s2.purl and s1.del_flag=0;
+
+update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList','/botsentence/botsentence_approve','/botsentence/botsentence_mytemplate','/botsentence/botsentence_history','/smsCenter/platformManage','/botsentence/botsentence_keywords','/financeCenter/rechargeManage','/botsentence/botsentence_approveKeywords','/system/product','system_noticeList_add');

@@ -12,7 +12,7 @@ BEGIN
 	
 	-- 定义游标	查询组织ID
 	DECLARE cur_org_id CURSOR FOR
-		SELECT o.id FROM guiyu_base.sys_organization o	;
+		SELECT DISTINCT org_id from plan_uuid_create 	;
 	
 	-- 将结束标志绑定到游标
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
@@ -225,7 +225,7 @@ BEGIN
 				p.line_type      
 			FROM dispatch_plan_2_tmp p
 				WHERE p.org_id = ",org_id,"	
-			) a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old
+			) a	 INNER  JOIN plan_uuid_create q on a.plan_uuid=q.planuuid_old  and q.planuuid_new>0
 			order by a.gmt_create asc
 		");
 		

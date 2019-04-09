@@ -1,20 +1,22 @@
-Ë³ĞòÖ´ĞĞ£º
-Ò»¡¢ÅäÖÃÎÄ¼ş¸üĞÂ
-1¡¢guiyu-auth-web
-     application.ymlÖĞmapperLocations: classpath*:mappers/*.xml   ¸ÄÎª mapperLocations: classpath*:mappers/**/*.xml
+é¡ºåºæ‰§è¡Œï¼š
+ä¸€ã€é…ç½®æ–‡ä»¶æ›´æ–°
+1ã€guiyu-auth-web
+     application.ymlä¸­mapperLocations: classpath*:mappers/*.xml   æ”¹ä¸º mapperLocations: classpath*:mappers/**/*.xml
 
-¶ş¡¢½Å±¾¸üĞÂ
-1¡¢01-guiyu_base.sql
-2¡¢02-guiyu_base.sql
-3¡¢03-batchModifyOrgCodeWithRole.sql
-4¡¢04-batchModifyOrgto1.sql
-5¡¢05-guiyu_botstence.sql
+äºŒã€è„šæœ¬æ›´æ–°
+1ã€01-guiyu_base.sql
+2ã€02-guiyu_base.sql
+3ã€03-batchModifyOrgCodeWithRole.sql
+4ã€04-batchModifyOrgto1.sql
+5ã€05-guiyu_botstence.sql
 
-Èı¡¢¸üĞÂÓ¦ÓÃ
+ä¸‰ã€æ›´æ–°åº”ç”¨
 
-ËÄ¡¢Ö´ĞĞÃüÁî£¬µ÷ÓÃ·şÎñ£¬³õÊ¼»¯authÊı¾İ
+å››ã€æ‰§è¡Œå‘½ä»¤ï¼Œè°ƒç”¨æœåŠ¡ï¼Œåˆå§‹åŒ–authæ•°æ®
 curl -X POST http://IP:18011/batch/initData
 
-Îå¡¢Íê³É
+äº”ã€äº§å“æ‰‹åŠ¨é…ç½®èœå•æƒé™
 
-//TODO ¡¢²úÆ·¹ÒµÄÄ£°å¡¢²Ëµ¥È¨ÏŞĞèÒª²âÊÔ°´ÕæÊµÇé¿ö³õÊ¼»¯ºÃÔÙ×¼±¸½Å±¾
+//TODO ã€äº§å“æŒ‚çš„æ¨¡æ¿ã€èœå•æƒé™éœ€è¦æµ‹è¯•æŒ‰çœŸå®æƒ…å†µåˆå§‹åŒ–å¥½å†å‡†å¤‡è„šæœ¬
+å…­ã€ç»„ç»‡æƒé™æ•°å…³ç³»è„šæœ¬æ›´æ–°å…³è”å…³ç³»
+06-guiyu_botstence.sql

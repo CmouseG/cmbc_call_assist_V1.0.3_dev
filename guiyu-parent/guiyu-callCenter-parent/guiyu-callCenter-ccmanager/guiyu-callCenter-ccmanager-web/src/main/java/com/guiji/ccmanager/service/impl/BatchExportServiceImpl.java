@@ -378,6 +378,9 @@ public class BatchExportServiceImpl implements BatchExportService {
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getIsRead())) {
             criteria.andIsreadEqualTo(Integer.valueOf(callOutPlanQueryEntity.getIsRead()));
         }
+        if (callOutPlanQueryEntity.getBatchId()!=null) {
+            criteria.andBatchIdEqualTo(callOutPlanQueryEntity.getBatchId());
+        }
         if (callOutPlanQueryEntity.getIntervened() != null) {
             if (callOutPlanQueryEntity.getIntervened().equals("1")) {
                 criteria.andIntervenedEqualTo(true);

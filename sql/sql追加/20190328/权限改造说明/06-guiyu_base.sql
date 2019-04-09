@@ -1,4 +1,4 @@
-##¸ø´æÁ¿Êı¾İ×éÖ¯Ôö¼ÓÈ¨ÏŞ¹ØÁª¹ØÏµ
+##ç»™å­˜é‡æ•°æ®ç»„ç»‡å¢åŠ æƒé™å…³è”å…³ç³»
 CREATE PROCEDURE inst()
 	BEGIN 
 		DECLARE resourceId INT;
@@ -33,7 +33,8 @@ CALL inst();
 
 
 
-##ĞÂÔöÊı¾İË¢²Ù×÷ÈËºÍ²Ù×÷Ê±¼ä
+##æ–°å¢æ•°æ®åˆ·æ“ä½œäººå’Œæ“ä½œæ—¶é—´
+use guiyu_base;
 UPDATE sys_privilege t 
 SET t.crt_user = 1,t.crt_time = NOW(),t.update_user = 1,t.update_time = NOW()
 where t.update_time IS NULL;

@@ -144,7 +144,6 @@ public class OrganizationService {
         redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
-	@Transactional
 	public void update(SysOrganization record,Long updateUser){
 		
 		SysOrganization parentOrg = getParentOrg(record.getCode());
@@ -737,9 +736,13 @@ public class OrganizationService {
 	
 	/**
 	 * 获取上一级组织
+	 * 系统的上一级就是自己
 	 */
 	public SysOrganization getParentOrg(String orgCode)
 	{
+		if("1".equals(orgCode)){
+			 return this.getOrgByCode(orgCode);
+		}
 		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
 		parentOrgCode = "1.".equals(parentOrgCode)? "1" : parentOrgCode;
 		return this.getOrgByCode(parentOrgCode);

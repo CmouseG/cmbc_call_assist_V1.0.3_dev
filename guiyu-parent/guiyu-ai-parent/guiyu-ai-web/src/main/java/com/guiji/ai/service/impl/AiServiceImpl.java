@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.ai.dao.AiModelFactoryMapper;
+import com.guiji.ai.dao.entity.AiModelFactory;
+import com.guiji.ai.dao.entity.AiModelFactoryExample;
 import com.guiji.ai.entity.AiConstants;
 import com.guiji.ai.service.IAiService;
 import com.guiji.ai.tts.TtsService;
@@ -16,7 +19,6 @@ import com.guiji.ai.tts.platform.Guiji;
 import com.guiji.ai.util.HttpClientUtil;
 import com.guiji.ai.util.JsonUtil;
 import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.utils.RedisUtil;
 
 @Service
@@ -29,6 +31,8 @@ public class AiServiceImpl implements IAiService
 	
 	@Autowired
 	RedisUtil redisUtil;
+	@Autowired
+	AiModelFactoryMapper mapper;
 	
 	/**
 	 * 根据模型或者tts平台
@@ -40,8 +44,13 @@ public class AiServiceImpl implements IAiService
 		List<String> factorys = (List<String>) redisUtil.get(model);
 		if(factorys == null || factorys.isEmpty())
 		{
-			logger.error("该模型没有对应厂商!");
-			throw new GuiyuException("该模型没有对应厂商!");
+			AiModelFactoryExample example = new AiModelFactoryExample();
+			example.createCriteria().andModelEqualTo(model);
+			List<AiModelFactory> aiModelFactory = mapper.selectByExample(example);
+			for(AiModelFactory factory : aiModelFactory)
+			{
+				factorys.add(factory.getFactory().toString());
+			}
 		}
 		if(factorys.contains(AiConstants.Guiji)){
 			return new Guiji(ttsUrl);

@@ -75,7 +75,7 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
                 keywords.forEach(originKeyword -> {
                     if(keywordToIntentNameMap.containsKey(originKeyword)){
                         KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
-                        errorSb.append(String.format(BRANCH_ERROR_FORMAT, keywordToIntentNameMap.get(originKeyword), branch.getBranchName(), botSentenceIntent.getName(), keyword.getDisplayKeyword()));
+                        errorSb.append(String.format(BRANCH_ERROR_FORMAT, keywordToIntentNameMap.get(originKeyword), branch.getLineName(), botSentenceIntent.getName(), keyword.getDisplayKeyword()));
                     }
                 });
             });

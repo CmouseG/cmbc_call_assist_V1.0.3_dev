@@ -49,7 +49,8 @@ public class AvailableTemplateController {
 	 */
 	@RequestMapping("getAdminOrgAvailableTemplate")
 	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId, @RequestHeader Integer authLevel){
-		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId, authLevel);
+		ReturnData<UserAuth> data=iAuth.queryUserDataAuth(new Long(userId));
+		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId, data.getBody().getAuthLevel());
 		return ServerResult.createBySuccess(list);
 	}
 
@@ -91,8 +92,7 @@ public class AvailableTemplateController {
 	 */
 	@RequestMapping("getAdminUserAvailableTemplate")
 	public ServerResult getAdminUserAvailableTemplate(Long userId,@RequestHeader String orgCode, @RequestHeader Integer authLevel){
-		ReturnData<UserAuth> data=iAuth.queryUserDataAuth(new Long(userId));
-		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId, data.getBody().getOrgCode(), data.getBody().getAuthLevel());
+		List<BotAvailableTemplate>  list=availableTemplateService.getUserSelectedTemplate(userId);
 		return ServerResult.createBySuccess(list);
 	}
 	

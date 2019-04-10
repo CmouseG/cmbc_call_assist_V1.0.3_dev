@@ -101,6 +101,31 @@ public class AvailableTemplateService {
 		return list;
 	}
 	
+	
+	
+	
+	/**
+	 * 查询某个指定用户已绑定可用话术
+	 * @return 
+	 */
+	public List<BotAvailableTemplate> getUserSelectedTemplate( Long userId){
+		List<BotAvailableTemplate> list = new ArrayList<>();
+		
+		list = botAvailableTemplateMapper.getUserAvailableTemplate(userId);
+		
+		if(null != list && list.size() > 0) {
+			for(BotAvailableTemplate template : list) {
+				if(StringUtils.isNotBlank(template.getTemplateId())) {
+					BotSentenceProcess process = botSentenceProcessService.getBotsentenceProcessByTemplateId(template.getTemplateId());
+					if(null != process) {
+						template.setTemplateName(process.getTemplateName());
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
 	/**
 	 * 用户添加可用话术
 	 */

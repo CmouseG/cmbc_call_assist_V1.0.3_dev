@@ -109,7 +109,7 @@ public class MenuService {
 			}
 			//拼装树形结构
 			if(allMenus!=null) {
-				map.put("menus", parseTree(allMenus,true));
+				map.put("menus", parseTree(allMenus,false));
 			}
 		}
 		List<Long> selected= new ArrayList<Long>();

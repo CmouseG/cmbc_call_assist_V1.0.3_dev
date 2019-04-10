@@ -5,3 +5,6 @@
 ####临时目录
 file:
   tmpPath: /apps/tmp/
+  
+3、执行统一布局下载建表脚本   export_file_record.sql
+  

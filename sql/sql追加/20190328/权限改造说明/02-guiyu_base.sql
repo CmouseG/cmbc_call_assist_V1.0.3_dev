@@ -1,4 +1,25 @@
 use guiyu_base;
+CREATE TEMPORARY TABLE  temp_menu1
+    (
+        id INT  COMMENT '主键',
+        name VARCHAR(64) COMMENT 'app名称',
+        description VARCHAR(255),
+        url VARCHAR(255) NOT NULL,
+        purl VARCHAR(255) COMMENT '父级url',
+        permission VARCHAR(255) COMMENT '权限标识',
+        is_show INT DEFAULT '0' COMMENT '是否展示0是1否',
+        create_id bigint,
+        create_time DATETIME,
+        update_id bigint,
+        update_time DATETIME,
+        type INT NOT NULL COMMENT '资源类型1菜单2按钮',
+        level INT NOT NULL COMMENT '资源层级',
+        appid INT DEFAULT '0' COMMENT 'appid关联sys_app主键',
+        remarks VARCHAR(255) COMMENT '备注信息',
+        del_flag INT DEFAULT '0' NOT NULL COMMENT '删除标识0正常1删除',
+        sys_type INT COMMENT '系统菜单标识：1-系统菜单 0-其他',
+        PRIMARY KEY (id)
+    );
 CREATE TEMPORARY TABLE  temp_menu
     (
         id INT  COMMENT '主键',
@@ -23,6 +44,7 @@ CREATE TEMPORARY TABLE  temp_menu
 INSERT INTO temp_menu1 (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('893', '个人信息-用户管理', NULL, '/personCenter/myselfInfo/userManage', '/personCenter/myselfInfo', NULL, '0', '1', '2019-04-07 14:12:31', '1', '2019-04-07 14:12:31', '1', '3', '0', 'add', '0', NULL);
 INSERT INTO temp_menu1 (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('895', '配置管理', NULL, '/personCenter/myselfInfo/getData', '/personCenter/myselfInfo', NULL, '0', '1', '2019-04-07 14:13:09', '1', '2019-04-07 14:13:09', '1', '3', '0', 'add', '0', NULL);
 INSERT INTO temp_menu1 (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('946', '产品管理', NULL, '/system/product', '/system', NULL, '0', '1', '2019-04-08 10:11:22', '1', '2019-04-08 10:11:22', '1', '2', '0', 'add', '0', NULL);
+INSERT INTO temp_menu1 (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1100', '导出记录', NULL, '/taskCenter/batchExportList', '/taskCenter', NULL, '0', '1', '2019-04-08 10:11:22', '1', '2019-04-08 10:11:22', '1', '2', '0', 'add', '0', NULL);
 INSERT INTO sys_menu (name, description, url, pid, permission, is_show, create_id, create_time, update_id, update_time, type, level, appid, remarks, del_flag, sys_type) select s2.name, s2.description, s2.url, s1.id, s2.permission, s2.is_show, s2.create_id, s2.create_time, s2.update_id, s2.update_time, s2.type, s2.level, s2.appid, s2.remarks, s2.del_flag, s2.sys_type from sys_menu s1,temp_menu1 s2 where s1.url=s2.purl and s1.del_flag=0;
 
 
@@ -159,8 +181,10 @@ INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`,
 INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1040', '坐席组管理-查询', NULL, 'callCenter_agentGroupManage_defquery', '/callCenter/agentGroupManage', 'callCenter_agentGroupManage_defquery', '0', '1', '2019-04-08 17:12:38', '1', '2019-04-08 17:12:38', '2', '3', '0', 'add', '0', NULL);
 INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1041', '坐席成员管理-查询', NULL, 'callCenter_agentStaffManage_defquery', '/callCenter/agentStaffManage', 'callCenter_agentStaffManage_defquery', '0', '1', '2019-04-08 17:13:03', '1', '2019-04-08 17:13:03', '2', '3', '0', 'add', '0', NULL);
 INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1042', '机器人配置-查询', NULL, 'robotCenter_robotManage_defquery', '/robotCenter/robotManage', 'robotCenter_robotManage_defquery', '0', '1', '2019-04-08 17:13:35', '1', '2019-04-08 17:13:35', '2', '3', '0', 'add', '0', NULL);
+INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1101', '任务中心-导出记录-删除', NULL, 'taskCenter_batchExportList_delete', ' /taskCenter/batchExportList', 'taskCenter_batchExportList_delete', '0', '1', '2019-04-08 17:13:35', '1', '2019-04-08 17:13:35', '2', '3', '0', 'add', '0', NULL);
+INSERT INTO temp_menu (`id`, `name`, `description`, `url`, `purl`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('1102', '任务中心-导出记录-下载', NULL, 'taskCenter_batchExportList_download', ' /taskCenter/batchExportList', 'taskCenter_batchExportList_download', '0', '1', '2019-04-08 17:13:35', '1', '2019-04-08 17:13:35', '2', '3', '0', 'add', '0', NULL);
 
 
 INSERT INTO sys_menu (name, description, url, pid, permission, is_show, create_id, create_time, update_id, update_time, type, level, appid, remarks, del_flag, sys_type) select s2.name, s2.description, s2.url, s1.id, s2.permission, s2.is_show, s2.create_id, s2.create_time, s2.update_id, s2.update_time, s2.type, s2.level, s2.appid, s2.remarks, s2.del_flag, s2.sys_type from sys_menu s1,temp_menu s2 where s1.url=s2.purl and s1.del_flag=0;
 
-update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList','/botsentence/botsentence_approve','/botsentence/botsentence_mytemplate','/botsentence/botsentence_history','/smsCenter/platformManage','/botsentence/botsentence_keywords','/financeCenter/rechargeManage','/botsentence/botsentence_approveKeywords','/system/product','system_noticeList_add');
+update sys_menu set sys_type=1 where url in ('/system/menu','/system/dataDictionaries','/system/processManage','/system/processTask','/robotCenter/simList','/smsCenter/platformManage','/financeCenter/rechargeManage','/system/product','system_noticeList_add');

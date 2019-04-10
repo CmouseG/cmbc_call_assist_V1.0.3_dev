@@ -1,3 +1,4 @@
+use guiyu_dispatch;
 DROP TABLE IF EXISTS dispatch_plan;        
         
         CREATE TABLE dispatch_plan

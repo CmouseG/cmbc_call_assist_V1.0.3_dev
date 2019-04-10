@@ -96,7 +96,15 @@ public class MenuService {
 					   url.equals("/botsentence/botsentence_mytemplate")||  // 行业模板
 					   url.equals("/botsentence/botsentence_history") ||  // 发布历史
 					   url.equals("/botsentence/botsentence_keywords") ||   // 关键词库
-					   url.equals("/botsentence/botsentence_approveKeywords")){  // 关键词审核
+					   url.equals("/botsentence/botsentence_approveKeywords") || // 关键词审核
+					   url.equals("/system/menu") || // 菜单维护
+					   url.equals("/system/dataDictionaries") || // 数据字典
+					   url.equals("/system/processManage") ||  // 资源进程
+					   url.equals("/system/processTask") ||  // 进程任务
+					   url.equals("/smsCenter/platformManage") ||  // 平台管理列表
+					   url.equals("/financeCenter/rechargeManage") || // 充值管理
+					   url.equals("/robotCenter/simList") // 机器人实时配置
+					   ){  // 关键词审核
 						iterator.remove();
 					}
 				}

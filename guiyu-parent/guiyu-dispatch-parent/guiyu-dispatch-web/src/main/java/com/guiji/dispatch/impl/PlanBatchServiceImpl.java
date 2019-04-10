@@ -25,6 +25,7 @@ import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
 import com.guiji.utils.JsonUtils;
@@ -37,6 +38,7 @@ import jxl.write.biff.RowsExceededException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -112,7 +114,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             bool = DaoHandler.getMapperBoolRes(
                     planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
 
-        //只勾选
+            //只勾选
         }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
             if(null != optPlanDto
                     && null != optPlanDto.getCheckPlanUuid()
@@ -121,7 +123,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                         planBatchMapper.delPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
             }
 
-        //全选去勾
+            //全选去勾
         }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
             bool = DaoHandler.getMapperBoolRes(
                     planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
@@ -364,15 +366,30 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     private void pushPlanCreateMQ(DispatchPlan submitPlan, Integer batchId, String phone, Long userId, Integer orgId, String orgCode){
         try {
             DispatchPlan newPlan = new DispatchPlan();
-            newPlan.setBatchId(batchId);
+            if(null != submitPlan){
+                BeanUtils.copyProperties(submitPlan, newPlan, DispatchPlan.class);
+            }
+            newPlan.setPhone(phone);
             newPlan.setParams(submitPlan.getParams());
             newPlan.setAttach(submitPlan.getAttach());
-            newPlan.setPhone(phone);
+            newPlan.setRobot(submitPlan.getRobot());
 
             newPlan.setBatchId(batchId);
+            newPlan.setBatchName(submitPlan.getBatchName());
             newPlan.setUserId(userId.intValue());
             newPlan.setOrgCode(orgCode);
             newPlan.setOrgId(orgId);
+
+            newPlan.setPlanUuid(SnowflakeIdWorker.nextId(orgId));
+            newPlan.setGmtModified(DateUtil.getCurrent4Time());
+            newPlan.setGmtCreate(DateUtil.getCurrent4Time());
+
+            newPlan.setStatusPlan(Constant.STATUSPLAN_1);
+            newPlan.setStatusSync(Constant.STATUS_SYNC_0);
+            newPlan.setIsDel(Constant.IS_DEL_0);
+            newPlan.setReplayType(Constant.REPLAY_TYPE_0);
+            newPlan.setIsTts(Constant.IS_TTS_0);
+            newPlan.setFlag(Constant.IS_FLAG_0);
 
             batchImportQueueHandler.add(newPlan);
         }catch(Exception e){
@@ -409,9 +426,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         this.exportFile(optPlanDto);
         logger.info(">>>>>>>>>>>>>>>>>>end exportPlanBatch");*/
 
-       this.executeThread(optPlanDto);
+        this.executeThread(optPlanDto);
 
-    //    this.executeExecutor(optPlanDto);
+        //    this.executeExecutor(optPlanDto);
 
         logger.info(">>>>>>>>>>>>>>>>>>end");
         return bool;
@@ -457,13 +474,13 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         logger.info("end executeExecutor");
     }
 
-//    @Autowired
+    @Autowired
     private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Autowired
     private ThreadPoolTaskExecutor asyncServiceExecutor;
 
-//    @Async("asyncImportPlanExecutor")
+    //    @Async("asyncImportPlanExecutor")
     public void exportFile(OptPlanDto optPlanDto){
         logger.info(">>>>>>>>>>>>>>start exportFile");
         List<DownLoadPlanVo> planList = new ArrayList<DownLoadPlanVo>();
@@ -477,7 +494,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             planList = planBatchMapper.queryExportPlanList(optPlanDto, limit);
             count = planBatchMapper.queryExportPlanCountList(optPlanDto);
 
-        //只勾选
+            //只勾选
         }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
             if(null != optPlanDto
                     && null != optPlanDto.getCheckPlanUuid()
@@ -486,7 +503,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 count = planBatchMapper.queryExportPlanCountById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList());
             }
 
-        //全选去勾
+            //全选去勾
         }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
             planList = planBatchMapper.queryExportPlanList(optPlanDto, limit);
             count = planBatchMapper.queryExportPlanCountList(optPlanDto);

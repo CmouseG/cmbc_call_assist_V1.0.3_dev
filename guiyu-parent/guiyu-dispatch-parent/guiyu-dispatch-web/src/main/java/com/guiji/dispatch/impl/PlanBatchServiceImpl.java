@@ -334,7 +334,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             List<DispatchBatchLine> lineList = submitPlan.getLines();
             for (DispatchBatchLine lines : lineList) {
                 lines.setBatchId(batchPlan.getId());
-                lines.setLineType(submitPlan.getLineType());
                 lines.setOrgId(operOrgId);
                 lines.setUserId(operUserId.intValue());
                 lines.setLineType(lineType);

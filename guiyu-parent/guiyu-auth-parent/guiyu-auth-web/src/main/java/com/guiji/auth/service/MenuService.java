@@ -209,17 +209,17 @@ public class MenuService {
 				SysRole sysRole = roleList.get(0);
 				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
 				Map<String,SysMenu> buttonMap = new HashMap<String,SysMenu>();
-				Iterator<SysMenu> it = allMenus.iterator();
-				while(it.hasNext()){
-					SysMenu sysMenu = it.next();
-				    if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
-				    	//加入按钮列表
-				    	buttonMap.put(sysMenu.getUrl(), sysMenu);
-				        //从菜单列表中移除
-				    	it.remove();
-				    }
-				}
 				if(allMenus!=null) {
+					Iterator<SysMenu> it = allMenus.iterator();
+					while(it.hasNext()){
+						SysMenu sysMenu = it.next();
+						if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
+							//加入按钮列表
+							buttonMap.put(sysMenu.getUrl(), sysMenu);
+							//从菜单列表中移除
+							it.remove();
+						}
+					}
 					map.put("menus", parseTree(allMenus,false));
 				}
 				map.put("buttons", buttonMap);

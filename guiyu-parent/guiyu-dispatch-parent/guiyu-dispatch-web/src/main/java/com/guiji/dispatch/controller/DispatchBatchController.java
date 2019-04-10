@@ -148,12 +148,12 @@ public class DispatchBatchController {
 
     @ApiOperation(value="批量导出计划任务", notes="批量导出计划任务")
     @Log(info ="批量导出计划任务")
-    @Jurisdiction("taskCenter_phonelist_batchExport")
+//    @Jurisdiction("taskCenter_phonelist_batchExport")
     @RequestMapping(value = "/exportPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean exportPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                  @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                                   @RequestBody OptPlanDto optPlanDto){
+                                   @RequestBody OptPlanDto optPlanDto)throws Exception{
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -163,6 +163,7 @@ public class DispatchBatchController {
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/exportPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.exportPlanBatch(optPlanDto);
+        Thread.sleep(2000L);//等待三秒
         if(!bool){
             throw new GuiyuException("批量导出计划任务失败");
         }

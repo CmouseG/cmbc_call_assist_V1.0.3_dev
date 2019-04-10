@@ -3,7 +3,7 @@ update guiyu_billing.billing_user_acct set org_code = '1' where org_code = '1.';
 
 update guiyu_botstence.bot_available_template set org_code = '1'  where org_code = '1.';
 update guiyu_botstence.bot_sentence_process set org_code = '1' where org_code = '1.';
-update guiyu_botstence.bot_sentence_share_auth set available_org = '1' where available_org = '1.,';
+update guiyu_botstence.bot_sentence_share_auth set available_org = '1,' where available_org = '1.,';
 
 update guiyu_callcenter.agent set org_code = '1' where org_code = '1.';
 update guiyu_callcenter.call_out_plan set org_code = '1' where org_code = '1.';

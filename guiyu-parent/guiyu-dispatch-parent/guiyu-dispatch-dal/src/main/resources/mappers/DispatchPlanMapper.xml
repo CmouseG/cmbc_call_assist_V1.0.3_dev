@@ -152,7 +152,7 @@
       #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR},
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR},
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=INTEGER},
-      #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER},
+      #{userName,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER},
       #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR},
       #{flag,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR},#{orgId,jdbcType=INTEGER}, #{cityName,jdbcType=VARCHAR},
       #{cityCode,jdbcType=VARCHAR}, #{lineType})

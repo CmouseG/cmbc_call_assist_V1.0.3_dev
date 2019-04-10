@@ -1,4 +1,25 @@
 use guiyu_base;
+CREATE TEMPORARY TABLE  temp_menu1
+    (
+        id INT  COMMENT '主键',
+        name VARCHAR(64) COMMENT 'app名称',
+        description VARCHAR(255),
+        url VARCHAR(255) NOT NULL,
+        purl VARCHAR(255) COMMENT '父级url',
+        permission VARCHAR(255) COMMENT '权限标识',
+        is_show INT DEFAULT '0' COMMENT '是否展示0是1否',
+        create_id bigint,
+        create_time DATETIME,
+        update_id bigint,
+        update_time DATETIME,
+        type INT NOT NULL COMMENT '资源类型1菜单2按钮',
+        level INT NOT NULL COMMENT '资源层级',
+        appid INT DEFAULT '0' COMMENT 'appid关联sys_app主键',
+        remarks VARCHAR(255) COMMENT '备注信息',
+        del_flag INT DEFAULT '0' NOT NULL COMMENT '删除标识0正常1删除',
+        sys_type INT COMMENT '系统菜单标识：1-系统菜单 0-其他',
+        PRIMARY KEY (id)
+    );
 CREATE TEMPORARY TABLE  temp_menu
     (
         id INT  COMMENT '主键',

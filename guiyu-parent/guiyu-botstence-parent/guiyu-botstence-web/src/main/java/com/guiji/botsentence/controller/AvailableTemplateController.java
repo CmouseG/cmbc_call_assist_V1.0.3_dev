@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.auth.model.UserAuth;
 import com.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
 import com.guiji.botsentence.receiver.UpdateReceiverResolver;
@@ -18,6 +20,7 @@ import com.guiji.botsentence.service.IBotSentenceProcessService;
 import com.guiji.botsentence.service.impl.AvailableTemplateService;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.component.client.config.JsonParam;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.component.result.ServerResult;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 
@@ -29,6 +32,8 @@ public class AvailableTemplateController {
 	private AvailableTemplateService availableTemplateService;
 	@Autowired
 	IBotSentenceProcessService botSentenceProcessService;
+	@Autowired
+	private IAuth iAuth;
 
 	/**
 	 * 企业可用话术
@@ -86,7 +91,8 @@ public class AvailableTemplateController {
 	 */
 	@RequestMapping("getAdminUserAvailableTemplate")
 	public ServerResult getAdminUserAvailableTemplate(Long userId,@RequestHeader String orgCode, @RequestHeader Integer authLevel){
-		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId,orgCode, authLevel);
+		ReturnData<UserAuth> data=iAuth.queryUserDataAuth(new Long(userId));
+		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId, data.getBody().getOrgCode(), data.getBody().getAuthLevel());
 		return ServerResult.createBySuccess(list);
 	}
 	

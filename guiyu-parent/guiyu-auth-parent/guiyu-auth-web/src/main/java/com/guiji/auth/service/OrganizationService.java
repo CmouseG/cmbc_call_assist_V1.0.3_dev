@@ -786,4 +786,17 @@ public class OrganizationService {
 		}
 		return brothers;
 	}
+
+	public List<SysOrganization> getOrgByUserIdAuthLevel(Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
+		return sysOrganizationMapper.selectByExample(example);
+	}
 }

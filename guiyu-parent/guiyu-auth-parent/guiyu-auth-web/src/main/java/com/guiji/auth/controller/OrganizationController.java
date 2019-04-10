@@ -128,8 +128,8 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("getOrgByUserId")
-	public List<SysOrganization> getOrgByUserId(@RequestHeader Long userId){
-		return organizationService.getOrgByUserId(userId);
+	public List<SysOrganization> getOrgByUserId(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.getOrgByUserIdAuthLevel(userId,authLevel,orgCode);
 	}
 	
 	@RequestMapping("getAdminOrgByUserId")
@@ -140,7 +140,7 @@ public class OrganizationController implements IOrg{
 	@RequestMapping("getOrgByCode")
 	public ReturnData<SysOrganization> getOrgByCode(String code){
 		return Result.ok(organizationService.getOrgByCode(code));
-	}
+	} 
 
 	@RequestMapping("countRobotByUserId")
 	public int countRobotByUserId(@RequestHeader Long userId){

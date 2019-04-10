@@ -1,12 +1,5 @@
 USER guiyu_dispatch;
 
-DROP INDEX idx_export_file_time ON export_file_record;
-
-DROP INDEX idx_export_file_user ON export_file_record;
-
-DROP INDEX idx_export_file_type ON export_file_record;
-
-DROP TABLE IF EXISTS export_file_record;
 
 /*==============================================================*/
 /* Table: export_file_record                                    */

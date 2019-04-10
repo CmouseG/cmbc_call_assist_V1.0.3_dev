@@ -15,6 +15,7 @@ import com.guiji.dispatch.dto.JoinPlanDto;
 import com.guiji.dispatch.dto.OptPlanDto;
 import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.enums.*;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.ExportFileDto;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.GetAuthUtil;
@@ -74,6 +75,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
     @Autowired
     private DispatchPlanBatchMapper dispatchPlanBatchMapper;
+
+    @Autowired
+    private IDispatchBatchLineService lineService;
 
     @Autowired
     private IExportFileService exportFileService;
@@ -323,6 +327,19 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             batchPlan.setGmtModified(new Date());
             dispatchPlanBatchMapper.insert(batchPlan);
             Integer batchId = batchPlan.getId();
+
+            //路线类型
+            Integer lineType = null != submitPlan.getLineType()?submitPlan.getLineType(): PlanLineTypeEnum.SIP.getType();
+            // 加入线路
+            List<DispatchBatchLine> lineList = submitPlan.getLines();
+            for (DispatchBatchLine lines : lineList) {
+                lines.setBatchId(batchPlan.getId());
+                lines.setLineType(submitPlan.getLineType());
+                lines.setOrgId(operOrgId);
+                lines.setUserId(operUserId.intValue());
+                lines.setLineType(lineType);
+                lineService.insert(lines);
+            }
 
             //批量加入MQ
             this.batchJoin(joinPlanDto, batchId);

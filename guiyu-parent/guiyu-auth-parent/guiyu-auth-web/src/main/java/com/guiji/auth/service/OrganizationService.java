@@ -146,22 +146,22 @@ public class OrganizationService {
 	
 	public void update(SysOrganization record,Long updateUser){
 		
-		SysOrganization parentOrg = getParentOrg(record.getCode());
-		List<SysOrganization> brothers = queryBrotherOrg(record.getCode());
+		SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
+		SysOrganization parentOrg = getParentOrg(organization.getCode());
+		List<SysOrganization> brothers = queryBrotherOrg(organization.getCode());
 		int i = 0;
 		for(SysOrganization org : brothers){
 			i += org.getRobot();
 		}
-		if(record.getRobot() + i > parentOrg.getRobot()){
+		if(organization.getRobot() + i > parentOrg.getRobot()){
 			throw new GuiyuException("配置机器人数之和超过父及企业！");
 		}
-		List<SysOrganization> children = queryChildrenOrg(record.getCode());
+		List<SysOrganization> children = queryChildrenOrg(organization.getCode());
 		int j = 0;
 		for(SysOrganization org : children){
 			j += org.getRobot();
 		}
-		if(record.getRobot() < j)
-		{
+		if(organization.getRobot() < j){
 			throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
 		}
 		

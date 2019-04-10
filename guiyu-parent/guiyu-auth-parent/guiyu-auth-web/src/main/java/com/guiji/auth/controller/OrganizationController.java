@@ -158,8 +158,9 @@ public class OrganizationController implements IOrg{
 	}
 
 	@RequestMapping("getOrgByOrgCodeOrgName")
-	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
-		return organizationService.getOrgByOrgCodeOrgName(orgCode,orgName);
+	public List<SysOrganization> getOrgByOrgCodeOrgName(String code,String orgName,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.getOrgByOrgCodeOrgName(userId,authLevel,orgCode,orgName);
 	}
 	
 	

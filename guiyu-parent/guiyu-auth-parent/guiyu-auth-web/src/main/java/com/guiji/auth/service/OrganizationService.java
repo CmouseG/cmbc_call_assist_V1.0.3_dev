@@ -470,9 +470,13 @@ public class OrganizationService {
 		return null;
 	}
 
-	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
+	public List<SysOrganization> getOrgByOrgCodeOrgName(Long userId, Integer authLevel, String orgCode,String orgName){
 		SysOrganizationExample example = new SysOrganizationExample();
-		if(!StringUtils.isEmpty(orgCode)){
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
 			example.createCriteria().andCodeLike(orgCode + "%");
 		}
 		if(!StringUtils.isEmpty(orgName)){

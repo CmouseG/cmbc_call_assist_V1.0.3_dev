@@ -50,10 +50,6 @@ update guiyu_notice.notice_info set org_code = '1' where org_code = '1.';
 update guiyu_notice.notice_setting set org_code = '1' where org_code = '1.';
 
 
-update guiyu_robot.dispatch_plan_124 set org_code = '1' where org_code = '1.';
-update guiyu_robot.dispatch_plan_125 set org_code = '1' where org_code = '1.';
-update guiyu_robot.dispatch_plan_126 set org_code = '1' where org_code = '1.';
-update guiyu_robot.dispatch_plan_127 set org_code = '1' where org_code = '1.';
 update guiyu_robot.user_ai_cfg_base_info set org_code = '1' where org_code = '1.';
 
 update guiyu_sms.sms_config set org_code = '1' where org_code = '1.';

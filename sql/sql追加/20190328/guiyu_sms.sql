@@ -1,3 +1,4 @@
+use guiyu_sms;
 ALTER TABLE `sms_task_detail`
 ADD COLUMN `create_id`  int(11) NULL COMMENT '创建人' AFTER `org_code`,
 ADD COLUMN `create_time`  datetime NULL COMMENT '创建时间' AFTER `create_id`,

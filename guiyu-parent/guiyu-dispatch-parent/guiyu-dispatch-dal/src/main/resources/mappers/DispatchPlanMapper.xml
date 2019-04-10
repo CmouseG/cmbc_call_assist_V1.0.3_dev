@@ -22,7 +22,7 @@
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
     <result column="is_tts" property="isTts" jdbcType="INTEGER" />
-    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="username" property="userName" jdbcType="VARCHAR" />
     <result column="replay_type" property="replayType" jdbcType="INTEGER" />
     <result column="is_del" property="isDel" jdbcType="INTEGER" />
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />

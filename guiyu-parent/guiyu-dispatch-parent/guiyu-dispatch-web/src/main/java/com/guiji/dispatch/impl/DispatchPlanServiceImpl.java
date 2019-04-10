@@ -1154,7 +1154,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			  planUuidSet.add(dis.getPlanUuidLong());
 
-			  /*// 转换userName
+			  // 转换userName
 			  if (!tmpUserMap.containsKey(dis.getUserId())) {
 				  ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 				  if (user.getBody() != null) {
@@ -1163,7 +1163,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			  }
 			  if (tmpUserMap.containsKey(dis.getUserId())) {
 				  dis.setUserName(tmpUserMap.get(dis.getUserId()).getUsername());
-			  }*/
+			  }
 
 			  /*List<DispatchBatchLine> linesVO = null;
 			  if (!tmpMap.containsKey(dis.getBatchId())) {

@@ -147,32 +147,32 @@ public class OrganizationService {
 	
 	public void update(SysOrganization record,Long updateUser){
 		
-		SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
-		SysOrganization parentOrg = getParentOrg(organization.getCode());
-		List<SysOrganization> brothers = queryBrotherOrg(organization.getCode());
-		int i = 0;
-		if(brothers != null && CollectionUtils.isNotEmpty(brothers))
+		if(record.getRobot() != null)
 		{
-			for(SysOrganization org : brothers){
-				i += org.getRobot();
+			SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
+			SysOrganization parentOrg = getParentOrg(organization.getCode());
+			List<SysOrganization> brothers = queryBrotherOrg(organization.getCode());
+			int i = 0;
+			if(brothers != null && CollectionUtils.isNotEmpty(brothers)){
+				for(SysOrganization org : brothers){
+					i += org.getRobot();
+				}
 			}
-		}
-		if(!"1".equals(parentOrg.getCode()))
-		{
-			if(organization.getRobot() + i > parentOrg.getRobot()){
-				throw new GuiyuException("配置机器人数之和超过父及企业！");
+			if(!"1".equals(parentOrg.getCode())){
+				if(record.getRobot() + i > parentOrg.getRobot()){
+					throw new GuiyuException("配置机器人数之和超过父及企业！");
+				}
 			}
-		}
-		List<SysOrganization> children = queryChildrenOrg(organization.getCode());
-		int j = 0;
-		if(children != null && CollectionUtils.isNotEmpty(children))
-		{
-			for(SysOrganization org : children){
-				j += org.getRobot();
+			List<SysOrganization> children = queryChildrenOrg(organization.getCode());
+			int j = 0;
+			if(children != null && CollectionUtils.isNotEmpty(children)){
+				for(SysOrganization org : children){
+					j += org.getRobot();
+				}
 			}
-		}
-		if(organization.getRobot() < j){
-			throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+			if(record.getRobot() < j){
+				throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+			}
 		}
 		
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);

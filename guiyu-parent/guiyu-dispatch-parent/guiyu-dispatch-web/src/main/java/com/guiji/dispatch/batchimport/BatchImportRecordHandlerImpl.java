@@ -80,7 +80,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 					if(null != vo.getFileRecordId()) {
 						saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
 					}
-					logger.debug("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
+					logger.error("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}
 			}
@@ -88,7 +88,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			if(null != vo.getFileRecordId()) {
 				saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 			}
-			logger.debug("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
+			logger.error("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
 

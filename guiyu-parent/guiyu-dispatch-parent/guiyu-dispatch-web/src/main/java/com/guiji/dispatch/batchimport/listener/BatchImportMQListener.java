@@ -24,7 +24,7 @@ public class BatchImportMQListener {
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
-
+		logger.info(message);
 		DispatchPlan vo = JsonUtils.json2Bean(message, DispatchPlan.class);
 		//executorService.execute(new BatchImportThread(vo, handler));
 		try
@@ -34,7 +34,7 @@ public class BatchImportMQListener {
 		} catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("", e);
 		}
 
 	}

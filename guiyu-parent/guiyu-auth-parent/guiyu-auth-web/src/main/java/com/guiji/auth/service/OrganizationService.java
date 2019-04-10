@@ -274,7 +274,7 @@ public class OrganizationService {
 	{
 		SysOrganizationExample example = new SysOrganizationExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
+		criteria.andDelFlagEqualTo(0).andOpenEqualTo(1);
 		if (authLevel == 1){
 			criteria.andCreateIdEqualTo(userId);
 		} else if (authLevel == 2){

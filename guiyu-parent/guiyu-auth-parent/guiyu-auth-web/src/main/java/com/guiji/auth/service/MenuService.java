@@ -104,9 +104,7 @@ public class MenuService {
 					   url.equals("/smsCenter/platformManage") ||  // 平台管理列表
 					   url.equals("/financeCenter/rechargeManage") || // 充值管理
 					   url.equals("/robotCenter/simList") // 机器人实时配置
-					   ){  // 关键词审核
-						iterator.remove();
-					}
+					   ){iterator.remove();}
 				}
 			}
 			//拼装树形结构

@@ -24,9 +24,10 @@ public class DispatchBatchController {
     @Autowired
     private IPlanBatchService planBatchService;
 
- //   @Jurisdiction("taskCenter_phonelist_batchDelete,taskCenter_phonelist_delete")
+
     @ApiOperation(value="删除计划任务", notes="删除计划任务")
     @Log(info ="删除计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchDelete,taskCenter_phonelist_delete")
     @RequestMapping(value = "/delPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean delPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -50,6 +51,7 @@ public class DispatchBatchController {
 
     @ApiOperation(value="批量暂停计划任务", notes="批量暂停计划任务")
     @Log(info ="批量暂停计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchPause")
     @RequestMapping(value = "/suspendPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean suspendPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -72,6 +74,7 @@ public class DispatchBatchController {
 
     @ApiOperation(value="批量停止计划任务", notes="批量停止计划任务")
     @Log(info ="批量停止计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchStop")
     @RequestMapping(value = "/stopPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean stopPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -96,6 +99,7 @@ public class DispatchBatchController {
     //
     @ApiOperation(value="批量恢复计划任务", notes="恢复计划任务")
     @Log(info ="批量恢复计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchRecover")
     @RequestMapping(value = "/recoveryPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean recoveryPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -120,6 +124,7 @@ public class DispatchBatchController {
     //批量加入
     @ApiOperation(value="批量加入计划任务", notes="恢复计划任务")
     @Log(info ="批量计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchJoin")
     @RequestMapping(value = "/joinPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean joinPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
@@ -143,6 +148,7 @@ public class DispatchBatchController {
 
     @ApiOperation(value="批量导出计划任务", notes="批量导出计划任务")
     @Log(info ="批量导出计划任务")
+    @Jurisdiction("taskCenter_phonelist_batchExport")
     @RequestMapping(value = "/exportPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean exportPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,

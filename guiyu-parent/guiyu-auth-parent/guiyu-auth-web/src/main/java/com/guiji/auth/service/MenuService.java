@@ -137,7 +137,7 @@ public class MenuService {
 		//获取当前用户的权限范围
 		if(allMenu!=null) {
 			//拼装树形结构
-			map.put("menus", parseTree(allMenu,true));
+			map.put("menus", parseTree(allMenu,false));
 		}
 		List<Long> selected= new ArrayList<Long>();
 		if(productId!=null) {

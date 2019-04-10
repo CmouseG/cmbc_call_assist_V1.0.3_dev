@@ -442,20 +442,43 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
         }
 
+
+        int count = 0;
+        int maxCount = 1000000;
+        OptPlanDto param = new OptPlanDto();
+        //全选
+        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+            param.setNocheckPlanUuid(null);
+            //只勾选
+        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+            if(null != optPlanDto
+                    && null != optPlanDto.getCheckPlanUuid() && optPlanDto.getCheckPlanUuid().size()>0){
+                param.setOrgIdList(optPlanDto.getOrgIdList());
+                param.setCheckPlanUuid(optPlanDto.getCheckPlanUuid());
+            }else{
+                throw new GuiyuException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+            }
+            //全选去勾
+        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+        }
+
+        //查询总数
+        count = planBatchMapper.queryExportPlanCountList(param);
+        count = count<maxCount?count:maxCount;
+        //增加导出文件记录
+        ExportFileRecord recordRes = exportFileService.addExportFile(getExportFileData(optPlanDto.getOperUserId(), optPlanDto.getOperOrgCode(),count));
+        this.executeThread(count, param, recordRes);
+
         logger.info(">>>>>>>>>>>>>>>>>>start");
-        /*logger.info(">>>>>>>>>>>>>>>>>>start exportPlanBatch");
-        //导出上传文件
-        this.exportFile(optPlanDto);
-        logger.info(">>>>>>>>>>>>>>>>>>end exportPlanBatch");*/
-
-        this.executeThread(optPlanDto);
-
-        //    this.executeExecutor(optPlanDto);
-
+    //    this.executeThread(optPlanDto);
+    //    this.exportFileNew(optPlanDto);
         logger.info(">>>>>>>>>>>>>>>>>>end");
         return bool;
     }
 
+/*
 
     public void executeThread(OptPlanDto optPlanDto) {
         logger.info("start executeThread");
@@ -464,7 +487,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 @Override
                 public void run(){
                     //导出上传文件
-                    exportFile(optPlanDto);
+                //    exportFile(optPlanDto);
+                    exportFileNew(optPlanDto);
                 }
             });
         }catch(Exception e){
@@ -495,6 +519,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         }
         logger.info("end executeExecutor");
     }
+*/
 
     @Autowired
     private static ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -513,7 +538,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             if(null != optPlanDto){
                 optPlanDto.setNocheckPlanUuid(null);
             }
-            planList = planBatchMapper.queryExportPlanList(optPlanDto, limit);
+            planList = planBatchMapper.queryExportPlanList(optPlanDto, 0, limit);
             count = planBatchMapper.queryExportPlanCountList(optPlanDto);
 
             //只勾选
@@ -521,13 +546,13 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             if(null != optPlanDto
                     && null != optPlanDto.getCheckPlanUuid()
                     && optPlanDto.getCheckPlanUuid().size()>0){
-                planList = planBatchMapper.queryExportPlanById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), limit);
+                planList = planBatchMapper.queryExportPlanById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), 0, limit);
                 count = planBatchMapper.queryExportPlanCountById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList());
             }
 
             //全选去勾
         }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            planList = planBatchMapper.queryExportPlanList(optPlanDto, limit);
+            planList = planBatchMapper.queryExportPlanList(optPlanDto, 0, limit);
             count = planBatchMapper.queryExportPlanCountList(optPlanDto);
         }
 
@@ -750,7 +775,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     }
 
     /**
-     * 封装
+     * 封装导出记录数据
      * @return
      */
     private ExportFileDto getExportFileData(String userId, String orgCode, Integer count){
@@ -768,5 +793,292 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 		/*data.setCreateName(fileRecords.getUserName());
 		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(fileRecords.getCreateTime()));*/
         return data;
+    }
+
+    /**
+     * 导出文件
+     * @param optPlanDto
+     */
+    public void exportFileNew(OptPlanDto optPlanDto){
+        String operUserId = optPlanDto.getOperUserId();
+        String operOrgCode = optPlanDto.getOperOrgCode();
+
+        int count = 0;
+        int maxCount = 1000000;
+        OptPlanDto param = new OptPlanDto();
+        //全选
+        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+            param.setNocheckPlanUuid(null);
+            //只勾选
+        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+            if(null != optPlanDto
+                    && null != optPlanDto.getCheckPlanUuid() && optPlanDto.getCheckPlanUuid().size()>0){
+                param.setOrgIdList(optPlanDto.getOrgIdList());
+                param.setCheckPlanUuid(optPlanDto.getCheckPlanUuid());
+            }else{
+                throw new GuiyuException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+            }
+            //全选去勾
+        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+        }
+
+        count = planBatchMapper.queryExportPlanCountList(param);
+        count = count<maxCount?count:maxCount;
+        //增加导出文件记录
+        ExportFileRecord recordRes = exportFileService.addExportFile(getExportFileData(operUserId, operOrgCode,count));
+        this.executeThread(count, param, recordRes);
+    }
+
+    /**
+     * 执行
+     * @param count
+     * @param param
+     * @param recordRes
+     */
+    protected void executeThread(int count, OptPlanDto param, ExportFileRecord recordRes) {
+        logger.info("start executeThread");
+        try{
+            asyncServiceExecutor.execute(new Runnable(){
+                @Override
+                public void run(){
+                    //导出上传文件
+                    //    exportFile(optPlanDto);
+                    export(count, param, recordRes);
+                }
+            });
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        logger.info("end executeThread");
+    }
+
+    /**
+     * 导出处理
+     * @param count
+     * @param param
+     * @param recordRes
+     */
+    private void export(int count, OptPlanDto param, ExportFileRecord recordRes){
+        File execlFile = null;	//生成文件
+        File zipFile = null;		//压缩文件
+        SysFileRspVO resFile = null;//上传
+        boolean bool = false;
+
+        String zipDirPath = this.tmpPath + File.separator + "data_" + DateTimeUtils.getCurrentDateString("yyyyMMddHHmmss")
+                + "_" + recordRes.getUserId() + "_" + System.currentTimeMillis();
+        File zipFileDir = new File(zipDirPath);
+        if (!zipFileDir.exists()) {
+            zipFileDir.mkdirs();
+        }
+        try {
+            int limit = 30000;//每个文件多少条
+            int indexStart = 0;
+
+            int pageNum = count % limit == 0 ? count / limit : (count / limit + 1);
+            for (int i = 1; i <= pageNum; i++) {
+                //查询计划列表
+                indexStart = (i - 1) * limit;
+                List<DownLoadPlanVo> planList = planBatchMapper.queryExportPlanList(param, indexStart, limit);
+                //execl文件名
+                String execlFileName = File.separator + "data_" + DateTimeUtils.getCurrentDateString("yyyyMMddHHmmss")
+                        + "_" + recordRes.getUserId() + "_";
+                //生成execl
+                execlFile = this.generateDownloadExcel(zipDirPath + File.separator + execlFileName + System.currentTimeMillis(), planList, 1);
+            }
+            //压缩文件
+            zipFile = this.generateZipFile(zipDirPath, zipDirPath);
+            //上传压缩文件
+            resFile = this.uploadFile(zipFile);
+            bool = true;
+        }catch(Exception e){
+            logger.error("导出处理异常", e);
+        }finally {
+            if(zipFileDir.exists() && zipFileDir.isDirectory()){
+                File[] fileList = zipFileDir.listFiles();
+                if(null != fileList && fileList.length>0){
+                    for(File fi : fileList){
+                        //    System.gc();
+                        fi.delete();
+                    }
+                }
+                zipFileDir.delete();
+            }
+        }
+
+        /*if(null != zipFile && zipFile.exists() && zipFile.delete()){
+            zipFile.delete();
+        }*/
+
+        //导出结果变更
+        exportFileService.endExportFile(recordRes.getRecordId(),
+                bool ? ExportFileStatusEnum.FINISH.getStatus() : ExportFileStatusEnum.FAIL.getStatus(),
+                null != resFile ? resFile.getSkUrl() : null);
+    }
+
+
+
+    private File generateDownloadExcel(String execlName, List<DownLoadPlanVo> planList, Integer isDesensitization) {
+        File execFile = new File(execlName + ".xls");
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(execFile);
+            Map<String, String> map = new HashMap<>();
+            map.put("1", "计划中");
+            map.put("2", "已完成");
+            map.put("3", "已暂停");
+            map.put("4", "已停止");
+            WritableWorkbook wb = Workbook.createWorkbook(out);
+            WritableSheet sheet = wb.createSheet("sheet1", 0);
+            WritableCellFormat format = new WritableCellFormat();
+            format.setBorder(Border.ALL, BorderLineStyle.THIN);
+            format.setWrap(true);
+
+            sheet.setColumnView(0, 12);
+            sheet.setColumnView(1, 12);
+
+            sheet.addCell(new Label(0, 0, "批次"));
+            sheet.addCell(new Label(1, 0, "号码"));
+            sheet.addCell(new Label(2, 0, "变量参数"));
+            sheet.addCell(new Label(3, 0, "附件参数"));
+            sheet.addCell(new Label(4, 0, "计划状态"));
+            sheet.addCell(new Label(5, 0, "意向标签"));
+            sheet.addCell(new Label(6, 0, "话术"));
+            sheet.addCell(new Label(7, 0, "线路"));
+            sheet.addCell(new Label(8, 0, "计划日期"));
+            sheet.addCell(new Label(9, 0, "计划时间"));
+            sheet.addCell(new Label(10, 0, "所属用户"));
+            sheet.addCell(new Label(11, 0, "添加日期"));
+
+            Map<Integer, String> batchLineMap = new HashMap<>();
+            int len = planList.size();
+            for (int i = 0; i < planList.size(); i++) {
+                DownLoadPlanVo dispatchPlan = planList.get(i);
+
+                int k = 0;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
+                k++;
+                if (isDesensitization.equals(0)) {
+                    String phoneNumber = dispatchPlan.getPhone().substring(0, 3) + "****"
+                            + dispatchPlan.getPhone().substring(7, dispatchPlan.getPhone().length());
+                    sheet.addCell(new Label(k, i + 1, phoneNumber));
+                    k++;
+                } else {
+                    sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
+                    k++;
+                }
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));//变量参数
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getAttach()));//附件参数
+                k++;
+                sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getResult()));//意向标签
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
+                k++;
+
+                //查询线路
+                String lineNames = "";
+            /*if (!batchLineMap.containsKey(dispatchPlan.getBatchId())) {
+                List<DispatchBatchLine> queryLinesByPlanUUID = lineServiceImpl.queryListByBatchId(dispatchPlan.getBatchId());
+
+                if (queryLinesByPlanUUID != null && !queryLinesByPlanUUID.isEmpty()) {
+                    String lineName = "";
+                    //查询线路
+                    for (DispatchBatchLine lines : queryLinesByPlanUUID) {
+                        lineName = lineName + "" + lines.getLineName() + ",";
+                    }
+
+                    lineNames = lineName.substring(0, lineName.length() - 1);
+                    batchLineMap.put(dispatchPlan.getBatchId(), lineNames);
+                }
+            } else {
+                lineNames = batchLineMap.get(dispatchPlan.getBatchId());
+            }*/
+
+                sheet.addCell(new Label(k, i + 1, lineNames));
+                k++;
+                sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallData())));
+                k++;
+                sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallHour())));
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getUsername()));
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getAddTime()));
+            }
+
+            wb.write();
+            wb.close();
+        }catch(Exception e){
+
+        }finally {
+            if(null != out){
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return execFile;
+    }
+
+    /**
+     * 生成.zip文件;
+     * @param zipName
+     * @param zipDirPath
+     * @return
+     */
+    public File generateZipFile(String zipName, String zipDirPath){  //
+        File file = new File(zipName +".zip");
+        ZipOutputStream zipOutputStream = null;
+        try {
+            zipOutputStream = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+            File[] files = new File(zipDirPath).listFiles();
+            FileInputStream fileInputStream = null;
+            byte[] buf = new byte[1024];
+            int len = 0;
+            if(files!=null && files.length > 0){
+                for(File excelFile:files){
+                    //    String fileName = excelFile.getName();
+                    String fileName = excelFile.getName();
+                    fileInputStream = new FileInputStream(excelFile);
+                    //放入压缩zip包中;
+                    zipOutputStream.putNextEntry(new ZipEntry( fileName));//this.tmpPath + File.separator  +
+                    //读取文件;
+                    while ((len = fileInputStream.read(buf)) > 0) {
+                        zipOutputStream.write(buf, 0, len);
+                    }
+                    //关闭;
+                    zipOutputStream.closeEntry();
+                    if (fileInputStream != null) {
+                        fileInputStream.close();
+                    }
+                }
+            }
+        }catch(IOException ex){
+            logger.error("生成.zip文件异常", ex);
+            throw new GuiyuException("生成zip文件异常", ex);
+        }catch(Exception e){
+            logger.error("生成.zip文件异常", e);
+            throw new GuiyuException("生成zip文件异常", e);
+        }finally {
+            if (zipOutputStream != null) {
+                try {
+                    zipOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return file;
+
+		/*File f = new File(lj);
+		InputStream istream = new FileInputStream(f);
+		return istream;*/
     }
 }

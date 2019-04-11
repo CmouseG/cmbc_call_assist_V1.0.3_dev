@@ -295,7 +295,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             CallOutDetailExample example = new CallOutDetailExample();
             CallOutDetailExample.Criteria criteria = example.createCriteria();
             criteria.andCallIdEqualTo(callId);
-            example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time)");
+            example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
             List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
 
             CallOutDetailRecordExample exampleRecord = new CallOutDetailRecordExample();
@@ -447,7 +447,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
         criteria.andCallIdEqualTo(new BigInteger(callId));
-        example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time)");
+        example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time).call_detail_id");
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
         if (list != null && list.size() > 0) {
@@ -499,7 +499,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutDetailExample example = new CallOutDetailExample();
 
         example.createCriteria().andCallIdIn(idList);
-        example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time)");
+        example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
 
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
 

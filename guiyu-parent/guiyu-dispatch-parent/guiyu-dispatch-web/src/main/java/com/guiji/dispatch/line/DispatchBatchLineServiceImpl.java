@@ -1,6 +1,7 @@
 package com.guiji.dispatch.line;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -118,8 +119,10 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 
 	@Override
 	public void getLineRule() {
+		DispatchPlan param = new DispatchPlan();
+		param.setCallData(Integer.valueOf(new SimpleDateFormat("yyyyMMdd").format(new Date())));
 		// 查询用户
-		List<DispatchPlan> selectPlanGroupByUserId = dispatchPlanMapper.selectPlanGroupByUserId(new DispatchPlan(), getAllOrgIds());
+		List<DispatchPlan> selectPlanGroupByUserId = dispatchPlanMapper.selectPlanGroupByUserId(param, getAllOrgIds());
 		// 根据用户查询规则
 		for (DispatchPlan dis : selectPlanGroupByUserId) {
 			// 去重查询任务中心用户

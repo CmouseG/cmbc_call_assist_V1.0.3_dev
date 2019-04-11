@@ -40,7 +40,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 	@Autowired
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
-	
+
 	@Autowired
 	private IDispatchBatchLineService lineService;
 
@@ -49,7 +49,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 	@Autowired
 	private GateWayLineService gateWayLineService;
-	
+
 	@Autowired
 	private IBlackListService blackService;
 
@@ -77,14 +77,18 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 				List<CheckResult> body = checkParams.getBody();
 				CheckResult checkResult = body.get(0);
 				if (!checkResult.isPass()) {
-					saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
-					logger.debug("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
+					if(null != vo.getFileRecordId()) {
+						saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
+					}
+					logger.error("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}
 			}
 		} else {
-			saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
-			logger.debug("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
+			if(null != vo.getFileRecordId()) {
+				saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
+			}
+			logger.error("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
 

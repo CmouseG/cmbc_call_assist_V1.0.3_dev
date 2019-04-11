@@ -307,12 +307,7 @@ public class UserService {
 
 	public SysUserExt getUserExtByUserId(Long id)
 	{
-		SysUserExt sysUserExt = LocalCacheUtil.getT("UserExt_"+id);
-		if(sysUserExt == null){
-			sysUserExt = mapper.getSysUserExtByUserId(id);
-			LocalCacheUtil.set("UserExt_"+id, sysUserExt, LocalCacheUtil.TEN_MIN);
-		}
-		return sysUserExt;
+		return mapper.getSysUserExtByUserId(id);
 	}
 
 	public void userBindWechat(Long userId,String weChat,String weChatOpenId) throws UnsupportedEncodingException {

@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.guiji.botsentence.service.IKeywordsVerifyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.guiji.botsentence.constant.Constant;
@@ -35,6 +38,8 @@ import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.vo.BotSentenceIntentVO;
 import com.guiji.botsentence.vo.BusinessAnswerVo;
 import com.guiji.common.exception.CommonException;
+
+import javax.annotation.Resource;
 
 @Service
 public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService{
@@ -75,6 +80,9 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 	
 	@Autowired
 	private BotSentenceKeyWordsValidateServiceImpl botSentenceKeyWordsValidateService;
+
+	@Resource
+	private IKeywordsVerifyService iKeywordsVerifyService;
 
 	private static final String DOMAIN="一般问题";
 	
@@ -129,18 +137,15 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 	@Override
 	@Transactional
 	public void addBusinessAnswer(BusinessAnswerVo record, String userId) {
-		
-		//校验关键字
-		//获取所有关键词库对应关键词集合
-		if(null != record.getIntentList() && record.getIntentList().size() > 0) {
-			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), null);
-			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(record.getIntentList(), record.getProcessId(), null);
-			
-		}else {
+
+		List<BotSentenceIntentVO> intentVOS = record.getIntentList();
+
+		if(CollectionUtils.isEmpty(intentVOS)){
 			throw new CommonException("请选择意图!");
 		}
-		
-		
+
+		iKeywordsVerifyService.verifyBusinessAnswerBranch(intentVOS, record.getProcessId(), null);
+
 		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(record.getProcessId());
 		
 		//获取branchName
@@ -393,27 +398,15 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		String oldAgentIntent = oldbranch.getAgentIntent();
 		String oldNext = oldbranch.getNext();
 		logger.info("当前转人工意图: " + oldAgentIntent);
-		
-		
-		//校验关键字
-		List<Long> intentIds = new ArrayList<>();
-		
-		//String[] keys = new String[] {};
-		
-		//获取所有关键词库对应关键词集合
-		if(null != record.getIntentList() && record.getIntentList().size() > 0) {
-			//String allKeywords = "";
-			for(BotSentenceIntentVO temp : record.getIntentList()) {
-				if(null != temp.getId()) {
-					intentIds.add(new Long(temp.getId()));
-				}
-			}
-			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), intentIds);
-			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(record.getIntentList(), record.getProcessId(), intentIds);
-		}else {
+
+		List<BotSentenceIntentVO> intentVOS = record.getIntentList();
+
+		if(CollectionUtils.isEmpty(intentVOS)){
 			throw new CommonException("请选择意图!");
 		}
-		
+
+		iKeywordsVerifyService.verifyBusinessAnswerBranch(intentVOS, record.getProcessId(), record.getBranchId());
+
 		//插入流程信息
 		BotSentenceBranch branch= botSentenceBranchMapper.selectByPrimaryKey(record.getBranchId());
 		branch.setUserAsk(record.getUserAsk().replace("\n", "").trim().replace(",", "，"));

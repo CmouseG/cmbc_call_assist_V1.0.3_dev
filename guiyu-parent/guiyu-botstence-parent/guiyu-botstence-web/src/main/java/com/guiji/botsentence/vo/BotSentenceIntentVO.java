@@ -3,6 +3,7 @@ package com.guiji.botsentence.vo;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class BotSentenceIntentVO {
@@ -35,4 +36,9 @@ public class BotSentenceIntentVO {
     private Long referenceId;
     
     private String intentDomain;
+
+    private List<String> singleKeywords;
+    private List<String>  combinationKeywords;
+    private List<String>  exactMatchKeywords;
+    private List<String>  otherKeywords;
 }

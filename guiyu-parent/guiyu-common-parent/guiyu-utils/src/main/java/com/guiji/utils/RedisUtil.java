@@ -109,6 +109,16 @@ public class RedisUtil {
     public Object get(String key){
         return key==null?null:redisTemplate.opsForValue().get(key);
     }
+    
+	/**
+	 * 普通缓存获取（转类型）
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getT(String key)
+	{
+		Object obj = get(key);
+		return obj == null ? null : (T) obj;
+	}
 
     /**
      * 普通缓存放入

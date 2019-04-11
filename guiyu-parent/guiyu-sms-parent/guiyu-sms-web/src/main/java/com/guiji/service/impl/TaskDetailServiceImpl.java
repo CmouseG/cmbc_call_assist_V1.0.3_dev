@@ -110,9 +110,9 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		detail.setTunnelName(taskReq.getTunnelName());
 		detail.setSendTime(taskReq.getSendTime());
 		if(taskReq.getSmsTemplateId() != null) {
-			detail.setSmsContent("【短信模版】" + taskReq.getSmsTemplateId());
+			detail.setSmsContent(taskReq.getSmsTemplateId().toString());
 		} else {
-			detail.setSmsContent("【短信内容】" + taskReq.getSmsContent());
+			detail.setSmsContent(taskReq.getSmsContent());
 		}
 		detail.setCreateId(taskReq.getUserId().intValue());
 		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));

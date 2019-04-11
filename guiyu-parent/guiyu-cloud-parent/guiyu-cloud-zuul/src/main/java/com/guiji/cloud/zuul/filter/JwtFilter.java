@@ -77,6 +77,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                Integer isDesensitization = jwtConfig.getIsDesensitizationByToken(tok);
                Long orgId = jwtConfig.getOrgIdByToken(tok);
 			   Integer authLevel = jwtConfig.getAuthLevelByToken(tok);
+			   Long roleId = jwtConfig.getRoleIdByToken(tok);
                RequestContext ctx = RequestContext.getCurrentContext();
                ctx.addZuulRequestHeader("userId", String.valueOf(userId));
                ctx.addZuulRequestHeader("orgCode", orgCode);
@@ -84,6 +85,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                ctx.addZuulRequestHeader("isDesensitization", isDesensitization.toString());
                ctx.addZuulRequestHeader("orgId", String.valueOf(orgId));
 			   ctx.addZuulRequestHeader("authLevel", authLevel.toString());
+			   ctx.addZuulRequestHeader("roleId", String.valueOf(roleId));
            }catch (Exception e){
                flag =false;
            }

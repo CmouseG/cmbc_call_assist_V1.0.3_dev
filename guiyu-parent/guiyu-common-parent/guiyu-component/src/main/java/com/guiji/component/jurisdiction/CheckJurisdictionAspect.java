@@ -19,7 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.utils.LocalCacheUtil;
+import com.guiji.utils.RedisUtil;
 
 /**
  * 校验权限切面
@@ -30,6 +30,8 @@ public class CheckJurisdictionAspect
 {	
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	/**
 	 * 切点定义
@@ -39,6 +41,7 @@ public class CheckJurisdictionAspect
 	{}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Before("check()")
 	public void doBefore(JoinPoint joinPoint)
 	{
@@ -52,19 +55,18 @@ public class CheckJurisdictionAspect
 		
 		ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = sra.getRequest();
-		String userId = request.getHeader("userId");
+		String roleId = request.getHeader("roleId");
 		
-		List<String> urlList = LocalCacheUtil.getT("Key_Jurisdiction_"+userId);
+		List<String> urlList = redisUtil.getT("Key_Jurisdiction_"+roleId);
 		if(urlList == null) {
 			//根据用户id查询其拥有的权限
-			ReturnData<List<String>> result = restTemplate.getForObject("http://guiyu-cloud-zuul:18000/auth/user/queryButtonByUser?userId="+userId, ReturnData.class);
+			ReturnData<List<String>> result = restTemplate.getForObject("http://guiyu-cloud-zuul:18000/auth/user/queryButtonByUser?userId="+roleId, ReturnData.class);
 			urlList = result.getBody();
 			if(CollectionUtils.isEmpty(urlList)){
 				throw new GuiyuException("00010404","您没有此权限!!!");
 			}
-			LocalCacheUtil.set("Key_Jurisdiction_"+userId, urlList, LocalCacheUtil.TEN_MIN);
+			redisUtil.set("Key_Jurisdiction_"+roleId, urlList);
 		}
-		
 		boolean flag = false;
 		for(String url : urls){
 			if(urlList.contains(url)) {
@@ -72,10 +74,8 @@ public class CheckJurisdictionAspect
 				break;
 			}
 		}
-		if(!flag)
-		{
+		if(!flag){
 			throw new GuiyuException("00010404","您没有此权限!!!");
 		}
-		
 	}
 }

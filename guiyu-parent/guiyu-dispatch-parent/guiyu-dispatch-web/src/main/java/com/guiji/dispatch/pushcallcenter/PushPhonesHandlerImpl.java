@@ -132,7 +132,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                                 lines.add(line.getLineId());
                                                 occupyLine = gateWayLine;
 												isSimPush = true;
-                                        //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+                                                logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
                                                 break;//有闲置，则推送，网关路线只能推送一个
                                             }
                                         }else {
@@ -237,7 +237,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				templateCfgAiNum = userResource.getTempAiNumMap().get(templateId);
 			}
 			if(templateCfgAiNum<=0) {
-				logger.error("用户:{},模板：{},机器人数量为：0");
+			//	logger.error("用户:{},模板：{},机器人数量为：0");
 				return false;
 			}
 			//获取用户目前在忙的机器人列表

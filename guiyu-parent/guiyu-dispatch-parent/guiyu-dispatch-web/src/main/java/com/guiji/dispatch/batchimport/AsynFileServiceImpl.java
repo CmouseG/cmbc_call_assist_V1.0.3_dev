@@ -89,7 +89,6 @@ public class AsynFileServiceImpl implements AsynFileService {
 		List<DispatchBatchLine> lineList = dispatchPlan.getLines();
 		for (DispatchBatchLine lines : lineList) {
 			lines.setBatchId(dispatchPlanBatch.getId());
-			lines.setLineType(dispatchPlan.getLineType());
 			lines.setOrgId(orgId);
 			lines.setUserId(userId.intValue());
 			lines.setLineType(lineType);

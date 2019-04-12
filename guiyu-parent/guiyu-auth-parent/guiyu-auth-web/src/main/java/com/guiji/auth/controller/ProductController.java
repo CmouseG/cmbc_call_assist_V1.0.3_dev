@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IProduct;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ProductStatusEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
@@ -42,7 +43,7 @@ import com.guiji.utils.StrUtils;
 */
 @RestController
 @RequestMapping("product")
-public class ProductController {
+public class ProductController implements IProduct{
 	@Autowired
 	ProductService productService;
 	@Autowired
@@ -219,5 +220,18 @@ public class ProductController {
 			return rtnList;
 		}
 		return null;
+	}
+
+
+	/**
+	 * 保存创建的模版到关联关系（privilege）
+	 */
+	@Override
+	public void getOrgByCode(List<String> templateIds)
+	{
+		List<SysProduct> productList = productService.queryOkProductList();
+		for(SysProduct product : productList){
+			privilegeService.savePrivlege(1, "1", 1, product.getId().toString(), 2, templateIds);
+		}
 	}
 }

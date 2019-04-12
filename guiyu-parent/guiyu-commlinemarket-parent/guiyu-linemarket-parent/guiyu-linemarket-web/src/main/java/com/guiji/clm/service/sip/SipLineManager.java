@@ -286,7 +286,7 @@ public class SipLineManager {
 	 * 3、保存
 	 * 4、已经分配到用户了，此时通知费用中心进行计费准备
 	 * 
-	 * @param sipLineShare
+	 * @param sipLineExclusive
 	 */
 	@Transactional
 	public void splitExclusiveSipLine(SipLineExclusive sipLineExclusive) {
@@ -637,7 +637,7 @@ public class SipLineManager {
 	
 	/**
 	 * 根据共享线路企业信息，获取线路拥有者类型
-	 * @param org
+	 * @param sipLineBaseInfo
 	 * @return
 	 */
 	public String getLineOwner(SipLineBaseInfo sipLineBaseInfo) {

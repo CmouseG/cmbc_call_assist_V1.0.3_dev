@@ -123,7 +123,7 @@ public class OldDataDealController {
 		
 		//新增的按钮  pid-ids
 		SysMenuExample exampleb = new SysMenuExample();
-		example.createCriteria().andTypeEqualTo(2).andRemarksEqualTo("add");
+		exampleb.createCriteria().andRemarksEqualTo("add");
 		List<SysMenu> buttonList = sysMenuMapper.selectByExample(exampleb);
 		if(buttonList!=null && !buttonList.isEmpty()) {
 			for(SysMenu button:buttonList) {

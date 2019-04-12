@@ -77,7 +77,18 @@ BEGIN
 		   city_name            VARCHAR(32) COMMENT '城市名',
 		   city_code            VARCHAR(32) COMMENT '城市code',
 		   line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关',
-  PRIMARY KEY (`plan_uuid`)
+  PRIMARY KEY (`plan_uuid`),
+  KEY `idx_", tab_name,"_robot` (`robot`),
+  KEY `idx_", tab_name,"_org_code` (`org_code`),
+  KEY `idx_", tab_name,"_batch_id` (`batch_id`),
+  KEY `idx_", tab_name,"_call_data` (`call_data`),
+  KEY `idx_", tab_name,"_status_plan` (`status_plan`),
+  KEY `idx_", tab_name,"_user_id` (`user_id`),
+  KEY `idx_", tab_name,"_gmt_create` (`gmt_create`),
+  KEY `idx_", tab_name,"_batch_name` (`batch_name`),
+  KEY `idx_", tab_name,"_phone` (`phone`),
+  KEY `idx_", tab_name,"_replay_type_is_del` (`replay_type`,`is_del`),
+  KEY `idx_", tab_name,"_status_plan_gmt_create` (`status_plan`,`gmt_create`) 
 		)
 		ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='计划任务表'		
 		");

@@ -35,25 +35,28 @@ public interface PlanBatchOptMapper {
 
     /*恢复*/
     int recoveryPlanBatchById(@Param("planUuidList") List<Long> planUuidList,
-                          @Param("orgIdList") List<Integer> orgIdList,
-                          @Param("updTime") Date updTime);
+                              @Param("orgIdList") List<Integer> orgIdList,
+                              @Param("updTime") Date updTime);
 
     int recoveryPlanBatchByParam(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("updTime") Date updTime);
 
     /*批量加入*/
     List<String> getDisPhone(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("limit") Integer limit);
 
-  //  int batchJoinPlan(@Param("plan") DispatchPlan plan, @Param("limit") Integer limit);
+    //  int batchJoinPlan(@Param("plan") DispatchPlan plan, @Param("limit") Integer limit);
 
     /*批量导出*/
     List<DownLoadPlanVo> queryExportPlanById(@Param("planUuidList") List<Long> planUuidList,
-                          @Param("orgIdList") List<Integer> orgIdList,
-                          @Param("limit") Integer limit);
+                                             @Param("orgIdList") List<Integer> orgIdList,
+                                             @Param("indexStart") Integer indexStart,
+                                             @Param("limit") Integer limit);
 
     int queryExportPlanCountById(@Param("planUuidList") List<Long> planUuidList,
                                  @Param("orgIdList") List<Integer> orgIdList);
 
-    List<DownLoadPlanVo> queryExportPlanList(@Param("optPlanDto") OptPlanDto optPlanDto, @Param("limit") Integer limit);
+    List<DownLoadPlanVo> queryExportPlanList(@Param("optPlanDto") OptPlanDto optPlanDto,
+                                             @Param("indexStart") Integer indexStart,
+                                             @Param("limit") Integer limit);
 
     int queryExportPlanCountList(@Param("optPlanDto") OptPlanDto optPlanDto);
 }

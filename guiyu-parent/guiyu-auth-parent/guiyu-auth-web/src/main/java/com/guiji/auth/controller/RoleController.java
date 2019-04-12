@@ -17,6 +17,7 @@ import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.vo.RoleParamVo;
+import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 
 @RestController
@@ -27,6 +28,8 @@ public class RoleController {
 	private RoleService roleService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private RedisUtil redisUtil;
 	
 	@Jurisdiction("system_role_add")
 	@RequestMapping("insert")
@@ -51,6 +54,7 @@ public class RoleController {
 			throw new GuiyuException("该角色下存在绑定用户，请先将用户解绑再删除！");
 		}
 		roleService.delete(id, userId);
+		redisUtil.del("Key_Jurisdiction_" + id);
 	}
 	
 	@Jurisdiction("system_role_edit")
@@ -59,6 +63,7 @@ public class RoleController {
 		role.setUpdateId(userId);
 		role.setUpdateTime(new Date());
 		roleService.update(role,orgCode,menuIds);
+		redisUtil.del("Key_Jurisdiction_" + role.getId());
 	}
 	
 	@RequestMapping("getRoleById")

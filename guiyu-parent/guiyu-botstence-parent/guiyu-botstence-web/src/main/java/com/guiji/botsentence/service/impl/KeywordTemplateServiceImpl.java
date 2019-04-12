@@ -8,7 +8,7 @@ import com.guiji.botsentence.dao.entity.BotSentenceKeywordTemplate;
 import com.guiji.botsentence.dao.entity.BotSentenceTrade;
 import com.guiji.botsentence.dao.entity.BotSentenceTradeExample;
 import com.guiji.botsentence.service.IKeywordTemplateService;
-import com.guiji.botsentence.util.enums.KeywordType;
+import com.guiji.botsentence.util.enums.IntentType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -36,17 +36,17 @@ public class KeywordTemplateServiceImpl implements IKeywordTemplateService {
             throw new RuntimeException("invalid parameters:" + JSON.toJSONString(keywordTemplateReqVO));
         }
 
-        KeywordType keywordType = KeywordType.getTypeByKey(keywordTemplateReqVO.getTemplateType());
-        if(null == keywordType){
+        IntentType intentType = IntentType.getTypeByKey(keywordTemplateReqVO.getTemplateType());
+        if(null == intentType){
             throw new RuntimeException("invalid keyword type:" + keywordTemplateReqVO.getTemplateType());
         }
 
         BotSentenceKeywordTemplate keywordTemplate = new BotSentenceKeywordTemplate();
 
-        switch (keywordType){
+        switch (intentType){
             case COMMON:
-                keywordTemplate.setIndustryId(KeywordType.COMMON_INDUSTRY_ID);
-                keywordTemplate.setIndustryName(KeywordType.COMMON_INDUSTRY_NAME);
+                keywordTemplate.setIndustryId(IntentType.COMMON_INDUSTRY_ID);
+                keywordTemplate.setIndustryName(IntentType.COMMON_INDUSTRY_NAME);
                 break;
             case INDUSTRY:
                 String industryId = keywordTemplateReqVO.getIndustryId();
@@ -61,7 +61,7 @@ public class KeywordTemplateServiceImpl implements IKeywordTemplateService {
                 keywordTemplate.setIndustryName(trade.getIndustryName());
                 break;
         }
-        keywordTemplate.setType(keywordType.getKey());
+        keywordTemplate.setType(intentType.getKey());
         keywordTemplate.setIntentName(intentName);
         keywordTemplate.setKeywords(EMPTY_KEYWORDS);
         keywordTemplate.setCrtTime(new Date());

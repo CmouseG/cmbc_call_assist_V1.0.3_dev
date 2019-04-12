@@ -13,8 +13,19 @@ public class WxAccount {
     private Integer isDesensitization;
 	private Integer authLevel;
     private Long orgId;
+    private Long roleId;
 
-    public Long getOrgId()
+    public Long getRoleId()
+	{
+		return roleId;
+	}
+
+	public void setRoleId(Long roleId)
+	{
+		this.roleId = roleId;
+	}
+
+	public Long getOrgId()
 	{
 		return orgId;
 	}

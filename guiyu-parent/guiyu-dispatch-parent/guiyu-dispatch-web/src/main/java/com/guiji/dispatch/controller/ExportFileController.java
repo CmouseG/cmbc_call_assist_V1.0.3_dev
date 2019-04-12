@@ -1,5 +1,6 @@
 package com.guiji.dispatch.controller;
 
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.dto.DelExportFileRecordDto;
 import com.guiji.dispatch.dto.QueryExportFileRecordDto;
 import com.guiji.dispatch.entity.ExportFileRecord;
@@ -58,6 +59,7 @@ public class ExportFileController {
     }
 
     @ApiOperation(value="删除文件导出记录", notes="删除文件导出记录")
+    @Jurisdiction("taskCenter_batchExportList_delete")
     @RequestMapping(value = "/delExpertFileRecord", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean delExpertFileRecord(@RequestBody DelExportFileRecordDto delExportFileRecordDto){
@@ -68,6 +70,7 @@ public class ExportFileController {
 
     //下载导出记录文件
     @ApiOperation(value="下载导出记录文件", notes="下载导出记录文件")
+    @Jurisdiction("taskCenter_batchExportList_download")
     @RequestMapping(value = "/downloadExportRecord", method = {RequestMethod.POST, RequestMethod.GET})
     public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
                                      @RequestParam(required = false, name = "recordId") String recordId)

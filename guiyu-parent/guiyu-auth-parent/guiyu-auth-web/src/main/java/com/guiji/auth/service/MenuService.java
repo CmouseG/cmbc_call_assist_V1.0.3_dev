@@ -96,14 +96,20 @@ public class MenuService {
 					   url.equals("/botsentence/botsentence_mytemplate")||  // 行业模板
 					   url.equals("/botsentence/botsentence_history") ||  // 发布历史
 					   url.equals("/botsentence/botsentence_keywords") ||   // 关键词库
-					   url.equals("/botsentence/botsentence_approveKeywords")){  // 关键词审核
-						iterator.remove();
-					}
+					   url.equals("/botsentence/botsentence_approveKeywords") || // 关键词审核
+					   url.equals("/system/menu") || // 菜单维护
+					   url.equals("/system/dataDictionaries") || // 数据字典
+					   url.equals("/system/processManage") ||  // 资源进程
+					   url.equals("/system/processTask") ||  // 进程任务
+					   url.equals("/smsCenter/platformManage") ||  // 平台管理列表
+					   url.equals("/financeCenter/rechargeManage") || // 充值管理
+					   url.equals("/robotCenter/simList") // 机器人实时配置
+					   ){iterator.remove();}
 				}
 			}
 			//拼装树形结构
 			if(allMenus!=null) {
-				map.put("menus", parseTree(allMenus,true));
+				map.put("menus", parseTree(allMenus,false));
 			}
 		}
 		List<Long> selected= new ArrayList<Long>();
@@ -131,7 +137,7 @@ public class MenuService {
 		//获取当前用户的权限范围
 		if(allMenu!=null) {
 			//拼装树形结构
-			map.put("menus", parseTree(allMenu,true));
+			map.put("menus", parseTree(allMenu,false));
 		}
 		List<Long> selected= new ArrayList<Long>();
 		if(productId!=null) {
@@ -203,17 +209,17 @@ public class MenuService {
 				SysRole sysRole = roleList.get(0);
 				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
 				Map<String,SysMenu> buttonMap = new HashMap<String,SysMenu>();
-				Iterator<SysMenu> it = allMenus.iterator();
-				while(it.hasNext()){
-					SysMenu sysMenu = it.next();
-				    if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
-				    	//加入按钮列表
-				    	buttonMap.put(sysMenu.getUrl(), sysMenu);
-				        //从菜单列表中移除
-				    	it.remove();
-				    }
-				}
 				if(allMenus!=null) {
+					Iterator<SysMenu> it = allMenus.iterator();
+					while(it.hasNext()){
+						SysMenu sysMenu = it.next();
+						if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
+							//加入按钮列表
+							buttonMap.put(sysMenu.getUrl(), sysMenu);
+							//从菜单列表中移除
+							it.remove();
+						}
+					}
 					map.put("menus", parseTree(allMenus,false));
 				}
 				map.put("buttons", buttonMap);

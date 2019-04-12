@@ -51,6 +51,7 @@ public class JwtConfig {
                 .withClaim("authLevel", wxAccount.getAuthLevel())
                 .withClaim("jwt-id", jwtId)
                 .withClaim("orgId", wxAccount.getOrgId())
+                .withClaim("roleId", wxAccount.getRoleId())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
@@ -81,6 +82,7 @@ public class JwtConfig {
                     .withClaim("authLevel", getAuthLevelByToken(redisToken))
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
                     .withClaim("orgId", getOrgIdByToken(redisToken))
+                    .withClaim("roleId", getRoleIdByToken(redisToken))
                     .acceptExpiresAt(System.currentTimeMillis() + expire_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
@@ -114,6 +116,7 @@ public class JwtConfig {
             Integer authLevel = getAuthLevelByToken(redisToken);
             String oldJwtId = getJwtIdByToken(redisToken);
             Long orgId = getOrgIdByToken(redisToken);
+            Long roleId = getRoleIdByToken(redisToken);
 
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("userId", userId)
@@ -123,6 +126,7 @@ public class JwtConfig {
                     .withClaim("isDesensitization", isDesensitization)
 					.withClaim("authLevel", authLevel)
                     .withClaim("orgId", orgId)
+                    .withClaim("roleId", roleId)
                     .acceptExpiresAt(System.currentTimeMillis() + refresh_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
@@ -139,6 +143,7 @@ public class JwtConfig {
                     .withClaim("isDesensitization", isDesensitization)
 					.withClaim("authLevel", authLevel)
                     .withClaim("orgId", orgId)
+                    .withClaim("roleId", roleId)
                     .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                     .sign(algorithm);
             //2 . Redis缓存JWT,
@@ -195,5 +200,10 @@ public class JwtConfig {
     public Long getOrgIdByToken(String token) throws JWTDecodeException
 	{
     	return JWT.decode(token).getClaim("orgId").asLong();
+	}
+    
+    public Long getRoleIdByToken(String token) throws JWTDecodeException
+	{
+    	return JWT.decode(token).getClaim("roleId").asLong();
 	}
 }

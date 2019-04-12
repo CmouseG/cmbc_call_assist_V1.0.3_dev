@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,23 +147,32 @@ public class OrganizationService {
 	
 	public void update(SysOrganization record,Long updateUser){
 		
-		SysOrganization parentOrg = getParentOrg(record.getCode());
-		List<SysOrganization> brothers = queryBrotherOrg(record.getCode());
-		int i = 0;
-		for(SysOrganization org : brothers){
-			i += org.getRobot();
-		}
-		if(record.getRobot() + i > parentOrg.getRobot()){
-			throw new GuiyuException("配置机器人数之和超过父及企业！");
-		}
-		List<SysOrganization> children = queryChildrenOrg(record.getCode());
-		int j = 0;
-		for(SysOrganization org : children){
-			j += org.getRobot();
-		}
-		if(record.getRobot() < j)
+		if(record.getRobot() != null)
 		{
-			throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+			SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
+			SysOrganization parentOrg = getParentOrg(organization.getCode());
+			List<SysOrganization> brothers = queryBrotherOrg(organization.getCode());
+			int i = 0;
+			if(brothers != null && CollectionUtils.isNotEmpty(brothers)){
+				for(SysOrganization org : brothers){
+					i += org.getRobot();
+				}
+			}
+			if(!"1".equals(parentOrg.getCode())){
+				if(record.getRobot() + i > parentOrg.getRobot()){
+					throw new GuiyuException("配置机器人数之和超过父及企业！");
+				}
+			}
+			List<SysOrganization> children = queryChildrenOrg(organization.getCode());
+			int j = 0;
+			if(children != null && CollectionUtils.isNotEmpty(children)){
+				for(SysOrganization org : children){
+					j += org.getRobot();
+				}
+			}
+			if(record.getRobot() < j){
+				throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
+			}
 		}
 		
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
@@ -264,7 +274,7 @@ public class OrganizationService {
 	{
 		SysOrganizationExample example = new SysOrganizationExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andDelFlagEqualTo(0).andOpenEqualTo(1).andTypeEqualTo(2);
+		criteria.andDelFlagEqualTo(0).andOpenEqualTo(1);
 		if (authLevel == 1){
 			criteria.andCreateIdEqualTo(userId);
 		} else if (authLevel == 2){
@@ -460,9 +470,13 @@ public class OrganizationService {
 		return null;
 	}
 
-	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
+	public List<SysOrganization> getOrgByOrgCodeOrgName(Long userId, Integer authLevel, String orgCode,String orgName){
 		SysOrganizationExample example = new SysOrganizationExample();
-		if(!StringUtils.isEmpty(orgCode)){
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
 			example.createCriteria().andCodeLike(orgCode + "%");
 		}
 		if(!StringUtils.isEmpty(orgName)){
@@ -771,5 +785,18 @@ public class OrganizationService {
 			}
 		}
 		return brothers;
+	}
+
+	public List<SysOrganization> getOrgByUserIdAuthLevel(Long userId, Integer authLevel, String orgCode)
+	{
+		SysOrganizationExample example = new SysOrganizationExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andCodeLike(orgCode + "%");
+		}
+		return sysOrganizationMapper.selectByExample(example);
 	}
 }

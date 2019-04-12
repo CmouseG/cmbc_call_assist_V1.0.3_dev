@@ -1,7 +1,19 @@
 package com.guiji.botsentence.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
+import com.guiji.botsentence.service.BotSentenceKeyWordsService;
+import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.util.KeywordsUtil;
+import com.guiji.botsentence.vo.AddIntentVO;
+import com.guiji.botsentence.vo.BotSentenceIntentVO;
+import com.guiji.botsentence.vo.KeywordsVO;
+import com.guiji.botsentence.vo.QueryKeywordsByIndustryVO;
+import com.guiji.common.exception.CommonException;
+import com.guiji.component.client.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -12,23 +24,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.guiji.botsentence.dao.BotSentenceAdditionMapper;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceKeywordTemplateMapper;
-import com.guiji.botsentence.dao.BotSentenceTradeMapper;
-import com.guiji.botsentence.dao.entity.*;
-import com.guiji.botsentence.service.BotSentenceKeyWordsService;
-import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.vo.AddIntentVO;
-import com.guiji.botsentence.vo.BotSentenceIntentVO;
-import com.guiji.botsentence.vo.KeywordsVO;
-import com.guiji.botsentence.vo.QueryKeywordsByIndustryVO;
-import com.guiji.component.client.util.FileUtil;
-import com.guiji.common.exception.CommonException;
 
 import java.io.*;
 import java.util.*;
@@ -285,16 +283,22 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
                      BotSentenceIntent botSentenceIntent = botSentenceIntentMapper.selectByPrimaryKey(Long.parseLong(intent[i]));
                      BotSentenceIntentVO botSentenceIntentVO = new BotSentenceIntentVO();
                      BeanUtils.copyProperties(botSentenceIntent, botSentenceIntentVO);
+
+                     KeywordsUtil.KeywordsGroup keywordsGroup = KeywordsUtil.getKeywordsGroup(botSentenceIntent.getKeywords());
+                     botSentenceIntentVO.setSingleKeywords(keywordsGroup.getSingleKeywords());
+                     botSentenceIntentVO.setCombinationKeywords(keywordsGroup.getCombinationKeywords());
+                     botSentenceIntentVO.setExactMatchKeywords(keywordsGroup.getExactMatchKeywords());
+                     botSentenceIntentVO.setOtherKeywords(keywordsGroup.getOtherKeywords());
+
                      String keyword = botSentenceIntentVO.getKeywords();
-                     
                      List<String> keywordList = BotSentenceUtil.getKeywords(keyword);
-                     
-					if(null != keywordList && keywordList.size() > 0) {
-						keyword = keywordList.get(0);
-					}else {
-						keyword = "";
-					}
-                     
+
+                    if(null != keywordList && keywordList.size() > 0) {
+                        keyword = keywordList.get(0);
+                    }else {
+                        keyword = "";
+                    }
+
                      //keyword = keyword.replace("[", "");
                      //keyword = keyword.replace("]", "");
                      keyword = keyword.replaceAll("\"", "");
@@ -597,26 +601,6 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
         }
     }
 
-
-
-
-
-
-
-
-
-    public static void main(String[] args) {
-        //String fileName="营销_医美_美容_已预约去不了怎么办.docx";
-        String fileName = "已预约去不了怎么办.docx";
-        String intentName = "";
-        if (fileName.indexOf("_") != -1) {
-            intentName = fileName.substring(fileName.lastIndexOf("_") + 1, fileName.lastIndexOf("."));
-        } else {
-            intentName = fileName.substring(0, fileName.lastIndexOf("."));
-        }
-        System.out.println(intentName);
-    }
-
     /**
      * type=00 表示通用对话保存
      */
@@ -624,34 +608,30 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 	@Transactional
 	public String saveIntent(String domain, String processId, String templateId, List<BotSentenceIntentVO> list, String type, BotSentenceBranch branch, String userId) {
         List<String> intentIdsList = new ArrayList<>();//用于收集intentId
-        List<String> editList = new ArrayList<>();//修改的
-        List<String> existList = new ArrayList<>();//已存在的
+        List<String> existIntentIds = new ArrayList<>();//已存在的
         if(null != branch) {
         	String existIntents = branch.getIntents();
         	if(StringUtils.isNotBlank(existIntents)) {
-            	existList = BotSentenceUtil.StringToList(existIntents);
+            	existIntentIds = BotSentenceUtil.StringToList(existIntents);
             }
         }
-        
-        boolean isAllEmpty = true;
-        
+
         for (BotSentenceIntentVO botSentenceIntentVO : list) {
         	Long intentId = botSentenceIntentVO.getId();
+
             if (null == intentId) {//新增
-                String keywordsJson = BotSentenceUtil.generateKeywords(botSentenceIntentVO.getKeywords());
-                if(StringUtils.isNotBlank(keywordsJson	)) {
-                	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
-                	isAllEmpty = false;
+                BotSentenceIntent intent = new BotSentenceIntent();
+                List<String> keywordList = KeywordsUtil.getAllKeywordsFromIntentVO(botSentenceIntentVO);
+                if(CollectionUtils.isEmpty(keywordList)){
+                    if("00".equals(type)){
+                        intent.setKeywords("[]");
+                    }else {
+                        throw new CommonException("关键词不能为空!");
+                    }
                 }else {
-                	if("00".equals(type)) {
-                		keywordsJson = "";
-                	}else {
-                		//throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");
-                		continue;
-                	}
+                    intent.setKeywords(JSON.toJSONString(keywordList));
                 }
                 
-                BotSentenceIntent intent = new BotSentenceIntent();
                 intent.setCrtTime(new Date(System.currentTimeMillis()));
                 intent.setCrtUser(userId);
                 intent.setName(botSentenceIntentVO.getName());
@@ -661,62 +641,52 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
                 }else{
                 	intent.setDomainName(domain);
                 }
-                intent.setKeywords("[" + keywordsJson + "]");
                 intent.setTemplateId(templateId);
                 intent.setForSelect(0);
                 intent.setRefrenceId(botSentenceIntentVO.getReferenceId());
                 botSentenceIntentMapper.insert(intent);
-                intentIdsList.add(intent.getId().toString());
+                intentId = intent.getId();
             } else {//修改
-                intentIdsList.add(intentId+"");
-                editList.add(intentId+"");
                 BotSentenceIntent intent = botSentenceIntentMapper.selectByPrimaryKey(new Long(intentId));
-                
-                String keywordsJson = BotSentenceUtil.generateKeywords(botSentenceIntentVO.getKeywords());
-                if(StringUtils.isNotBlank(keywordsJson	)) {
-                	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
-                	isAllEmpty = false;
+
+                List<String> keywordList = KeywordsUtil.getAllKeywordsFromIntentVO(botSentenceIntentVO);
+                if(CollectionUtils.isEmpty(keywordList)){
+                    if("00".equals(type)){
+                        intent.setKeywords("[]");
+                    }else {
+                        if("自定义".equals(intent.getName())) {
+                            intent.setKeywords("[]");
+                            botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
+                        }
+                        continue;
+                    }
                 }else {
-                	if("00".equals(type)) {
-                		keywordsJson = "";
-                	}else {
-                		//throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");
-                		if("自定义".equals(intent.getName())) {
-                			intent.setKeywords("[]");
-                			botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
-                		}
-                		continue;
-                	}
+                    intent.setKeywords(JSON.toJSONString(keywordList));
                 }
-                
-                
-              //得到保存之前的关键词
-                List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
-                if(null != keywordList && keywordList.size() > 0 && org.apache.commons.lang.StringUtils.isNotBlank(keywordList.get(1))) {
-        			intent.setKeywords("[" + keywordsJson + "," + keywordList.get(1).replace("\n", "") + "]");
-        		}else {
-        			intent.setKeywords("[" + keywordsJson + "]");
-        		}
                 botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
             }
+
+            intentIdsList.add(intentId.toString());
         }
-        
-        if(isAllEmpty) {
-        	throw new CommonException("关键词不能为空!");	
-        }
-        
+
         //删除未选择的意图
-        if(null != existList && existList.size() > 0) {
-        	for(int i = existList.size() - 1 ; i >= 0 ; i--) {
-            	if(!editList.contains(existList.get(i))) {
-            		botSentenceIntentMapper.deleteByPrimaryKey(new Long(existList.get(i)));
-            	}
+        if(!CollectionUtils.isEmpty(existIntentIds)) {
+            List<Long> needDeleteIntentIds = Lists.newArrayList();
+            existIntentIds.forEach(existIntentId -> {
+                if(!intentIdsList.contains(existIntentId)){
+                    needDeleteIntentIds.add(Long.parseLong(existIntentId));
+                }
+            });
+
+            if(!CollectionUtils.isEmpty(needDeleteIntentIds)){
+                BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
+                intentExample.createCriteria().andIdIn(needDeleteIntentIds);
+                botSentenceIntentMapper.deleteByExample(intentExample);
             }
         }
         
         //修改branch表中的意图id的关联
-        String intentIds = StringUtils.join(intentIdsList.toArray(), ",");
-        return intentIds;
+        return StringUtils.join(intentIdsList.toArray(), ",");
 	}
 	
 	private void validasteKeywords(String industryId, String keywords) {

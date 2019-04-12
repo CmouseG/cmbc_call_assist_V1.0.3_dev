@@ -18,7 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IProduct;
 import com.guiji.botsentence.service.IImportProcessService;
 import com.guiji.botsentence.vo.BotSentenceProcessVO;
 import com.guiji.component.client.util.IOUtil;
@@ -55,6 +58,7 @@ public class ImportProcessController {
 	
 	@Autowired
 	private IImportProcessService importProcessService;
+	
 	
 	@Value("${template.dir}")
 	private String tempDir;

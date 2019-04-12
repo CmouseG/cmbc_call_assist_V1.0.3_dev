@@ -4,27 +4,6 @@ server:
 spring:
   application:
     name: guiyu-ai-web
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_ai?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: ai
-    password: ai@1234
-  redis:
-    database: 8
-    host: 192.168.1.81
-    port: 6379
-    password: 123456
-    pool:
-      max-active: 8
-      max-wait: -1
-      max-idle: 8
-      min-idle: 0
-  rabbitmq:
-    host: 192.168.1.81
-    port: 5672
-    virtual-host: /
-    username: guiyu
-    password: 123456
   zipkin:
     rabbitmq:
       queue: zipkin
@@ -39,12 +18,7 @@ endpoints:
 management:
   security:
     enabled: false
-    
-#数据库连接配置
-mybatis:
-  mapper-locations: classpath*:mappers/**/*.xml
-jdbc:
-  type: mysql
+
 
 #注册中心配置      
 eureka:
@@ -59,24 +33,11 @@ eureka:
 gateway:
   host: http://guiyu-cloud-zuul:18000/
 
+
 properties:
   error: properties/error.properties
-  threadpool: properties/threadPool.properties
 
-#xxl-job admin中心配置
-xxl:
-  job:
-    admin:
-      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
-    executor:
-      ip:
-      port: 9051
-      logpath: /home/logs/guiyu-ai-web
-      logretentiondays: -1
-    accessToken: 
 
-ttsUrl: http://192.168.1.124:18061/ 
-filePath: /home/apps/ai/wav/
-notifyUrl: http://192.168.1.78:18000/api/ai/callback
+guiyu_tts_2_url: http://localhost:38001/ # guiyu-tts2.0服务地址
+notifyAiUrl: http://localhost:18051/callback # ai服务地址
 

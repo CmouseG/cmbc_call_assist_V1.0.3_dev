@@ -1,11 +1,11 @@
-package com.guiji.ai.vo;
+package com.guiji.ai.bean;
 
 import java.util.Map;
 
 import lombok.Data;
 
 @Data
-public class TtsRspVO
+public class TtsRsp
 {
     private String busId;
 	private Integer status;

@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.guiji.ai.api.IAi;
 import com.guiji.ai.bean.SynPostReq;
-import com.guiji.ai.vo.AsynPostReqVO;
-import com.guiji.ai.vo.SynPostReqVO;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.controller.server.BotsentenceServerController;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;

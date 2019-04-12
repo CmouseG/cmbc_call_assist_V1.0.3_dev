@@ -68,6 +68,7 @@ public class LoginController implements ILogin {
                     }
                 }
             }
+            Long roleId = sysRoles.get(0).getId().longValue();
             long orgId = -1;
             ReturnData<SysOrganization> result = auth.getOrgByUserId(userId);
             if(result != null && result.getBody() != null) {
@@ -89,16 +90,17 @@ public class LoginController implements ILogin {
             }
             wxAccount.setAuthLevel(authLevel);
             wxAccount.setOrgId(orgId);
+            wxAccount.setRoleId(roleId);
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
             JwtToken token = new JwtToken(jwtToken);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("isSuperAdmin", isSuperAdmin);
-            map.put("roleId", sysRoles.get(0).getId());
             map.put("token", jwtToken);
             map.put("username", sysUser.getUsername());
             map.put("isDesensitization", sysUser.getIsDesensitization());
             map.put("orgId", orgId);
             map.put("authLevel", authLevel);
+            map.put("roleId", roleId);
             return Result.ok(map);
         } catch (Exception e) {
             return Result.error("00010003");
@@ -135,6 +137,7 @@ public class LoginController implements ILogin {
                     }
                 }
             }
+            Long roleId = sysRoles.get(0).getId().longValue();
             long orgId = -1;
             ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
             if(returnData != null && returnData.getBody() != null) {
@@ -148,6 +151,7 @@ public class LoginController implements ILogin {
             wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
             wxAccount.setOrgId(orgId);
+            wxAccount.setRoleId(roleId);
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
 
             Map<String, Object> map = new HashMap<String, Object>();

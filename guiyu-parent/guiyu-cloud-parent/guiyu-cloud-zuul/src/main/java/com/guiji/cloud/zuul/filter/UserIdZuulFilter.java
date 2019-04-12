@@ -37,17 +37,20 @@ public class UserIdZuulFilter extends ZuulFilter {
 		Object isDesensitizationObj = SecurityUtils.getSubject().getSession().getAttribute("isDesensitization");
 		Object orgIdObj = SecurityUtils.getSubject().getSession().getAttribute("orgId");
 		Object authLevelObj = SecurityUtils.getSubject().getSession().getAttribute("authLevel");
+		Object roleIdObj = SecurityUtils.getSubject().getSession().getAttribute("roleId");
 		try {
 			String userId=userIdObj.toString();
 			String isSuperAdmin = isSuperAdminObj.toString();
 			String isDesensitization = isDesensitizationObj.toString();
 			String orgId = orgIdObj.toString();
+			String roleId = roleIdObj.toString();
 			ctx.addZuulRequestHeader("userId", userId);
 			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 			ctx.addZuulRequestHeader("isDesensitization", isDesensitization);
 			ctx.addZuulRequestHeader("orgId", orgId);
 			ctx.addZuulRequestHeader("authLevel", authLevelObj.toString());
+			ctx.addZuulRequestHeader("roleId", roleId);
 		} catch (NullPointerException e) {
 			logger.error("userIdZuulFilter:" + e.getMessage());
 			//处理下一些特殊不需要user的场景

@@ -121,7 +121,9 @@ public class BatchExportServiceImpl implements BatchExportService {
 
         String uuidDir = IdGenUtil.uuid();
         File parentDir = new File(downloadPath + File.separator + uuidDir);
-        parentDir.mkdir();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
 
         for (int i = 1; i <= excelCount; i++) {
             log.info("第[{}]个excel开始生产",i);
@@ -419,7 +421,9 @@ public class BatchExportServiceImpl implements BatchExportService {
         String uuidDir = IdGenUtil.uuid();
         String savePath = downloadPath + File.separator + uuidDir;
         File parentDir = new File(savePath);
-        parentDir.mkdir();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
 
         for (int i = 1; i <= excelCount; i++) {
 

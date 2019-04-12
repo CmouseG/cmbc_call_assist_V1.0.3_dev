@@ -52,7 +52,7 @@ public class RobotServiceImpl implements RobotService {
     private RedisUtil redisUtil;
 
     @Override
-    public  ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(DispatchRobotOpDto dispatchRobotOpDto, ResultPage<DispatchRobotOpVo> page) {
+    public  ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page) {
         List<DispatchRobotOpVo> pageList = new LinkedList<DispatchRobotOpVo>();
         int len = 0;
         //获取到用户机器人资源
@@ -60,7 +60,7 @@ public class RobotServiceImpl implements RobotService {
         if(null != map){
             //有序treemap
             Map<Object, Object> treeMap = new TreeMap<>(map);
-            List<DispatchRobotOpVo> allList = new ArrayList<DispatchRobotOpVo>();
+            List<DispatchRobotOpVo> list = new ArrayList<DispatchRobotOpVo>();
             for(Map.Entry<Object, Object> entry: treeMap.entrySet()){
                 String userId = (String)entry.getKey();
                 SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
@@ -81,8 +81,8 @@ public class RobotServiceImpl implements RobotService {
                                     robot.setBotstenceId(botstenceId);
                                     robot.setMaxRobotNum(aiNum.getValue());
                                     robot.setRobotNum(this.getActualRobotCount(Integer.valueOf(userId), botstenceId));
-                                    allList.add(robot);
-                                //    len++;
+                                    list.add(robot);
+                                    len++;
                                 }else{
                                     continue;
                                 }
@@ -91,21 +91,7 @@ public class RobotServiceImpl implements RobotService {
                     }
                 }
             }
-            List<DispatchRobotOpVo> list = new ArrayList<DispatchRobotOpVo>();
-            if(allList.size()>0){
-                if(null != dispatchRobotOpDto && !StringUtils.isEmpty(dispatchRobotOpDto.getUserName())) {
-                    String userName = dispatchRobotOpDto.getUserName();
-                    for (DispatchRobotOpVo robot : allList) {
-                        if (null != robot.getUserName() && robot.getUserName().contains(userName)) {
-                            list.add(robot);
-                        }
-                    }
-                }else{
-                    list = allList;
-                }
-            }
 
-            len = list.size();
             int pageNo = page.getPageNo();
             int pageSize = page.getPageSize();
             //获取分页列表
@@ -135,7 +121,6 @@ public class RobotServiceImpl implements RobotService {
                 }
             }
         }
-
         //列表
         page.setList(pageList);
         //获取总条数和页数

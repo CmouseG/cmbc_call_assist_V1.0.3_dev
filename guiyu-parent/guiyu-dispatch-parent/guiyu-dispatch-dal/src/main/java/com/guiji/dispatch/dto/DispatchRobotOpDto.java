@@ -29,6 +29,11 @@ public class DispatchRobotOpDto extends PageDto {
      */
     private Integer supplType;
 
+    /**
+     * 用户名称
+     */
+    private String userName;
+
     public String getBotstenceUserId() {
         return botstenceUserId;
     }
@@ -67,5 +72,13 @@ public class DispatchRobotOpDto extends PageDto {
 
     public void setSupplType(Integer supplType) {
         this.supplType = supplType;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

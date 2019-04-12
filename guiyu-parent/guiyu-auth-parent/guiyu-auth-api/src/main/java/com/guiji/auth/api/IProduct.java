@@ -13,5 +13,5 @@ public interface IProduct
 	 * 保存创建的模版到关联关系（privilege）
 	 */
 	@RequestMapping("/product/")
-	public void getOrgByCode(@RequestParam("templateIds") List<String> templateIds);
+	public void saveProductTemplates(@RequestParam("templateIds") List<String> templateIds);
 }

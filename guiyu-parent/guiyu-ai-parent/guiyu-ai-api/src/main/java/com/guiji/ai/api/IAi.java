@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.guiji.ai.bean.AsynPostReq;
 import com.guiji.ai.bean.SynPostReq;
 import com.guiji.ai.bean.TtsRsp;
-import com.guiji.ai.common.ReturnData;
+import com.guiji.component.result.Result.ReturnData;
 
 /**
  * AI对外服务

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.guiji.ai.api.IAi;
+import com.guiji.ai.bean.SynPostReq;
 import com.guiji.ai.vo.AsynPostReqVO;
 import com.guiji.ai.vo.SynPostReqVO;
 import com.guiji.botsentence.constant.Constant;
@@ -525,13 +526,15 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		
 		//发送tts任务
 		logger.info("发送tts任务");
-		SynPostReqVO req = new SynPostReqVO();
+		SynPostReq req = new SynPostReq();
+		//SynPostReqVO req = new SynPostReqVO();
 		List<String> contents = new ArrayList<>();
 		req.setContent(temp.getContent());
 		req.setModel(model);//TTS合成声音模型
+		req.setBusId("bot-" + taskId.toString());
 	    logger.info("请求参数: " + req.toString());
 	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
-    	ReturnData<String> result = null;
+    	com.guiji.ai.common.ReturnData<String> result = null;
 		try {
 			result = ai.synPost(req);
 		} catch (Exception e) {
@@ -540,7 +543,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
     	logger.info("返回参数: " + result.toString());
 		if("0".equals(result.getCode())) {
 			logger.info("推送tts数据成功...");
-			String url = result.getBody();
+			String url = result.getData();
 			if(StringUtils.isNotBlank(url)) {
 				botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
 			}else {

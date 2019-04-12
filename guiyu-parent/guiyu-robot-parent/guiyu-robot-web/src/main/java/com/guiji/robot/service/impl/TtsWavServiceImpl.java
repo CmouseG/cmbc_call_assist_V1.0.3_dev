@@ -2,10 +2,10 @@ package com.guiji.robot.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.IAi;
-import com.guiji.ai.vo.AsynPostReqVO;
+import com.guiji.ai.bean.AsynPostReq;
+import com.guiji.ai.common.ReturnData;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
-import com.guiji.component.result.Result.ReturnData;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.robot.cfg.RobotMqConfig;
 import com.guiji.robot.constants.RobotConstants;
@@ -425,7 +425,7 @@ public class TtsWavServiceImpl implements ITtsWavService {
             ttsWavHis.setTtsTxtJsonData(jsonTxtStr);
             aiNewTransService.recordTtsWav(ttsWavHis);
             //开始拼装调用
-            AsynPostReqVO ttsReqVO = new AsynPostReqVO();
+            AsynPostReq ttsReqVO = new AsynPostReq();
             ttsReqVO.setBusId(busiId);    //唯一key
             ttsReqVO.setModel(hsReplace.getUse_speaker_flag());
             ttsReqVO.setContents(contents);
@@ -440,10 +440,10 @@ public class TtsWavServiceImpl implements ITtsWavService {
                 logger.error("调用TTS工具生成语音失败，返回数据：{}" + ttsRspData);
                 throw new RobotException(ttsRspData.getCode(), ttsRspData.getMsg());
             }
-            if (!RobotConstants.TTS_RSP_SUCCESS.equals(ttsRspData.getBody())) {
+            if (!RobotConstants.TTS_RSP_SUCCESS.equals(ttsRspData.getData())) {
                 //如果异步方法返回直接失败，那么这条TTS合成记录抛出异常
                 logger.error("调用TTS工具生成语音返回状态失败，返回数据：{}" + ttsRspData);
-                throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(), ttsRspData.getBody());
+                throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(), ttsRspData.getData());
             }
         } catch (Exception e) {
             logger.error("调用TTS工具接口异常", e);

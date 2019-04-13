@@ -23,6 +23,8 @@ public class DispatchPlan implements Serializable {
 
     private String orgCode;
 
+    private Integer orgId;
+
     private String agentGroupId;
 
     private String remarks;
@@ -127,6 +129,14 @@ public class DispatchPlan implements Serializable {
         this.params = params;
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     @Override
     public String toString() {
         return "DispatchPlan{" +
@@ -137,8 +147,9 @@ public class DispatchPlan implements Serializable {
                 ", tempId='" + tempId + '\'' +
                 ", lineList=" + lineList +
                 ", isTts=" + isTts +
-                ", simCall='" + simCall + '\'' +
+                ", simCall=" + simCall +
                 ", orgCode='" + orgCode + '\'' +
+                ", orgId=" + orgId  +
                 ", remarks='" + remarks + '\'' +
                 ", params='" + params + '\'' +
                 ", agentGroupId='" + agentGroupId + '\'' +

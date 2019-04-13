@@ -15,9 +15,9 @@ import com.guiji.ai.api.IAi;
 import com.guiji.ai.bean.AsynPostReq;
 import com.guiji.ai.bean.SynPostReq;
 import com.guiji.ai.bean.TtsRsp;
-import com.guiji.ai.common.Result;
-import com.guiji.ai.common.ReturnData;
 import com.guiji.ai.service.AiService;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TtsCallback;
 
@@ -38,7 +38,7 @@ public class AiController implements IAi
 	public ReturnData<String> synPost(@RequestBody SynPostReq synPostReq) throws Exception
 	{
 		String audioUrl = ai.synPost(synPostReq);
-		return Result.success(audioUrl);
+		return Result.ok(audioUrl);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class AiController implements IAi
 	public ReturnData<String> asynPost(@RequestBody AsynPostReq asynPostReq) throws Exception
 	{
 		String result = ai.asynPost(asynPostReq);
-		return Result.success(result);
+		return Result.ok(result);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class AiController implements IAi
 	@GetMapping(value = "getResultByBusId")
 	public ReturnData<TtsRsp> getResultByBusId(String busId)
 	{
-		return Result.success(ai.getResultByBusId(busId));
+		return Result.ok(ai.getResultByBusId(busId));
 	}
 
 }

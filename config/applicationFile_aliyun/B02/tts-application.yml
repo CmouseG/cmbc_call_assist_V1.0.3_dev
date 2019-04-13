@@ -1,5 +1,5 @@
 server:
-  port: 38002
+  port: 38001
 
 spring:
   application:
@@ -10,7 +10,7 @@ spring:
     username: tts
     password: tts@1234
   redis:
-    database: 8
+    database: 12
     host: 172.16.167.215
     port: 6379
     password: Toolwiz.admin.2017
@@ -26,23 +26,21 @@ spring:
     username: guiyu
     password: Guiyu.admin.2017
 
+
 #数据库连接配置
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
-jdbc:
-  type: mysql
 
-properties:
-  error: properties/error.properties
 
 rabbit:
   general:
     direct:
-      queue: szj.queue
+      queues: szj.queue|mh.queue
+
 
 filePath: /home/apps/tts/wav/
 ttsServiceUrl: http://218.2.153.30:8089/synthesize
-nasServiceUrl: http://172.16.167.214:38001/upload  #nas部署机器
+nasServiceUrl: http://172.16.167.214:38002/uploadFile  #nas部署机器
 
 
 

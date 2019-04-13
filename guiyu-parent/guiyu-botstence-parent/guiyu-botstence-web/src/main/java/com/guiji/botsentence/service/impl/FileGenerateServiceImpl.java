@@ -993,8 +993,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 							String wavName = index + "_" + seq.split("_")[1];
 							//wavNameList.add(wavName);
 							
-							indexMap.put(index, wavName);
-							indexList.add(index);
+							indexMap.put(new Integer(seq.split("_")[1]), wavName);
+							indexList.add(new Integer(seq.split("_")[1]));
 							
 							if(Constant.IS_PARAM_FALSE.equals(task.getIsParam())) {
 								if(StringUtils.isNotBlank(task.getVoliceUrl())) {

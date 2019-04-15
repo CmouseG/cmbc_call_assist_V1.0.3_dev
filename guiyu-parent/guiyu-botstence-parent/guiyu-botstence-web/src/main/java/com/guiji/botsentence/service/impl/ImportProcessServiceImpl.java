@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IProduct;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.controller.server.vo.ImportBranchVO;
 import com.guiji.botsentence.controller.server.vo.ImportDomainVO;
@@ -90,6 +91,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 	
 	@Autowired
 	private ImportProcessMapper importProcessMapper;
+	
+	@Autowired
+	private IProduct product;
 
 	@Autowired
 	private VoliceInfoMapper voliceInfoMapper;
@@ -840,6 +844,13 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		//}
 		
 		logger.info("------>>end import data,processId:" + processId);
+		
+		//通知auth绑定模板
+		logger.info("通知auth绑定模板");
+		List<String> templateIds = new ArrayList<>();
+		templateIds.add(template_id);
+		product.saveProductTemplates(templateIds);
+		
 		return true;
 
 	}

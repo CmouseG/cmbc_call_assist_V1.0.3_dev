@@ -21,7 +21,7 @@ public class NoticeSendController implements INoticeSend {
     @Autowired
     NoticeSendService noticeSendService;
 
-    private ExecutorService executor = Executors.newCachedThreadPool() ;
+//    private ExecutorService executor = Executors.newCachedThreadPool() ;
 
     @Override
     public Result.ReturnData sendMessage(@RequestBody MessageSend messageSend) {
@@ -30,12 +30,7 @@ public class NoticeSendController implements INoticeSend {
 
         if (messageSend != null && messageSend.getNoticeType() != null) {
 
-            executor.submit(new Runnable() {
-                                @Override
-                                public void run() {
-                                    noticeSendService.sendMessage(messageSend);
-                                }
-                            });
+            noticeSendService.sendMessage(messageSend);
 
             logger.info("==========end sendMessage userId[{}]",messageSend.getUserId());
             return Result.ok();

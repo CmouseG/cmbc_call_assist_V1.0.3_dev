@@ -1,4 +1,4 @@
-package com.guiji.ai.util;
+package com.guiji.ai.utils;
 
 import com.alibaba.fastjson.JSON;
 

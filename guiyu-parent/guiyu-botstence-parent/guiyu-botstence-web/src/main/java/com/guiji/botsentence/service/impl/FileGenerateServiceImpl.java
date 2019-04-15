@@ -969,12 +969,16 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			Map<String, String> tts_pos_map1 = new LinkedHashMap<>();
 			Map<String, String> tts_pos_map2 = new LinkedHashMap<>();
 			
+			
 			List<String> allParamList  = new ArrayList<>();
 			
 			for(VoliceInfo temp : ttsVoliceList) {
 				
 				if(StringUtils.isNotBlank(temp.getContent())) {
 				   List<String> wavNameList = new ArrayList<>();
+				   
+				   Map<Integer, String> indexMap = new HashMap<>();
+				   List<Integer> indexList = new ArrayList<>();
 				   
 				   BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
 					ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
@@ -987,7 +991,10 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 							//使用序号替换voliceId
 							int index = voliceIdsMap.get(new Long(task.getBusiId()));
 							String wavName = index + "_" + seq.split("_")[1];
-							wavNameList.add(wavName);
+							//wavNameList.add(wavName);
+							
+							indexMap.put(new Integer(seq.split("_")[1]), wavName);
+							indexList.add(new Integer(seq.split("_")[1]));
 							
 							if(Constant.IS_PARAM_FALSE.equals(task.getIsParam())) {
 								if(StringUtils.isNotBlank(task.getVoliceUrl())) {
@@ -1008,6 +1015,13 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 						}
 					}
 				   
+					//对Tts拆分的录音文案进行排序
+					Collections.sort(indexList);
+					for(int index : indexList) {
+						wavNameList.add(indexMap.get(index));
+					}
+					
+					
 					map1.put(voliceIdsMap.get(temp.getVoliceId()).toString(), wavNameList);
 				}
 			}
@@ -1315,18 +1329,16 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 	}
 	
 	public static void main(String[] args) {
-		com.guiji.botsentence.vo.DomainVO domainVO = new com.guiji.botsentence.vo.DomainVO();
-		domainVO.setContent("121212");
-		domainVO.setIsMainFlow("true");
-		List<NextVO> list = new ArrayList<>();
-		NextVO next1 = new NextVO();
-		next1.setBranchId("branch1111");
-		next1.setName("分支1");
-		list.add(next1);
-		domainVO.setNext(list);
-		String jsonstr = JSON.toJSONString(domainVO);
-		jsonstr = formatJson(jsonstr);
-		System.out.println(jsonstr);
+		List<Integer> indexList = new ArrayList<>();
+		indexList.add(1);
+		indexList.add(2);
+		indexList.add(11);
+		indexList.add(21);
+		indexList.add(6);
+		Collections.sort(indexList);
+		for(int index : indexList) {
+			System.out.println(index);
+		}
 	}
 	private static String getLevelStr(int level) {
         StringBuffer levelStr = new StringBuffer();

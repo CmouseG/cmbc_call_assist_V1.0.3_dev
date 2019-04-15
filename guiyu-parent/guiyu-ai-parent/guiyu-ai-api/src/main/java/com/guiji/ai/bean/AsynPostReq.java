@@ -1,11 +1,14 @@
-package com.guiji.ai.vo;
+package com.guiji.ai.bean;
 
 import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 异步请求对象
+ */
 @Data
-public class AsynPostReqVO
+public class AsynPostReq
 {
     private String busId;
     private String model;

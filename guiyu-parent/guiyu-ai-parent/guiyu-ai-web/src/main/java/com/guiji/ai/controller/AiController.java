@@ -6,75 +6,58 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.IAi;
-import com.guiji.ai.service.IAiService;
-import com.guiji.ai.vo.AsynPostReqVO;
-import com.guiji.ai.vo.SynPostReqVO;
-import com.guiji.ai.vo.TtsRspVO;
+import com.guiji.ai.bean.AsynPostReq;
+import com.guiji.ai.bean.SynPostReq;
+import com.guiji.ai.bean.TtsRsp;
+import com.guiji.ai.service.AiService;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TtsCallback;
 
-/**
- * 语音合成
- */
 @RestController
 public class AiController implements IAi
 {
-	private static Logger logger = LoggerFactory.getLogger(AiController.class);
-
-	@Value("${notifyUrl}")
-	private String notifyUrl;
+	private static final Logger log = LoggerFactory.getLogger(AiController.class);
+	
 	@Autowired
-	IAiService ai;
+	AiService ai;
 	@Autowired
 	IRobotRemote robotRemote;
-	
-	@Override
+
+	/**
+     * 语音合成（同步）
+     */
 	@PostMapping(value = "synPost")
-	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) throws Exception {
-		try
-		{
-			logger.info("语音合成（同步）..." + postVO.toString());
-			String model = postVO.getModel();
-			String audioUrl = ai.getPlat(model).synPost(postVO);
-			logger.info("audioUrl = " + audioUrl);
-			return Result.ok(audioUrl);
-		} catch (Exception e) {
-			logger.error("请求失败！", e);
-			throw e;
-		}
+	public ReturnData<String> synPost(@RequestBody SynPostReq synPostReq) throws Exception
+	{
+		String audioUrl = ai.synPost(synPostReq);
+		return Result.ok(audioUrl);
 	}
 
-	@Override
+	/**
+     * 语音合成（异步）
+     */
 	@PostMapping(value = "asynPost")
-	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO) throws Exception
+	public ReturnData<String> asynPost(@RequestBody AsynPostReq asynPostReq) throws Exception
 	{
-		try
-		{
-			logger.info("语音合成（异步）..." + postVO.toString());
-			postVO.setNotifyUrl(notifyUrl);
-			String model = postVO.getModel();
-			String result = ai.getPlat(model).asynPost(postVO);
-			return Result.ok(result);
-		} catch (Exception e) {
-			logger.error("请求失败！", e);
-			throw e;
-		}
+		String result = ai.asynPost(asynPostReq);
+		return Result.ok(result);
 	}
-	
-	@Override
+
+	/**
+	 * TTS结果回调
+	 */
 	@PostMapping(value = "callback")
-	public void callback(@RequestBody TtsRspVO ttsRsp)
+	public void callback(@RequestBody TtsRsp ttsRsp)
 	{
-		logger.info("tts回调结果：" + ttsRsp.toString());
+		log.info("tts回调结果：" + ttsRsp.toString());
 		// 回调机器人接口，返回数据
 		TtsCallback ttsCallback = new TtsCallback();
 		ttsCallback.setBusiId(ttsRsp.getBusId());
@@ -87,11 +70,13 @@ public class AiController implements IAi
 		robotRemote.ttsCallback(resultList);
 	}
 
-	@Override
-	@GetMapping(value = "getResult")
-	public ReturnData<TtsRspVO> getResult(String busId)
+	/**
+	 * 查询异步合成结果
+	 */
+	@GetMapping(value = "getResultByBusId")
+	public ReturnData<TtsRsp> getResultByBusId(String busId)
 	{
 		return Result.ok(ai.getResultByBusId(busId));
 	}
-	
+
 }

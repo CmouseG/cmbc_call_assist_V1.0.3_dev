@@ -1,4 +1,4 @@
-package com.guiji.ai.util;
+package com.guiji.ai.utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -12,8 +12,8 @@ import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.util.IOUtils;
-import com.guiji.ai.entity.GuiyuAIExceptionEnum;
-import com.guiji.common.exception.GuiyuException;
+import com.guiji.ai.common.AiException;
+import com.guiji.ai.common.ExceptionEnum;
 
 /**
  * HttpClient工具类
@@ -39,14 +39,14 @@ public class HttpClientUtil
 				EntityUtils.consume(entity);
 			}
 		} catch (Exception e) {
-			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_Request_TTS);
+			throw new AiException(ExceptionEnum.ERROR_REQUEST_TTS);
 		} finally {
 			IOUtils.close(response);
 			IOUtils.close(httpClient);
 		}
 		return result;
 	}
-
+	
 	/**
 	 * post请求
 	 */
@@ -68,7 +68,7 @@ public class HttpClientUtil
 			}
 		} 
 		catch (Exception e) {
-			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_Request_TTS);
+			throw new AiException(ExceptionEnum.ERROR_REQUEST_TTS);
 		} finally {
 			IOUtils.close(response);
 			IOUtils.close(httpClient);

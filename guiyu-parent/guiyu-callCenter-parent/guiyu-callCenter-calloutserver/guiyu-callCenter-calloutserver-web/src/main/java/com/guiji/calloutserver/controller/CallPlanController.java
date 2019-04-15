@@ -10,10 +10,10 @@ import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.EurekaManager;
-import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.TempReadyService;
 import com.guiji.component.result.Result;
+import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +39,8 @@ public class CallPlanController implements ICallPlan {
     TempReadyService tempReadyService;
     @Autowired
     CallingCountManager callingCountManager;
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     public Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan) {
@@ -65,6 +67,12 @@ public class CallPlanController implements ICallPlan {
 
     @Override
     public Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid) {
+
+        // 不存在的uuid存入到缓存中，防止被攻击
+        if(redisUtil.get("planNotFound_"+planUuid)!=null){
+            return Result.error(Constant.ERROR_UUID_NOTFIND);
+        }
+
         //需要在planUuid字段上加索引
         CallOutPlan callOutPlan = callOutPlanService.findByPlanUuid(planUuid);
         if(callOutPlan!=null){
@@ -80,8 +88,11 @@ public class CallPlanController implements ICallPlan {
             return Result.ok(callEndIntent);
 
         }
+
+        redisUtil.set("planNotFound_"+planUuid,true,20*60);
         log.info(">>>>>>>isCallEnd not found uuid[{}]",planUuid);
         return Result.error(Constant.ERROR_UUID_NOTFIND);
+
     }
 
     /**

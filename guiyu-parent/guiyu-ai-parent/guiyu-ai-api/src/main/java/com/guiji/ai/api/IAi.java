@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.guiji.ai.vo.AsynPostReqVO;
-import com.guiji.ai.vo.SynPostReqVO;
-import com.guiji.ai.vo.TtsRspVO;
+import com.guiji.ai.bean.AsynPostReq;
+import com.guiji.ai.bean.SynPostReq;
+import com.guiji.ai.bean.TtsRsp;
 import com.guiji.component.result.Result.ReturnData;
 
 /**
@@ -21,24 +21,18 @@ public interface IAi {
 	 * @throws Exception 
      */
 	@PostMapping(value = "synPost")
-	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) throws Exception;
+	public ReturnData<String> synPost(@RequestBody SynPostReq synPostReq) throws Exception;
 	
 	/**
      * 语音合成（异步）
 	 * @throws Exception 
      */
 	@PostMapping(value = "asynPost")
-	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO) throws Exception;
+	public ReturnData<String> asynPost(@RequestBody AsynPostReq asynPostReq) throws Exception;
 	
 	/**
-	 *回调接口
+	 * 根据busiId查询TTS处理结果
 	 */
-	@PostMapping(value = "callback")
-	public void callback(@RequestBody TtsRspVO ttsRsp);
-	
-	/**
-	 * 查询接口
-	 */
-	@GetMapping(value = "getResult")
-	public ReturnData<TtsRspVO> getResult(String busId);
+	@GetMapping(value = "getResultByBusId")
+	public ReturnData<TtsRsp> getResultByBusId(String busId);
 }

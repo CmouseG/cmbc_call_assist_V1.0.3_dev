@@ -115,15 +115,16 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                 GateWayLineOccupyVo occupyLine = null;
 								try {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
-									callBean.setTempId(dispatchRedis.getRobot());
-									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
-									callBean.setRemarks(dispatchRedis.getAttach());
+									callBean.setTempId(dispatchRedis.getRobot());//话术模板ID
+									callBean.setAgentGroupId(dispatchRedis.getCallAgent());//转人工坐席号
+									callBean.setRemarks(dispatchRedis.getAttach());//参数、备注
+									callBean.setOrgId(dispatchRedis.getOrgId());//orgId
 									List<Integer> lines = new ArrayList<>();
 									boolean isSimPush = false;//是否是SIM卡推送
 
 									for (DispatchBatchLine line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
-									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
+									    if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()){//网关路线
 										//	logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
 									    	callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
 									        Integer lineId = line.getLineId();

@@ -532,7 +532,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		req.setBusId("bot-" + taskId.toString());
 	    logger.info("请求参数: " + req.toString());
 	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
-    	com.guiji.ai.common.ReturnData<String> result = null;
+    	ReturnData<String> result = null;
 		try {
 			result = ai.synPost(req);
 		} catch (Exception e) {
@@ -541,7 +541,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
     	logger.info("返回参数: " + result.toString());
 		if("0".equals(result.getCode())) {
 			logger.info("推送tts数据成功...");
-			String url = result.getData();
+			String url = result.getBody();
 			if(StringUtils.isNotBlank(url)) {
 				botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
 			}else {

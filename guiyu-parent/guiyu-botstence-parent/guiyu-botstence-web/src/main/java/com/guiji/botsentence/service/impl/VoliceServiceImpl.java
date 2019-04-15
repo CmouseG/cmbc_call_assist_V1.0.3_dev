@@ -1173,10 +1173,14 @@ public class VoliceServiceImpl implements IVoliceService {
 	}
 
 	public static void main(String[] args) {
-		String wavName = "/home/sellbot/dist/app/wav/shyjw_rec/27.wav";
-		int index = wavName.lastIndexOf("/");
-		wavName = wavName.substring(index+1, wavName.length());
-		System.out.println(10/3);
+		String regEx = Constant.TTS_REG_EX;// 正则表达式
+		// 获取变量列表
+		Pattern pattern = Pattern.compile(regEx);
+		Matcher matcher = pattern.matcher("我们是中建集团的，有23年$0001,$0002的开发历程，您可以了解一下哦！");
+		while (matcher.find()) {
+			String match = matcher.group();
+			System.out.println(match);
+		}
 		
 	}
 
@@ -1441,7 +1445,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		List<String> contentList = new ArrayList<>();
 
 		// 使用变量切割成的文案列表
-		if (null != array && array.length > 0) {
+		/*if (null != array && array.length > 0) {
 			for (int i = 0; i < array.length; i++) {
 				if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
 						&& !"，".equals(array[i]) && !",".equals(array[i]) && !"！".equals(array[i])
@@ -1449,7 +1453,7 @@ public class VoliceServiceImpl implements IVoliceService {
 					contentList.add(array[i]);
 				}
 			}
-		}
+		}*/
 
 		
 		if (isStart) {

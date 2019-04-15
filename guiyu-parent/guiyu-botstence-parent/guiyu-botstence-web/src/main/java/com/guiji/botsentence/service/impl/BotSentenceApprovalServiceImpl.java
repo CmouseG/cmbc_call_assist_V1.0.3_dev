@@ -835,6 +835,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	public void saveDeploy(List<String> list, String jobId, String processId, String templateId, String userId) {
 		if(null != list && list.size() > 0) {
 			logger.info("共返回" + list.size() + "条任务");
+			logger.info("jobId = " + jobId);
 			int index = 1;
 			for(String temp : list) {
 				logger.info("任务【" + index + "】的任务号:  " + temp) ;

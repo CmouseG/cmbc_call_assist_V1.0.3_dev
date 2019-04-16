@@ -56,11 +56,12 @@ public class CheckJurisdictionAspect
 		ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = sra.getRequest();
 		String roleId = request.getHeader("roleId");
+		String userId = request.getHeader("userId");
 		
 		List<String> urlList = redisUtil.getT("Key_Jurisdiction_"+roleId);
 		if(urlList == null) {
 			//根据用户id查询其拥有的权限
-			ReturnData<List<String>> result = restTemplate.getForObject("http://guiyu-cloud-zuul:18000/auth/user/queryButtonByUser?userId="+roleId, ReturnData.class);
+			ReturnData<List<String>> result = restTemplate.getForObject("http://guiyu-cloud-zuul:18000/auth/user/queryButtonByUser?userId="+userId, ReturnData.class);
 			urlList = result.getBody();
 			if(CollectionUtils.isEmpty(urlList)){
 				throw new GuiyuException("00010404","您没有此权限!!!");

@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
@@ -1296,36 +1299,40 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 	 */
 	public List<String> getIntentKeys(String ids) {
 
-		List<String> enterList = new ArrayList<String>();
-		String res = "";
-
-		if (!StringUtils.isBlank(ids)) {
-
-			if (ids.contains("[")) {
-				ids = ids.replace("[", "");
-				ids = ids.replace("]", "").trim();
-			}
-			if (!StringUtils.isBlank(ids)) {
-				String[] enterArr = ids.split(",");
-				for (String id : enterArr) {
-					BotSentenceIntent intent = botSentenceIntentMapper.selectByPrimaryKey(Long.parseLong(id));
-					if (intent != null) {
-						String keys = intent.getKeywords();
-						if(keys.startsWith("[")) {
-							keys = keys.substring(1, keys.length()-1);
-//							enterList.add(keys);
-						}
-						res = res + keys +"," ;
-					}
-				}
-			}
+		List<String> allKeywords = Lists.newArrayList();
+		List<String> emptyKeywords = Lists.newArrayList();
+		emptyKeywords.add("");
+		if(StringUtils.isBlank(ids)){
+			return emptyKeywords;
 		}
-		
-		if(res.endsWith(",")){
-			res=res.substring(0, res.length()-1);
+
+		String[] intendIdArray = ids.split(",");
+		List<Long> intendIds = Lists.newArrayList();
+
+		for(String intendId : intendIdArray){
+			intendIds.add(Long.parseLong(intendId));
 		}
-		enterList.add(res);
-		return enterList;
+
+		if(CollectionUtils.isEmpty(intendIds)){
+			return emptyKeywords;
+		}
+
+		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
+		intentExample.createCriteria().andIdIn(intendIds);
+		List<BotSentenceIntent> intents = botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
+
+		if(CollectionUtils.isEmpty(intents)){
+			return emptyKeywords;
+		}
+
+		List<String> keywordsList = Lists.newArrayList();
+		intents.forEach(intent -> {
+			keywordsList.addAll(JSON.parseArray(intent.getKeywords(), String.class));
+		});
+
+		allKeywords.add(String.join(",", keywordsList));
+
+		return allKeywords;
 	}
 	
 	public static void main(String[] args) {

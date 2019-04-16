@@ -2,6 +2,7 @@ package com.guiji.auth.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,10 +127,33 @@ public class AgentGroupChangeService {
 			}
 		}
 	}
-	
-	
-	public void unBindAgentMembers(Integer userId,Long roleId) {
-		
+
+	public void updateBindAgentMembers(SysUser user, Long oldRoleId, Long newRoleId)
+	{
+		if(user==null || oldRoleId ==null || newRoleId==null) {return;}
+		List<SysPrivilege> oldPrivilegeList = privilegeService.queryPrivilegeListByAuth(oldRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+		List<SysPrivilege> newPrivilegeList = privilegeService.queryPrivilegeListByAuth(newRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+		List<String> oldResourceList = oldPrivilegeList.stream().map(privilege -> privilege.getResourceId()).collect(Collectors.toList());
+		List<String> newResourceList = newPrivilegeList.stream().map(privilege -> privilege.getResourceId()).collect(Collectors.toList());
+		if(oldResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"") && !newResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"")) //解绑
+		{
+			List<Long> userList = new ArrayList<Long>();
+			userList.add(user.getId());
+			iAgentGroup.delAgentMembers(userList);
+		}
+		if(!oldResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"") && newResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"")) //绑定
+		{
+			List<AgentMembrVO> agentMembers = new ArrayList<AgentMembrVO>();
+			AgentMembrVO vo = new AgentMembrVO();
+			vo.setCustomerId(user.getId());
+			vo.setCustomerName(user.getUsername());
+			vo.setLoginAccount(user.getUsername());
+			vo.setOrgCode(user.getOrgCode());
+			agentMembers.add(vo);
+			iAgentGroup.syncAgentMembers(agentMembers);
+		}
 	}
+	
+	
 	
 }

@@ -36,7 +36,7 @@ public interface SysUserMapper {
     int updateByPrimaryKey(SysUser record);
     
     //
-    void addRole(@Param("userId")Long userId,@Param("roleIds")Long roleIds);
+    void addRole(@Param("userId")Long userId,@Param("roleId")Long roleId);
     
     String getPassword(String principal);
     

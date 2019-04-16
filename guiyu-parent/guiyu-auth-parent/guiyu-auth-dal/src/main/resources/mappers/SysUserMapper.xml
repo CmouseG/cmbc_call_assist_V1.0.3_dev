@@ -455,7 +455,7 @@
 	<insert id="addRole">
 		delete from sys_role_user where user_id=#{userId};
 		insert into sys_role_user(user_id,role_id,create_time)
-		values (#{userId},#{roleIds},now());
+		values (#{userId},#{roleId},now());
 	</insert>
 
 	<select id="getPassword" resultType="string">

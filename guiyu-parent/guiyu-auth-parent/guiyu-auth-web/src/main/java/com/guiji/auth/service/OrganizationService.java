@@ -13,12 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.model.OrgRoleInfo;
 import com.guiji.auth.model.OrganizationVO;
+import com.guiji.auth.model.SaveOrgReq;
+import com.guiji.auth.model.UpdateOrgReq;
 import com.guiji.auth.util.DataLocalCacheUtil;
+import com.guiji.auth.util.HttpClientUtil;
 import com.guiji.auth.util.OrgUtil;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.IBotSentenceTradeService;
@@ -42,6 +47,7 @@ import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 
@@ -92,6 +98,12 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
+//		String postUrl = "http://localhost:18080/org/remote/save";
+//		String restult = HttpClientUtil.post(postUrl,new SaveOrgReq(record.getId(),record.getType(),record.getName(),record.getCode(),record.getSubCode(),userId,record.getCreateTime()));
+//		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
+//		if(!"000000".equals(rspCode)){
+//			throw new GuiyuException("请求三方接口失败!");
+//		}
 		queueSender.send("OrgIdMQ.direct.Auth", record.getId().toString());
 		if(record.getProduct()!=null && !record.getProduct().isEmpty()) {
 			//如果参数产品不为空，那么以选择的产品为准
@@ -145,8 +157,60 @@ public class OrganizationService {
         redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
+	@Transactional
 	public void update(SysOrganization record,Long updateUser){
 		
+		isRobotNumRight(record); // 判断配置机器人数量
+//		requestThirdApi(record,updateUser); // 请求三方接口（进销存）
+		sysOrganizationMapper.updateByPrimaryKeySelective(record);
+		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
+			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
+				sysOrganizationMapper.updateOrganizationProduct(record.getId().longValue(),record.getUpdateId(),record.getProduct());
+			}
+			if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
+				//给企业绑定行业资源
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
+			}
+			if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
+				//给企业绑定菜单资源
+				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+			}
+		}else {
+			//系统不需要通过前端绑定行业/菜单资源
+			//系统数据通过资源初始化或者资源新增时的初始化绑定
+		}
+		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
+		redisUtil.delVague(REDIS_ORG_BY_USERID);
+	}
+
+	private void requestThirdApi(SysOrganization record, Long updateUser)
+	{
+		if(record.getRobot()==null && record.getStartDate()==null && record.getEndDate()==null){return;}
+		String url = "http://localhost:18080/org/remote/updateResource";
+		SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
+		UpdateOrgReq req = new UpdateOrgReq(organization.getId(),null,organization.getType(),organization.getCode(), 
+				organization.getRobot(), organization.getStartDate(), organization.getEndDate(), record.getRobot(), record.getStartDate(), 
+				record.getEndDate(), updateUser, new Date());
+		String orgCode = organization.getCode();
+		Integer type = organization.getType();
+		Integer superAgentId = null;
+		while(type != 1)
+		{
+			SysOrganization org = getParentOrg(orgCode);
+			orgCode = org.getCode();
+			superAgentId = org.getId();
+			type = org.getType();
+		}
+		req.setSuperAgentId(superAgentId);
+		String restult = HttpClientUtil.post(url, req);
+		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
+		if(!"000000".equals(rspCode)){
+			throw new GuiyuException("请求三方接口失败!");
+		}
+	}
+
+	private void isRobotNumRight(SysOrganization record)
+	{
 		if(record.getRobot() != null)
 		{
 			SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
@@ -174,26 +238,6 @@ public class OrganizationService {
 				throw new GuiyuException("配置机器人数低于子企业配置机器人数之和！");
 			}
 		}
-		
-		sysOrganizationMapper.updateByPrimaryKeySelective(record);
-		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
-			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
-				sysOrganizationMapper.updateOrganizationProduct(record.getId().longValue(),record.getUpdateId(),record.getProduct());
-			}
-			if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
-				//给企业绑定行业资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
-			}
-			if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
-				//给企业绑定菜单资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
-			}
-		}else {
-			//系统不需要通过前端绑定行业/菜单资源
-			//系统数据通过资源初始化或者资源新增时的初始化绑定
-		}
-		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
-		redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
 	public Page<OrganizationVO> selectByPage(Page<Object> page, Long userId, Integer authLevel, String orgCode,String orgName,Integer type){

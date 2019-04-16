@@ -534,6 +534,21 @@ public class SysOrganizationExample {
             addCriterion("robot not between", value1, value2, "robot");
             return (Criteria) this;
         }
+        
+        public Criteria andStartDateIsNull() {
+            addCriterion("`startDate` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartDateEqualTo(String value) {
+            addCriterion("`startDate` =", value, "name");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartDateNotEqualTo(String value) {
+            addCriterion("`startDate` <>", value, "name");
+            return (Criteria) this;
+        }
 
         public Criteria andLineIsNull() {
             addCriterion("line is null");

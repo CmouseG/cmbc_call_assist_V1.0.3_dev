@@ -163,7 +163,7 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 				continue;
 			}
 
-			// 线路一条的话就不排序0
+			// 线路是网关SIM卡类型就不排序
 			if (dis.getLineType() == PlanLineTypeEnum.GATEWAY.getType()) {
 				res.add(dis);
 				continue;

@@ -81,6 +81,8 @@ public class UserService {
 	
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
+	@Autowired
+	RoleService roleService;
 	
 	@Autowired
 	AgentGroupChangeService agentGroupChangeService;
@@ -105,13 +107,15 @@ public class UserService {
 	}
 	
 	/**
-	 * 修改密码
+	 * 修改
 	 * @param user
 	 */
-	public void update(SysUser user,Long roleIds){
+	public void update(SysUser user,Long roleId){
 		user.setUpdateTime(new Date());
+		Long oldRoleId = roleService.getRoleByUserId(user.getId().longValue()).getId().longValue();
+		agentGroupChangeService.updateBindAgentMembers(user,oldRoleId,roleId);
 		mapper.updateByPrimaryKeySelective(user);
-		mapper.addRole(user.getId(),roleIds);
+		mapper.addRole(user.getId(),roleId);
 		redisUtil.del(REDIS_USER_BY_ID+user.getId());
 		redisUtil.del(REDIS_ROLE_BY_USERID+user.getId());
 		redisUtil.del(REDIS_ORG_BY_USERID+user.getId());

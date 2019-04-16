@@ -3,7 +3,7 @@ package com.guiji.robot.service.job;
 import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.IAi;
 import com.guiji.ai.bean.TtsRsp;
-import com.guiji.ai.common.ReturnData;
+import com.guiji.component.result.Result;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.TtsCallbackHis;
@@ -67,9 +67,9 @@ public class TtsCheckJobTimer extends IJobHandler {
                 String busiId = ttsWavHis.getBusiId();
                 if (StrUtils.isNotEmpty(busiId)) {
                     //业务编号不为空，开始到AI服务进行TTS查证
-                    ReturnData<TtsRsp> ttsRspData = iAi.getResultByBusId(busiId);
-                    if (ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getData() != null) {
-                        TtsRsp ttsRspVO = ttsRspData.getData();
+                    Result.ReturnData<TtsRsp> ttsRspData = iAi.getResultByBusId(busiId);
+                    if (ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getBody() != null) {
+                        TtsRsp ttsRspVO = ttsRspData.getBody();
                         int status = ttsRspVO.getStatus();    //TTS查证接口返回状态
                         int statusInt = 99;
                         //查证接口只处理终态，成功、失败

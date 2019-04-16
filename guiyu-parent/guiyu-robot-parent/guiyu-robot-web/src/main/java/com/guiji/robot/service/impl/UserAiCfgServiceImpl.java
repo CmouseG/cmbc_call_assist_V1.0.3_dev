@@ -24,7 +24,6 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.StrUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -404,6 +403,16 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
         return null;
     }
 
+    @Override
+    public List<UserAiCfgBaseInfo> queryUserAiCfgInfoByCondition(UserAiCfgBaseCondition condition) {
+
+
+        UserAiCfgBaseInfoExample example = this.queryExample(condition);
+
+
+        return userAiCfgBaseInfoMapper.selectByExample(example);
+
+    }
 
     /**
      * 根据用户编号查询用户符合话术模板的配置列表

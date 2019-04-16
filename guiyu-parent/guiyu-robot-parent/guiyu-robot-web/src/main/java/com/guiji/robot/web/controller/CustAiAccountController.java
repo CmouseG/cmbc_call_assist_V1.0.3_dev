@@ -1,6 +1,5 @@
 package com.guiji.robot.web.controller;
 
-import com.google.common.collect.Lists;
 import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.entity.BotSentenceProcess;
@@ -27,7 +26,6 @@ import com.guiji.robot.util.ListUtil;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -317,6 +315,64 @@ public class CustAiAccountController {
                         if (hsReplace != null) {
                             vo.setTtsFlag(hsReplace.isTemplate_tts_flag());    //是否需要tts
                             vo.setAgentFlag(hsReplace.isAgent()); //是否转人工
+                        }
+                    }
+                }
+            }
+        }
+        return Result.ok(rtnList);
+    }
+
+    /**
+     * 通话记录使用的话术模板
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/queryRobotTemplateList", method = RequestMethod.POST)
+    public Result.ReturnData<List<AiTemplateVO>> queryRobotTemplateList(
+            @RequestHeader Long userId,
+            @RequestHeader String orgCode,
+            @RequestHeader Integer authLevel) {
+
+        List<AiTemplateVO> rtnList = new ArrayList<>();
+
+        UserAiCfgBaseCondition userAiCfgBaseCondition = new UserAiCfgBaseCondition();
+
+        userAiCfgBaseCondition.setUserId(userId.toString());
+        userAiCfgBaseCondition.setOrgCode(orgCode);
+        userAiCfgBaseCondition.setAuthLevel(authLevel);
+
+        List<UserAiCfgBaseInfo> list = iUserAiCfgService.queryUserAiCfgInfoByCondition(userAiCfgBaseCondition);
+        if (ListUtil.isNotEmpty(list)) {
+            //开始获取用户配置的机器人列表
+            Set<String> templateSet = new HashSet<String>();
+            for (UserAiCfgBaseInfo cfg : list) {
+                String templateIds = cfg.getTemplateIds();
+                if (StrUtils.isNotEmpty(templateIds)) {
+                    if (StrUtils.isNotEmpty(templateIds)) {
+                        String[] templateArray = templateIds.split(",");    //多模板逗号分隔
+                        for (String templateId : templateArray) {
+                            //放入set,防重
+                            templateSet.add(templateId);
+                        }
+                    }
+                }
+            }
+            //开始设置返回对象list
+            if (templateSet != null && !templateSet.isEmpty()) {
+                for (String templateId : templateSet) {
+                    //缓存中没有，重新查询
+                    ServerResult<List<BotSentenceProcess>> templateData = iBotSentenceProcess.getTemplateById(templateId);
+                    if (templateData != null && ListUtil.isNotEmpty(templateData.getData())) {
+                        BotSentenceProcess botSentenceProcess = templateData.getData().get(0);
+                        if (botSentenceProcess != null) {
+                            AiTemplateVO aiTemplateVO = new AiTemplateVO();
+                            aiTemplateVO.setTemplateId(templateId);
+                            aiTemplateVO.setTemplateName(botSentenceProcess.getTemplateName());
+                            rtnList.add(aiTemplateVO);
+                        } else {
+                            logger.error("查不到对应的话术模板{}", templateId);
                         }
                     }
                 }

@@ -98,12 +98,12 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
-		String postUrl = "http://localhost:18080/org/remote/save";
-		String restult = HttpClientUtil.post(postUrl,new SaveOrgReq(record.getId(),record.getType(),record.getName(),record.getCode(),record.getSubCode(),userId,record.getCreateTime()));
-		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
-		if(!"000000".equals(rspCode)){
-			throw new GuiyuException("请求三方接口失败!");
-		}
+//		String postUrl = "http://localhost:18080/org/remote/save";
+//		String restult = HttpClientUtil.post(postUrl,new SaveOrgReq(record.getId(),record.getType(),record.getName(),record.getCode(),record.getSubCode(),userId,record.getCreateTime()));
+//		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
+//		if(!"000000".equals(rspCode)){
+//			throw new GuiyuException("请求三方接口失败!");
+//		}
 		queueSender.send("OrgIdMQ.direct.Auth", record.getId().toString());
 		if(record.getProduct()!=null && !record.getProduct().isEmpty()) {
 			//如果参数产品不为空，那么以选择的产品为准
@@ -161,7 +161,7 @@ public class OrganizationService {
 	public void update(SysOrganization record,Long updateUser){
 		
 		isRobotNumRight(record); // 判断配置机器人数量
-		requestThirdApi(record,updateUser); // 请求三方接口（进销存）
+//		requestThirdApi(record,updateUser); // 请求三方接口（进销存）
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
 			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {

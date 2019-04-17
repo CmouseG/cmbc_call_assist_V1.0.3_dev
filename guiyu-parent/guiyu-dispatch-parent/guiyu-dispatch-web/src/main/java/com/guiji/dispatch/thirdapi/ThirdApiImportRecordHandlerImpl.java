@@ -70,7 +70,6 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					//mod by xujin
 					for(DispatchBatchLine line : lineList){
 						line.setBatchId(vo.getBatchId());
-						line.setLineType(vo.getLineType());
 						line.setOrgId(vo.getOrgId());
 						line.setUserId(vo.getUserId().intValue());
 						line.setLineType(lineType);

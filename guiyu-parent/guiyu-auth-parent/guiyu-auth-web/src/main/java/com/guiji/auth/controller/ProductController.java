@@ -227,6 +227,7 @@ public class ProductController implements IProduct{
 	 * 保存创建的模版到关联关系（privilege）
 	 */
 	@Override
+	@RequestMapping("saveProductTemplates")
 	public void saveProductTemplates(List<String> templateIds)
 	{
 		List<SysProduct> productList = productService.queryOkProductList();

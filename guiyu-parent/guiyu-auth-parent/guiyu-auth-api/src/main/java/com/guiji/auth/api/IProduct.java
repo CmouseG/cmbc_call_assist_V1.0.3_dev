@@ -12,6 +12,6 @@ public interface IProduct
 	/**
 	 * 保存创建的模版到关联关系（privilege）
 	 */
-	@RequestMapping("/product/")
+	@RequestMapping("/product/saveProductTemplates")
 	public void saveProductTemplates(@RequestParam("templateIds") List<String> templateIds);
 }

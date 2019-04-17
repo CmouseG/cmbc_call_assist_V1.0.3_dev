@@ -1330,8 +1330,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			keywordsList.addAll(JSON.parseArray(intent.getKeywords(), String.class));
 		});
 
-		allKeywords.add(String.join(",", keywordsList));
-
+		String keywordJson = JSON.toJSONString(keywordsList);
+		allKeywords.add(keywordJson.substring(1, keywordJson.length()-1));
 		return allKeywords;
 	}
 	

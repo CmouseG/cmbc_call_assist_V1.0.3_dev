@@ -76,7 +76,7 @@ public class AgentResource {
      * @param request
      * @return
      */
-    @Jurisdiction("callCenter_agentStaffManage_edit")
+    @Jurisdiction("callCenter_agentStaffManage_edit,callCenter_workPlatform_edit")
     @RequestMapping(path = "/agents/{agentId}", method = RequestMethod.PUT)
     public Result.ReturnData updateAgent(@PathVariable String agentId, @RequestBody AgentRequest request,
                                          @RequestHeader Long userId){

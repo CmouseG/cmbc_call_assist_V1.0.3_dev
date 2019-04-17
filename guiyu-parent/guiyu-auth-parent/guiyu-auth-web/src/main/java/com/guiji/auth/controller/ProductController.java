@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ProductStatusEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.model.ProductCondition;
+import com.guiji.auth.model.ProductTemplatesVO;
 import com.guiji.auth.model.ProductVO;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.PrivilegeService;
@@ -227,12 +229,12 @@ public class ProductController implements IProduct{
 	 * 保存创建的模版到关联关系（privilege）
 	 */
 	@Override
-	@RequestMapping("saveProductTemplates")
-	public void saveProductTemplates(List<String> templateIds)
+	@PostMapping("saveProductTemplates")
+	public void saveProductTemplates(@RequestBody ProductTemplatesVO productTemplates)
 	{
 		List<SysProduct> productList = productService.queryOkProductList();
 		for(SysProduct product : productList){
-			privilegeService.savePrivlege(1, "1", 1, product.getId().toString(), 2, templateIds);
+			privilegeService.savePrivlege(1, "1", 1, product.getId().toString(), 2, productTemplates.getTemplateIds());
 		}
 	}
 }

@@ -23,7 +23,8 @@ public interface ILineRate {
 
     @ApiOperation(value = "线路监控信息,所有线路")
     @GetMapping(value = "/out/getLineRateAll")
-    Result.ReturnData<List<LineRateResponse>> getLineRateAll(@RequestBody RateTimeReq rateTime);
+    Result.ReturnData<List<LineRateResponse>> getLineRateAll(@RequestParam(value = "startTime") String startTime,
+                                                             @RequestParam(value = "endTime") String endTime)throws Exception;
 
 
 }

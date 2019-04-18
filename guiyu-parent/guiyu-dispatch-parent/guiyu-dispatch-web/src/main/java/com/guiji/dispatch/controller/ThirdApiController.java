@@ -219,9 +219,9 @@ public class ThirdApiController implements IThirdApiOut {
 			BeanUtils.copyProperties(lines,newLine);
 
 			newLine.setBatchId(batch.getId());
+			newLine.setLineType(lineType);
 			newLine.setOrgId(parseObject.getOrgId());
 			newLine.setUserId(batch.getUserId());
-			newLine.setLineType(lineType);
 			lineService.insert(newLine);
 		}
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();

@@ -92,6 +92,7 @@ public class BlackListServiceImpl implements IBlackListService {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
 				phone = null != phone?phone.trim():null;
+				logger.info("com.guiji.dispatch.impl.BlackListServiceImpl.batchPlanImport黑名单号码:{}",phone);
 				if (phone == null || phone == "") {
 					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
 					continue;

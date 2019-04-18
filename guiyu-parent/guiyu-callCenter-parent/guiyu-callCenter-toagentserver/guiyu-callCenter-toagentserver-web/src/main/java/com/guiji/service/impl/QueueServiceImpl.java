@@ -360,6 +360,7 @@ public class QueueServiceImpl implements QueueService {
         try {
             result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, lineId);
             if (result.getCode().equals("0")&&result.getBody()!=null) {
+                log.info("根据userid:[{}]和lineId:[{}]从线路市场获取线路名称结果：[{}]",systemUserId,lineId,result.getBody().getLineName());
                 return result.getBody().getLineName();
             } else {
                 LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);

@@ -169,10 +169,12 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	@Override
 	@Transactional
 	public String copy(String processId, String orgCode, String userId, String tempalteName) {
-		
+		logger.info("当前用户id: " + userId);
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		orgCode=data.getBody().getOrgCode();
 		String orgName = data.getBody().getOrgName();
+		
+		logger.info("当前机构code: " + orgCode);
 		
 		ReturnData<SysUser> userData = iAuth.getUserById(new Long(userId));
 		

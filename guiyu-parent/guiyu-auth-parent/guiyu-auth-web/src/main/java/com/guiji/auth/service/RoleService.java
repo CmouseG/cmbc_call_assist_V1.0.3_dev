@@ -13,8 +13,11 @@ import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysRoleMapper;
+import com.guiji.user.dao.SysRoleUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysRoleExample;
+import com.guiji.user.dao.entity.SysRoleUser;
+import com.guiji.user.dao.entity.SysRoleUserExample;
 import com.guiji.user.dao.ext.SysRoleMapperExt;
 import com.guiji.user.vo.RoleParamVo;
 import com.guiji.utils.StrUtils;
@@ -27,6 +30,8 @@ public class RoleService {
 	private SysRoleMapper mapper;
 	@Autowired
 	private SysRoleMapperExt mapperExt;
+	@Autowired
+	private SysRoleUserMapper roleUserMapper;
 	
 	@Transactional
 	public void insert(SysRole role,String orgCode,String[] menuIds){
@@ -67,6 +72,14 @@ public class RoleService {
 	
 	public SysRole getRoleId(Long id){
 		return mapper.selectByPrimaryKey(id.intValue());
+	}
+	
+	public SysRole getRoleByUserId(Long userId)
+	{
+		SysRoleUserExample example = new SysRoleUserExample();
+		example.createCriteria().andUserIdEqualTo(userId);
+		SysRoleUser roleUser = roleUserMapper.selectByExample(example).get(0);
+		return mapper.selectByPrimaryKey(roleUser.getRoleId());
 	}
 	
 	public List<SysRole> getRoles(){

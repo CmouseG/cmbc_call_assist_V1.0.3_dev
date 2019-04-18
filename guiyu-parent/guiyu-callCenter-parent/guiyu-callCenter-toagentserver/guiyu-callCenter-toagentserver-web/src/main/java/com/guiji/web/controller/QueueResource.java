@@ -31,7 +31,7 @@ public class QueueResource {
     @Jurisdiction("callCenter_agentGroupManage_add")
     @RequestMapping(path = "/queues", method = RequestMethod.POST)
     public Result.ReturnData addQueue(@RequestBody QueueInfo QueueInfo,@RequestHeader Long userId,@RequestHeader String orgCode) {
-        log.info("收到创建队列请求QueueInfo:[{}]", QueueInfo.toString());
+        log.info("收到创建队列请求QueueInfo:[{}],userId:[{}],orgCode[{}]", QueueInfo.toString(),userId,orgCode);
         try {
             queueService.addQueue(QueueInfo,orgCode,userId);
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class QueueResource {
     @RequestMapping(path = "/queues/{queueId}", method = RequestMethod.PUT)
     public Result.ReturnData updateQueue(@PathVariable String queueId, @RequestBody QueueInfo request,
                                          @RequestHeader Long userId,@RequestHeader String orgCode) {
-        log.info("收到更新队列请求queueId:[{}],QueueInfo:[{}]", queueId,request.toString());
+        log.info("收到更新队列请求queueId:[{}],QueueInfo:[{}],userId:[{}],orgCode[{}]", queueId,request.toString(),userId,orgCode);
         try {
             queueService.updateQueue(queueId, request, userId,orgCode);
         } catch (Exception e) {
@@ -108,7 +108,7 @@ public class QueueResource {
                                                  @RequestHeader int authLevel,
                                                  @RequestHeader Long userId,
                                                  @RequestHeader String orgCode) {
-        log.info("收到查询坐席组列表请求queueName:[{}],pageNo:[{}],pageSize:[{}]",queueName,page,size);
+        log.info("收到查询坐席组列表请求queueName:[{}],pageNo:[{}],pageSize:[{}],authLevel:[{}],userId:[{}],orgCode[{}]",queueName,page,size,authLevel,userId,orgCode);
         Paging paging = null;
         try {
             paging = queueService.queryQueues(queueName,page,size,systemUserId,orgCode,authLevel,userId);

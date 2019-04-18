@@ -16,6 +16,8 @@ public class SysOrganization implements Serializable {
     private Integer type;
 
     private Integer robot;
+    private String startDate;
+    private String endDate;
 
     private Integer line;
 
@@ -43,7 +45,27 @@ public class SysOrganization implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    public List<String> getMenuIds()
+    public String getStartDate()
+	{
+		return startDate;
+	}
+
+	public void setStartDate(String startDate)
+	{
+		this.startDate = startDate;
+	}
+
+	public String getEndDate()
+	{
+		return endDate;
+	}
+
+	public void setEndDate(String endDate)
+	{
+		this.endDate = endDate;
+	}
+
+	public List<String> getMenuIds()
 	{
 		return menuIds;
 	}
@@ -226,6 +248,8 @@ public class SysOrganization implements Serializable {
         sb.append(", code=").append(code);
         sb.append(", type=").append(type);
         sb.append(", robot=").append(robot);
+        sb.append(", startDate=").append(startDate);
+        sb.append(", endDate=").append(endDate);
         sb.append(", line=").append(line);
         sb.append(", botstence=").append(botstence);
         sb.append(", delFlag=").append(delFlag);

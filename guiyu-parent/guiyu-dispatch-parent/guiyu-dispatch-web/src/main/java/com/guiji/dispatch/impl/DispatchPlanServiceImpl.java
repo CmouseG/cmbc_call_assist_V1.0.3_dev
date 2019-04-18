@@ -188,7 +188,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
         List<DispatchBatchLine> lineList = dispatchPlan.getLines();
 		for (DispatchBatchLine lines : lineList) {
 			lines.setBatchId(dispatchPlanBatch.getId());
-			lines.setLineType(dispatchPlan.getLineType());
 			lines.setOrgId(orgId);
 			lines.setUserId(userId.intValue());
 			lines.setLineType(lineType);
@@ -964,9 +963,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<DispatchBatchLine> lineList = plans.getLines();
 		for (DispatchBatchLine lines : lineList) {
 			lines.setBatchId(batch.getId());
-			lines.setLineType(lineType);
 			lines.setOrgId(orgId);
 			lines.setUserId(userId.intValue());
+			lines.setLineType(lineType);
 			lineService.insert(lines);
 		}
 

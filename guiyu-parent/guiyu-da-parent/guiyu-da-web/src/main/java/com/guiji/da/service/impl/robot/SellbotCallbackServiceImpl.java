@@ -246,7 +246,7 @@ public class SellbotCallbackServiceImpl implements ISellbotCallbackService{
 			for (Map.Entry<String,Integer> newMapEntry : newMap.entrySet()) {
 				String key = newMapEntry.getKey();
 				Integer existNum = existMap.get(key);
-				Integer newNum = newMap.get(key);
+				Integer newNum = newMapEntry.getValue();
 				existMap.put(key, (existNum==null?0:existNum)+(newNum==null?0:newNum));
 			}
 		}

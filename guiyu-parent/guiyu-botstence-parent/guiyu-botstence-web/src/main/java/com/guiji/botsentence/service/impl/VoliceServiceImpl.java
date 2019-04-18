@@ -1175,12 +1175,31 @@ public class VoliceServiceImpl implements IVoliceService {
 	public static void main(String[] args) {
 		String regEx = Constant.TTS_REG_EX;// 正则表达式
 		// 获取变量列表
+		String str = "$0003我们是中建集团的，有23年$0001$0002的开发历程，您可以了解一下哦！$0006";
 		Pattern pattern = Pattern.compile(regEx);
-		Matcher matcher = pattern.matcher("我们是中建集团的，有23年$0001,$0002的开发历程，您可以了解一下哦！");
+		Matcher matcher = pattern.matcher(str);
+		List<String> list = new ArrayList<>();
+		
 		while (matcher.find()) {
 			String match = matcher.group();
-			System.out.println(match);
+			String [] array = str.split("[$]"+match.substring(1, match.length()));
+			list.add(array[0]);
+			list.add(match);
+			if(array.length > 1) {
+				str = array[1];
+				if(!BotSentenceUtil.validateContainParam(str)) {
+					list.add(str);
+				}
+				matcher = pattern.matcher(str);
+			}
 		}
+		
+		for(String temp : list) {
+			if(StringUtils.isNotBlank(temp)) {
+				System.out.println(temp);
+			}
+		}
+		
 		
 	}
 
@@ -1406,7 +1425,7 @@ public class VoliceServiceImpl implements IVoliceService {
 			}
 		}
 		// 判断是否变量是第一个
-		boolean isStart = false;
+		/*boolean isStart = false;
 		boolean isEnd = false;
 		for (int i = 0; i < paramList.size(); i++) {
 			int index = newContent.indexOf(paramList.get(i));
@@ -1447,11 +1466,11 @@ public class VoliceServiceImpl implements IVoliceService {
 		// 使用变量切割成的文案列表
 		if (null != array && array.length > 0) {
 			for (int i = 0; i < array.length; i++) {
-				/*if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
+				if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
 						&& !"，".equals(array[i]) && !",".equals(array[i]) && !"！".equals(array[i])
 						&& !"!".equals(array[i]) && !"？".equals(array[i]) && !"?".equals(array[i])) {
 					contentList.add(array[i]);
-				}*/
+				}
 				contentList.add(array[i]);
 			}
 		}
@@ -1501,7 +1520,58 @@ public class VoliceServiceImpl implements IVoliceService {
 				ttsTask.setIsParam(Constant.IS_PARAM_TRUE);
 				botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
 			}
+		}*/
+		
+		
+		
+		
+		// 获取变量列表
+		List<String> list = new ArrayList<>();
+		Matcher matcher2 = pattern.matcher(newContent);
+		while (matcher2.find()) {
+			String match = matcher2.group();
+			String [] array = newContent.split("[$]"+match.substring(1, match.length()));
+			list.add(array[0]);
+			list.add(match);
+			if(array.length > 1) {
+				newContent = array[1];
+				if(!BotSentenceUtil.validateContainParam(newContent)) {
+					list.add(newContent);
+				}
+				matcher2 = pattern.matcher(newContent);
+			}
 		}
+		
+		int index = 1;
+		for(String temp : list) {
+			if(StringUtils.isNotBlank(temp) && !"。".equals(temp) && !".".equals(temp)
+					&& !"，".equals(temp) && !",".equals(temp) && !"！".equals(temp)
+					&& !"!".equals(temp) && !"？".equals(temp) && !"?".equals(temp)) {
+				System.out.println(temp);
+				if(paramList.contains(temp)) {
+					String seq = voliceInfo.getVoliceId() + "_" + index;
+					BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
+					ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
+					ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
+					ttsTask.setContent(temp);
+					ttsTask.setSeq(seq);
+					ttsTask.setIsParam(Constant.IS_PARAM_TRUE);
+					botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
+				}else {
+					String seq = voliceInfo.getVoliceId() + "_" + index;
+					BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
+					ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
+					ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
+					ttsTask.setContent(temp);
+					ttsTask.setSeq(seq);
+					ttsTask.setIsParam(Constant.IS_PARAM_FALSE);
+					botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
+				}
+				index++;
+			}
+		}
+		
+		
 	}
 
 	@Override

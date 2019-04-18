@@ -88,6 +88,8 @@ ribbon:
   eureka:
     enabled: true
 
+flydragon_server_url: http://172.16.168.219:10000
+
 #xxl-job admin中心配置
 xxl:
   job:

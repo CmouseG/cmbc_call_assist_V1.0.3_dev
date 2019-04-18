@@ -10,6 +10,7 @@ import com.guiji.config.FsBotConfig;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.CallState;
 import com.guiji.fs.FsManager;
+import com.guiji.service.AgentService;
 import com.guiji.service.CallOutPlanService;
 import com.guiji.service.PhoneService;
 import com.guiji.util.DateUtil;
@@ -42,6 +43,8 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     FsBotConfig fsBotConfig;
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
+    @Autowired
+    AgentService agentService;
 
     @Override
     public void insert(CallOutPlan callOutPlan){
@@ -62,7 +65,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public QueryQueueCalls queueCalls(String queueId,Agent agent) {
+    public QueryQueueCalls queueCalls(String queueId,Long customerId) {
         Date date = DateUtil.initDateByDay();
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
         callOutPlanExample.createCriteria().andAgentGroupIdEqualTo(queueId).andAgentAnswerTimeGreaterThan(date);
@@ -73,6 +76,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
             queryQueueCalls.setWaitCount(fsManager.getWaitCount(queueId));
             queryQueueCalls.setQueueId(queueId);
         }
+        Agent agent = agentService.getAgentByCustomerId(customerId);
         if(agent!=null){
             CallOutPlanExample callOutPlanExample1 = new CallOutPlanExample();
             callOutPlanExample1.createCriteria().andAgentIdEqualTo(agent.getUserId()+"").andAgentAnswerTimeGreaterThan(date);

@@ -16,7 +16,7 @@ spring:
         max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-idle: 300 # 连接池中的最大空闲连接
         min-idle: 100 # 连接池中的最小空闲连接
-    rabbitmq:
+  rabbitmq:
       host: 192.168.1.81
       port: 5672
       virtual-host: /

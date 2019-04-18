@@ -20,7 +20,7 @@ public interface CallOutPlanService {
 
     CallOutPlan findByCallId(String recordId);
 
-    QueryQueueCalls queueCalls(String queueId,Agent agent);
+    QueryQueueCalls queueCalls(String queueId,Long customerId);
 
     void updateLabel(UpdateLabelRequest request);
 

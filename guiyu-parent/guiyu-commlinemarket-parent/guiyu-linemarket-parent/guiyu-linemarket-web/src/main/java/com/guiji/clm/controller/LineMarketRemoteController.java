@@ -101,6 +101,7 @@ public class LineMarketRemoteController implements LineMarketRemote{
 			}else {
 				//从原始线路中查找下
 				SipLineInfoQueryCondition sipCondition = new SipLineInfoQueryCondition();
+				sipCondition.setLineId(lineId);
 				List<SipLineBaseInfo> baseLineList = sipLineInfoService.querySipLineBaseListByCondition(sipCondition);
 				if(baseLineList!=null && !baseLineList.isEmpty()) {
 					vo.setLineName(baseLineList.get(0).getLineName());

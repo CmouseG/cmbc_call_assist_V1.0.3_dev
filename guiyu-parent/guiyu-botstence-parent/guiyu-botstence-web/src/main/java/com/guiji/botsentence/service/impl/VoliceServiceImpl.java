@@ -1445,15 +1445,16 @@ public class VoliceServiceImpl implements IVoliceService {
 		List<String> contentList = new ArrayList<>();
 
 		// 使用变量切割成的文案列表
-		/*if (null != array && array.length > 0) {
+		if (null != array && array.length > 0) {
 			for (int i = 0; i < array.length; i++) {
-				if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
+				/*if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
 						&& !"，".equals(array[i]) && !",".equals(array[i]) && !"！".equals(array[i])
 						&& !"!".equals(array[i]) && !"？".equals(array[i]) && !"?".equals(array[i])) {
 					contentList.add(array[i]);
-				}
+				}*/
+				contentList.add(array[i]);
 			}
-		}*/
+		}
 
 		
 		if (isStart) {

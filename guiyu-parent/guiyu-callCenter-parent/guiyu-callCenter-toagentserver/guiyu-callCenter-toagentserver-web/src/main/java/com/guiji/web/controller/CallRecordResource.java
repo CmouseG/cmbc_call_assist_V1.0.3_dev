@@ -1,10 +1,8 @@
 package com.guiji.web.controller;
 
-import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
-import com.guiji.entity.CustomSessionVar;
 import com.guiji.service.CallOutPlanService;
 import com.guiji.service.CallOutRecordService;
 import com.guiji.web.request.UpdateLabelRequest;
@@ -14,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.math.BigInteger;
 
 @Slf4j
 @RestController
@@ -47,10 +43,9 @@ public class CallRecordResource {
      * @return
      */
     @RequestMapping(path = "/queuecalls/{queueId}", method = RequestMethod.GET)
-    public Result.ReturnData<QueryQueueCalls> queueCalls(@PathVariable String queueId, HttpSession session) {
-        log.info("收到获取座席组通话信息的请求queueId[{}]",queueId);
-        Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        QueryQueueCalls queryQueueCalls = callOutPlanService.queueCalls(queueId,agent);
+    public Result.ReturnData<QueryQueueCalls> queueCalls(@PathVariable String queueId,@RequestHeader Long userId) {
+        log.info("收到获取座席组通话信息的请求queueId[{}],userId:[{}]",queueId,userId);
+        QueryQueueCalls queryQueueCalls = callOutPlanService.queueCalls(queueId,userId);
         return Result.ok(queryQueueCalls);
     }
 

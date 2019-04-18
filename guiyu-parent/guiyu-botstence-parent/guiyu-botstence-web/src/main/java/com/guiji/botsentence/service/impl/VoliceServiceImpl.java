@@ -1175,23 +1175,27 @@ public class VoliceServiceImpl implements IVoliceService {
 	public static void main(String[] args) {
 		String regEx = Constant.TTS_REG_EX;// 正则表达式
 		// 获取变量列表
-		String str = "$0003我们是中建集团的，有23年$0001$0002的开发历程，您可以了解一下哦！$0006";
+		String str = "$0001我们$1111$6666项目的具体地$1111址在南京雨花台，就在南京南火车站附$2222近，交通还是蛮方便的啊！$0002";
 		Pattern pattern = Pattern.compile(regEx);
 		Matcher matcher = pattern.matcher(str);
 		List<String> list = new ArrayList<>();
 		
 		while (matcher.find()) {
 			String match = matcher.group();
-			String [] array = str.split("[$]"+match.substring(1, match.length()));
+			int i = matcher.start();
+			str.substring(0, i);
+			//String [] array = str.split("[$]"+match.substring(1, match.length()));
+			String [] array = new String[2];
+			array[0] = str.substring(0, i);
+			array[1] = str.substring(i+5);
 			list.add(array[0]);
 			list.add(match);
-			if(array.length > 1) {
-				str = array[1];
-				if(!BotSentenceUtil.validateContainParam(str)) {
-					list.add(str);
-				}
-				matcher = pattern.matcher(str);
+			str = array[1];
+			if(!BotSentenceUtil.validateContainParam(str)) {
+				list.add(str);
+				break;
 			}
+			matcher = pattern.matcher(str);
 		}
 		
 		for(String temp : list) {
@@ -1529,7 +1533,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		List<String> list = new ArrayList<>();
 		Matcher matcher2 = pattern.matcher(newContent);
 		while (matcher2.find()) {
-			String match = matcher2.group();
+			/*String match = matcher2.group();
 			String [] array = newContent.split("[$]"+match.substring(1, match.length()));
 			list.add(array[0]);
 			list.add(match);
@@ -1539,7 +1543,23 @@ public class VoliceServiceImpl implements IVoliceService {
 					list.add(newContent);
 				}
 				matcher2 = pattern.matcher(newContent);
+			}*/
+
+			String match = matcher2.group();
+			int i = matcher2.start();
+			newContent.substring(0, i);
+			String [] array = new String[2];
+			array[0] = newContent.substring(0, i);
+			array[1] = newContent.substring(i+5);
+			list.add(array[0]);
+			list.add(match);
+			newContent = array[1];
+			if(!BotSentenceUtil.validateContainParam(newContent)) {
+				list.add(newContent);
+				break;
 			}
+			
+			matcher2 = pattern.matcher(newContent);
 		}
 		
 		int index = 1;

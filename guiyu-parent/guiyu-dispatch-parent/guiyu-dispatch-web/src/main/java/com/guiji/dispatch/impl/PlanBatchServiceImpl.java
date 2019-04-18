@@ -25,6 +25,7 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
+import com.guiji.dispatch.vo.JoinPlanDataVo;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
@@ -310,10 +311,10 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
 
             // 查询用户名称
-            SysUser sysUser = getApiService.getUserById(operUserId+"");
+            /*SysUser sysUser = getApiService.getUserById(operUserId+"");
             if (null == sysUser) {
                 throw new GuiyuException("用户不存在");
-            }
+            }*/
 
             //批次入库
             DispatchPlanBatch batchPlan = new DispatchPlanBatch();
@@ -353,12 +354,12 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         String operOrgCode = joinPlanDto.getOperOrgCode();  //企业编码
         OptPlanDto optPlanDto = joinPlanDto.getOptPlan();
         DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
-        // 查询用户名称
+        /*// 查询用户名称
         SysUser user = getApiService.getUserById(operUserId+"");
         if (user == null) {
             throw new GuiyuException("用户不存在");
         }
-        submitPlan.setUserName(user.getUsername());
+        submitPlan.setUserName(user.getUsername());*/
         //获取权限
         Integer authLevel = joinPlanDto.getAuthLevel();//操作用户权限等级
         optPlanDto.setAuthLevel(authLevel);
@@ -368,11 +369,12 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 optPlanDto.getOrgIdList()
                 :getAuthUtil.getOrgIdsByAuthLevel(authLevel,operOrgId));//获取组织ID
         int limit = 30000;
+        logger.info("批量加入查询条件:{}", JsonUtils.bean2Json(optPlanDto));
         //查询条件列表（注意，号码去重）
-        List<String> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
+        List<JoinPlanDataVo> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
         logger.info(">>>>>加入数量:{}", null != phoneList?phoneList.size():0);
-        for(String phone : phoneList){
-            this.pushPlanCreateMQ(submitPlan, batchId, phone, operUserId, operOrgId, operOrgCode);
+        for(JoinPlanDataVo phoneData : phoneList){
+            this.pushPlanCreateMQ(submitPlan, batchId, phoneData, operUserId, operOrgId, operOrgCode);
         }
     }
 
@@ -380,21 +382,22 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
      * 推送MQ
      * @param submitPlan
      * @param batchId
-     * @param phone
+     * @param phoneData
      * @param userId
      * @param orgId
      * @param orgCode
      */
-    private void pushPlanCreateMQ(DispatchPlan submitPlan, Integer batchId, String phone, Long userId, Integer orgId, String orgCode){
+    private void pushPlanCreateMQ(DispatchPlan submitPlan, Integer batchId, JoinPlanDataVo phoneData, Long userId, Integer orgId, String orgCode){
         try {
             DispatchPlan newPlan = new DispatchPlan();
             if(null != submitPlan){
                 BeanUtils.copyProperties(submitPlan, newPlan, DispatchPlan.class);
             }
-            newPlan.setPhone(phone);
-            newPlan.setParams(submitPlan.getParams());
-            newPlan.setAttach(submitPlan.getAttach());
+            newPlan.setPhone(phoneData.getPhone()); //号码
+            newPlan.setParams(phoneData.getParams());   //参数
+            newPlan.setAttach(phoneData.getAttach());   //参数、备注
             newPlan.setRobot(submitPlan.getRobot());
+            newPlan.setCallAgent(submitPlan.getCallAgent());
 
             newPlan.setBatchId(batchId);
             newPlan.setBatchName(submitPlan.getBatchName());

@@ -16,11 +16,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.guiji.auth.api.IOrg;
-import com.guiji.ccmanager.entity.RateTimeReq;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.ccmanager.entity.LineRateResponse;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.model.RateTimeReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +36,6 @@ import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-
 @Service
 public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 {
@@ -146,8 +144,11 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 			RateTimeReq rateTime = new RateTimeReq();
 			rateTime.setStartTime(getStartTime());
 			rateTime.setEndTime(getnowEndTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String startTime = sdf.format(rateTime.getStartTime());
+			String endTime = sdf.format(rateTime.getEndTime());
 			//查询两个月的接通率
-			ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(rateTime);
+			ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(startTime, endTime);
 			if (lineRateAll.getBody() != null) {
 				logger.info("查询线路监控数量>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lineRateAll.getBody().size());
 				redisUtils.set("LINE_RATE_DATA", lineRateAll.getBody());
@@ -169,7 +170,7 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 				continue;
 			}
 
-			// 线路是网关SIM卡类型就不排序
+			// 线路一条的话就不排序0
 			if (dis.getLineType() == PlanLineTypeEnum.GATEWAY.getType()) {
 				res.add(dis);
 				continue;

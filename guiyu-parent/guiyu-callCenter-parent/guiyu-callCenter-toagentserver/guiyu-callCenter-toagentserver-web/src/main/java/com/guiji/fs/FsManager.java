@@ -340,6 +340,7 @@ public class FsManager {
                 Agent agent = new Agent();
                 agent.setAgentId(agentInfo.getAgentId());
                 agent.setContact(agentInfo.getContact());
+                agent.setStatus(agentInfo.getStatus());
                 agentList.add(agent);
             }
         }

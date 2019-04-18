@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1290,12 +1292,25 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 			keys = botSentenceIntent.getKeywords();
 			
 			if(StringUtils.isNotBlank(keys) && keys.length() > 2) {
-				keys = keys.substring(1, keys.length() - 1);//去掉前后的[]号
+				List<String> keywordsList = JSON.parseArray(keys,  String.class);
+
+				List<String> keywordsReusltList = Lists.newArrayList();
+
+				keywordsList.forEach(keyword -> {
+					if(keyword.contains("[")){
+						keywordsReusltList.add(keyword);
+					}else {
+						keywordsReusltList.add("\"" + keyword +"\"");
+					}
+				});
+
+				String keywordJson = String.join(",", keywordsReusltList);
+
 				if(selectMap.containsKey(domainName)) {
 					String existKeywords = selectMap.get(domainName);
-					keys = existKeywords + "," + keys;
+					keywordJson = existKeywords + "," + keywordJson;
 				}
-				selectMap.put(domainName, keys);
+				selectMap.put(domainName, keywordJson);
 			}
 		}
 		

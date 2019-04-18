@@ -39,7 +39,7 @@ rabbit:
 
 
 filePath: /home/apps/tts/wav/
-ttsServiceUrl: http://218.2.153.30:8089/synthesize
+ttsServiceUrl: http://218.2.153.30:18080/synthesize
 nasServiceUrl: http://172.16.167.214:38002/uploadFile  #nas部署机器
 
 

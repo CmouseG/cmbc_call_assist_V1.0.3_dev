@@ -39,5 +39,5 @@ properties:
   
 
 
-guiyu_tts_2_url: http://172.16.167.214:38001/
+guiyu_tts_2_url: http://172.16.167.214:38002/
 notifyAiUrl: http://172.16.167.213:18000/ai/callback

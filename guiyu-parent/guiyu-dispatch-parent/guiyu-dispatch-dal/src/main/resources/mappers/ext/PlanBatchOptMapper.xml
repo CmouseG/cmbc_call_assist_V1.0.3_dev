@@ -299,72 +299,11 @@
 
     <select id="getDisPhone" resultType="com.guiji.dispatch.vo.JoinPlanDataVo">
         SELECT
-          b.phone, b.attach, b.params, b.call_agent
+          a.phone, a.attach, a.params, MAX(a.gmt_create)
         FROM
         (
             SELECT
-              c.phone, MAX(c.gmt_create) AS gmt_create
-            FROM
-            (
-                SELECT
-                  p.phone, gmt_create
-                FROM dispatch_plan p
-                WHERE p.is_del = 0
-                <if test="optPlanDto != null">
-                    <if test="optPlanDto.orgIdList != null">
-                        AND p.org_id IN
-                        <foreach collection="optPlanDto.orgIdList" item="orgId" open="(" close=")" separator=",">
-                            #{orgId}
-                        </foreach>
-                    </if>
-                    <if test="optPlanDto.batchId != null">
-                        AND p.batch_id = #{optPlanDto.batchId}
-                    </if>
-                    <if test="optPlanDto.startTime != null and optPlanDto.endTime != null">
-                        AND p.gmt_create BETWEEN #{optPlanDto.startTime} AND #{optPlanDto.endTime}
-                    </if>
-                    <if test="optPlanDto.startCallData != null and optPlanDto.endCallData != null">
-                        AND p.call_data BETWEEN #{optPlanDto.startCallData} AND #{optPlanDto.endCallData}
-                    </if>
-                    <if test="optPlanDto.userId != null and optPlanDto.userId != ''">
-                        AND p.user_id = #{optPlanDto.userId}
-                    </if>
-                    <if test="optPlanDto.phone != null and optPlanDto.phone != ''">
-                        AND p.phone = #{optPlanDto.phone}
-                    </if>
-                    <if test="optPlanDto.planStatusList != null and optPlanDto.planStatusList.size()>0">
-                        AND p.status_plan IN
-                        <foreach collection="optPlanDto.planStatusList" item="statusPlan" open="(" close=")" separator=",">
-                            #{statusPlan}
-                        </foreach>
-                    </if>
-                    <if test="optPlanDto.resultList != null and optPlanDto.resultList.size()>0">
-                        AND p.result IN
-                        <foreach collection="optPlanDto.resultList" item="result" open="(" close=")" separator=",">
-                            #{result}
-                        </foreach>
-                    </if>
-                    <if test="optPlanDto.checkPlanUuid != null and optPlanDto.checkPlanUuid.size()>0">
-                        AND p.plan_uuid IN
-                        <foreach collection="optPlanDto.checkPlanUuid" item="planUuid" open="(" close=")" separator=",">
-                            #{planUuid}
-                        </foreach>
-                    </if>
-                    <if test="optPlanDto.nocheckPlanUuid != null and optPlanDto.nocheckPlanUuid.size()>0">
-                        AND p.plan_uuid NOT IN
-                        <foreach collection="optPlanDto.nocheckPlanUuid" item="planUuid" open="(" close=")" separator=",">
-                            #{planUuid}
-                        </foreach>
-                    </if>
-                </if>
-                ORDER BY gmt_create DESC
-                LIMIT 0, #{limit}
-                ) c
-            GROUP BY c.phone
-        ) a,
-        (
-            SELECT
-              p.phone, p.gmt_create, p.attach, p.params, p.call_agent
+              p.phone, p.attach, p.params, p.gmt_create
             FROM dispatch_plan p
             WHERE p.is_del = 0
             <if test="optPlanDto != null">
@@ -414,9 +353,11 @@
                     </foreach>
                 </if>
             </if>
-        ) b
-        WHERE a.phone = b.phone
-        AND a.gmt_create = b.gmt_create
+            ORDER BY p.gmt_create DESC
+            LIMIT 0, #{limit}
+        ) a
+        GROUP BY a.phone, a.attach, a.params
+
         <!--  因为在MQ消费流程中已经过滤黑名单，所以此处不需要关联过滤黑名单
         WHERE
         (SELECT COUNT(b.id) FROM black_list b

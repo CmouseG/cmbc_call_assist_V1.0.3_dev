@@ -146,8 +146,11 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 			RateTimeReq rateTime = new RateTimeReq();
 			rateTime.setStartTime(getStartTime());
 			rateTime.setEndTime(getnowEndTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String startTime = sdf.format(rateTime.getStartTime());
+			String endTime = sdf.format(rateTime.getEndTime());
 			//查询两个月的接通率
-			ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(rateTime);
+			ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(startTime, endTime);
 			if (lineRateAll.getBody() != null) {
 				logger.info("查询线路监控数量>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lineRateAll.getBody().size());
 				redisUtils.set("LINE_RATE_DATA", lineRateAll.getBody());

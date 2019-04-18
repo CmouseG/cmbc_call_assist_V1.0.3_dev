@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +37,12 @@ public class LineRateController implements ILineRate {
     }
 
     @Override
-    public Result.ReturnData<List<LineRateResponse>> getLineRateAll(@RequestBody RateTimeReq rateTime){
-
-        List<LineRateResponse> list =lineRateService.getLineRateAll(rateTime.getStartTime(), rateTime.getEndTime());
+    public Result.ReturnData<List<LineRateResponse>> getLineRateAll( @RequestParam(value = "startTime") String startTime,
+                                                                     @RequestParam(value = "endTime") String endTime)throws Exception{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = sdf.parse(startTime);
+        Date end = sdf.parse(endTime);
+        List<LineRateResponse> list =lineRateService.getLineRateAll(start, end);
 
         return Result.ok(list);
     }

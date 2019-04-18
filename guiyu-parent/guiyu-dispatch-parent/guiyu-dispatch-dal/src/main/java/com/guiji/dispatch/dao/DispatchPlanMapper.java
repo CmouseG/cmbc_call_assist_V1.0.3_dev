@@ -47,10 +47,10 @@ public interface DispatchPlanMapper {
                                     @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
     //查询任务计划
-    DispatchPlan queryDispatchPlanById(@Param("planUuid") long planUuId, @Param("orgId") Integer orgId);
+    DispatchPlan queryDispatchPlanById(@Param("planUuid") long planUuid, @Param("orgId") Integer orgId);
 
     //查询任务计划备注
-    String queryPlanRemarkById(@Param("planUuid") long planUuId, @Param("orgId") Integer orgId);
+    String queryPlanRemarkById(@Param("planUuid") long planUuid, @Param("orgId") Integer orgId);
 
     //查询下载数据
     List<DownLoadPlanVo> queryDownloadPlanList(DispatchPlanExample example);

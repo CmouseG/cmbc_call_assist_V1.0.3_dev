@@ -1303,7 +1303,14 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 						keywordsReusltList.add("\"" + keyword +"\"");
 					}
 				});
-				selectMap.put(domainName, String.join(",", keywordsReusltList));
+
+				String keywordJson = String.join(",", keywordsReusltList);
+
+				if(selectMap.containsKey(domainName)) {
+					String existKeywords = selectMap.get(domainName);
+					keywordJson = existKeywords + "," + keywordJson;
+				}
+				selectMap.put(domainName, keywordJson);
 			}
 		}
 		

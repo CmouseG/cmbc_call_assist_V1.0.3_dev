@@ -1,0 +1,6 @@
+1、用户登录，创建话术并审核通过后，配置给此用户； 找张朋，将数据库中，此模板key换成zxyhxyk_en
+   脚本：-- 第一个template_id为飞龙模板key，第二个template_id为需要修改的key
+        update bot_available_template set template_id='' where template_id='';
+        update bot_sentence_process set template_id='' where template_id='';
+2、修改robot配置文件，添加：    flydragon_server_url: http://飞龙ip:飞龙port （按上线后分配的服务器ip和port）线上环境对应为flydragon_server_url: http://172.16.168.219:10000
+3、打开部署 robot和 calloutserver的服务器，进/home/botstence_robot_tmpl和/home/botstence_tmpl路径下，将zxyhxyk_en文件放进去

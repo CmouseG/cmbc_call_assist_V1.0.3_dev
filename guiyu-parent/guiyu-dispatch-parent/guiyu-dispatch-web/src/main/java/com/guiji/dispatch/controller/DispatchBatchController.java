@@ -33,6 +33,7 @@ public class DispatchBatchController {
     public boolean delPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
                                 @RequestBody OptPlanDto optPlanDto){
+        logger.info("/dispatch/batch/controller/delPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -40,7 +41,6 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgCode(orgCode);
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
-        logger.info("/dispatch/batch/controller/delPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.delPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("删除计划失败");

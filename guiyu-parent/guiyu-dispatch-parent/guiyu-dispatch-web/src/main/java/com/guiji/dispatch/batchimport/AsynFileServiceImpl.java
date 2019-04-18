@@ -79,8 +79,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		dispatchPlanBatch.setStatusShow(Constant.BATCH_STATUS_SHOW);
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 
-		File exelFile = getFile(file);//获取文件
-		FileRecords FileRecord = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, exelFile);
+		FileRecords FileRecord = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, file);
 		dispatchPlan.setFileRecordId(FileRecord.getId().intValue());
 
 		//路线类型
@@ -90,6 +89,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		List<DispatchBatchLine> lineList = dispatchPlan.getLines();
 		for (DispatchBatchLine lines : lineList) {
 			lines.setBatchId(dispatchPlanBatch.getId());
+			lines.setLineType(dispatchPlan.getLineType());
 			lines.setOrgId(orgId);
 			lines.setUserId(userId.intValue());
 			lines.setLineType(lineType);
@@ -97,11 +97,11 @@ public class AsynFileServiceImpl implements AsynFileService {
 		}
 
 		// 导入
-		batchImportService.batchImport(exelFile, dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode, orgId);
+		batchImportService.batchImport(new BufferedInputStream(file.getInputStream()), dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode, orgId);
 	}
 
 	private FileRecords saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,
-			Long userId, String orgCode, File file) throws Exception {
+			Long userId, String orgCode, MultipartFile file) throws Exception {
 		// 用户
 		ReturnData<SysUser> user = authService.getUserById(userId);
 		// 线路
@@ -143,7 +143,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		sysFileReqVO.setBusiType("dispatch"); // 上传的影像文件业务类型
 		sysFileReqVO.setSysCode("02"); // 文件上传系统码
 		sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
-		SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
+		SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, getFile(file));
 		fileRecords = new FileRecords();
 		fileRecords.setId(fileRecordId);
 		fileRecords.setUrl(sysFileRsp.getSkUrl());

@@ -4,9 +4,6 @@ public class RedisConstant {
 
     public static interface RedisConstantKey{
 
-        //系统最大并发数
-        public static final String REDIS_SYSTEM_MAX_PLAN = "REDIS_SYSTEM_MAX_PLAN";
-
         //推入redis总列表
         public static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 

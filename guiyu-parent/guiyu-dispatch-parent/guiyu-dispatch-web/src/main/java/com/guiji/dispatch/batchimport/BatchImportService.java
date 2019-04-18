@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 @Service
@@ -41,14 +38,10 @@ public class BatchImportService implements IBatchImportService {
 
 	@Async("asyncBatchImportExecutor")
 	@Override
-	public void batchImport(File file, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode, Integer orgId)
+	public void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode, Integer orgId)
 	{
-		InputStream inputStream = null;
-		BufferedInputStream buffer = null;
 		try
 		{
-			inputStream = new FileInputStream(file);
-			buffer = new BufferedInputStream(inputStream);
 			logger.info("批量导入开始，批次ID:{},dispatchPlanParam:{},userId:{},orgCode:{},orgId:{}",batchId,dispatchPlanParam,userId,orgCode,orgId);
 			BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode, orgId);
 			excelListener.setBatchImportQueueHandler(batchImportQueueHandler);
@@ -56,16 +49,12 @@ public class BatchImportService implements IBatchImportService {
 			excelListener.setFileRecordErrorService(fileRecordErrorService);
 			excelListener.setFileRecordsMapper(fileRecordsMapper);
 			excelListener.setPhoneRegionService(phoneRegionService);
-			EasyExcelFactory.readBySax(buffer, new Sheet(1, 1, BatchImportExcelModel.class), excelListener);
+			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, BatchImportExcelModel.class), excelListener);
 		} catch (Exception e) {
 			logger.error("批量导入失败!!!", e);
 			throw new GuiyuException(e);
 		} finally {
-			IOUtils.close(buffer);
 			IOUtils.close(inputStream);
-			if(null != file && file.exists()){
-				file.delete();
-			}
 		}
 	}
 }

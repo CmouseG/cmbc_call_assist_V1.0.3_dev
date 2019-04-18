@@ -1,0 +1,1 @@
+转人工配置文文件callCenter-toagent.yml 中加上MQ和redis的配置

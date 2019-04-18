@@ -369,6 +369,7 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 optPlanDto.getOrgIdList()
                 :getAuthUtil.getOrgIdsByAuthLevel(authLevel,operOrgId));//获取组织ID
         int limit = 30000;
+        logger.info("批量加入查询条件:{}", JsonUtils.bean2Json(optPlanDto));
         //查询条件列表（注意，号码去重）
         List<JoinPlanDataVo> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
         logger.info(">>>>>加入数量:{}", null != phoneList?phoneList.size():0);

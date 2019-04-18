@@ -1,7 +1,9 @@
 package com.guiji.dispatch.util;
 
 import com.guiji.dispatch.bean.UserLineBotenceVO;
+import com.guiji.robot.model.TemplateInfo;
 import com.guiji.robot.model.UserResourceCache;
+import com.guiji.robot.model.UserResourceCacheWithVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.Map;
 public class AllotUserLineBotenceUtil {
 
     public static List<UserLineBotenceVO> allot(List<UserLineBotenceVO> userLineBotenceVOList,
-                                                List<UserResourceCache> configRes, Integer maxRobot) {
+                                                List<UserResourceCacheWithVersion> configRes, Integer maxRobot) {
 
         List<UserLineBotenceVO> result = new ArrayList<>();
         if (userLineBotenceVOList == null || userLineBotenceVOList.isEmpty()) {
@@ -26,6 +28,7 @@ public class AllotUserLineBotenceUtil {
                 if (hasDistributeCount == userLineBotenceVOList.size()) {
                     return result;
                 }
+
                 // 至少给一个机器人
                 item.setMaxRobotCount(1);
                 result.add(item);
@@ -130,8 +133,6 @@ public class AllotUserLineBotenceUtil {
             return result;
         }
 
-        System.out.println(userLineBotenceVOList);
-
         String key = "";
         for (UserLineBotenceVO item : userLineBotenceVOList) {
             key = item.getUserId() + "-" + item.getBotenceName();
@@ -155,15 +156,18 @@ public class AllotUserLineBotenceUtil {
      * @param configRes
      * @return
      */
-    public static Map<String, Integer> convertUserRes2Map(List<UserResourceCache> configRes) {
+    public static Map<String, Integer> convertUserRes2Map(List<UserResourceCacheWithVersion> configRes) {
         Map<String, Integer> result = new HashMap<>();
         if (configRes == null) {
             return result;
         }
 
-        for (UserResourceCache item : configRes) {
-            for (Map.Entry<String, Integer> ent : item.getTempAiNumMap().entrySet()) {
-                result.put(item.getUserId() + "-" + ent.getKey(), ent.getValue());
+        for (UserResourceCacheWithVersion item : configRes) {
+            for (Map.Entry<String, TemplateInfo> ent : item.getTempInfoMap().entrySet()) {
+                if(null != ent.getValue()){
+                    TemplateInfo templ = (TemplateInfo)ent.getValue();
+                    result.put(item.getUserId() + "-" + ent.getKey(), templ.getNum());
+                }
             }
         }
 

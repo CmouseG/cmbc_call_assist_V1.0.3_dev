@@ -502,6 +502,7 @@ public class CallCenterConfig {
             xa.setName(agent.getAgentId());
             xa.setContact(agent.getContact());
             xa.setMax_no_answer("999999");
+            xa.setStatus(agent.getStatus().getStrStatus());
             callCenterConfig.getAgents().getAgent().add(xa);
         }
         for (Queue queue:queueList) {

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.utils.JsonUtils;
+import net.minidev.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -373,6 +375,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			sellbotRestoreReq.setCfg(aiCallStartReq.getTemplateId()); //话术模板
 			sellbotRestoreReq.setPhonenum(aiCallStartReq.getPhoneNo());	//手机号
 			sellbotRestoreReq.setSeqid(aiCallStartReq.getSeqId());	//会话ID
+
+			logger.info("请求sellbot:{}", JsonUtils.bean2Json(nowAi) + JsonUtils.bean2Json(sellbotRestoreReq));
 			String sellbotRsp = robotServerSwitchService.getRobotServerInstance(aiCallStartReq.getTemplateId()).restore(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotRestoreReq);
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());

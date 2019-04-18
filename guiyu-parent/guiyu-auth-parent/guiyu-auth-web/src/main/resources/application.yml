@@ -90,6 +90,6 @@ weixin:
 rabbit:
   general:
     direct:
-      queue: OrgIdMQ.direct.Auth
+      queue: OrgIdMQ.direct.Auth|SyncAgentMembers.direct.Auth|DelAgentMembers.direct.Auth
 
     

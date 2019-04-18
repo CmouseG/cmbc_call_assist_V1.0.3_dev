@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
-import com.guiji.component.result.Result;
-import com.guiji.toagentserver.api.IAgentGroup;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.toagentserver.entity.AgentMembrVO;
 import com.guiji.user.dao.SysRoleUserMapper;
 import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysRoleUser;
 import com.guiji.user.dao.entity.SysRoleUserExample;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,13 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AgentGroupChangeService {
 	@Autowired
-	IAgentGroup iAgentGroup;
-	@Autowired
 	UserService userService; 
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
 	@Autowired
 	PrivilegeService privilegeService;
+	@Autowired
+	private QueueSender queueSender;
 	
 	/**
 	 * 新增某些权限，校验是否需要调用呼叫中心新增坐席人员
@@ -66,8 +66,7 @@ public class AgentGroupChangeService {
 					agentMembers.add(vo);
 				}
 				log.info("调用转人工服务,通知增加坐席：{}",agentMembers);
-				Result.ReturnData rspData = iAgentGroup.syncAgentMembers(agentMembers);
-				log.info("调用转人工服务,通知增加坐席,返回数据：{}",rspData);
+				queueSender.send("SyncAgentMembers.direct.Auth", JsonUtils.bean2Json(agentMembers));
 			}
 		}
 	}
@@ -91,8 +90,7 @@ public class AgentGroupChangeService {
 						vo.setOrgCode(sysUser.getOrgCode());
 						agentMembers.add(vo);
 						log.info("调用转人工服务,通知增加坐席：{}",agentMembers);
-						Result.ReturnData rspData = iAgentGroup.syncAgentMembers(agentMembers);
-						log.info("调用转人工服务,通知增加坐席,返回数据：{}",rspData);
+						queueSender.send("SyncAgentMembers.direct.Auth", JsonUtils.bean2Json(agentMembers));
 						break;
 					}
 				}
@@ -122,8 +120,7 @@ public class AgentGroupChangeService {
 					userList.add(roleUser.getUserId());
 				}
 				log.info("调用转人工服务,通知删除坐席：{}",userList);
-				Result.ReturnData rspData = iAgentGroup.delAgentMembers(userList);
-				log.info("调用转人工服务,通知删除坐席,返回数据：{}",rspData);
+				queueSender.send("DelAgentMembers.direct.Auth", JsonUtils.bean2Json(userList));
 			}
 		}
 	}
@@ -139,7 +136,7 @@ public class AgentGroupChangeService {
 		{
 			List<Long> userList = new ArrayList<Long>();
 			userList.add(user.getId());
-			iAgentGroup.delAgentMembers(userList);
+			queueSender.send("DelAgentMembers.direct.Auth", JsonUtils.bean2Json(userList));
 		}
 		if(!oldResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"") && newResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"")) //绑定
 		{
@@ -150,7 +147,7 @@ public class AgentGroupChangeService {
 			vo.setLoginAccount(user.getUsername());
 			vo.setOrgCode(user.getOrgCode());
 			agentMembers.add(vo);
-			iAgentGroup.syncAgentMembers(agentMembers);
+			queueSender.send("SyncAgentMembers.direct.Auth", JsonUtils.bean2Json(agentMembers));
 		}
 	}
 	

@@ -1,5 +1,8 @@
 package com.guiji.billing.sys;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,6 +13,8 @@ import java.util.List;
  * @param <T>
  */
 public class ResultPage<T> implements Serializable {
+
+	private Logger logger = LoggerFactory.getLogger(ResultPage.class);
 
 	/**
 	 * 
@@ -34,7 +39,7 @@ public class ResultPage<T> implements Serializable {
 	/**
 	 * 每页默认条数 默认10条
 	 */
-	public static int defaultPageSize = 10;
+	public final static int defaultPageSize = 10;
 
 	/**
 	 * 排序字段
@@ -100,7 +105,7 @@ public class ResultPage<T> implements Serializable {
 		this.isPage = pageNo > 0 ? true : false; // 不传当前页数，则判断为不需要分页
 		this.pageNo = pageNo > 0 ? pageNo : 1; // 当前页数
 		this.pageSize = defaultPageSize; // 没有设置每页条数，采用默认每页条数
-		this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+		this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 	}
 
 	/**
@@ -114,7 +119,7 @@ public class ResultPage<T> implements Serializable {
 		this.isPage = pageNo > 0 ? true : false; // 不传当前页数，则判断为不需要分页
 		this.pageNo = pageNo > 0 ? pageNo : 1; // 当前页数
 		this.pageSize = setPageSize > 0 ? setPageSize : defaultPageSize; // 设置每页条数
-		this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+		this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 	}
 
 	/**
@@ -129,7 +134,7 @@ public class ResultPage<T> implements Serializable {
 		this.isPage = pageNo > 0 ? true : false; // 不传当前页数，则判断为不需要分页
 		this.pageNo = pageNo > 0 ? pageNo : 1; // 当前页数
 		this.pageSize = defaultPageSize; // 没有设置每页条数，采用默认每页条数
-		this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+		this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 		this.orderBy = orderBy; // 排序字段
 		this.sort = sort; // 排列顺序，升序:ASC,降序:DESC
 	}
@@ -147,7 +152,7 @@ public class ResultPage<T> implements Serializable {
 		this.isPage = pageNo > 0 ? true : false; // 不传当前页数，则判断为不需要分页
 		this.pageNo = pageNo > 0 ? pageNo : 1; // 当前页数
 		this.pageSize = setPageSize > 0 ? setPageSize : defaultPageSize; // 设置每页条数
-		this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+		this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 		this.orderBy = orderBy; // 排序字段
 		this.sort = sort; // 排列顺序，升序:ASC,降序:DESC
 	}
@@ -164,7 +169,7 @@ public class ResultPage<T> implements Serializable {
 				this.isPage = pageDto.getPageNo() > 0 ? true : false; // 不传当前页数，则判断为不需要分页
 				this.pageNo = pageDto.getPageNo() > 0 ? pageDto.getPageNo() : 1; // 当前页数
 				this.pageSize = pageDto.getPageSize() > 0 ? pageDto.getPageSize() : defaultPageSize; // 设置每页条数
-				this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+				this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 				if(null != pageDto.getOrderBy()){
 					this.orderBy = pageDto.getOrderBy(); //排序字段
 					this.sort = pageDto.getSort(); //排列顺序，升序:ASC,降序:DESC
@@ -172,9 +177,9 @@ public class ResultPage<T> implements Serializable {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			this.isPage = false;
-			return;
+			logger.error("com.guiji.billing.sys.ResultPage.ResultPage", e);
+			e.printStackTrace();
 		}
 	}
 
@@ -321,7 +326,7 @@ public class ResultPage<T> implements Serializable {
 	public long getNextPage() {
 		nextPage = this.getPageNo();
 		if (this.isHasNextPage()) {
-			nextPage = this.getPageNo() + 1;
+			nextPage = (long)(this.getPageNo() + 1);
 		}
 		return nextPage;
 	}
@@ -334,7 +339,7 @@ public class ResultPage<T> implements Serializable {
 	public long getPrePage() {
 		prePage = this.getPageNo();
 		if (this.isHasPrePage()) {
-			prePage = this.getPageNo() - 1;
+			prePage = (long)(this.getPageNo() - 1);
 		}
 		return prePage;
 	}

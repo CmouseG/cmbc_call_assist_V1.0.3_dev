@@ -41,7 +41,7 @@ public class PageDto extends BaseDto {
 		this.isPage = true; // 不传当前页数，则判断为不需要分页
 		this.pageNo = pageNo > 0 ? pageNo : 1; // 当前页数
 		this.pageSize = pageSize > 0 ? pageSize : 10; // 没有设置每页条数，采用默认每页条数
-		this.indexStart = (this.pageNo - 1) * this.pageSize; // 计算当前开始上标位置
+		this.indexStart = (long)((this.pageNo - 1) * this.pageSize); // 计算当前开始上标位置
 	}
 
 	 /**

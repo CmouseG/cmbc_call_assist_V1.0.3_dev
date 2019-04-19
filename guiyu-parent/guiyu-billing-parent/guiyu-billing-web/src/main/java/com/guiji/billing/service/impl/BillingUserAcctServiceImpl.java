@@ -262,7 +262,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 arrearageNotifyVo.setIsArrearage(AcctArrearageStatusEnum.ARREARAGE.getStatus());
             }
         }
-        logger.info("最终结果，欠费用户列表:{},日志ID:{}", null != arrearageNotifyVo? JsonUtils.bean2Json(arrearageNotifyVo):null, logId);
+        logger.info("最终结果，欠费用户列表:{},日志ID:{}", JsonUtils.bean2Json(arrearageNotifyVo));
         return arrearageNotifyVo;
     }
 

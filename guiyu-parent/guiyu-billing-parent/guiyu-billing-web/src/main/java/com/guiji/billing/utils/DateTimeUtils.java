@@ -2,6 +2,8 @@ package com.guiji.billing.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Time;
 import java.text.DateFormat;
@@ -20,7 +22,8 @@ import java.util.regex.Pattern;
  *
  */
 public class DateTimeUtils {
-//	private final static Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
+
+	public static Logger logger = LoggerFactory.getLogger(DateTimeUtils.class);
 	
 	public final static String DEFAULT_DATE_FORMAT_PATTERN_SHORT = "yyyy-MM-dd";
 	
@@ -346,6 +349,7 @@ public class DateTimeUtils {
 			}
 			days = diff / (1000 * 60 * 60 * 24);
 		} catch (Exception e) {
+			logger.error("", e);
 			e.printStackTrace();
 		}
 		return days;
@@ -370,6 +374,7 @@ public class DateTimeUtils {
 			}
 			days = diff / (1000 * 60 * 60 * 24);
 		} catch (Exception e) {
+			logger.error("", e);
 			e.printStackTrace();
 		}
 		return days;
@@ -383,7 +388,7 @@ public class DateTimeUtils {
 	 */
 	public static long getDistanceYears(Date date1, Date date2){
 		if (date1 != null && date2 != null){
-			return date2.getYear() - date1.getYear();
+			return (long)(date2.getYear() - date1.getYear());
 		}
 		return 0;
 

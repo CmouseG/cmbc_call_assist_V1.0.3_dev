@@ -30,7 +30,7 @@ public class GetApiServiceImpl implements GetApiService {
         if(!StringUtils.isEmpty(userId)) {
             //获取企业组织, code后面不带点.
             SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
-            logger.info("根据用户ID:{}查询企业组织:{}", null !=org?JsonUtils.bean2Json(org):org);
+            logger.info("根据用户ID:{}查询企业组织:{}", userId, null !=org?JsonUtils.bean2Json(org):org);
             return org;
         }else{
             return null;

@@ -3,6 +3,7 @@ package com.guiji.clm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -99,7 +100,7 @@ public class VoipGwController {
 		}
 		if(condition.getGwStatus()==null) {
 			//默认查询正常数据
-			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+			condition.setGwStatus(Lists.newArrayList(VoipGwStatusEnum.OK.getCode()));
 		}
 		Page<VoipGwInfoVO> page = voipGwManager.queryVoipGwForPageWrap(condition.getPageNo(), condition.getPageSize(), condition);
 		return Result.ok(page);
@@ -167,7 +168,7 @@ public class VoipGwController {
 		}
 		if(condition.getGwStatus()==null) {
 			//默认查询正常数据
-			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+			condition.setGwStatus(Lists.newArrayList(VoipGwStatusEnum.OK.getCode()));
 		}
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return Result.ok(list);
@@ -189,7 +190,7 @@ public class VoipGwController {
 		}
 		if(condition.getGwStatus()==null) {
 			//默认查询正常数据
-			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+			condition.setGwStatus(Lists.newArrayList(VoipGwStatusEnum.OK.getCode()));
 		}
 		condition.setOrgCode(orgCode);
 		Page<VoipGwPortVO> portPage = voipGwManager.queryVoipGwPortListWrapForPage(condition);
@@ -208,7 +209,7 @@ public class VoipGwController {
 		condition.setUserId(userId.toString());
 		if(condition.getGwStatus()==null) {
 			//默认查询正常数据
-			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+			condition.setGwStatus(Lists.newArrayList(VoipGwStatusEnum.OK.getCode()));
 		}
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return Result.ok(list);

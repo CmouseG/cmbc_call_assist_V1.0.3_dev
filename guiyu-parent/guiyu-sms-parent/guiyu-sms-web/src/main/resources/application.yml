@@ -6,12 +6,12 @@ spring:
     name: guiyu-sms-web
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: 123456
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: sms
+    password: sms@1234
   redis:
     database: 8
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 6379
     password: 123456
     pool:
@@ -20,7 +20,7 @@ spring:
       max-idle: 8
       min-idle: 0
   rabbitmq:
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 5672
     virtual-host: /
     username: guiyu
@@ -74,7 +74,7 @@ xxl:
   job:
     admin:
       ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
+      addresses: http://192.168.1.57:18016/xxl-job-admin
     executor:
       ip:
       port: 9017

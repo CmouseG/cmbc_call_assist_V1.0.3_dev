@@ -164,11 +164,17 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
         List<BotSentenceBranch> specialCommonDialogBranches = Lists.newArrayList();
 
+        List specialDomainNames = Arrays.asList("投诉","拒绝","用户不清楚");
+        BotSentenceBranch currentBranch = botSentenceBranchMapper.selectByPrimaryKey(currentBranchId);
+        if(!"结束_在忙".equals(currentBranch.getDomain())){
+            specialDomainNames.add("在忙");
+        }
+
         BotSentenceBranchExample negativeBranchExample = new BotSentenceBranchExample();
         negativeBranchExample.createCriteria()
                 .andProcessIdEqualTo(processId)
                 .andIntentsIsNotNull()
-                .andDomainIn(Arrays.asList("在忙","投诉","拒绝","用户不清楚"))
+                .andDomainIn(specialDomainNames)
                 .andBranchNameEqualTo("negative");
 
         specialCommonDialogBranches.addAll(botSentenceBranchMapper.selectByExample(negativeBranchExample));

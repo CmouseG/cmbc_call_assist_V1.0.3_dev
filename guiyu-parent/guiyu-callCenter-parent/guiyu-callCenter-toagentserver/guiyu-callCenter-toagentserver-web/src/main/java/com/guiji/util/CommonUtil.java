@@ -63,22 +63,6 @@ public class CommonUtil {
 		return  UUID.randomUUID().toString();
 	}
 
-
-	/**
-	 * 生成6位验证码
-	 *
-	 * @return
-	 */
-	public static String getValidateCode() {
-		//生成6位验证码
-		Random random = new Random();
-		String result = "";
-		for (int i = 0; i < 6; i++) {
-			result += random.nextInt(10);
-		}
-		return result;
-	}
-
     /**
      * xml to javabean
      *
@@ -198,13 +182,14 @@ public class CommonUtil {
             return map;
         }
         Class<?> clazz = bean.getClass();
-        BeanInfo beanInfo = null;
+        BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(clazz);
         } catch (IntrospectionException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+			return map;
         }
+
         PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
         for(PropertyDescriptor descriptor : descriptors){
             String propertyName = descriptor.getName();
@@ -218,19 +203,11 @@ public class CommonUtil {
                     }else{
                         map.put(propertyName, "");
                     }
-                } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    // TODO Auto-generated catch block
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-
         return map;
     }
 
@@ -860,11 +837,11 @@ public class CommonUtil {
 //
 //		user.getUser().getVariables().getVariable()[1].setValue("99999999999999999");
 //		beanToXML(user, file);
-
-		File file = new File("/Users/toolwiz.com/tmp/fs1/conf/autoload_configs/callcenter.conf.xml");
-        XCallCenter cc = xmlToBean(file, XCallCenter.class);
-
-        File out = new File("/Users/toolwiz.com/tmp/fs1/conf/autoload_configs/callcenter.conf111.xml");
-        beanToXML(cc, out);
+//
+//		File file = new File("/Users/toolwiz.com/tmp/fs1/conf/autoload_configs/callcenter.conf.xml");
+//        XCallCenter cc = xmlToBean(file, XCallCenter.class);
+//
+//        File out = new File("/Users/toolwiz.com/tmp/fs1/conf/autoload_configs/callcenter.conf111.xml");
+//        beanToXML(cc, out);
 	}
 }

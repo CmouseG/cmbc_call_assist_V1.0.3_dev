@@ -4,7 +4,6 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -47,10 +46,10 @@ public interface DispatchPlanMapper {
                                     @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
     //查询任务计划
-    DispatchPlan queryDispatchPlanById(@Param("planUuid") long planUuId, @Param("orgId") Integer orgId);
+    DispatchPlan queryDispatchPlanById(@Param("planUuid") long planUuid, @Param("orgId") Integer orgId);
 
     //查询任务计划备注
-    String queryPlanRemarkById(@Param("planUuid") long planUuId, @Param("orgId") Integer orgId);
+    String queryPlanRemarkById(@Param("planUuid") long planUuid, @Param("orgId") Integer orgId);
 
     //查询下载数据
     List<DownLoadPlanVo> queryDownloadPlanList(DispatchPlanExample example);

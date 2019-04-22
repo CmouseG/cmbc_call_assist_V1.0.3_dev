@@ -32,7 +32,7 @@ public class TemplateController implements ITemplate {
     @Autowired
     UploadRcordHandler uploadRcordHandler;
 
-    private ExecutorService executor = Executors.newFixedThreadPool(20) ;
+    private static ExecutorService executor = Executors.newFixedThreadPool(20) ;
 
     @Override
     public Result.ReturnData<Boolean> istempexist(@PathVariable(value = "tempId") String tempId) {

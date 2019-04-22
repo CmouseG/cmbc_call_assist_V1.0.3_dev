@@ -1,0 +1,6 @@
+1、 加字段：
+
+linemarket数据库
+
+alter table sip_line_base_info
+	add supplier_type int null comment '是否供应商，0非1是' after supplier;

@@ -26,12 +26,12 @@ management:
   security:
     enabled: false
 jdbc_driver0: com.mysql.jdbc.Driver
-jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-jdbc_username0: callcenter
-jdbc_password0: callcenter@1234
-#jdbc_url0: jdbc:mysql://127.0.0.1:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-#jdbc_username0: root
-#jdbc_password0: root
+#jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#jdbc_username0: callcenter
+#jdbc_password0: callcenter@1234
+jdbc_url0: jdbc:mysql://127.0.0.1:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+jdbc_username0: root
+jdbc_password0: root
 validationQuery: SELECT 1
 #数据库连接配置
 mybatis:

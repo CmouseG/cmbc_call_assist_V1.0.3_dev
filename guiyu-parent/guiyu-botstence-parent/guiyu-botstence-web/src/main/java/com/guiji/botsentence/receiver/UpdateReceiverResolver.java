@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.utils.RedisUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,11 @@ public class UpdateReceiverResolver {
 	@Autowired
 	BotSentenceDeployMapper botSentenceDeployMapper;
 
+	@Autowired
+	private RedisUtil redisUtil;
+
+	private static final String BOTSTENCE_DEPLOY_JOB_ID = "BOTSTENCE_DEPLOY_JOB_ID_";
+
 	@Transactional
 	public void resolver(PublishBotstenceResultMsgVO param){
 		logger.info("resolver---start");
@@ -67,12 +74,44 @@ public class UpdateReceiverResolver {
 		String subJobId = param.getSubJobId();
 		//根据模板号和子任务号查询发布任务记录
 
-		for(int i = 0 ; i < 4 ; i++) {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				logger.error("系统等待5秒异常...", e);
+		boolean flg = true;
+		int threadTimeCount = 1;
+		while (flg)
+		{
+			String redisValue = redisUtil.get(BOTSTENCE_DEPLOY_JOB_ID+subJobId)== null? "":(String)redisUtil.get(BOTSTENCE_DEPLOY_JOB_ID+subJobId);
+			if(StringUtils.isEmpty(redisValue))
+			{
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					logger.error("系统等待5秒异常...", e);
+				}
+
+				threadTimeCount++;
+
+				if(threadTimeCount >=100)
+				{
+					flg = false;
+					return;
+				}
+
+				continue;
 			}
+			else
+			{
+				String jobValue = redisUtil.get(BOTSTENCE_DEPLOY_JOB_ID+redisValue)== null? "":(String)redisUtil.get(BOTSTENCE_DEPLOY_JOB_ID+redisValue);
+				if(StringUtils.equals(jobValue, "false"))
+				{
+					flg = false;
+					return;
+				}
+				else
+				{
+					flg = false;
+					break;
+				}
+			}
+		}
 			
 			BotSentenceDeployExample deployExample = new BotSentenceDeployExample();
 			deployExample.createCriteria().andTemplateIdEqualTo(tempId).andSubJobIdEqualTo(subJobId);
@@ -96,6 +135,9 @@ public class UpdateReceiverResolver {
 				    record.setId(id);
 				    record.setStatus("3");
 				    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
+
+					redisUtil.set(BOTSTENCE_DEPLOY_JOB_ID+deploy.getJobId(),"false",24*60*60);
+
 				}else if(0 == param.getResult()) {//如果当前任务是成功
 					logger.info("当前发布任务: " + subJobId + "部署成功...");
 				    
@@ -141,11 +183,9 @@ public class UpdateReceiverResolver {
 						logger.info("UpdateReceiverResolver---end");
 					}
 				}
-				break;
 			}else {
 				logger.info("当前发布任务: " + subJobId + "不存在，忽略...");
 			}
-		}
 		
 		/*UpdateReceiverVo vo=cache.get(tempId);
 		if(vo==null){

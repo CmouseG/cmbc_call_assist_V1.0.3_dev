@@ -31,10 +31,8 @@ public class TemplateController implements ITemplate {
     TemplateService templateService;
     @Autowired
     UploadRcordHandler uploadRcordHandler;
-    @Value("${server.uploadThread:20}")
-    static Integer uploadThread;
 
-    public static ExecutorService executor = Executors.newFixedThreadPool(uploadThread) ;
+    private ExecutorService executor = Executors.newFixedThreadPool(20) ;
 
     @Override
     public Result.ReturnData<Boolean> istempexist(@PathVariable(value = "tempId") String tempId) {

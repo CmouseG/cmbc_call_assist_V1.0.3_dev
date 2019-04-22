@@ -386,6 +386,66 @@ public class SipLineBaseInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierTypeIsNull() {
+            addCriterion("supplier_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeIsNotNull() {
+            addCriterion("supplier_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeEqualTo(Integer value) {
+            addCriterion("supplier_type =", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeNotEqualTo(Integer value) {
+            addCriterion("supplier_type <>", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeGreaterThan(Integer value) {
+            addCriterion("supplier_type >", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("supplier_type >=", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeLessThan(Integer value) {
+            addCriterion("supplier_type <", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("supplier_type <=", value, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeIn(List<Integer> values) {
+            addCriterion("supplier_type in", values, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeNotIn(List<Integer> values) {
+            addCriterion("supplier_type not in", values, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeBetween(Integer value1, Integer value2) {
+            addCriterion("supplier_type between", value1, value2, "supplierType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("supplier_type not between", value1, value2, "supplierType");
+            return (Criteria) this;
+        }
+
         public Criteria andLineStatusIsNull() {
             addCriterion("line_status is null");
             return (Criteria) this;

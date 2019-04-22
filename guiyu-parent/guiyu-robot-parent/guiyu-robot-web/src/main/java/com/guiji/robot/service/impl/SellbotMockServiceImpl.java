@@ -1,5 +1,7 @@
 package com.guiji.robot.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.service.ISellbotService;
@@ -18,6 +20,10 @@ import com.guiji.utils.LocalCacheUtil;
 */
 @Service
 public class SellbotMockServiceImpl implements ISellbotService{
+
+	/** logger */
+	private final static Logger LOGGER = LoggerFactory.getLogger(SellbotMockServiceImpl.class);
+
 	//机器人-开场白
 	private static final String[] prologueAnswers = {
 			"您好，我是成都爱巧匠互联网智能装修公司的小王，来电是想邀请您参加元旦期间，我们公司在南充举行的一场盛大的智能家装节，活动中既可以现场体验智能装修装出来的智慧家庭的效果，还有全屋家具14件套赠送，这边简单给您介绍一下您看行吗?",
@@ -167,6 +173,7 @@ public class SellbotMockServiceImpl implements ISellbotService{
 	 * @param sellbotMatchReq
 	 * @return
 	 */
+	@Override
 	public String match(AiBaseInfo ai,SellbotMatchReq sellbotMatchReq) {
 		this.mockCallTime();
 		return "{\r\n" + 
@@ -205,10 +212,11 @@ public class SellbotMockServiceImpl implements ISellbotService{
 		int min = 200; //最小响应时间200ms
 		int max = 800;	//最大响应时间800ms
 		int average = (int)(min+Math.random()*(max-min+1));
+
 		try {
 			Thread.sleep(average);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LOGGER.error("模拟调用sellbot的响应时间异常： {}", e.getMessage());
 		}
 	}
 	/**

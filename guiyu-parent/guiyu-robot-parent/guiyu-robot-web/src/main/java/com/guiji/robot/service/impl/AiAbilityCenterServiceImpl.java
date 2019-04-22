@@ -339,9 +339,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	@Override
 	@Transactional
 	public AiCallNext aiCallStart(AiCallStartReq aiCallStartReq) {
+
+		if(aiCallStartReq == null) {
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+
 		/**1、请求参数校验 **/
-		if(aiCallStartReq == null
-				|| StrUtils.isEmpty(aiCallStartReq.getDisSeqId())
+		if(StrUtils.isEmpty(aiCallStartReq.getDisSeqId())
 				|| StrUtils.isEmpty(aiCallStartReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallStartReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
@@ -594,9 +598,12 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 */
 	@Override
 	public void aiHangup(AiHangupReq aiHangupReq) {
+		if(aiHangupReq == null) {
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+
 		/**1、请求参数校验 **/
-		if(aiHangupReq == null
-				|| StrUtils.isEmpty(aiHangupReq.getSeqId())
+		if(StrUtils.isEmpty(aiHangupReq.getSeqId())
 				|| StrUtils.isEmpty(aiHangupReq.getAiNo())
 				|| StrUtils.isEmpty(aiHangupReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiHangupReq.getTemplateId())
@@ -715,11 +722,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	private boolean isNeedVoiceCheck(AiFlowMsgPushReq aiFlowMsgPushReq) {
-		if(1==1) {
-			//因为现在调用阿里的asr识别，所以暂时不需要调用我们自己的噪音检测，所以先直接返回不需要检测
-			return false;
-		}
-		//长度>4不需要走噪音检测
+
+		//因为现在调用阿里的asr识别，所以暂时不需要调用我们自己的噪音检测，所以先直接返回不需要检测
+		return false;
+
+		/*//长度>4不需要走噪音检测
 		if(aiFlowMsgPushReq.getSentence().length()>4) {
 			return false;
 		}
@@ -734,7 +741,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(isMatched) {
 			return false;
 		}
-		return true;
+		return true;*/
 	}
 	
 	

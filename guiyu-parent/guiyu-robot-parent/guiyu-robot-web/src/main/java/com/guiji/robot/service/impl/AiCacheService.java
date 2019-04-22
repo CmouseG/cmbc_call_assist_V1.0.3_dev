@@ -387,7 +387,7 @@ public class AiCacheService {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put(String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
 		//提交到redis（通话流数据，缓存5分钟即可）
-		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,5*60);
+		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,5*60L);
 	}
 	
 	/**
@@ -545,7 +545,7 @@ public class AiCacheService {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put(callBusiData.getPhoneNo(), callBusiData);
 		//提交到redis
-		redisUtil.hmset(RobotConstants.ROBOT_BUSI_DATA, map ,5*60);  //缓存5分钟
+		redisUtil.hmset(RobotConstants.ROBOT_BUSI_DATA, map ,5*60L);  //缓存5分钟
  	}
 	
 	/**

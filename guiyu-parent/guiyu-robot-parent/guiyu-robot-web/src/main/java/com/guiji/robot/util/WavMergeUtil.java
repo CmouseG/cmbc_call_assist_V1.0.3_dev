@@ -27,52 +27,60 @@ public class WavMergeUtil {
 		File fileOut = new File(outputWav);
 		//如果这个语音大于 2 个
 		if (orgWavList.size() >= 2){
-		   BufferedInputStream bi1 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(0))));
-		   BufferedInputStream bi2 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(1))));
-		   AudioInputStream audio1 = AudioSystem.getAudioInputStream(bi1);
-		   AudioInputStream audio2 = AudioSystem.getAudioInputStream(bi2);
-		   BufferedInputStream bi3 = null;
-		   AudioInputStream audioBuild = new AudioInputStream(
-		         new SequenceInputStream(audio1, audio2),
-		         audio1.getFormat(),
-		         audio1.getFrameLength() +
-		               audio2.getFrameLength()
-		   );
-		   AudioInputStream audio3 = null;
-		   //大于两个时继续合并
-		   for(int i = 2; i<orgWavList.size();i++){
-			   bi3 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(i))));
-		      audio3 = AudioSystem.getAudioInputStream(bi3);
-		      audioBuild = new AudioInputStream(
-		            new SequenceInputStream(audioBuild, audio3),
-		            audioBuild.getFormat(), audioBuild.getFrameLength() +
-		            audio3.getFrameLength()
-		      );
-		   }
-		   //生成语音
-		   AudioSystem.write(audioBuild, AudioFileFormat.Type.WAVE, fileOut);
-		   
-		   if(audio1 != null) {
-			   audio1.close();
-		   }
-		   if(audio2 != null) {
-			   audio2.close();
-		   }
-		   if(audio3 != null) {
-			   audio3.close();
-		   }
-		   if(audioBuild != null) {
-			   audioBuild.close();
-		   }
-		   if(bi1 != null) {
-			   bi1.close();
-		   }
-		   if(bi2 != null) {
-			   bi2.close();
-		   }
-		   if(bi3 != null) {
-			   bi3.close();
-		   }
+			BufferedInputStream bi1 = null;
+			BufferedInputStream bi3 = null;
+			BufferedInputStream bi2 = null;
+			try {
+				bi1 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(0))));
+				bi2 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(1))));
+				AudioInputStream audio1 = AudioSystem.getAudioInputStream(bi1);
+				AudioInputStream audio2 = AudioSystem.getAudioInputStream(bi2);
+
+				AudioInputStream audioBuild = new AudioInputStream(
+						new SequenceInputStream(audio1, audio2),
+						audio1.getFormat(),
+						audio1.getFrameLength() +
+								audio2.getFrameLength()
+				);
+				AudioInputStream audio3 = null;
+				//大于两个时继续合并
+				for(int i = 2; i<orgWavList.size();i++){
+					bi3 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(i))));
+					audio3 = AudioSystem.getAudioInputStream(bi3);
+					audioBuild = new AudioInputStream(
+							new SequenceInputStream(audioBuild, audio3),
+							audioBuild.getFormat(), audioBuild.getFrameLength() +
+							audio3.getFrameLength()
+					);
+				}
+				//生成语音
+				AudioSystem.write(audioBuild, AudioFileFormat.Type.WAVE, fileOut);
+
+				if(audio1 != null) {
+					audio1.close();
+				}
+				if(audio2 != null) {
+					audio2.close();
+				}
+				if(audio3 != null) {
+					audio3.close();
+				}
+				if(audioBuild != null) {
+					audioBuild.close();
+				}
+			} catch (Exception e) {
+
+			} finally {
+				if(bi1 != null) {
+					bi1.close();
+				}
+				if(bi2 != null) {
+					bi2.close();
+				}
+				if(bi3 != null) {
+					bi3.close();
+				}
+			}
 		} else {
 		   //否则只有一个,直接返回语音路径
 			orgWavList.get(0);

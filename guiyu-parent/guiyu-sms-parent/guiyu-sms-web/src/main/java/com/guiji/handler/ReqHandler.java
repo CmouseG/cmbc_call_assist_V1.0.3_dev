@@ -73,7 +73,7 @@ public class ReqHandler
 			record = new Welink().sendMessage(params, phone, smsContent);
 		} else if ("cmpp".equals(identification)) {
 			logger.info("通过<CMPP>发送短信...");
-			record = new Cmpp(MapUtil.getString(params, "cmppServiceUrl", 0)).sendMessage(params, phone, smsContent);
+			record = new Cmpp().sendMessage(params, phone, smsContent);
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>发送短信...");
 			record = new Zxy().sendMessage(params, phone, smsContent);

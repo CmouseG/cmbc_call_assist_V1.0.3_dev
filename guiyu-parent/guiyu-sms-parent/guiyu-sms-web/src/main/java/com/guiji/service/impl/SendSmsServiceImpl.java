@@ -89,7 +89,7 @@ public class SendSmsServiceImpl implements SendSmsService
 			records = new Welink().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		} else if ("cmpp".equals(identification)) {
 			logger.info("通过<CMPP>群发短信...");
-			records = new Cmpp(MapUtil.getString(params, "cmppServiceUrl", 0)).sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+			records = new Cmpp().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>群发短信...");
 			records = new Zxy().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());

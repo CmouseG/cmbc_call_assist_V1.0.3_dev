@@ -50,7 +50,7 @@ xxl:
       port: 9024
       logpath: /home/logs/guiyu-callCenter-fsagent-web
       logretentiondays: -1
-     accessToken:
+    accessToken:
 
 path:
     recordPath: D:/record/

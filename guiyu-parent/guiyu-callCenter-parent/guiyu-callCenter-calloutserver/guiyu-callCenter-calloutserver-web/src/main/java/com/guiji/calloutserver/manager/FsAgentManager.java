@@ -25,7 +25,7 @@ public interface FsAgentManager {
       * @param busiType  业务类型
       * @return
       */
-     Result.ReturnData uploadRecord(String callId, String fileName, String busiType, Long userId, RecordType recordType);
+     Result.ReturnData uploadRecord(String recordId,String busiId, String fileName, String busiType, Long userId, RecordType recordType);
 
     /**
      * 模板是否存在

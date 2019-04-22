@@ -159,10 +159,12 @@ public class TemplateServiceImpl implements TemplateService {
         return list;
     }
 
+/*
     @Override
     public void uploadrecord2(RecordReqVO recordReqVO) {
         simpleEventSender.sendEvent(recordReqVO);
     }
+*/
 
 
 }

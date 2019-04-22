@@ -1,6 +1,5 @@
 package com.guiji.fsagent.eventbus.handler;
 
-import com.google.common.eventbus.Subscribe;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
@@ -8,7 +7,6 @@ import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.config.FsagentExceptionEnum;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
-import com.guiji.fsagent.eventbus.SimpleEventSender;
 import com.guiji.fsagent.util.FileUtil;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.utils.JsonUtils;
@@ -18,26 +16,25 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 
 @Service
 @Slf4j
 public class UploadRcordHandler {
-    @Autowired
-    SimpleEventSender simpleEventSender;
+//    @Autowired
+//    SimpleEventSender simpleEventSender;
     @Autowired
     FsConfig fsConfig;
 
     @Autowired
     private QueueSender queueSender;
 
-    @PostConstruct
+/*    @PostConstruct
     public void init() {
         simpleEventSender.register(this);
-    }
+    }*/
 
-    @Subscribe
+//    @Subscribe
     public void handleUploadRecord(RecordReqVO recordReqVO) {
         log.info("收到上传录音的事件[{}]", recordReqVO);
         RecordVO record = new RecordVO();

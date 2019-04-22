@@ -33,6 +33,7 @@ public class FsWatchDog {
                 try {
                     Thread.sleep( fsConfig.getReconnectSleepTime());
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         });

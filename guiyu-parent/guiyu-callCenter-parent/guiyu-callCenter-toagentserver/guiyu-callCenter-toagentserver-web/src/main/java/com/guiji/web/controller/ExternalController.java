@@ -16,6 +16,7 @@ import com.guiji.toagentserver.entity.AgentMembrVO;
 import com.guiji.toagentserver.entity.FsInfoVO;
 import com.guiji.web.response.AgentSumResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,19 +74,28 @@ public class ExternalController implements IAgentGroup{
 
     @Override
     public Result.ReturnData untyingLineinfos(String lineId) {
-        queueService.untyingLineinfos(lineId);
+        log.info("收到解绑队列线路的请求lineId：[{}]",lineId);
+        if(!StringUtils.isBlank(lineId)){
+            queueService.untyingLineinfos(lineId);
+        }
         return Result.ok();
     }
 
     @Override
     public Result.ReturnData syncAgentMembers(@RequestBody List<AgentMembrVO> agentMembers) {
-        agentService.syncAgentMembers(agentMembers);
+        log.info("收到同步坐席用户的接口");
+        if(agentMembers!=null&&agentMembers.size()>0){
+            agentService.syncAgentMembers(agentMembers);
+        }
         return Result.ok();
     }
 
     @Override
     public Result.ReturnData delAgentMembers(@RequestBody List<Long> customerIds) {
-        agentService.delAgentMembers(customerIds);
+        log.info("收到删除坐席用户的接口");
+        if(customerIds!=null&&customerIds.size()>0) {
+            agentService.delAgentMembers(customerIds);
+        }
         return Result.ok();
     }
 

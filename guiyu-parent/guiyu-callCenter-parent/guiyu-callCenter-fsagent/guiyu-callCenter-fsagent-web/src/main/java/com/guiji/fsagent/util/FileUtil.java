@@ -98,49 +98,10 @@ public class FileUtil {
                     audioInputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn("关闭流出现异常", e);
             }
         }
         return null;
-    }
-
-    /**
-     * 截取音频文件
-     * @param sourceFileName
-     * @param destinationFileName
-     * @param startSecond
-     * @param secondsToCopy
-     */
-    public static void copyAudio(String sourceFileName, String destinationFileName, int startSecond, int secondsToCopy) {
-        AudioInputStream inputStream = null;
-        AudioInputStream shortenedStream = null;
-        try {
-            File file = new File(sourceFileName);
-            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-            AudioFormat format = fileFormat.getFormat();
-            inputStream = AudioSystem.getAudioInputStream(file);
-            int bytesPerSecond = format.getFrameSize() * (int) format.getFrameRate();
-            inputStream.skip(startSecond * bytesPerSecond);
-            long framesOfAudioToCopy = secondsToCopy * (int) format.getFrameRate();
-            shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
-            File destinationFile = new File(destinationFileName);
-            AudioSystem.write(shortenedStream, fileFormat.getType(), destinationFile);
-        } catch (Exception e) {
-            log.warn("截取音频文件出现异常", e);
-        } finally {
-            if (inputStream != null)
-                try {
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (shortenedStream != null)
-                try {
-                shortenedStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }

@@ -251,12 +251,12 @@ public class FsEventHandler {
 
         event.setCallDirection(callInfo.getCallDirection());
         CallPlan callPlan = callPlanService.findByCallId(callInfo.getSeqId(), event.getCallDirection());
-        if(callPlan.getCallState() != CallState.agent_answer.ordinal()){
-            log.info("座席尚未接听，忽略该asr， seqId[{}]", callInfo.getSeqId());
-            return;
-        }
 
         if (callPlan != null) {
+            if(callPlan.getCallState() != CallState.agent_answer.ordinal()){
+                log.info("座席尚未接听，忽略该asr， seqId[{}]", callInfo.getSeqId());
+                return;
+            }
             event.setCallPlan(callPlan);
             if (callInfo.getUserType() == EUserType.CUSTOMER) {
                 event.setUuid(uuid);

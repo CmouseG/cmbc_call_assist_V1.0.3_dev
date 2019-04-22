@@ -13,6 +13,8 @@ public class SipLineBaseInfo implements Serializable {
 
     private String supplier;
 
+    private Integer supplierType;
+
     private Integer lineStatus;
 
     private String sipIp;
@@ -113,6 +115,14 @@ public class SipLineBaseInfo implements Serializable {
 
     public void setSupplier(String supplier) {
         this.supplier = supplier == null ? null : supplier.trim();
+    }
+
+    public Integer getSupplierType() {
+        return supplierType;
+    }
+
+    public void setSupplierType(Integer supplierType) {
+        this.supplierType = supplierType;
     }
 
     public Integer getLineStatus() {
@@ -397,6 +407,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", lineName=").append(lineName);
         sb.append(", lineId=").append(lineId);
         sb.append(", supplier=").append(supplier);
+        sb.append(", supplierType=").append(supplierType);
         sb.append(", lineStatus=").append(lineStatus);
         sb.append(", sipIp=").append(sipIp);
         sb.append(", sipPort=").append(sipPort);

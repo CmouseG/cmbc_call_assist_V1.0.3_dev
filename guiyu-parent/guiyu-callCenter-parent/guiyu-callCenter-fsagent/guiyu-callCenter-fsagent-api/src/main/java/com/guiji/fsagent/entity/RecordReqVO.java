@@ -6,8 +6,9 @@ public class RecordReqVO {
     private String busiType;
     private String fileName;
     private Long userId;
-    private int duration;
-    private int billsec;
+    private String recordId;
+
+    private RecordType recordType;
 
     public String getSysCode() {
         return sysCode;
@@ -49,20 +50,20 @@ public class RecordReqVO {
         this.userId = userId;
     }
 
-    public int getDuration() {
-        return duration;
+    public String getRecordId() {
+        return recordId;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
     }
 
-    public int getBillsec() {
-        return billsec;
+    public RecordType getRecordType() {
+        return recordType;
     }
 
-    public void setBillsec(int billsec) {
-        this.billsec = billsec;
+    public void setRecordType(RecordType recordType) {
+        this.recordType = recordType;
     }
 
     @Override
@@ -73,8 +74,8 @@ public class RecordReqVO {
                 ", busiType='" + busiType + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", userId=" + userId +
-                ", duration=" + duration +
-                ", billsec=" + billsec +
+                ", recordId='" + recordId + '\'' +
+                ", recordType=" + recordType +
                 '}';
     }
 }

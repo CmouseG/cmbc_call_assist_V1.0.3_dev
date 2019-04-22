@@ -1,7 +1,7 @@
 package com.guiji.calloutserver.manager;
 
 import com.guiji.component.result.Result;
-import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsmanager.entity.FsBindVO;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ public interface FsAgentManager {
       * @param busiType  业务类型
       * @return
       */
-    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId, Integer billsec, Integer duration);
+     Result.ReturnData uploadRecord(String callId, String fileName, String busiType, Long userId, RecordType recordType);
 
     /**
      * 模板是否存在

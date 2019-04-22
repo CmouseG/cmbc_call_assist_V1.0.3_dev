@@ -5,6 +5,8 @@ import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.fsagent.entity.RecordType;
+import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
@@ -40,22 +42,26 @@ public class UploadFileMqListener {
     @RabbitHandler
     public void process(String message) {
         try {
-            PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message, PublishBotstenceResultMsgVO.class);
+            RecordVO recordVO = JsonUtils.json2Bean(message, RecordVO.class);
 
-            logger.info("文件上传MQ监听消息{}", publishBotstenceResultMsgVO);
+            logger.info("文件上传MQ监听消息{}", recordVO);
 
-            CallOutRecord callOutRecord = new CallOutRecord();
-            callOutRecord.setCallId(new BigInteger("xxxx"));
-            callOutRecord.setRecordUrl("xxxxxxxxxxx");
-            callOutRecordService.update(callOutRecord);
-
-
-            CallOutDetailRecord detailRecord = new CallOutDetailRecord();
-            detailRecord.setCallId(new BigInteger("xxxxx"));
-            detailRecord.setCustomerRecordUrl("xxxxx");
-            detailRecord.setAgentRecordUrl("xxxxx");
-            detailRecord.setBotRecordUrl("xxxxx");
-            callOutDetailRecordService.update(detailRecord);
+            if(recordVO.getRecordType() == RecordType.TOTAL_RECORD){
+                CallOutRecord callOutRecord = new CallOutRecord();
+                callOutRecord.setCallId(new BigInteger(recordVO.getRecordId()));
+                callOutRecord.setRecordUrl(recordVO.getFileUrl());
+                callOutRecordService.update(callOutRecord);
+            }else if(recordVO.getRecordType() == RecordType.CUSTOMER_RECORD){
+                CallOutDetailRecord detailRecord = new CallOutDetailRecord();
+                detailRecord.setCallDetailId(new BigInteger(recordVO.getRecordId()));
+                detailRecord.setCustomerRecordUrl(recordVO.getFileUrl());
+                callOutDetailRecordService.update(detailRecord);
+            }else if(recordVO.getRecordType() == RecordType.AGENT_RECORD){
+                CallOutDetailRecord detailRecord = new CallOutDetailRecord();
+                detailRecord.setCallDetailId(new BigInteger(recordVO.getRecordId()));
+                detailRecord.setAgentRecordUrl(recordVO.getFileUrl());
+                callOutDetailRecordService.update(detailRecord);
+            }
 
         }catch (Exception e){
             logger.error("文件上传队列数据出现异常",e);

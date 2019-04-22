@@ -8,7 +8,7 @@ import com.guiji.calloutserver.util.CallFeignBuildUtil;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.entity.RecordReqVO;
-import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsmanager.entity.FsBindVO;
@@ -46,20 +46,17 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId, Integer billsec, Integer duration){
+    public Result.ReturnData uploadRecord(String callId, String fileName, String busiType, Long userId, RecordType recordType){
         log.info("开始上传文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
         RecordReqVO request = new RecordReqVO();
-        request.setBusiId(callId);
-        request.setFileName(fileName);
         request.setSysCode(eurekaManager.getAppName());
+        request.setBusiId(callId);
         request.setBusiType(busiType);
+        request.setFileName(fileName);
         request.setUserId(userId);
-        if(billsec!=null){
-            request.setBillsec(billsec);
-        }
-        if(duration!=null){
-            request.setDuration(duration);
-        }
+        request.setRecordId(callId);
+        request.setRecordType(recordType);
+
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -80,14 +77,14 @@ public class FsAgentManagerImpl implements FsAgentManager {
                     }
                     return false;
                 }
-            }, 10, 1, 30, 600);
+            }, 3, 100, 300, 600);
         }catch (Exception ex){
             log.warn("上传文件出现异常", ex);
             //TODO: 报警，上传文件异常
         }
 
         Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
-        return (RecordVO) returnData.getBody();
+        return returnData;
     }
 
     @Override

@@ -71,11 +71,10 @@ public class CallDetailServiceImpl implements CallDetailService {
         getCriteria(criteria, callOutPlanQueryEntity, queryUser, false);
 
         long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
-        if(authService.isSeat(userId)){//具有人工坐席权限
+        if(callOutPlanQueryEntity.getAuthLevel() ==1 && authService.isSeat(userId)){//具有人工坐席权限
             try{
-                String userName = authService.getUserName(userId);
                 AgentExample agentExample = new AgentExample();
-                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+                agentExample.createCriteria().andCustomerIdEqualTo(Long.valueOf(callOutPlanQueryEntity.getCustomerId()));
                 List<Agent> listAgent = agentMapper.selectByExample(agentExample);
                 Long agentId = listAgent.get(0).getUserId();
                 CallOutPlanExample.Criteria criteria2 = example.or();

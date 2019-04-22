@@ -1,6 +1,15 @@
-1、 加字段：
 
-linemarket数据库
-
+#linemarket 加字段
 alter table sip_line_base_info
 	add supplier_type int null comment '是否供应商，0非1是' after supplier;
+
+
+#### 第一步：从组织表中查询所有的代理商组织code码
+select code from guiyu_base.sys_organization where type=1;
+
+
+#### 第二步：上一步查到的代理商code填入该sql的查询条件中
+update sip_line_base_info set supplier_type=1 where org_code in (代理商的code拼接);
+
+#### 第三步
+update sip_line_base_info set supplier_type=0 where supplier_type is null;

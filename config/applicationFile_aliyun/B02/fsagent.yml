@@ -1,0 +1,49 @@
+server:
+  port: 16006
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    max-connections: 20000
+spring:
+  application:
+    name: guiyu-callcenter-fsagent
+  rabbitmq:
+    host: 172.16.167.215
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+fs:
+   homeDir: /home/freeswitch/fsbot
+
+job:
+  clearRecord: 0 0 0 * * ?
+
+path:
+    #recordPath: D:/
+    tempPath: /home/botstence_tmpl/
+    ttsPath: /home/aiwav/tts/
+    tempRecordPath: /home/aiwav
+
+properties:
+    error: properties/error.properties
+rabbit:
+  general:
+    direct:
+      queue: callCenter.record_update_mq

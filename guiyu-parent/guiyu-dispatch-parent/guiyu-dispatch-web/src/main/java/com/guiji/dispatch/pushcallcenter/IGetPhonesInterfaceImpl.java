@@ -80,8 +80,9 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		orgIds.add(ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId))).getId().intValue());
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgIds);*/
 		Integer orgId = getApiService.getOrgIdByUser(userId+"");
+		logger.info("com.guiji.dispatch.pushcallcenter.IGetPhonesInterfaceImpl.getPhonesByParams userId:{},orgId:{}", userId, orgId);
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgId);
-		if(null != selectByCallHour) {
+		if(null != selectByCallHour && selectByCallHour.size()>0) {
 			List<Long> ids = new ArrayList<>();
 			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
 			for (DispatchPlan plan : planList) {

@@ -1,5 +1,6 @@
 server:
   port: 18006
+  threadCount: 20
 
 spring:
   application:

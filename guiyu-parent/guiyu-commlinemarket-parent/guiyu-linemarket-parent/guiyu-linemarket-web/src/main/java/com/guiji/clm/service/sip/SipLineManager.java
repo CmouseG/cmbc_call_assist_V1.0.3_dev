@@ -743,6 +743,10 @@ public class SipLineManager {
                 lineInfo.setMaxConcurrentCalls(sipLineBaseInfo.getMaxConcurrentCalls());
                 lineInfo.setOrgCode(sipLineBaseInfo.getOrgCode());
                 lineInfo.setLineType(sipLineBaseInfo.getRegFlag() ? 1 : 0);
+                if(lineInfo.getLineType() == 1) {
+                    lineInfo.setSipUser(sipLineBaseInfo.getSipAccount());
+                    lineInfo.setSipPwd(sipLineBaseInfo.getSipPsd());
+                }
                 Result.ReturnData upData = iLineOperation.updateLineInfo(lineInfo);
                 if (upData == null || !upData.success) {
                     log.error("调用呼叫中心变更线路异常,返回结果:{}", upData);

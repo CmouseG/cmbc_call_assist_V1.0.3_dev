@@ -661,13 +661,16 @@
     <if test="record.flag != null">
       and flag = #{record.flag}
     </if>
-    <if test="orgIds != null">
+    <if test="orgId != null">
+      and org_id = #{orgId}
+    </if>
+    <!--<if test="orgIds != null">
       and org_id in
       <foreach item="item" index="index" collection="orgIds" open="("
                separator="," close=")">
         #{item}
       </foreach>
-    </if>
+    </if>-->
     order by `plan_uuid` ASC
     <if test="record.limitStart != null and record.limitStart>=0">
       limit #{record.limitStart} , #{record.limitEnd}
@@ -808,6 +811,16 @@
              separator="," close=")">
       #{item}
     </foreach>
+  </update>
+
+  <update id="updPlanByStatusSync">
+    UPDATE plan_uuid
+    <set>
+      status_sync = #{status},
+      gmt_modified = NOW()
+    </set>
+    WHERE plan_uuid = #{planUuid}
+    AND org_id = #{orgId}
   </update>
 
 

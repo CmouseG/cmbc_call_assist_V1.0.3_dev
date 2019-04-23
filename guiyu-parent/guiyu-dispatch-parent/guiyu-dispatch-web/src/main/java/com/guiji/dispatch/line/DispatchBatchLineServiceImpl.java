@@ -160,8 +160,13 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 		}
 	}
 
+	/**
+	 * 批量排序
+	 * @param list
+	 * @return
+	 */
 	@Override
-	public synchronized List<DispatchPlan> sortLine(List<DispatchPlan> list) {
+	public List<DispatchPlan> sortLine(List<DispatchPlan> list) {
 		List<DispatchPlan> res = new ArrayList<>();
 		for (DispatchPlan dis : list) {
 			// 线路一条的话就不排序0
@@ -216,6 +221,63 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * 单个排序
+	 * @param dis
+	 * @return
+	 */
+	@Override
+	public DispatchPlan sortLine(DispatchPlan dis) {
+		// 线路一条的话就不排序0
+		if (dis.getLines().size() <= 1) {
+			return dis;
+		}
+
+		// 线路一条的话就不排序0
+		if (dis.getLineType() == PlanLineTypeEnum.GATEWAY.getType()) {
+			return dis;
+		}
+		// 获取用户的排序规则
+		List<SipRouteRuleVO> userRule = (List<SipRouteRuleVO>) redisUtils
+				.get("LINE_RULE_USER_ID_" + dis.getUserId());
+
+		if(userRule.get(0).getRuleContent() ==null){
+			logger.info("当前用户没用用户规则 不排序",dis.getUserId());
+			return dis;
+		}
+
+		if (userRule != null) {
+			// 获取不同用户排序规则
+			SipRouteRuleVO ruleVO = getRule(dis, userRule);
+			if (ruleVO == null) {
+				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前redis用户没有线路规则去查询接口" + dis.getUserId());
+				// 去接口查询
+				ReturnData<List<SipRouteRuleVO>> querySipRouteRule = remote
+						.querySipRouteRule(String.valueOf(dis.getUserId()));
+				if (querySipRouteRule.getBody() != null) {
+					if (querySipRouteRule.getBody().size() > 0) {
+						List<SipRouteItemVO> itemList = querySipRouteRule.getBody().get(0).getItemList();
+						// 排序算法
+						List<DispatchBatchLine> sort = sort(dis, itemList);
+						dis.setLines(sort);
+						return dis;
+					} else {
+						logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
+						return dis;
+					}
+				} else {
+					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
+					return dis;
+				}
+			}
+			// 排序算法
+			List<DispatchBatchLine> sort = sort(dis, ruleVO.getItemList());
+			dis.setLines(sort);
+
+		}
+		return dis;
 	}
 
 	private SipRouteRuleVO getRule(DispatchPlan dis, List<SipRouteRuleVO> userRule) {

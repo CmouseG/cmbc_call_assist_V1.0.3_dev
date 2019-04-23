@@ -70,25 +70,37 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										Thread.sleep(500);
 										break;
 									}
-										// mod by xujin
-										List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
-										if(dispatchPlanList.size()>0){
-											logger.info("当前查询到的数据"+dispatchPlanList.size());
-										}
-										if(dispatchPlanList.size()>0){
+									// mod by xujin
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+									int len = 0;
+									if(null != dispatchPlanList && dispatchPlanList.size()>0){
+										len = dispatchPlanList.size();
+										logger.info("当前查询到的数据:"+len);
+
+										//进去队列之前，根据优line优先级进行排序
+										List<DispatchPlan> bak = new ArrayList<>();
+										bak.addAll(dispatchPlanList);
+										for(DispatchPlan plan: dispatchPlanList){
 											//进去队列之前，根据优line优先级进行排序
-											List<DispatchPlan> bak = new ArrayList<>();
-											bak.addAll(dispatchPlanList);
-											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
-											logger.info("sortLine", sortLine);
-											if(sortLine.size()>0){
-												pushPlan2Queue(sortLine,queue);
-											}else if (bak.size()>0){
-												logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
-												pushPlan2Queue(dispatchPlanList,queue);
-											}
+											DispatchPlan sortPlan = lineService.sortLine(plan);
+											this.pushPlanQueue(sortPlan, queue);
 										}
+
+									/*
+									//进去队列之前，根据优line优先级进行排序
+									List<DispatchPlan> bak = new ArrayList<>();
+									bak.addAll(dispatchPlanList);
+									List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
+									logger.info("sortLine", sortLine);
+									if(sortLine.size()>0){
+										pushPlan2Queue(sortLine,queue);
+									}else if (bak.size()>0){
+										logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
+										pushPlan2Queue(dispatchPlanList,queue);
 									}
+									*/
+									}
+								}
 							}
 							catch (Exception e) {
 								logger.info("PhonePlanQueueServiceImpl#execute:",e);
@@ -104,6 +116,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public boolean pushPlanQueue(DispatchPlan plan, String queue){
+		logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
+		boolean result = redisUtil.leftPush(queue, plan);
+		logger.info("推入要拨打电话数据KEY:{},{}", queue, redisUtil.lGetListSize(queue));
+		return result;
 	}
 
 	@Override

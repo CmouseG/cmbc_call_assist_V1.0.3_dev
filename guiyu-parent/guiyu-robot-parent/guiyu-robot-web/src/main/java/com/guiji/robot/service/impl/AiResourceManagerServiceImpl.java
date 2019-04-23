@@ -266,7 +266,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		}
 		if(assignAi==null) {
 			//没有空闲机器人
-			logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList.size());
+			logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList == null ? 0:aiPoolList.size());
 			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
 		}
 		//设置分配后的部分信息

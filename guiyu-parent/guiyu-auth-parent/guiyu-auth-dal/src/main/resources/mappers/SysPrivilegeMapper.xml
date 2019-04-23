@@ -286,4 +286,13 @@
       update_user = #{updateUser,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="queryOrgIds" resultType="java.lang.Integer">
+  	SELECT DISTINCT b.organization_id FROM sys_product a
+	LEFT JOIN sys_organization_product b ON a.id = b.product
+	LEFT JOIN sys_privilege c ON c.auth_id = b.product
+	WHERE c.auth_type = 1
+	AND c.auth_id = #{authId,jdbcType=VARCHAR}
+  </select>
+  
 </mapper>

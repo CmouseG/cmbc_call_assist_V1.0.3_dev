@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
+import com.guiji.utils.MapUtil;
 
 /**
  * Cmpp
@@ -25,22 +26,19 @@ import com.guiji.sms.dao.entity.SmsRecord;
 public class Cmpp implements ISendMsgByContent
 {
 	private static final Logger logger = LoggerFactory.getLogger(Cmpp.class);
-	
-	private String cmppServiceUrl;
-	
-	public Cmpp(String cmppServiceUrl)
-	{
-		this.cmppServiceUrl = cmppServiceUrl;
-	}
 
 	@Override
 	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
 	{
 		SmsRecord record = null;
+		String cmppServiceUrl = MapUtil.getString(params, "cmppServiceUrl", 0);
 		JSONObject json = new JSONObject();
+		json.put("id", MapUtil.getString(params, "id", 0));
 		json.put("phone", phone);
 		json.put("msgContent", msgContent);
-		record = send(json);
+		json.put("companyCode", MapUtil.getString(params, "companyCode", 0));
+		json.put("spCode", MapUtil.getString(params, "spCode", 0));
+		record = send(json,cmppServiceUrl);
 		record.setPhone(phone);
 		return record;
 	}
@@ -50,23 +48,26 @@ public class Cmpp implements ISendMsgByContent
 	{
 		List<SmsRecord> records = new ArrayList<>();
 		SmsRecord record = null;
-		
+		String cmppServiceUrl = MapUtil.getString(params, "cmppServiceUrl", 0);
 		JSONObject json = new JSONObject();
+		json.put("id", MapUtil.getString(params, "id", 0));
 		json.put("msgContent", msgContent);
+		json.put("companyCode", MapUtil.getString(params, "companyCode", 0));
+		json.put("spCode", MapUtil.getString(params, "spCode", 0));
 		for(String phone : phoneList)
 		{
 			json.put("phone", phone);
-			record = send(json);
+			record = send(json,cmppServiceUrl);
 			record.setPhone(phone);
 			records.add(record);
 		}
 		return records;
 	}
 	
-	private SmsRecord send(JSONObject json)
+	private SmsRecord send(JSONObject json, String cmppServiceUrl)
 	{
 		SmsRecord record = new SmsRecord();
-		String result = doPost(json.toJSONString()); // 发送请求
+		String result = doPost(json.toJSONString(),cmppServiceUrl); // 发送请求
 		JSONObject returnData = JSONObject.parseObject(result);
 		// 返回参数
 		String code = returnData.getString("code");
@@ -88,7 +89,7 @@ public class Cmpp implements ISendMsgByContent
 		return record;
 	}
 
-	private String doPost(String json)
+	private String doPost(String json, String cmppServiceUrl)
 	{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;

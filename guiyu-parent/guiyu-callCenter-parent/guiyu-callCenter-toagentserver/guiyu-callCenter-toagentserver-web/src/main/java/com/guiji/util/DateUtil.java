@@ -19,8 +19,8 @@ public class DateUtil {
     /**
      * 日期格式为 年-月-日 时:分:秒
      */
-    public static String FORMAT_YEARMONTHDAY_HOURMINSEC = "yyyy-MM-dd HH:mm:ss";
-    public static String FORMAT_YEARMONTHDAY = "yyyy-MM-dd";
+    public static final String FORMAT_YEARMONTHDAY_HOURMINSEC = "yyyy-MM-dd HH:mm:ss";
+    public static final String FORMAT_YEARMONTHDAY = "yyyy-MM-dd";
 
     /**
      * 获取当前的日期， 年月日，如20121218
@@ -162,46 +162,13 @@ public class DateUtil {
         return  convertSuccess;
     }
 
-    /**
-     * 将不规则的时间格式转成规则的时间格式
-     * @param date
-     * @return
-     */
-    public static String complianceDate(String date){
-        SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_YEARMONTHDAY_HOURMINSEC);
-        try {
-            return sdf.format(sdf.parse(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-
-
-    public static void main(String[] args) {
-//        String ff = "yyyy-MM-dd HH:mm:ss";
-//        System.out.println("currdate: " + getCurrentDateByFormat(ff));
-//        System.out.println(timeStampToDate(1726272727L));
-        System.out.println(initDateByDay());
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date zero = calendar.getTime();
-        System.out.println(zero);
-
-    }
-
     public static String getUserYears(String yearIng){
         String effectiveDate=null;
         try {
             Preconditions.checkNotNull(yearIng,"null yearIng");
             int add=Integer.parseInt(yearIng);
             Date date=new Date();
-            SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
             String yearOld=sdf.format(date);
             String[] yearMonthData=yearOld.split("-");
             int year=Integer.parseInt(yearMonthData[0]);
@@ -267,13 +234,6 @@ public class DateUtil {
         }
 
         return myStamp;
-    }
-
-
-    public static LocalDateTime getLocalTime(){
-        LocalDateTime localDateTime = LocalDateTime.now();
-        localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        return localDateTime;
     }
 
     public static String localTimeToString(LocalDateTime localDateTime){

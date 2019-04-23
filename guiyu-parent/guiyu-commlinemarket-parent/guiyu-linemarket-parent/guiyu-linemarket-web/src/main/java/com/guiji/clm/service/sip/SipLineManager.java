@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.guiji.dispatch.model.LineIsUseDto;
 import io.swagger.models.auth.In;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -285,7 +286,7 @@ public class SipLineManager {
 	 * 3、保存
 	 * 4、已经分配到用户了，此时通知费用中心进行计费准备
 	 * 
-	 * @param sipLineShare
+	 * @param sipLineExclusive
 	 */
 	@Transactional
 	public void splitExclusiveSipLine(SipLineExclusive sipLineExclusive) {
@@ -550,7 +551,7 @@ public class SipLineManager {
 			//查询目前正常的独享自营线路
 			SipLineExclusiveQueryCondition exclusiveCondition = new SipLineExclusiveQueryCondition();
 			exclusiveCondition.setSipLineId(sipBaseId);
-			exclusiveCondition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+			exclusiveCondition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
 			exclusiveCondition.setLineType(SipLineTypeEnum.SELF.getCode());
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.querySipLineExclusiveList(exclusiveCondition);
 			//独享线路并发总数
@@ -636,7 +637,7 @@ public class SipLineManager {
 	
 	/**
 	 * 根据共享线路企业信息，获取线路拥有者类型
-	 * @param org
+	 * @param sipLineBaseInfo
 	 * @return
 	 */
 	public String getLineOwner(SipLineBaseInfo sipLineBaseInfo) {

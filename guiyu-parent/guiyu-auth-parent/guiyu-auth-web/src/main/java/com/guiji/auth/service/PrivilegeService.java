@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,15 @@ import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.model.PrivlegeAuth;
 import com.guiji.auth.util.ArrayUtils;
 import com.guiji.user.dao.SysMenuMapper;
+import com.guiji.user.dao.SysOrganizationMapper;
 import com.guiji.user.dao.SysPrivilegeMapper;
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysMenuExample;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysPrivilegeExample;
-import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysPrivilegeExample.Criteria;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 
@@ -51,7 +53,11 @@ public class PrivilegeService {
 	@Autowired
 	UserService userService;
 	@Autowired
-	AgentGroupChangeService agentGroupChangeService; 
+	AgentGroupChangeService agentGroupChangeService;
+	@Autowired
+	SysPrivilegeMapper privilegeMapper;
+	@Autowired
+	SysOrganizationMapper orgMapper;
 	
 	/**
 	 * 查询授权对象的某种类型权限列表
@@ -221,13 +227,19 @@ public class PrivilegeService {
 			}else {
 				criteria.andResourceIdIn(resourceIdList);
 			}
-			if(AuthObjTypeEnum.ORG.getCode()==authType) {
-				//删除企业数据
-				criteria.andOrgCodeLike(orgCode+"%");
-			}else {
+			if(AuthObjTypeEnum.PRODUCT.getCode()==authType) {
+				//删除产品以及下级数据
+				//TODO 此处缺陷，删除产品的时候需要删除所有使用该产品的组织以及子组织以及角色的资源
+				deleteProductChildrenResource(authId,resourceType,resourceIdList);
+				//现在是只删了产品级的
+				criteria.andAuthTypeEqualTo(authType);
 				criteria.andAuthIdEqualTo(authId);
-			}
-			if(StrUtils.isNotEmpty(authId)) {
+			}else if(AuthObjTypeEnum.ORG.getCode()==authType) {
+				//删除企业以及下级数据
+				criteria.andOrgCodeLike(orgCode+"%");
+				criteria.andAuthTypeIn(new ArrayList<Integer>(){{add(AuthObjTypeEnum.ORG.getCode());add(AuthObjTypeEnum.ROLE.getCode());}});
+			}else {
+				criteria.andAuthTypeEqualTo(authType);
 				criteria.andAuthIdEqualTo(authId);
 			}
 			List<SysPrivilege> list = sysPrivilegeMapper.selectByExample(example);
@@ -247,6 +259,23 @@ public class PrivilegeService {
 	}
 	
 	
+	private void deleteProductChildrenResource(String authId, Integer resourceType, List<String> resourceIdList)
+	{
+		List<Integer> orgIds = privilegeMapper.queryOrgIds(authId); //获取所有用这个产品的组织id
+		List<SysOrganization> orgs = orgIds.stream().map(orgId -> orgMapper.selectByPrimaryKey(orgId.longValue())).collect(Collectors.toList()); //获取所有用这个产品的组织
+		for(SysOrganization org : orgs)
+		{
+			SysPrivilegeExample example = new SysPrivilegeExample();
+			List<Integer> authTypes = new ArrayList<>();
+			authTypes.add(2); //组织
+			authTypes.add(3); // 角色
+			String orgCode = org.getCode();
+			example.createCriteria().andAuthTypeIn(authTypes).andResourceTypeEqualTo(resourceType).andResourceIdIn(resourceIdList).andOrgCodeEqualTo(orgCode);
+			privilegeMapper.deleteByExample(example);
+		}
+	}
+
+
 	/**
 	 * 获取资源id
 	 * @param privilegeList

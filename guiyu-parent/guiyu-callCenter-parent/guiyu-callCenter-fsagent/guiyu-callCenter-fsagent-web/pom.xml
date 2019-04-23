@@ -60,6 +60,16 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zipkin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-message-queue</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>guiji.task.job</groupId>
+            <artifactId>guiyu-timerTask-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

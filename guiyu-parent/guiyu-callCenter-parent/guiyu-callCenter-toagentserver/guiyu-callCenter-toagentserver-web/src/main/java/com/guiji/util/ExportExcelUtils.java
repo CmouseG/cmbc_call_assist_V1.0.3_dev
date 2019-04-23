@@ -1,6 +1,7 @@
 package com.guiji.util;
 
 import com.guiji.entity.ExcelData;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -19,6 +20,7 @@ import java.util.List;
 /**
  * Created by zouLu on 2017-12-14.
  */
+@Slf4j
 public class ExportExcelUtils {
     public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data){
         try {
@@ -28,7 +30,8 @@ public class ExportExcelUtils {
             response.setHeader("Content-Disposition", "attachment;filename="+URLEncoder.encode(fileName, "utf-8"));
             exportExcel(data, response.getOutputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("下载excel出现异常",e);
+
         }
     }
     public static void exportExcel(ExcelData data, OutputStream out) throws Exception {

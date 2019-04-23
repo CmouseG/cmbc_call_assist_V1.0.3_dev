@@ -6,10 +6,8 @@ import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
 import com.guiji.fs.FsManager;
-import com.guiji.fs.pojo.AgentState;
 import com.guiji.service.*;
 import com.guiji.util.DateUtil;
-import com.guiji.web.request.AgentInfo;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +67,7 @@ public class FsBotHandler {
                 log.debug("开始处理转人工事件[{}]", event);
                 //判断座席组是否有座席成员
                 List<Agent> agents = tierService.findAgentsByQueueId(event.getQueueId());
-                if (agents == null && agents.size() == 0) {
+                if (agents == null || agents.size() == 0) {
                     doWithUnWorkTimeVistor(event, callPlan);
                     log.warn("当前座席组中没有分配座席，提示退出，queueId:[{}]", event.getQueueId());
                     return;

@@ -226,14 +226,14 @@ public class HttpClientUtil {
             in.close();
             result = sb.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+        	logger.error("IO error: {}", e.getMessage());
         } finally {
             try {
                 if (null != response) {
                     response.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+				logger.error("close io error: {}", e.getMessage());
             }
         }
         return result;
@@ -311,13 +311,13 @@ public class HttpClientUtil {
 			rd.close();
 		} catch (java.io.IOException e) {
 			receive.append("访问产生了异常-->").append(e.getMessage());
-			e.printStackTrace();
+			logger.error("IO error: {}", e.getMessage());
 		} finally {
 			if (rd != null) {
 				try {
 					rd.close();
 				} catch (IOException ex) {
-					ex.printStackTrace();
+					logger.error("close io error: {}", ex.getMessage());
 				}
 				rd = null;
 			}
@@ -353,13 +353,13 @@ public class HttpClientUtil {
 			}
 		} catch (IOException e) {
 			receive.append("访问产生了异常-->").append(e.getMessage());
-			e.printStackTrace();
+			logger.error("IO error: {}", e.getMessage());
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (java.io.IOException ex) {
-					ex.printStackTrace();
+					logger.error("close stream error: {}", ex.getMessage());
 				}
 				in = null;
 			}

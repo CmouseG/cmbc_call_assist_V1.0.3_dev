@@ -1,9 +1,11 @@
 package com.guiji.user.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysPrivilegeExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface SysPrivilegeMapper {
     int countByExample(SysPrivilegeExample example);
@@ -27,4 +29,7 @@ public interface SysPrivilegeMapper {
     int updateByPrimaryKeySelective(SysPrivilege record);
 
     int updateByPrimaryKey(SysPrivilege record);
+
+	List<Integer> queryOrgIds(@Param("authId") String authId);
+
 }

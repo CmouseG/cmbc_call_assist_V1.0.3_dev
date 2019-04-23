@@ -549,6 +549,7 @@ public class VoipGwManager {
 					SysUser sysUser = dataLocalCacheUtil.queryUser(voipGwPort.getUserId());
 					if(sysUser==null) {
 						log.error("用户编号：{}查询不到用户信息",voipGwPort.getUserId());
+						continue;
 					}
 					vo.setUserName(sysUser.getUsername());
 				}
@@ -565,7 +566,6 @@ public class VoipGwManager {
 	 * 如：公司ID、设备ID等信息
 	 * @param voipGwInfo
 	 */
-	@Transactional
 	void fillVoipGwDevInfo(VoipGwInfo voipGwInfo) {
 		if(voipGwInfo!=null && StrUtils.isEmpty(voipGwInfo.getCompanyId())) {
 			//设备信息（公司信息）为空，那么调用网关服务重新查询下

@@ -23,8 +23,7 @@ public class MD5Util {
 	   try{
 	    messagedigest = MessageDigest.getInstance("MD5");
 	   }catch(NoSuchAlgorithmException nsaex){
-		   logger.error(MD5Util.class.getName()+"初始化失败，MessageDigest不支持MD5Util。");
-		   nsaex.printStackTrace();
+		   logger.error("初始化失败，MessageDigest不支持MD5Util。");
 	   }
 	}
 

@@ -571,7 +571,9 @@ public class TtsWavServiceImpl implements ITtsWavService {
             if (ListUtil.isNotEmpty(ttsFilePathList)) {
                 for (String tempTtsFilePath : ttsFilePathList) {
                     File tempFile = new File(tempTtsFilePath);
-                    if (tempFile != null && tempFile.exists()) tempFile.delete();
+                    if (tempFile != null && tempFile.exists()) {
+                        tempFile.delete();
+                    }
                 }
             }
         }

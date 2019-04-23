@@ -67,6 +67,7 @@ CREATE TABLE `sip_line_base_info` (
   `line_name` varchar(30) DEFAULT NULL COMMENT '线路名称',
   `line_id` int(11) DEFAULT NULL COMMENT '线路编号',
   `supplier` varchar(30) DEFAULT NULL COMMENT '供应商',
+  `supplier_type` int DEFAULT NULL comment '是否供应商，0非1是',
   `line_status` int(11) DEFAULT NULL COMMENT '线路状态:0-初始未提交,1-正常;2-到期;3-失效',
   `sip_ip` varchar(15) DEFAULT NULL COMMENT 'sip服务器ip',
   `sip_port` int(11) DEFAULT NULL COMMENT 'sip服务器端口',

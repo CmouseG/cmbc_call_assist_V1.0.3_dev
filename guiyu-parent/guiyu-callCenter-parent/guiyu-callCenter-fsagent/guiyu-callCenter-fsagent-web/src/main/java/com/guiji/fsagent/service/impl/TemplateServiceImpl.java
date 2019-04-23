@@ -9,6 +9,7 @@ import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
+import com.guiji.fsagent.eventbus.SimpleEventSender;
 import com.guiji.fsagent.service.TemplateService;
 import com.guiji.fsagent.util.FileUtil;
 import com.guiji.common.model.SysFileReqVO;
@@ -42,6 +43,11 @@ public class TemplateServiceImpl implements TemplateService {
     FsConfig fsConfig;
     @Autowired
     IRobotRemote iRobotFeign;
+
+    @Autowired
+    SimpleEventSender simpleEventSender;
+
+
     @Override
     public boolean istempexist(String tempId) {
         tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
@@ -93,40 +99,40 @@ public class TemplateServiceImpl implements TemplateService {
         return null;
     }
 
-    @Override
-    public RecordVO uploadrecord(RecordReqVO recordReqVO) {
-        RecordVO record = new RecordVO();
-        record.setFileName(recordReqVO.getFileName());
-        SysFileReqVO sysFileReqVO = new SysFileReqVO();
-        sysFileReqVO.setBusiId(recordReqVO.getBusiId());
-        sysFileReqVO.setBusiType(recordReqVO.getBusiType());
-        sysFileReqVO.setSysCode(recordReqVO.getSysCode());
-        sysFileReqVO.setUserId(recordReqVO.getUserId());
-        sysFileReqVO.setThumbImageFlag("0");
-        String uploadOriginalFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();//原文件路径
-        String uploadTempFile =  fsConfig.getHomeDir()+"/recordings/temp_" + record.getFileName();//截取后的文件路径
-        String uploadOFile; //要上传的文件
-        if(FileUtil.isExist(uploadTempFile)) { //如果截取后的文件存在，则上传截取后的文件
-            logger.info("上传截取后的录音文件：{{}]",uploadTempFile);
-            uploadOFile = uploadTempFile;
-        }else{
-            if(!FileUtil.isExist(uploadOriginalFile)) {//如果源文件也不存在，直接抛出异常
-                logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadOriginalFile);
-                throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
-            }
-            //如果截取文件不存在，源文件存在，则上传源文件
-            logger.info("上传原录音文件：{{}]",uploadOriginalFile);
-            uploadOFile = uploadOriginalFile;
-        }
-        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadOFile));
-        if(sysFileRspVO==null){
-            logger.info("上传录音失败,失败的文件为:[{}]",uploadOFile);
-            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_UPLOAD_ERROR);
-       }
-        FileUtil.delete(uploadOFile);
-        record.setFileUrl(sysFileRspVO.getSkUrl());
-        return record;
-    }
+//    @Override
+//    public RecordVO uploadrecord(RecordReqVO recordReqVO) {
+//        RecordVO record = new RecordVO();
+//        record.setFileName(recordReqVO.getFileName());
+//        SysFileReqVO sysFileReqVO = new SysFileReqVO();
+//        sysFileReqVO.setBusiId(recordReqVO.getBusiId());
+//        sysFileReqVO.setBusiType(recordReqVO.getBusiType());
+//        sysFileReqVO.setSysCode(recordReqVO.getSysCode());
+//        sysFileReqVO.setUserId(recordReqVO.getUserId());
+//        sysFileReqVO.setThumbImageFlag("0");
+//        String uploadOriginalFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();//原文件路径
+//        String uploadTempFile =  fsConfig.getHomeDir()+"/recordings/temp_" + record.getFileName();//截取后的文件路径
+//        String uploadOFile; //要上传的文件
+//        if(FileUtil.isExist(uploadTempFile)) { //如果截取后的文件存在，则上传截取后的文件
+//            logger.info("上传截取后的录音文件：[{}]",uploadTempFile);
+//            uploadOFile = uploadTempFile;
+//        }else{
+//            if(!FileUtil.isExist(uploadOriginalFile)) {//如果源文件也不存在，直接抛出异常
+//                logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadOriginalFile);
+//                throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
+//            }
+//            //如果截取文件不存在，源文件存在，则上传源文件
+//            logger.info("上传原录音文件：[{}]",uploadOriginalFile);
+//            uploadOFile = uploadOriginalFile;
+//        }
+//        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadOFile));
+//        if(sysFileRspVO==null){
+//            logger.info("上传录音失败,失败的文件为:[{}]",uploadOFile);
+//            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_UPLOAD_ERROR);
+//       }
+//        FileUtil.delete(uploadOFile);
+//        record.setFileUrl(sysFileRspVO.getSkUrl());
+//        return record;
+//    }
 
     @Override
     public List<WavLengthVO> getwavlength(String tempId) {
@@ -152,6 +158,14 @@ public class TemplateServiceImpl implements TemplateService {
         }
         return list;
     }
+
+/*
+    @Override
+    public void uploadrecord2(RecordReqVO recordReqVO) {
+        simpleEventSender.sendEvent(recordReqVO);
+    }
+*/
+
 
 }
 

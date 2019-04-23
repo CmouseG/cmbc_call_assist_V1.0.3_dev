@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.utils.RedisUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.util.security.MD5Encoder;
@@ -137,6 +138,11 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	
 	@Value("${selftest.sellbot.port}")
 	private int port;
+
+	@Autowired
+	private RedisUtil redisUtil;
+
+	private static final String BOTSTENCE_DEPLOY_JOB_ID = "BOTSTENCE_DEPLOY_JOB_ID_";
 	
 	
 	@Override
@@ -837,6 +843,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			logger.info("共返回" + list.size() + "条任务");
 			logger.info("jobId = " + jobId);
 			int index = 1;
+
 			for(String temp : list) {
 				logger.info("任务【" + index + "】的任务号:  " + temp) ;
 				BotSentenceDeploy deploy = new BotSentenceDeploy();
@@ -848,6 +855,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 				deploy.setProcessId(processId);
 				deploy.setTemplateId(templateId);
 				botSentenceDeployMapper.insert(deploy);
+				redisUtil.set(BOTSTENCE_DEPLOY_JOB_ID+temp,jobId,24*60*60);
 				index++;
 			}
 		}

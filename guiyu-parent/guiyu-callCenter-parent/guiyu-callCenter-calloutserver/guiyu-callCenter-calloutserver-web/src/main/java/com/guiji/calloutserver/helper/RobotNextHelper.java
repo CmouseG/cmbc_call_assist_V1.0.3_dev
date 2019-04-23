@@ -63,7 +63,7 @@ public class RobotNextHelper {
     @PostConstruct
     private void init() {
 
-        scheduledExecutorService = Executors.newScheduledThreadPool(20);
+        scheduledExecutorService = Executors.newScheduledThreadPool(30);
         scheduleConcurrentHashMap = new ConcurrentHashMap<>();
     }
 

@@ -68,7 +68,7 @@ public class RobotNextHelper {
     }
 
     public void startAiCallNextTimer(AiCallNextReq aiCallNextReq, String agentGroupId) {
-        log.debug("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
+        log.info("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
         String callId = aiCallNextReq.getSeqId();
         Channel channelInit = channelService.findByUuid(callId);
         if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return

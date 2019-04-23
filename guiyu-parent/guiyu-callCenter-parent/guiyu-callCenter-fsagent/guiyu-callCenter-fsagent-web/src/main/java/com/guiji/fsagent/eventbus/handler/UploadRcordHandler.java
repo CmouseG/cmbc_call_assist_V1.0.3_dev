@@ -14,6 +14,7 @@ import com.guiji.utils.NasUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class UploadRcordHandler {
     }*/
 
 //    @Subscribe
+    @Async
     public void handleUploadRecord(RecordReqVO recordReqVO) {
         log.info("收到上传录音的事件[{}]", recordReqVO);
         RecordVO record = new RecordVO();

@@ -74,7 +74,7 @@ public class UploadRcordHandler {
         FileUtil.delete(uploadOFile);
         record.setFileUrl(sysFileRspVO.getSkUrl());
         //record.setFileUrl("http://123.34.22.11");
-        queueSender.send("record_update_mq", JsonUtils.bean2Json(record));
+        queueSender.send("callCenter.record_update_mq", JsonUtils.bean2Json(record));
     }
 
 }

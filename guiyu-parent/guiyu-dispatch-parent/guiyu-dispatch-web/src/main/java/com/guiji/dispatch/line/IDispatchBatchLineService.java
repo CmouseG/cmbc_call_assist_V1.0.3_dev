@@ -33,7 +33,12 @@ public interface IDispatchBatchLineService {
 	void getLineRate();
 
 	/**
-	 * 根据排序规则排序
+	 * 根据排序规则排序（批量）
 	 */
 	List<DispatchPlan> sortLine(List<DispatchPlan> list);
+
+	/**
+	 * 根据排序规则排序
+	 */
+	DispatchPlan sortLine(DispatchPlan dis);
 }

@@ -14,7 +14,24 @@ public interface GetApiService {
      */
     SysOrganization getOrgByUserId(String userId);
 
+    /**
+     * 获取上级组织ID
+     * @param orgId
+     * @return
+     */
     List<Integer> getSubOrgIdByOrgId(Integer orgId);
 
+    /**
+     * 获取用户
+     * @param userId
+     * @return
+     */
     SysUser getUserById(String userId);
+
+    /**
+     * 根据用户获取orgId
+     * @param userId
+     * @return
+     */
+    Integer getOrgIdByUser(String userId);
 }

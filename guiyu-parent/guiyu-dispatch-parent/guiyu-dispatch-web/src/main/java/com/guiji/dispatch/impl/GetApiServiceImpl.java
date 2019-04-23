@@ -65,7 +65,7 @@ public class GetApiServiceImpl implements GetApiService {
 
     @Override
     public SysUser getUserById(String userId) {
-        logger.info("根据用户ID:{}查询企业组织",userId);
+        logger.info("根据用户ID:{}查询用户",userId);
         if(!StringUtils.isEmpty(userId)) {
             SysUser user = null;
             try {
@@ -74,6 +74,23 @@ public class GetApiServiceImpl implements GetApiService {
                 logger.error("", e);
             }
             return user;
+        }else{
+            return null;
+        }
+    }
+
+    @Override
+    public Integer getOrgIdByUser(String userId) {
+        logger.info("根据用户ID:{}查询企业组织Id",userId);
+        if(!StringUtils.isEmpty(userId)) {
+            Integer orgId = null;
+            try {
+                SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+                orgId = null != org?org.getId():null;
+            }catch (Exception e){
+                logger.error("根据用户ID查询企业组织Id异常", e);
+            }
+            return orgId;
         }else{
             return null;
         }

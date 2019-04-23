@@ -712,6 +712,11 @@ public class SipLineManager {
             lineInfo.setCalleePrefix(sipLineBaseInfo.getDestinationPrefix());
             lineInfo.setMaxConcurrentCalls(sipLineBaseInfo.getMaxConcurrentCalls());
             lineInfo.setOrgCode(sipLineBaseInfo.getOrgCode());
+            lineInfo.setLineType(sipLineBaseInfo.getRegFlag() ? 1 : 0);
+            if(lineInfo.getLineType() == 1) {
+                lineInfo.setSipUser(sipLineBaseInfo.getSipAccount());
+                lineInfo.setSipPwd(sipLineBaseInfo.getSipPsd());
+            }
             Result.ReturnData<Integer> lineIdData = iLineOperation.addLineInfo(lineInfo);
             if (lineIdData == null || lineIdData.getBody() == null) {
                 log.error("调用呼叫中心新增线路异常,返回结果:{}", lineIdData);

@@ -814,7 +814,7 @@
   </update>
 
   <update id="updPlanByStatusSync">
-    UPDATE plan_uuid
+    UPDATE dispatch_plan
     <set>
       status_sync = #{status},
       gmt_modified = NOW()

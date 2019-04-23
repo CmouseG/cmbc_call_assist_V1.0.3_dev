@@ -38,7 +38,7 @@ public class BatchAliyunUploadMqListener {
 			res.setBusiId(req.getBusiId());
 			res.setSourceUrl(req.getSourceUrl());
 			res.setAliyunUrl(AliyunUtil.getAliyunBaseUrl() + fileName);
-			fanoutSender.send("fanoutAliyunNoticeExchange", res.toString());
+			fanoutSender.send("fanoutAliyunNoticeQueue", res.toString());
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			logger.info("error",e);

@@ -79,6 +79,5 @@ xxl:
     accessToken:
 rabbit:
   general:
-    fanout:
-      exchange: fanoutAliyunUploadExchange|fanoutAliyunNoticeExchange|fanoutNasFileDeleteExchange #队列名称
+    direct:
       queue: fanoutAliyunUploadQueue|fanoutAliyunNoticeQueue|fanoutNasFileDeleteQueue #队列名称

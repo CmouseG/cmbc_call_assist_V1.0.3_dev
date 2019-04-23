@@ -36,11 +36,11 @@ public class GetApiServiceImpl implements GetApiService {
      */
     @Override
     public SysOrganization getOrgByUserId(String userId) {
-        logger.info("根据用户ID:{}查询企业组织",userId);
+    //    logger.info("根据用户ID:{}查询企业组织",userId);
         if(!StringUtils.isEmpty(userId)) {
             //获取企业组织, code后面不带点.
             SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
-            logger.info("根据用户ID:{}查询企业组织:{}", null !=org?JsonUtils.bean2Json(org):org);
+    //        logger.info("根据用户ID:{}查询企业组织:{}", null !=org?JsonUtils.bean2Json(org):org);
             return org;
         }else{
             return null;
@@ -65,7 +65,7 @@ public class GetApiServiceImpl implements GetApiService {
 
     @Override
     public SysUser getUserById(String userId) {
-        logger.info("根据用户ID:{}查询用户",userId);
+    //    logger.info("根据用户ID:{}查询用户",userId);
         if(!StringUtils.isEmpty(userId)) {
             SysUser user = null;
             try {
@@ -81,7 +81,7 @@ public class GetApiServiceImpl implements GetApiService {
 
     @Override
     public Integer getOrgIdByUser(String userId) {
-        logger.info("根据用户ID:{}查询企业组织Id",userId);
+    //    logger.info("根据用户ID:{}查询企业组织Id",userId);
         if(!StringUtils.isEmpty(userId)) {
             Integer orgId = null;
             try {

@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.callcenter.dao.entityext.CallIdRecordUrl;
 import org.apache.ibatis.annotations.Param;
 
 public interface CallOutPlanMapper {
@@ -39,4 +40,7 @@ public interface CallOutPlanMapper {
     int updateByPrimaryKey(CallOutPlan record);
 
     void updateNotOverWriteIntent(CallOutPlan callPlan);
+
+    List<CallIdRecordUrl> selectCallIdRecordUrl(@Param("callId") BigInteger callId);
+    List<CallIdRecordUrl> selectDetailIdRecordUrl(@Param("callDetailId") BigInteger callDetailId);
 }

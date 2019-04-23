@@ -1,6 +1,5 @@
 package com.guiji.ccmanager.listener;
 
-import com.guiji.ccmanager.scheduler.ReportScheduler;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
@@ -22,23 +21,12 @@ public class ApplicationInit {
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
 
-        log.info("----------application init start check----------");
+        log.info("----------应用已经启动");
 
-        /*Lock lock = new Lock("ApplicationInit.isTruncateSuccess", "ApplicationInit.isTruncateSuccess");
-        try {
-            if (distributedLockHandler.tryLock(lock)) {
-                if (!reportSchedulerService.isTruncateSuccess()) {  //假如清空today表失败了。将之前几天的数据删除掉
-                    log.info("----------truncate task has not done suceess----------");
-                    reportSchedulerService.reportCallTodayTruncateBefore();
-                }
-            }
-        }catch (Exception e){
-            log.error("检查清空当天统计表失败",e);
-        }finally {
-            distributedLockHandler.releaseLock(lock);// 释放锁
-        }*/
+        log.info("----------开始检查数据统计");
 
-        Lock lockDay = new Lock("ApplicationInit.isDaySheduleSuccess", "ApplicationInit.isDaySheduleSuccess");
+        Lock lockDay = new Lock("ApplicationInit.isDaySheduleSuccess",
+                "ApplicationInit.isDaySheduleSuccess");
         if (distributedLockHandler.tryLock(lockDay)) {
 
             try {
@@ -53,7 +41,12 @@ public class ApplicationInit {
             }
         }
 
-        log.info("----------application init end check----------");
+        log.info("----------应用启动后操作结束");
+
+
+
+
+
     }
 
 }

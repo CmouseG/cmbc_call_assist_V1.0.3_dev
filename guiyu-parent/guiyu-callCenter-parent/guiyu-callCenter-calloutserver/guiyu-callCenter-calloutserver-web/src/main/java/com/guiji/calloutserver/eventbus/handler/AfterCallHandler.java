@@ -13,6 +13,8 @@ import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutRecordService;
+import com.guiji.component.result.Result;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsagent.entity.RecordVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +81,13 @@ public class AfterCallHandler {
      *
      */
     public void uploadMainRecord(CallOutRecord callOutRecord, CallOutPlan callPlan) {
-        log.info("开始上传主录音，callId[{}], file[{}]", callOutRecord.getCallId(), callOutRecord.getRecordFile());
-        RecordVO recordVO = fsAgentManager.uploadRecord(String.valueOf(callOutRecord.getCallId()), callOutRecord.getRecordFile(), "mainrecord",
-                Long.valueOf(callPlan.getCustomerId()),callPlan.getBillSec(),callPlan.getDuration());
-        log.info("上传录音返回结果为[{}]", recordVO);
-        callOutRecord.setRecordUrl(recordVO.getFileUrl());
-        callOutRecordService.update(callOutRecord);
+        String callId = callOutRecord.getCallId().toString();
+        log.info("开始上传主录音，callId[{}], file[{}]", callId, callOutRecord.getRecordFile());
+        Result.ReturnData returnData = fsAgentManager.uploadRecord(callId, callId, callOutRecord.getRecordFile(), "mainrecord",
+                Long.valueOf(callPlan.getCustomerId()), RecordType.TOTAL_RECORD);
+        log.info("上传录音返回结果为[{}]", returnData);
+//        callOutRecord.setRecordUrl(recordVO.getFileUrl());
+//        callOutRecordService.update(callOutRecord);
     }
 
     /**
@@ -95,33 +98,35 @@ public class AfterCallHandler {
      */
     public void uploadDetailsRecord(List<CallOutDetailRecord> callOutDetailRecords, Long userId) {
         String busiType = "detailrecord";
-        boolean isEdit = false;
         for (CallOutDetailRecord detailRecord : callOutDetailRecords) {
-            log.info("开始上传客户录音,callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
+//            boolean isEdit = false;
             //上传客户说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getCustomerRecordFile()) && Strings.isNullOrEmpty(detailRecord.getCustomerRecordUrl())) {
-                String fileId = "customer_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
-                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getCustomerRecordFile(), busiType, userId, null, null);
-                log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getCustomerRecordFile(), recordVO);
-                detailRecord.setCustomerRecordUrl(recordVO.getFileUrl());
-                isEdit = true;
+                log.info("开始上传客户录音,callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
+                String busiId = "customer_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
+                Result.ReturnData returnData = fsAgentManager.uploadRecord(detailRecord.getCallDetailId().toString(),
+                        busiId, detailRecord.getCustomerRecordFile(), busiType, userId, RecordType.CUSTOMER_RECORD);
+                log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", busiId, detailRecord.getCustomerRecordFile(), returnData);
+//                detailRecord.setCustomerRecordUrl(recordVO.getFileUrl());
+//                isEdit = true;
             }else{
                 log.info("忽略客户说话录音，因文件为空");
             }
 
-            log.info("开始上传座席录音， callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
             //上传座席说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getAgentRecordFile()) && Strings.isNullOrEmpty(detailRecord.getAgentRecordUrl())) {
-                String fileId = "agent_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
-                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getAgentRecordFile(), busiType, userId, null ,null);
-                log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getAgentRecordFile(), recordVO);
-                detailRecord.setAgentRecordUrl(recordVO.getFileUrl());
-                isEdit = true;
+                log.info("开始上传座席录音， callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
+                String busiId = "agent_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
+                Result.ReturnData returnData = fsAgentManager.uploadRecord(detailRecord.getCallDetailId().toString(),
+                        busiId, detailRecord.getAgentRecordFile(), busiType, userId, RecordType.AGENT_RECORD);
+                log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", busiId, detailRecord.getAgentRecordFile(), returnData);
+//                detailRecord.setAgentRecordUrl(recordVO.getFileUrl());
+//                isEdit = true;/
             }
 
-            if (isEdit) {
-                callOutDetailRecordService.update(detailRecord);
-            }
+//            if (isEdit) {
+//                callOutDetailRecordService.update(detailRecord);
+//            }
         }
     }
 }

@@ -13,7 +13,9 @@ public interface TemplateService {
 
     List<TtsWav> downloadttswav(String tempId, String planUuid, String callId);
 
-    RecordVO uploadrecord(RecordReqVO recordReqVO);
+   // RecordVO uploadrecord(RecordReqVO recordReqVO);
 
      List<WavLengthVO> getwavlength(String tempId);
+
+//   void  uploadrecord2(RecordReqVO recordReqVO);
 }

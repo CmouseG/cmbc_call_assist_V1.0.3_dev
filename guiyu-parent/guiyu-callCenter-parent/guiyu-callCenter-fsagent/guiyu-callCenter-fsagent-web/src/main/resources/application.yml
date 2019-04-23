@@ -49,4 +49,9 @@ path:
 properties:
     error: properties/error.properties
 
+rabbit:
+  general:
+    direct:
+      queue: record_update_mq
+
 

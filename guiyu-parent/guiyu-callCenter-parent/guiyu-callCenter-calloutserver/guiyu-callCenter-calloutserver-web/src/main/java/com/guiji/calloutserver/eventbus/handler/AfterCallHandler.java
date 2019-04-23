@@ -81,8 +81,9 @@ public class AfterCallHandler {
      *
      */
     public void uploadMainRecord(CallOutRecord callOutRecord, CallOutPlan callPlan) {
-        log.info("开始上传主录音，callId[{}], file[{}]", callOutRecord.getCallId(), callOutRecord.getRecordFile());
-        Result.ReturnData returnData = fsAgentManager.uploadRecord(String.valueOf(callOutRecord.getCallId()), callOutRecord.getRecordFile(), "mainrecord",
+        String callId = callOutRecord.getCallId().toString();
+        log.info("开始上传主录音，callId[{}], file[{}]", callId, callOutRecord.getRecordFile());
+        Result.ReturnData returnData = fsAgentManager.uploadRecord(callId, callId, callOutRecord.getRecordFile(), "mainrecord",
                 Long.valueOf(callPlan.getCustomerId()), RecordType.TOTAL_RECORD);
         log.info("上传录音返回结果为[{}]", returnData);
 //        callOutRecord.setRecordUrl(recordVO.getFileUrl());
@@ -102,9 +103,10 @@ public class AfterCallHandler {
             //上传客户说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getCustomerRecordFile()) && Strings.isNullOrEmpty(detailRecord.getCustomerRecordUrl())) {
                 log.info("开始上传客户录音,callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
-                String fileId = detailRecord.getCallDetailId().toString();
-                Result.ReturnData returnData = fsAgentManager.uploadRecord(fileId, detailRecord.getCustomerRecordFile(), busiType, userId, RecordType.CUSTOMER_RECORD);
-                log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getCustomerRecordFile(), returnData);
+                String busiId = "customer_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
+                Result.ReturnData returnData = fsAgentManager.uploadRecord(detailRecord.getCallDetailId().toString(),
+                        busiId, detailRecord.getCustomerRecordFile(), busiType, userId, RecordType.CUSTOMER_RECORD);
+                log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", busiId, detailRecord.getCustomerRecordFile(), returnData);
 //                detailRecord.setCustomerRecordUrl(recordVO.getFileUrl());
 //                isEdit = true;
             }else{
@@ -114,9 +116,10 @@ public class AfterCallHandler {
             //上传座席说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getAgentRecordFile()) && Strings.isNullOrEmpty(detailRecord.getAgentRecordUrl())) {
                 log.info("开始上传座席录音， callId[{}][{}]", detailRecord.getCallId(), detailRecord.getCallDetailId());
-                String fileId = detailRecord.getCallDetailId().toString();
-                Result.ReturnData returnData = fsAgentManager.uploadRecord(fileId, detailRecord.getAgentRecordFile(), busiType, userId, RecordType.AGENT_RECORD);
-                log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getAgentRecordFile(), returnData);
+                String busiId = "agent_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
+                Result.ReturnData returnData = fsAgentManager.uploadRecord(detailRecord.getCallDetailId().toString(),
+                        busiId, detailRecord.getAgentRecordFile(), busiType, userId, RecordType.AGENT_RECORD);
+                log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", busiId, detailRecord.getAgentRecordFile(), returnData);
 //                detailRecord.setAgentRecordUrl(recordVO.getFileUrl());
 //                isEdit = true;/
             }

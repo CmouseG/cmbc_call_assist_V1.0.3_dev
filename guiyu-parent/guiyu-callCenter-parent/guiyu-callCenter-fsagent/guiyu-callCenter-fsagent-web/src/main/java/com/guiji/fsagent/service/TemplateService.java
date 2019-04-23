@@ -17,5 +17,5 @@ public interface TemplateService {
 
      List<WavLengthVO> getwavlength(String tempId);
 
-   void  uploadrecord2(RecordReqVO recordReqVO);
+//   void  uploadrecord2(RecordReqVO recordReqVO);
 }

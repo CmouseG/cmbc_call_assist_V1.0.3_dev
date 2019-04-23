@@ -7,6 +7,7 @@ import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
@@ -81,13 +82,14 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgIds);*/
 		Integer orgId = getApiService.getOrgIdByUser(userId+"");
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgId);
-		if(null != selectByCallHour) {
+		if(null != selectByCallHour && selectByCallHour.size()>0) {
 			List<Long> ids = new ArrayList<>();
 			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
-			for (DispatchPlan plan : planList) {
+			for (DispatchPlan plan : selectByCallHour) {
 				ids.add(plan.getPlanUuidLong());
-				//更新每条记录状态:已通知标识
-				dispatchMapper.updPlanByStatusSync(plan.getPlanUuidLong(), Constant.STATUS_SYNC_1, orgId);
+				//更新每条记录状态:已推送redis标识
+				dispatchMapper.updPlanByStatusSync(plan.getPlanUuidLong(), SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
+				plan.setStatusSync(SyncStatusEnum.ALREADY_SYNC.getStatus());
 				// 查询出每个任务下对应的线路
 				List<DispatchBatchLine> linesVO = null;
 				if(!tmpMap.containsKey(plan.getBatchId()))
@@ -103,6 +105,8 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 				{
 					plan.setLines(tmpMap.get(plan.getBatchId()));
 				}
+
+				planList.add(plan);
 			}
 			/*if (ids.size() > 0) {
 				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1, orgIds);

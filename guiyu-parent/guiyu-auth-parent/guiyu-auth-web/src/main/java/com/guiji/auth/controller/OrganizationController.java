@@ -70,7 +70,7 @@ public class OrganizationController implements IOrg{
 		organizationService.delte(record);
 	}
 	
-	@Jurisdiction("system_organization_edit,system_account_add,system_account_robot")
+	@Jurisdiction("system_organization_edit,system_account_add,system_account_robot,system_account_delay")
 	@RequestMapping("update")
 	public void update(SysOrganization record,
 			@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{

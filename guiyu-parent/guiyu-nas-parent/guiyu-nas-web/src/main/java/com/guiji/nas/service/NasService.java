@@ -44,5 +44,11 @@ public interface NasService {
 	 * @return List<SysFile>
 	 */
 	public List<SysFile> querySkFileByCondition(SysFileQueryReqVO sysFileQueryReqVO);
+	
+	/**
+	 * 删除文件
+	 * @param sourceUrl void
+	 */
+	public void deleteByUrl(String sourceUrl);
 }
   

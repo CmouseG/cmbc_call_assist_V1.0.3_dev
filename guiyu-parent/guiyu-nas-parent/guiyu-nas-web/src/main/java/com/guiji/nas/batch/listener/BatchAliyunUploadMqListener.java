@@ -22,7 +22,7 @@ import com.rabbitmq.client.Channel;
 
 
 @Component
-@RabbitListener(queues = "fanoutAliyunUploadQueue", containerFactory = "batchUploadRabbitFactory")
+@RabbitListener(queues = "aliyunUploadQueue", containerFactory = "batchUploadRabbitFactory")
 public class BatchAliyunUploadMqListener {
 	
 	private static Logger logger = LoggerFactory.getLogger(BatchAliyunUploadMqListener.class);
@@ -39,7 +39,7 @@ public class BatchAliyunUploadMqListener {
 			res.setBusiId(req.getBusiId());
 			res.setSourceUrl(req.getSourceUrl());
 			res.setAliyunUrl(AliyunUtil.getAliyunBaseUrl() + fileName);
-			queueSender.send("fanoutAliyunNoticeQueue", res.toString());
+			queueSender.send("aliyunNoticeQueue", res.toString());
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			logger.info("error",e);

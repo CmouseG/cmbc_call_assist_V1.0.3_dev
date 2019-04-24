@@ -80,4 +80,4 @@ xxl:
 rabbit:
   general:
     direct:
-      queue: fanoutAliyunUploadQueue|fanoutAliyunNoticeQueue|fanoutNasFileDeleteQueue #队列名称
+      queue: aliyunUploadQueue|aliyunNoticeQueue|nasFileDeleteQueue #队列名称

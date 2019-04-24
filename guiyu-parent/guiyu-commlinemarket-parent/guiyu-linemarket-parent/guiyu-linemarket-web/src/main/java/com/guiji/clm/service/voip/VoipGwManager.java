@@ -555,6 +555,14 @@ public class VoipGwManager {
 				}
 				rtnList.add(vo);
 			}
+
+			//如果是鼎信，需端口减1，保持展示与设备一致
+			if(BrandConfig.DINGXIN.equals(voipGwInfo.getGwBrand())) {
+				for (VoipGwPortVO vo : rtnList) {
+					vo.setPort(vo.getPort() - 1);
+				}
+			}
+
 			return rtnList;
 		}
 		return null;

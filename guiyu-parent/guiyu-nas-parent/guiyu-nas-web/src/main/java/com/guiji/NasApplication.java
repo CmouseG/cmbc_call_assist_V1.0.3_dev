@@ -2,11 +2,14 @@ package com.guiji;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import com.guiji.component.result.EnableAutoResultPack;
+import com.guiji.nas.property.AliyunUtil;
+
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
 import org.springframework.jmx.support.RegistrationPolicy;
@@ -28,4 +31,11 @@ public class NasApplication {
     public static void main(String[] args) {
         SpringApplication.run(NasApplication.class, args);
     }
+    
+    @Bean(name = "AliyunUtil")
+    public AliyunUtil aliyunUtil() {
+    	AliyunUtil aliyunUtil = new AliyunUtil();
+        return aliyunUtil;
+    }
+    
 }

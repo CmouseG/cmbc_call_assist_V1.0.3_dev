@@ -152,7 +152,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				}
 			});
 		}catch(Exception e){
-			logger.error("推送redis完成后，变更计划通知状态", e);
+			logger.error("推送redis完成后，变更计划通知状态异常", e);
 			e.printStackTrace();
 		}
 	}

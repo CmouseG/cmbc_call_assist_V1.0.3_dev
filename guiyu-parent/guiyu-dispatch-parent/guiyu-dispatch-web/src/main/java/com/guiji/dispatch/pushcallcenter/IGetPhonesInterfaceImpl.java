@@ -108,6 +108,10 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 
 				planList.add(plan);
 			}
+
+			//更新计划状态：已通知redis状态
+			dispatchMapper.updPlanByStatusSync(ids, SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
+
 			/*if (ids.size() > 0) {
 				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1, orgIds);
 			}*/

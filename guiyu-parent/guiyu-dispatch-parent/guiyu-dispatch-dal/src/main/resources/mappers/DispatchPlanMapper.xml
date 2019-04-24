@@ -733,11 +733,12 @@
 
   <update id="updPlanByStatusSync">
     UPDATE dispatch_plan
-    <set>
-      status_sync = #{status},
-      gmt_modified = NOW()
-    </set>
-    WHERE plan_uuid = #{planUuid}
+    SET status_sync = #{status}
+    WHERE plan_uuid in
+    <foreach item="item" index="index" collection="params" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
     AND org_id = #{orgId}
   </update>
 

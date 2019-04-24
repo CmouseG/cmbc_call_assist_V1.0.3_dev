@@ -37,7 +37,7 @@ public interface DispatchPlanMapper {
 
 	int updateDispatchPlanListByStatusSYNC(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgIds")List<Integer> orgIds);
 
-    int updPlanByStatusSync(@Param("planUuid") Long planUuid , @Param("status")Integer status, @Param("orgId") Integer orgId);
+    int updPlanByStatusSync(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgId") Integer orgId);
 
 	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(@Param("dis")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
 	

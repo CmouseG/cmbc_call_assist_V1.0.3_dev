@@ -101,9 +101,6 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 											}
 										}
 
-										//变更计划通知状态
-										this.updPlanSyncStatus(syncRedisList, syncOrgIdList);
-
 									/*
 									//进去队列之前，根据优line优先级进行排序
 									List<DispatchPlan> bak = new ArrayList<>();
@@ -133,27 +130,6 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				logger.error("PhonePlanQueueServiceImpl#execute:" , e);
 				e.printStackTrace();
 			}
-		}
-	}
-
-	/**
-	 * 变更计划通知状态
-	 * @param syncRedisList
-	 * @param syncOrgIdList
-	 */
-//	@Async("asyncSuccPhoneExecutor")
-	protected void updPlanSyncStatus(List<Long> syncRedisList, List<Integer> syncOrgIdList){
-		try{
-			asyncServiceExecutor.execute(new Runnable(){
-				@Override
-				public void run(){
-					//更新计划状态：已推送redis
-					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(syncRedisList, SyncStatusEnum.ALREADY_SYNC.getStatus(), syncOrgIdList);
-				}
-			});
-		}catch(Exception e){
-			logger.error("推送redis完成后，变更计划通知状态异常", e);
-			e.printStackTrace();
 		}
 	}
 

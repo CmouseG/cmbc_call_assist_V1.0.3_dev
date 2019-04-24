@@ -82,7 +82,7 @@ fdfs:
   webServerUrl: http://192.168.1.83:8080/
 rabbit:
   general:
-    direct:                               #需要绑定交换机与队列关系
+    direct:
       queue: fanoutAliyunUploadQueue|fanoutNasFileDeleteQueue #队列名称
 properties:
   error: properties/error.properties

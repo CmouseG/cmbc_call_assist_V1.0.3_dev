@@ -66,19 +66,7 @@ properties:
 rabbit:
   general:
     direct:
-      queue: SendMessageMQ.Sms|MessagesTaskMQ.Sms
+      queues: SendMessageMQ.direct.Sms|SendMessageTaskMQ.direct.Sms
 
- 
-#xxl-job admin中心配置
-xxl:
-  job:
-    admin:
-      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://172.16.167.213:18016/xxl-job-admin
-    executor:
-      ip: 172.16.167.213
-      port: 9017
-      logpath: /home/logs/guiyu-ai-web
-      logretentiondays: -1
-    accessToken:
+
 

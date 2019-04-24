@@ -4,7 +4,6 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.entity.RecordReqVO;
-import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.eventbus.handler.UploadRcordHandler;
@@ -13,14 +12,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 @RestController
@@ -31,8 +28,6 @@ public class TemplateController implements ITemplate {
     TemplateService templateService;
     @Autowired
     UploadRcordHandler uploadRcordHandler;
-
-    private static ExecutorService executor = Executors.newFixedThreadPool(20) ;
 
     @Override
     public Result.ReturnData<Boolean> istempexist(@PathVariable(value = "tempId") String tempId) {
@@ -76,12 +71,8 @@ public class TemplateController implements ITemplate {
         }
         logger.info("收到上传录音请求RecordReqVO[{}]", recordReqVO);
 
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                uploadRcordHandler.handleUploadRecord(recordReqVO);
-            }
-        });
+        uploadRcordHandler.handleUploadRecord(recordReqVO);
+
         return Result.ok();
     }
 

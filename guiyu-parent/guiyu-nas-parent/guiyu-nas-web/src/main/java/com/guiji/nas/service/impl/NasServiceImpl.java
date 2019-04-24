@@ -123,6 +123,8 @@ public class NasServiceImpl implements NasService {
 	 * @param sourceUrl void
 	 */
 	public void deleteByUrl(String sourceUrl) {
+		//获取域名后路径
+		sourceUrl.replace(hostUrl, "");
 		client.deleteFile(sourceUrl);
 	}
 	

@@ -17,7 +17,7 @@ import com.rabbitmq.client.Channel;
 
 
 @Component
-@RabbitListener(queues = "fanoutNasFileDeleteQueue", containerFactory = "BatchDeleteRabbitFactory")
+@RabbitListener(queues = "nasFileDeleteQueue", containerFactory = "BatchDeleteRabbitFactory")
 public class BatchDeleteMqListener {
 	
 	private static Logger logger = LoggerFactory.getLogger(BatchDeleteMqListener.class);

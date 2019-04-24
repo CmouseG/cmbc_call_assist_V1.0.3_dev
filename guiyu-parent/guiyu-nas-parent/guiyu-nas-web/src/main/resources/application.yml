@@ -83,7 +83,7 @@ fdfs:
 rabbit:
   general:
     direct:
-      queue: fanoutAliyunUploadQueue|fanoutNasFileDeleteQueue #队列名称
+      queue: aliyunUploadQueue|nasFileDeleteQueue #队列名称
 properties:
   error: properties/error.properties
 #阿里云oss配置

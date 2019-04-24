@@ -39,7 +39,7 @@ public class RecordUploadListener {
      *
      * @param message
      */
-    @RabbitListener(queues = "fanoutAliyunNoticeQueue")
+    @RabbitListener(queues = "aliyunNoticeQueue")
     @RabbitHandler
     public void process(String message) {
         logger.info("阿里云上传成功Mq，收到消息{}", message);
@@ -78,7 +78,7 @@ public class RecordUploadListener {
                 aliyunReqVO.setBusiId(busId);
                 aliyunReqVO.setSourceUrl(sourceUrl);
                 logger.info("发送到删除队列 [{}]",aliyunReqVO);
-                queueSender.send("fanoutNasFileDeleteQueue", JsonUtils.bean2Json(aliyunReqVO));
+                queueSender.send("nasFileDeleteQueue", JsonUtils.bean2Json(aliyunReqVO));
 
             }
 

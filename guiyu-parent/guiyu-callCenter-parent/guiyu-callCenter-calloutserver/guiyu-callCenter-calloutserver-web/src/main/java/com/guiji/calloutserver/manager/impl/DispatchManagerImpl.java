@@ -27,9 +27,9 @@ public class DispatchManagerImpl implements DispatchManager {
      */
     @Override
     public void successSchedule(String planUuid, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId, Boolean isNeedPlan) {
-        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}]",planUuid,phoneNo,intent,lineId);
         if(StringUtils.isBlank(planUuid)){
-            log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+            log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}]",planUuid,phoneNo,intent,lineId);
             return;
         }
         MQSuccPhoneDto mqSuccPhoneDto = new MQSuccPhoneDto();

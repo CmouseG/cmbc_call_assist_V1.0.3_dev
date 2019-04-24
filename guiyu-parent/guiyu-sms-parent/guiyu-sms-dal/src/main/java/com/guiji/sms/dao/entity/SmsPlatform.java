@@ -12,15 +12,15 @@ public class SmsPlatform implements Serializable {
 
     private String identification;
 
-    private Integer createId;
-
-    private Date createTime;
-
-    private Integer updateId;
-
-    private Date updateTime;
+    private Integer contentType;
 
     private String orgCode;
+
+    private Integer createId;
+
+    private String createName;
+
+    private Date createTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -56,36 +56,12 @@ public class SmsPlatform implements Serializable {
         this.identification = identification == null ? null : identification.trim();
     }
 
-    public Integer getCreateId() {
-        return createId;
+    public Integer getContentType() {
+        return contentType;
     }
 
-    public void setCreateId(Integer createId) {
-        this.createId = createId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getUpdateId() {
-        return updateId;
-    }
-
-    public void setUpdateId(Integer updateId) {
-        this.updateId = updateId;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 
     public String getOrgCode() {
@@ -94,6 +70,30 @@ public class SmsPlatform implements Serializable {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public Integer getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Integer createId) {
+        this.createId = createId;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override
@@ -106,11 +106,11 @@ public class SmsPlatform implements Serializable {
         sb.append(", platformName=").append(platformName);
         sb.append(", platformParams=").append(platformParams);
         sb.append(", identification=").append(identification);
-        sb.append(", createId=").append(createId);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateId=").append(updateId);
-        sb.append(", updateTime=").append(updateTime);
+        sb.append(", contentType=").append(contentType);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", createId=").append(createId);
+        sb.append(", createName=").append(createName);
+        sb.append(", createTime=").append(createTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

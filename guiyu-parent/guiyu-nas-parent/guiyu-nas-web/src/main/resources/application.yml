@@ -80,5 +80,15 @@ fdfs:
     max-total: 500
     max-wait-millis: 120
   webServerUrl: http://192.168.1.83:8080/
+rabbit:
+  general:
+    direct:
+      queue: aliyunUploadQueue|nasFileDeleteQueue #队列名称
 properties:
   error: properties/error.properties
+#阿里云oss配置
+endpoint: 
+accessKeyId: 
+accessKeySecret: 
+bucketName: 
+aliyunBaseUrl: 

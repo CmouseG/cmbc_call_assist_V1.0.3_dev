@@ -470,11 +470,13 @@
 	</select>
 
 	<select id="getUserIdForLogin" resultType="long">
-		select id from sys_user t
-		where t.username = #{username}
-		and t.password = #{password}
-		and t.status = 1
-		and (t.vaild_time >= curdate() OR ISNULL(t.vaild_time))
+		SELECT t.id FROM sys_user t
+		LEFT JOIN sys_organization o ON t.org_code = o.`code`
+		WHERE t.username = #{username}
+		AND t.`password` = #{password}
+		AND t.`status` = 1
+		AND(o.effective_date <![CDATA[<=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
+		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d') OR ISNULL(o.invalid_date))
 	</select>
 
 

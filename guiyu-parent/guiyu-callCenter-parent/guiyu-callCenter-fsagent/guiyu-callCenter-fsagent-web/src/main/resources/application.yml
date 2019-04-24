@@ -1,5 +1,6 @@
 server:
   port: 18006
+  threadCount: 20
 
 spring:
   application:
@@ -64,6 +65,6 @@ properties:
 rabbit:
   general:
     direct:
-      queue: record_update_mq
+      queue: callCenter.record_update_mq
 
 

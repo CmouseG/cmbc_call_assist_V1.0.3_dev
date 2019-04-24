@@ -103,7 +103,8 @@ public class MenuService {
 					   url.equals("/system/processTask") ||  // 进程任务
 					   url.equals("/smsCenter/platformManage") ||  // 平台管理列表
 					   url.equals("/financeCenter/rechargeManage") || // 充值管理
-					   url.equals("/robotCenter/simList") // 机器人实时配置
+					   url.equals("/robotCenter/simList") || // 机器人实时配置
+					   url.equals("system_account_delay")  // 系统管理-开户管理-延期
 					   ){iterator.remove();}
 				}
 			}

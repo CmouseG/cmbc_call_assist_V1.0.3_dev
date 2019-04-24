@@ -119,6 +119,16 @@ public class NasServiceImpl implements NasService {
 	}
 	
 	/**
+	 * 删除文件
+	 * @param sourceUrl void
+	 */
+	public void deleteByUrl(String sourceUrl) {
+		//获取域名后路径
+		sourceUrl.replace(hostUrl, "");
+		client.deleteFile(sourceUrl);
+	}
+	
+	/**
 	 * 根据条件查询文件信息列表
 	 * @date:2018年6月25日 下午10:14:17 
 	 * @param sysFileQueryReqVO

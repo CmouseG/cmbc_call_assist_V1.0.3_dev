@@ -40,7 +40,7 @@ public class UploadFileMqListener {
      * 1、
      * @param message
      */
-    @RabbitListener(queues = "record_update_mq")
+    @RabbitListener(queues = "callCenter.record_update_mq")
     @RabbitHandler
     public void process(String message) {
         try {

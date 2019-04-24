@@ -8,37 +8,37 @@ public class SmsTask implements Serializable {
 
     private String taskName;
 
-    private Integer phoneNum;
+    private String tunnelName;
 
-    private Integer sendStatus;
+    private Integer contentType;
+
+    private Integer phoneNum;
 
     private Integer sendType;
 
-    private String tunnelName;
+    private Integer sendStatus;
 
-    private Integer smsTemplateId;
-
-    private Date sendDate;
+    private String sendTime;
 
     private Integer auditingStatus;
 
     private Integer runStatus;
 
-    private String fileName;
+    private String orgCode;
 
-    private Integer companyId;
-
-    private String companyName;
+    private String orgName;
 
     private Integer createId;
+
+    private String createName;
 
     private Date createTime;
 
     private Integer updateId;
 
-    private Date updateTime;
+    private String updateName;
 
-    private String orgCode;
+    private Date updateTime;
 
     private String smsContent;
 
@@ -60,20 +60,28 @@ public class SmsTask implements Serializable {
         this.taskName = taskName == null ? null : taskName.trim();
     }
 
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName == null ? null : tunnelName.trim();
+    }
+
+    public Integer getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
+    }
+
     public Integer getPhoneNum() {
         return phoneNum;
     }
 
     public void setPhoneNum(Integer phoneNum) {
         this.phoneNum = phoneNum;
-    }
-
-    public Integer getSendStatus() {
-        return sendStatus;
-    }
-
-    public void setSendStatus(Integer sendStatus) {
-        this.sendStatus = sendStatus;
     }
 
     public Integer getSendType() {
@@ -84,28 +92,20 @@ public class SmsTask implements Serializable {
         this.sendType = sendType;
     }
 
-    public String getTunnelName() {
-        return tunnelName;
+    public Integer getSendStatus() {
+        return sendStatus;
     }
 
-    public void setTunnelName(String tunnelName) {
-        this.tunnelName = tunnelName == null ? null : tunnelName.trim();
+    public void setSendStatus(Integer sendStatus) {
+        this.sendStatus = sendStatus;
     }
 
-    public Integer getSmsTemplateId() {
-        return smsTemplateId;
+    public String getSendTime() {
+        return sendTime;
     }
 
-    public void setSmsTemplateId(Integer smsTemplateId) {
-        this.smsTemplateId = smsTemplateId;
-    }
-
-    public Date getSendDate() {
-        return sendDate;
-    }
-
-    public void setSendDate(Date sendDate) {
-        this.sendDate = sendDate;
+    public void setSendTime(String sendTime) {
+        this.sendTime = sendTime == null ? null : sendTime.trim();
     }
 
     public Integer getAuditingStatus() {
@@ -124,28 +124,20 @@ public class SmsTask implements Serializable {
         this.runStatus = runStatus;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getOrgCode() {
+        return orgCode;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName == null ? null : fileName.trim();
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
-    public Integer getCompanyId() {
-        return companyId;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName == null ? null : companyName.trim();
+    public void setOrgName(String orgName) {
+        this.orgName = orgName == null ? null : orgName.trim();
     }
 
     public Integer getCreateId() {
@@ -154,6 +146,14 @@ public class SmsTask implements Serializable {
 
     public void setCreateId(Integer createId) {
         this.createId = createId;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
     }
 
     public Date getCreateTime() {
@@ -172,20 +172,20 @@ public class SmsTask implements Serializable {
         this.updateId = updateId;
     }
 
+    public String getUpdateName() {
+        return updateName;
+    }
+
+    public void setUpdateName(String updateName) {
+        this.updateName = updateName == null ? null : updateName.trim();
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     public String getSmsContent() {
@@ -204,22 +204,22 @@ public class SmsTask implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", taskName=").append(taskName);
-        sb.append(", phoneNum=").append(phoneNum);
-        sb.append(", sendStatus=").append(sendStatus);
-        sb.append(", sendType=").append(sendType);
         sb.append(", tunnelName=").append(tunnelName);
-        sb.append(", smsTemplateId=").append(smsTemplateId);
-        sb.append(", sendDate=").append(sendDate);
+        sb.append(", contentType=").append(contentType);
+        sb.append(", phoneNum=").append(phoneNum);
+        sb.append(", sendType=").append(sendType);
+        sb.append(", sendStatus=").append(sendStatus);
+        sb.append(", sendTime=").append(sendTime);
         sb.append(", auditingStatus=").append(auditingStatus);
         sb.append(", runStatus=").append(runStatus);
-        sb.append(", fileName=").append(fileName);
-        sb.append(", companyId=").append(companyId);
-        sb.append(", companyName=").append(companyName);
+        sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgName=").append(orgName);
         sb.append(", createId=").append(createId);
+        sb.append(", createName=").append(createName);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
+        sb.append(", updateName=").append(updateName);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", orgCode=").append(orgCode);
         sb.append(", smsContent=").append(smsContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

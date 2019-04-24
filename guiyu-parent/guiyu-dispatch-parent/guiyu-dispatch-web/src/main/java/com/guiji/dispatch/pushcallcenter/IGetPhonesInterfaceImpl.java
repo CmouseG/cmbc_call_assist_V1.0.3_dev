@@ -87,8 +87,8 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
 			for (DispatchPlan plan : selectByCallHour) {
 				ids.add(plan.getPlanUuidLong());
-				//更新每条记录状态:已推送redis标识
-				dispatchMapper.updPlanByStatusSync(plan.getPlanUuidLong(), SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
+				//更新每条记录状态:已推送redis标识  优化修改 放到推到redis队列之后
+		//		dispatchMapper.updPlanByStatusSync(plan.getPlanUuidLong(), SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
 				plan.setStatusSync(SyncStatusEnum.ALREADY_SYNC.getStatus());
 				// 查询出每个任务下对应的线路
 				List<DispatchBatchLine> linesVO = null;

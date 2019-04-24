@@ -4,7 +4,9 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
@@ -13,6 +15,8 @@ import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +38,12 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private DistributedLockHandler distributedLockHandler;
 	@Autowired
 	private IDispatchBatchLineService lineService;
+
+	@Autowired
+	private DispatchPlanMapper dispatchPlanMapper;
+
+	@Autowired
+	private ThreadPoolTaskExecutor asyncServiceExecutor;
 
 	@Override
 	public void execute() throws Exception {
@@ -76,15 +86,23 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									if(null != dispatchPlanList && dispatchPlanList.size()>0){
 										len = dispatchPlanList.size();
 										logger.info("当前查询到的数据:"+len);
-
+										List<Long> syncRedisList = new ArrayList<Long>();
+										List<Integer> syncOrgIdList = new ArrayList<Integer>();
 										//进去队列之前，根据优line优先级进行排序
-										List<DispatchPlan> bak = new ArrayList<>();
-										bak.addAll(dispatchPlanList);
 										for(DispatchPlan plan: dispatchPlanList){
-											//进去队列之前，根据优line优先级进行排序
-											DispatchPlan sortPlan = lineService.sortLine(plan);
-											this.pushPlanQueue(sortPlan, queue);
+											try {
+												//进去队列之前，根据优line优先级进行排序
+												DispatchPlan sortPlan = lineService.sortLine(plan);
+												this.pushPlanQueue(sortPlan, queue);
+												syncRedisList.add(sortPlan.getPlanUuidLong());
+												syncOrgIdList.add(sortPlan.getOrgId());
+											}catch(Exception ex){
+												logger.error("plan line排序异常或者推入redis队列异常", ex);
+											}
 										}
+
+										//变更计划通知状态
+										this.updPlanSyncStatus(syncRedisList, syncOrgIdList);
 
 									/*
 									//进去队列之前，根据优line优先级进行排序
@@ -118,10 +136,32 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		}
 	}
 
+	/**
+	 * 变更计划通知状态
+	 * @param syncRedisList
+	 * @param syncOrgIdList
+	 */
+//	@Async("asyncSuccPhoneExecutor")
+	protected void updPlanSyncStatus(List<Long> syncRedisList, List<Integer> syncOrgIdList){
+		try{
+			asyncServiceExecutor.execute(new Runnable(){
+				@Override
+				public void run(){
+					//更新计划状态：已推送redis
+					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(syncRedisList, SyncStatusEnum.ALREADY_SYNC.getStatus(), syncOrgIdList);
+				}
+			});
+		}catch(Exception e){
+			logger.error("推送redis完成后，变更计划通知状态异常", e);
+			e.printStackTrace();
+		}
+	}
+
+	@Async("asyncSuccPhoneExecutor")
 	public boolean pushPlanQueue(DispatchPlan plan, String queue){
-		logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
+	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
 		boolean result = redisUtil.leftPush(queue, plan);
-		logger.info("推入要拨打电话数据KEY:{},{}", queue, redisUtil.lGetListSize(queue));
+	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, redisUtil.lGetListSize(queue));
 		return result;
 	}
 

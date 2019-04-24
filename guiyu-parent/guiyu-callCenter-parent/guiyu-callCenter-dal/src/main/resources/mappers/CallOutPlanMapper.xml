@@ -224,6 +224,31 @@
     </foreach>
     order by a.create_time desc
   </select>
+  <select id="selectCallIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
+    select
+    a.call_id as callId, b.record_url as recordUrl
+    from call_out_plan a
+    left join call_out_record b on a.call_id = b.call_id
+    where b.record_url is not null
+    <if test="callId != null" >
+      and a.call_id > #{callId}
+    </if>
+    order by a.call_id
+    limit 0,3000
+  </select>
+  <select id="selectDetailIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
+    select
+    a.call_detail_id as callDetailId, a.call_id as callId,
+    b.customer_record_url as customerRecordUrl, b.bot_record_url as botRecordUrl
+    from call_out_detail a
+    left join call_out_detail_record b on a.call_detail_id = b.call_detail_id
+    where (b.customer_record_url is not null or b.bot_record_url is not null)
+    <if test="callDetailId != null" >
+      and a.call_detail_id > #{callDetailId}
+    </if>
+    order by a.call_detail_id
+    limit 0,3000
+  </select>
 
   <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map" >
     select count(*)

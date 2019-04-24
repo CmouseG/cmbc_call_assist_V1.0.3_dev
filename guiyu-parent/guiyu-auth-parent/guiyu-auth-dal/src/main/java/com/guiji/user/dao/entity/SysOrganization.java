@@ -43,9 +43,32 @@ public class SysOrganization implements Serializable {
     private List<String> menuIds;
     private Integer usable;
     
+    private String effectiveDate;
+    private String invalidDate;
+    
     private static final long serialVersionUID = 1L;
 
-    public String getStartDate()
+    public String getEffectiveDate()
+	{
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(String effectiveDate)
+	{
+		this.effectiveDate = effectiveDate;
+	}
+
+	public String getInvalidDate()
+	{
+		return invalidDate;
+	}
+
+	public void setInvalidDate(String invalidDate)
+	{
+		this.invalidDate = invalidDate;
+	}
+
+	public String getStartDate()
 	{
 		return startDate;
 	}

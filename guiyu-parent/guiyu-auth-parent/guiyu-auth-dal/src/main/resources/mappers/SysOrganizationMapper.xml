@@ -341,6 +341,12 @@
       <if test="subCode != null" >
         sub_code = #{subCode,jdbcType=VARCHAR},
       </if>
+       <if test="effectiveDate != null">
+        effective_date = #{effectiveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="invalidDate != null">
+        invalid_date = #{invalidDate,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -365,7 +371,7 @@
 	<select id="selectOpenByPage" resultType="map">
 		select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
 		b.username as createName,c.username as updateName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line,
-		a.start_date,a.end_date
+		a.start_date,a.end_date, a.effective_date, a.invalid_date
 		from sys_organization a
 		LEFT JOIN sys_user b on a.create_id=b.id
 		LEFT JOIN sys_user c on a.update_id=c.id

@@ -39,7 +39,7 @@ public class RecordUploadListener {
      *
      * @param message
      */
-    @RabbitListener(queues = "fanoutAliyunNoticeExchange")
+    @RabbitListener(queues = "fanoutAliyunNoticeQueue")
     @RabbitHandler
     public void process(String message) {
         logger.info("阿里云上传成功Mq，收到消息{}", message);

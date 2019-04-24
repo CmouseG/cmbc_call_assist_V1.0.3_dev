@@ -2,6 +2,7 @@ package com.guiji.nas.batch.listener;
 
 import java.io.IOException;
 
+import com.guiji.guiyu.message.component.QueueSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -27,7 +28,7 @@ public class BatchAliyunUploadMqListener {
 	private static Logger logger = LoggerFactory.getLogger(BatchAliyunUploadMqListener.class);
 
 	@Autowired
-    private FanoutSender fanoutSender;
+    private QueueSender queueSender;
 
 	@RabbitHandler
 	public void process(String message,Channel channel,Message message2) {
@@ -38,7 +39,7 @@ public class BatchAliyunUploadMqListener {
 			res.setBusiId(req.getBusiId());
 			res.setSourceUrl(req.getSourceUrl());
 			res.setAliyunUrl(AliyunUtil.getAliyunBaseUrl() + fileName);
-			fanoutSender.send("fanoutAliyunNoticeExchange", res.toString());
+			queueSender.send("fanoutAliyunNoticeQueue", res.toString());
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			logger.info("error",e);

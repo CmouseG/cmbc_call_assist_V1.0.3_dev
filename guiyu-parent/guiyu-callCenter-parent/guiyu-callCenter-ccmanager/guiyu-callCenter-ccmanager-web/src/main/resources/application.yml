@@ -77,3 +77,7 @@ xxl:
       logpath: /home/logs/guiyu-callCenter-ccmanager-web
       logretentiondays: -1
     accessToken:
+rabbit:
+  general:
+    direct:
+      queue: fanoutAliyunUploadQueue|fanoutAliyunNoticeQueue|fanoutNasFileDeleteQueue #队列名称

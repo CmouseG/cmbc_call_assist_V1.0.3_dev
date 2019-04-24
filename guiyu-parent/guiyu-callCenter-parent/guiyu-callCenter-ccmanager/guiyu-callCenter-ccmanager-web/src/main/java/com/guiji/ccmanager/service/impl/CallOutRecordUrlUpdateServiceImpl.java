@@ -64,7 +64,7 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
                     aliyunReqVO.setBusiId(callId.toString());
                     aliyunReqVO.setSourceUrl(recordUrl);
                     log.info("callOutPlan推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
-                    queueSender.send("fanoutAliyunUploadExchange", JsonUtils.bean2Json(aliyunReqVO));
+                    queueSender.send("fanoutAliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
 
                 }
 
@@ -124,12 +124,12 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
                         aliyunReqVO.setBusiId("customer_" + callIdRecordUrl.getCallId() + "_" + callDetailId);
                         aliyunReqVO.setSourceUrl(customerRecordUrl);
                         log.info("客户说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
-                        queueSender.send("fanoutAliyunUploadExchange", JsonUtils.bean2Json(aliyunReqVO));
+                        queueSender.send("fanoutAliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
                     } else {
                         aliyunReqVO.setBusiId("agent_" + callIdRecordUrl.getCallId() + "_" + callDetailId);
                         aliyunReqVO.setSourceUrl(botRecordUrl);
                         log.info("坐席说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
-                        queueSender.send("fanoutAliyunUploadExchange", JsonUtils.bean2Json(aliyunReqVO));
+                        queueSender.send("fanoutAliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
                     }
 
 

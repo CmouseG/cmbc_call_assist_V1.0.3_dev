@@ -4,22 +4,22 @@
   <resultMap id="BaseResultMap" type="com.guiji.sms.dao.entity.SmsTask">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="task_name" jdbcType="VARCHAR" property="taskName" />
-    <result column="phone_num" jdbcType="INTEGER" property="phoneNum" />
-    <result column="send_status" jdbcType="INTEGER" property="sendStatus" />
-    <result column="send_type" jdbcType="INTEGER" property="sendType" />
     <result column="tunnel_name" jdbcType="VARCHAR" property="tunnelName" />
-    <result column="sms_template_id" jdbcType="INTEGER" property="smsTemplateId" />
-    <result column="send_date" jdbcType="TIMESTAMP" property="sendDate" />
+    <result column="content_type" jdbcType="INTEGER" property="contentType" />
+    <result column="phone_num" jdbcType="INTEGER" property="phoneNum" />
+    <result column="send_type" jdbcType="INTEGER" property="sendType" />
+    <result column="send_status" jdbcType="INTEGER" property="sendStatus" />
+    <result column="send_time" jdbcType="VARCHAR" property="sendTime" />
     <result column="auditing_status" jdbcType="INTEGER" property="auditingStatus" />
     <result column="run_status" jdbcType="INTEGER" property="runStatus" />
-    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="company_id" jdbcType="INTEGER" property="companyId" />
-    <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+    <result column="org_name" jdbcType="VARCHAR" property="orgName" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_id" jdbcType="INTEGER" property="updateId" />
+    <result column="update_name" jdbcType="VARCHAR" property="updateName" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsTask">
     <result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
@@ -83,9 +83,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, task_name, phone_num, send_status, send_type, tunnel_name, sms_template_id, send_date, 
-    auditing_status, run_status, file_name, company_id, company_name, create_id, create_time, 
-    update_id, update_time, org_code
+    id, task_name, tunnel_name, content_type, phone_num, send_type, send_status, send_time, 
+    auditing_status, run_status, org_code, org_name, create_id, create_name, create_time, 
+    update_id, update_name, update_time
   </sql>
   <sql id="Blob_Column_List">
     sms_content
@@ -105,9 +105,6 @@
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
     </if>
   </select>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsTaskExample" resultMap="BaseResultMap">
@@ -147,19 +144,19 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsTask" useGeneratedKeys="true" keyProperty="id">
-    insert into sms_task (id, task_name, phone_num, 
-      send_status, send_type, tunnel_name, 
-      sms_template_id, send_date, auditing_status, 
-      run_status, file_name, company_id, 
-      company_name, create_id, create_time, 
-      update_id, update_time, org_code, 
+    insert into sms_task (id, task_name, tunnel_name, 
+      content_type, phone_num, send_type, 
+      send_status, send_time, auditing_status, 
+      run_status, org_code, org_name, 
+      create_id, create_name, create_time, 
+      update_id, update_name, update_time, 
       sms_content)
-    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{phoneNum,jdbcType=INTEGER}, 
-      #{sendStatus,jdbcType=INTEGER}, #{sendType,jdbcType=INTEGER}, #{tunnelName,jdbcType=VARCHAR}, 
-      #{smsTemplateId,jdbcType=INTEGER}, #{sendDate,jdbcType=TIMESTAMP}, #{auditingStatus,jdbcType=INTEGER}, 
-      #{runStatus,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR}, #{companyId,jdbcType=INTEGER}, 
-      #{companyName,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{orgCode,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{tunnelName,jdbcType=VARCHAR}, 
+      #{contentType,jdbcType=INTEGER}, #{phoneNum,jdbcType=INTEGER}, #{sendType,jdbcType=INTEGER}, 
+      #{sendStatus,jdbcType=INTEGER}, #{sendTime,jdbcType=VARCHAR}, #{auditingStatus,jdbcType=INTEGER}, 
+      #{runStatus,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{orgName,jdbcType=VARCHAR}, 
+      #{createId,jdbcType=INTEGER}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateId,jdbcType=INTEGER}, #{updateName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{smsContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTask" useGeneratedKeys="true" keyProperty="id">
@@ -171,23 +168,23 @@
       <if test="taskName != null">
         task_name,
       </if>
+      <if test="tunnelName != null">
+        tunnel_name,
+      </if>
+      <if test="contentType != null">
+        content_type,
+      </if>
       <if test="phoneNum != null">
         phone_num,
-      </if>
-      <if test="sendStatus != null">
-        send_status,
       </if>
       <if test="sendType != null">
         send_type,
       </if>
-      <if test="tunnelName != null">
-        tunnel_name,
+      <if test="sendStatus != null">
+        send_status,
       </if>
-      <if test="smsTemplateId != null">
-        sms_template_id,
-      </if>
-      <if test="sendDate != null">
-        send_date,
+      <if test="sendTime != null">
+        send_time,
       </if>
       <if test="auditingStatus != null">
         auditing_status,
@@ -195,17 +192,17 @@
       <if test="runStatus != null">
         run_status,
       </if>
-      <if test="fileName != null">
-        file_name,
+      <if test="orgCode != null">
+        org_code,
       </if>
-      <if test="companyId != null">
-        company_id,
-      </if>
-      <if test="companyName != null">
-        company_name,
+      <if test="orgName != null">
+        org_name,
       </if>
       <if test="createId != null">
         create_id,
+      </if>
+      <if test="createName != null">
+        create_name,
       </if>
       <if test="createTime != null">
         create_time,
@@ -213,11 +210,11 @@
       <if test="updateId != null">
         update_id,
       </if>
+      <if test="updateName != null">
+        update_name,
+      </if>
       <if test="updateTime != null">
         update_time,
-      </if>
-      <if test="orgCode != null">
-        org_code,
       </if>
       <if test="smsContent != null">
         sms_content,
@@ -230,23 +227,23 @@
       <if test="taskName != null">
         #{taskName,jdbcType=VARCHAR},
       </if>
+      <if test="tunnelName != null">
+        #{tunnelName,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=INTEGER},
+      </if>
       <if test="phoneNum != null">
         #{phoneNum,jdbcType=INTEGER},
-      </if>
-      <if test="sendStatus != null">
-        #{sendStatus,jdbcType=INTEGER},
       </if>
       <if test="sendType != null">
         #{sendType,jdbcType=INTEGER},
       </if>
-      <if test="tunnelName != null">
-        #{tunnelName,jdbcType=VARCHAR},
+      <if test="sendStatus != null">
+        #{sendStatus,jdbcType=INTEGER},
       </if>
-      <if test="smsTemplateId != null">
-        #{smsTemplateId,jdbcType=INTEGER},
-      </if>
-      <if test="sendDate != null">
-        #{sendDate,jdbcType=TIMESTAMP},
+      <if test="sendTime != null">
+        #{sendTime,jdbcType=VARCHAR},
       </if>
       <if test="auditingStatus != null">
         #{auditingStatus,jdbcType=INTEGER},
@@ -254,17 +251,17 @@
       <if test="runStatus != null">
         #{runStatus,jdbcType=INTEGER},
       </if>
-      <if test="fileName != null">
-        #{fileName,jdbcType=VARCHAR},
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
       </if>
-      <if test="companyId != null">
-        #{companyId,jdbcType=INTEGER},
-      </if>
-      <if test="companyName != null">
-        #{companyName,jdbcType=VARCHAR},
+      <if test="orgName != null">
+        #{orgName,jdbcType=VARCHAR},
       </if>
       <if test="createId != null">
         #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -272,11 +269,11 @@
       <if test="updateId != null">
         #{updateId,jdbcType=INTEGER},
       </if>
+      <if test="updateName != null">
+        #{updateName,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="orgCode != null">
-        #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="smsContent != null">
         #{smsContent,jdbcType=LONGVARCHAR},
@@ -298,23 +295,23 @@
       <if test="record.taskName != null">
         task_name = #{record.taskName,jdbcType=VARCHAR},
       </if>
+      <if test="record.tunnelName != null">
+        tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contentType != null">
+        content_type = #{record.contentType,jdbcType=INTEGER},
+      </if>
       <if test="record.phoneNum != null">
         phone_num = #{record.phoneNum,jdbcType=INTEGER},
-      </if>
-      <if test="record.sendStatus != null">
-        send_status = #{record.sendStatus,jdbcType=INTEGER},
       </if>
       <if test="record.sendType != null">
         send_type = #{record.sendType,jdbcType=INTEGER},
       </if>
-      <if test="record.tunnelName != null">
-        tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
+      <if test="record.sendStatus != null">
+        send_status = #{record.sendStatus,jdbcType=INTEGER},
       </if>
-      <if test="record.smsTemplateId != null">
-        sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
-      </if>
-      <if test="record.sendDate != null">
-        send_date = #{record.sendDate,jdbcType=TIMESTAMP},
+      <if test="record.sendTime != null">
+        send_time = #{record.sendTime,jdbcType=VARCHAR},
       </if>
       <if test="record.auditingStatus != null">
         auditing_status = #{record.auditingStatus,jdbcType=INTEGER},
@@ -322,17 +319,17 @@
       <if test="record.runStatus != null">
         run_status = #{record.runStatus,jdbcType=INTEGER},
       </if>
-      <if test="record.fileName != null">
-        file_name = #{record.fileName,jdbcType=VARCHAR},
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.companyId != null">
-        company_id = #{record.companyId,jdbcType=INTEGER},
-      </if>
-      <if test="record.companyName != null">
-        company_name = #{record.companyName,jdbcType=VARCHAR},
+      <if test="record.orgName != null">
+        org_name = #{record.orgName,jdbcType=VARCHAR},
       </if>
       <if test="record.createId != null">
         create_id = #{record.createId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createName != null">
+        create_name = #{record.createName,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -340,11 +337,11 @@
       <if test="record.updateId != null">
         update_id = #{record.updateId,jdbcType=INTEGER},
       </if>
+      <if test="record.updateName != null">
+        update_name = #{record.updateName,jdbcType=VARCHAR},
+      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.orgCode != null">
-        org_code = #{record.orgCode,jdbcType=VARCHAR},
       </if>
       <if test="record.smsContent != null">
         sms_content = #{record.smsContent,jdbcType=LONGVARCHAR},
@@ -358,22 +355,22 @@
     update sms_task
     set id = #{record.id,jdbcType=INTEGER},
       task_name = #{record.taskName,jdbcType=VARCHAR},
-      phone_num = #{record.phoneNum,jdbcType=INTEGER},
-      send_status = #{record.sendStatus,jdbcType=INTEGER},
-      send_type = #{record.sendType,jdbcType=INTEGER},
       tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
-      sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
-      send_date = #{record.sendDate,jdbcType=TIMESTAMP},
+      content_type = #{record.contentType,jdbcType=INTEGER},
+      phone_num = #{record.phoneNum,jdbcType=INTEGER},
+      send_type = #{record.sendType,jdbcType=INTEGER},
+      send_status = #{record.sendStatus,jdbcType=INTEGER},
+      send_time = #{record.sendTime,jdbcType=VARCHAR},
       auditing_status = #{record.auditingStatus,jdbcType=INTEGER},
       run_status = #{record.runStatus,jdbcType=INTEGER},
-      file_name = #{record.fileName,jdbcType=VARCHAR},
-      company_id = #{record.companyId,jdbcType=INTEGER},
-      company_name = #{record.companyName,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      org_name = #{record.orgName,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=INTEGER},
+      create_name = #{record.createName,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
+      update_name = #{record.updateName,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      org_code = #{record.orgCode,jdbcType=VARCHAR},
       sms_content = #{record.smsContent,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -383,22 +380,22 @@
     update sms_task
     set id = #{record.id,jdbcType=INTEGER},
       task_name = #{record.taskName,jdbcType=VARCHAR},
-      phone_num = #{record.phoneNum,jdbcType=INTEGER},
-      send_status = #{record.sendStatus,jdbcType=INTEGER},
-      send_type = #{record.sendType,jdbcType=INTEGER},
       tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
-      sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
-      send_date = #{record.sendDate,jdbcType=TIMESTAMP},
+      content_type = #{record.contentType,jdbcType=INTEGER},
+      phone_num = #{record.phoneNum,jdbcType=INTEGER},
+      send_type = #{record.sendType,jdbcType=INTEGER},
+      send_status = #{record.sendStatus,jdbcType=INTEGER},
+      send_time = #{record.sendTime,jdbcType=VARCHAR},
       auditing_status = #{record.auditingStatus,jdbcType=INTEGER},
       run_status = #{record.runStatus,jdbcType=INTEGER},
-      file_name = #{record.fileName,jdbcType=VARCHAR},
-      company_id = #{record.companyId,jdbcType=INTEGER},
-      company_name = #{record.companyName,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      org_name = #{record.orgName,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=INTEGER},
+      create_name = #{record.createName,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      org_code = #{record.orgCode,jdbcType=VARCHAR}
+      update_name = #{record.updateName,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -409,23 +406,23 @@
       <if test="taskName != null">
         task_name = #{taskName,jdbcType=VARCHAR},
       </if>
+      <if test="tunnelName != null">
+        tunnel_name = #{tunnelName,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        content_type = #{contentType,jdbcType=INTEGER},
+      </if>
       <if test="phoneNum != null">
         phone_num = #{phoneNum,jdbcType=INTEGER},
-      </if>
-      <if test="sendStatus != null">
-        send_status = #{sendStatus,jdbcType=INTEGER},
       </if>
       <if test="sendType != null">
         send_type = #{sendType,jdbcType=INTEGER},
       </if>
-      <if test="tunnelName != null">
-        tunnel_name = #{tunnelName,jdbcType=VARCHAR},
+      <if test="sendStatus != null">
+        send_status = #{sendStatus,jdbcType=INTEGER},
       </if>
-      <if test="smsTemplateId != null">
-        sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
-      </if>
-      <if test="sendDate != null">
-        send_date = #{sendDate,jdbcType=TIMESTAMP},
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=VARCHAR},
       </if>
       <if test="auditingStatus != null">
         auditing_status = #{auditingStatus,jdbcType=INTEGER},
@@ -433,17 +430,17 @@
       <if test="runStatus != null">
         run_status = #{runStatus,jdbcType=INTEGER},
       </if>
-      <if test="fileName != null">
-        file_name = #{fileName,jdbcType=VARCHAR},
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
       </if>
-      <if test="companyId != null">
-        company_id = #{companyId,jdbcType=INTEGER},
-      </if>
-      <if test="companyName != null">
-        company_name = #{companyName,jdbcType=VARCHAR},
+      <if test="orgName != null">
+        org_name = #{orgName,jdbcType=VARCHAR},
       </if>
       <if test="createId != null">
         create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -451,11 +448,11 @@
       <if test="updateId != null">
         update_id = #{updateId,jdbcType=INTEGER},
       </if>
+      <if test="updateName != null">
+        update_name = #{updateName,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="orgCode != null">
-        org_code = #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="smsContent != null">
         sms_content = #{smsContent,jdbcType=LONGVARCHAR},
@@ -466,44 +463,44 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.sms.dao.entity.SmsTask">
     update sms_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      phone_num = #{phoneNum,jdbcType=INTEGER},
-      send_status = #{sendStatus,jdbcType=INTEGER},
-      send_type = #{sendType,jdbcType=INTEGER},
       tunnel_name = #{tunnelName,jdbcType=VARCHAR},
-      sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
-      send_date = #{sendDate,jdbcType=TIMESTAMP},
+      content_type = #{contentType,jdbcType=INTEGER},
+      phone_num = #{phoneNum,jdbcType=INTEGER},
+      send_type = #{sendType,jdbcType=INTEGER},
+      send_status = #{sendStatus,jdbcType=INTEGER},
+      send_time = #{sendTime,jdbcType=VARCHAR},
       auditing_status = #{auditingStatus,jdbcType=INTEGER},
       run_status = #{runStatus,jdbcType=INTEGER},
-      file_name = #{fileName,jdbcType=VARCHAR},
-      company_id = #{companyId,jdbcType=INTEGER},
-      company_name = #{companyName,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},
+      create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
+      update_name = #{updateName,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      org_code = #{orgCode,jdbcType=VARCHAR},
       sms_content = #{smsContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.sms.dao.entity.SmsTask">
     update sms_task
     set task_name = #{taskName,jdbcType=VARCHAR},
-      phone_num = #{phoneNum,jdbcType=INTEGER},
-      send_status = #{sendStatus,jdbcType=INTEGER},
-      send_type = #{sendType,jdbcType=INTEGER},
       tunnel_name = #{tunnelName,jdbcType=VARCHAR},
-      sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
-      send_date = #{sendDate,jdbcType=TIMESTAMP},
+      content_type = #{contentType,jdbcType=INTEGER},
+      phone_num = #{phoneNum,jdbcType=INTEGER},
+      send_type = #{sendType,jdbcType=INTEGER},
+      send_status = #{sendStatus,jdbcType=INTEGER},
+      send_time = #{sendTime,jdbcType=VARCHAR},
       auditing_status = #{auditingStatus,jdbcType=INTEGER},
       run_status = #{runStatus,jdbcType=INTEGER},
-      file_name = #{fileName,jdbcType=VARCHAR},
-      company_id = #{companyId,jdbcType=INTEGER},
-      company_name = #{companyName,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},
+      create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      org_code = #{orgCode,jdbcType=VARCHAR}
+      update_name = #{updateName,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

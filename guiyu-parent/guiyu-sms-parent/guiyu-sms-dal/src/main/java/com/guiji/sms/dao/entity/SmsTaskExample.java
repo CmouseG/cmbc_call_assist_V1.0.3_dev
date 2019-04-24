@@ -255,186 +255,6 @@ public class SmsTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andPhoneNumIsNull() {
-            addCriterion("phone_num is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumIsNotNull() {
-            addCriterion("phone_num is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumEqualTo(Integer value) {
-            addCriterion("phone_num =", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumNotEqualTo(Integer value) {
-            addCriterion("phone_num <>", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumGreaterThan(Integer value) {
-            addCriterion("phone_num >", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumGreaterThanOrEqualTo(Integer value) {
-            addCriterion("phone_num >=", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumLessThan(Integer value) {
-            addCriterion("phone_num <", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumLessThanOrEqualTo(Integer value) {
-            addCriterion("phone_num <=", value, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumIn(List<Integer> values) {
-            addCriterion("phone_num in", values, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumNotIn(List<Integer> values) {
-            addCriterion("phone_num not in", values, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumBetween(Integer value1, Integer value2) {
-            addCriterion("phone_num between", value1, value2, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneNumNotBetween(Integer value1, Integer value2) {
-            addCriterion("phone_num not between", value1, value2, "phoneNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusIsNull() {
-            addCriterion("send_status is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusIsNotNull() {
-            addCriterion("send_status is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusEqualTo(Integer value) {
-            addCriterion("send_status =", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusNotEqualTo(Integer value) {
-            addCriterion("send_status <>", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusGreaterThan(Integer value) {
-            addCriterion("send_status >", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusGreaterThanOrEqualTo(Integer value) {
-            addCriterion("send_status >=", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusLessThan(Integer value) {
-            addCriterion("send_status <", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusLessThanOrEqualTo(Integer value) {
-            addCriterion("send_status <=", value, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusIn(List<Integer> values) {
-            addCriterion("send_status in", values, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusNotIn(List<Integer> values) {
-            addCriterion("send_status not in", values, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusBetween(Integer value1, Integer value2) {
-            addCriterion("send_status between", value1, value2, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendStatusNotBetween(Integer value1, Integer value2) {
-            addCriterion("send_status not between", value1, value2, "sendStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeIsNull() {
-            addCriterion("send_type is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeIsNotNull() {
-            addCriterion("send_type is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeEqualTo(Integer value) {
-            addCriterion("send_type =", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeNotEqualTo(Integer value) {
-            addCriterion("send_type <>", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeGreaterThan(Integer value) {
-            addCriterion("send_type >", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("send_type >=", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeLessThan(Integer value) {
-            addCriterion("send_type <", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("send_type <=", value, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeIn(List<Integer> values) {
-            addCriterion("send_type in", values, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeNotIn(List<Integer> values) {
-            addCriterion("send_type not in", values, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeBetween(Integer value1, Integer value2) {
-            addCriterion("send_type between", value1, value2, "sendType");
-            return (Criteria) this;
-        }
-
-        public Criteria andSendTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("send_type not between", value1, value2, "sendType");
-            return (Criteria) this;
-        }
-
         public Criteria andTunnelNameIsNull() {
             addCriterion("tunnel_name is null");
             return (Criteria) this;
@@ -505,123 +325,313 @@ public class SmsTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdIsNull() {
-            addCriterion("sms_template_id is null");
+        public Criteria andContentTypeIsNull() {
+            addCriterion("content_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdIsNotNull() {
-            addCriterion("sms_template_id is not null");
+        public Criteria andContentTypeIsNotNull() {
+            addCriterion("content_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdEqualTo(Integer value) {
-            addCriterion("sms_template_id =", value, "smsTemplateId");
+        public Criteria andContentTypeEqualTo(Integer value) {
+            addCriterion("content_type =", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdNotEqualTo(Integer value) {
-            addCriterion("sms_template_id <>", value, "smsTemplateId");
+        public Criteria andContentTypeNotEqualTo(Integer value) {
+            addCriterion("content_type <>", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdGreaterThan(Integer value) {
-            addCriterion("sms_template_id >", value, "smsTemplateId");
+        public Criteria andContentTypeGreaterThan(Integer value) {
+            addCriterion("content_type >", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("sms_template_id >=", value, "smsTemplateId");
+        public Criteria andContentTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("content_type >=", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdLessThan(Integer value) {
-            addCriterion("sms_template_id <", value, "smsTemplateId");
+        public Criteria andContentTypeLessThan(Integer value) {
+            addCriterion("content_type <", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdLessThanOrEqualTo(Integer value) {
-            addCriterion("sms_template_id <=", value, "smsTemplateId");
+        public Criteria andContentTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("content_type <=", value, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdIn(List<Integer> values) {
-            addCriterion("sms_template_id in", values, "smsTemplateId");
+        public Criteria andContentTypeIn(List<Integer> values) {
+            addCriterion("content_type in", values, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdNotIn(List<Integer> values) {
-            addCriterion("sms_template_id not in", values, "smsTemplateId");
+        public Criteria andContentTypeNotIn(List<Integer> values) {
+            addCriterion("content_type not in", values, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdBetween(Integer value1, Integer value2) {
-            addCriterion("sms_template_id between", value1, value2, "smsTemplateId");
+        public Criteria andContentTypeBetween(Integer value1, Integer value2) {
+            addCriterion("content_type between", value1, value2, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSmsTemplateIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("sms_template_id not between", value1, value2, "smsTemplateId");
+        public Criteria andContentTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("content_type not between", value1, value2, "contentType");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateIsNull() {
-            addCriterion("send_date is null");
+        public Criteria andPhoneNumIsNull() {
+            addCriterion("phone_num is null");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateIsNotNull() {
-            addCriterion("send_date is not null");
+        public Criteria andPhoneNumIsNotNull() {
+            addCriterion("phone_num is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateEqualTo(Date value) {
-            addCriterion("send_date =", value, "sendDate");
+        public Criteria andPhoneNumEqualTo(Integer value) {
+            addCriterion("phone_num =", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateNotEqualTo(Date value) {
-            addCriterion("send_date <>", value, "sendDate");
+        public Criteria andPhoneNumNotEqualTo(Integer value) {
+            addCriterion("phone_num <>", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateGreaterThan(Date value) {
-            addCriterion("send_date >", value, "sendDate");
+        public Criteria andPhoneNumGreaterThan(Integer value) {
+            addCriterion("phone_num >", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("send_date >=", value, "sendDate");
+        public Criteria andPhoneNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("phone_num >=", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateLessThan(Date value) {
-            addCriterion("send_date <", value, "sendDate");
+        public Criteria andPhoneNumLessThan(Integer value) {
+            addCriterion("phone_num <", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateLessThanOrEqualTo(Date value) {
-            addCriterion("send_date <=", value, "sendDate");
+        public Criteria andPhoneNumLessThanOrEqualTo(Integer value) {
+            addCriterion("phone_num <=", value, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateIn(List<Date> values) {
-            addCriterion("send_date in", values, "sendDate");
+        public Criteria andPhoneNumIn(List<Integer> values) {
+            addCriterion("phone_num in", values, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateNotIn(List<Date> values) {
-            addCriterion("send_date not in", values, "sendDate");
+        public Criteria andPhoneNumNotIn(List<Integer> values) {
+            addCriterion("phone_num not in", values, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateBetween(Date value1, Date value2) {
-            addCriterion("send_date between", value1, value2, "sendDate");
+        public Criteria andPhoneNumBetween(Integer value1, Integer value2) {
+            addCriterion("phone_num between", value1, value2, "phoneNum");
             return (Criteria) this;
         }
 
-        public Criteria andSendDateNotBetween(Date value1, Date value2) {
-            addCriterion("send_date not between", value1, value2, "sendDate");
+        public Criteria andPhoneNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("phone_num not between", value1, value2, "phoneNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeIsNull() {
+            addCriterion("send_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeIsNotNull() {
+            addCriterion("send_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeEqualTo(Integer value) {
+            addCriterion("send_type =", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeNotEqualTo(Integer value) {
+            addCriterion("send_type <>", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeGreaterThan(Integer value) {
+            addCriterion("send_type >", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("send_type >=", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeLessThan(Integer value) {
+            addCriterion("send_type <", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("send_type <=", value, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeIn(List<Integer> values) {
+            addCriterion("send_type in", values, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeNotIn(List<Integer> values) {
+            addCriterion("send_type not in", values, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeBetween(Integer value1, Integer value2) {
+            addCriterion("send_type between", value1, value2, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("send_type not between", value1, value2, "sendType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusIsNull() {
+            addCriterion("send_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusIsNotNull() {
+            addCriterion("send_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusEqualTo(Integer value) {
+            addCriterion("send_status =", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusNotEqualTo(Integer value) {
+            addCriterion("send_status <>", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusGreaterThan(Integer value) {
+            addCriterion("send_status >", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("send_status >=", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusLessThan(Integer value) {
+            addCriterion("send_status <", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("send_status <=", value, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusIn(List<Integer> values) {
+            addCriterion("send_status in", values, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusNotIn(List<Integer> values) {
+            addCriterion("send_status not in", values, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusBetween(Integer value1, Integer value2) {
+            addCriterion("send_status between", value1, value2, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("send_status not between", value1, value2, "sendStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeIsNull() {
+            addCriterion("send_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeIsNotNull() {
+            addCriterion("send_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeEqualTo(String value) {
+            addCriterion("send_time =", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeNotEqualTo(String value) {
+            addCriterion("send_time <>", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeGreaterThan(String value) {
+            addCriterion("send_time >", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeGreaterThanOrEqualTo(String value) {
+            addCriterion("send_time >=", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeLessThan(String value) {
+            addCriterion("send_time <", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeLessThanOrEqualTo(String value) {
+            addCriterion("send_time <=", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeLike(String value) {
+            addCriterion("send_time like", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeNotLike(String value) {
+            addCriterion("send_time not like", value, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeIn(List<String> values) {
+            addCriterion("send_time in", values, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeNotIn(List<String> values) {
+            addCriterion("send_time not in", values, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeBetween(String value1, String value2) {
+            addCriterion("send_time between", value1, value2, "sendTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendTimeNotBetween(String value1, String value2) {
+            addCriterion("send_time not between", value1, value2, "sendTime");
             return (Criteria) this;
         }
 
@@ -745,203 +755,143 @@ public class SmsTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andFileNameIsNull() {
-            addCriterion("file_name is null");
+        public Criteria andOrgCodeIsNull() {
+            addCriterion("org_code is null");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameIsNotNull() {
-            addCriterion("file_name is not null");
+        public Criteria andOrgCodeIsNotNull() {
+            addCriterion("org_code is not null");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameEqualTo(String value) {
-            addCriterion("file_name =", value, "fileName");
+        public Criteria andOrgCodeEqualTo(String value) {
+            addCriterion("org_code =", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameNotEqualTo(String value) {
-            addCriterion("file_name <>", value, "fileName");
+        public Criteria andOrgCodeNotEqualTo(String value) {
+            addCriterion("org_code <>", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameGreaterThan(String value) {
-            addCriterion("file_name >", value, "fileName");
+        public Criteria andOrgCodeGreaterThan(String value) {
+            addCriterion("org_code >", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameGreaterThanOrEqualTo(String value) {
-            addCriterion("file_name >=", value, "fileName");
+        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("org_code >=", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameLessThan(String value) {
-            addCriterion("file_name <", value, "fileName");
+        public Criteria andOrgCodeLessThan(String value) {
+            addCriterion("org_code <", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameLessThanOrEqualTo(String value) {
-            addCriterion("file_name <=", value, "fileName");
+        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
+            addCriterion("org_code <=", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameLike(String value) {
-            addCriterion("file_name like", value, "fileName");
+        public Criteria andOrgCodeLike(String value) {
+            addCriterion("org_code like", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameNotLike(String value) {
-            addCriterion("file_name not like", value, "fileName");
+        public Criteria andOrgCodeNotLike(String value) {
+            addCriterion("org_code not like", value, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameIn(List<String> values) {
-            addCriterion("file_name in", values, "fileName");
+        public Criteria andOrgCodeIn(List<String> values) {
+            addCriterion("org_code in", values, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameNotIn(List<String> values) {
-            addCriterion("file_name not in", values, "fileName");
+        public Criteria andOrgCodeNotIn(List<String> values) {
+            addCriterion("org_code not in", values, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameBetween(String value1, String value2) {
-            addCriterion("file_name between", value1, value2, "fileName");
+        public Criteria andOrgCodeBetween(String value1, String value2) {
+            addCriterion("org_code between", value1, value2, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andFileNameNotBetween(String value1, String value2) {
-            addCriterion("file_name not between", value1, value2, "fileName");
+        public Criteria andOrgCodeNotBetween(String value1, String value2) {
+            addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdIsNull() {
-            addCriterion("company_id is null");
+        public Criteria andOrgNameIsNull() {
+            addCriterion("org_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdIsNotNull() {
-            addCriterion("company_id is not null");
+        public Criteria andOrgNameIsNotNull() {
+            addCriterion("org_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdEqualTo(Integer value) {
-            addCriterion("company_id =", value, "companyId");
+        public Criteria andOrgNameEqualTo(String value) {
+            addCriterion("org_name =", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdNotEqualTo(Integer value) {
-            addCriterion("company_id <>", value, "companyId");
+        public Criteria andOrgNameNotEqualTo(String value) {
+            addCriterion("org_name <>", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdGreaterThan(Integer value) {
-            addCriterion("company_id >", value, "companyId");
+        public Criteria andOrgNameGreaterThan(String value) {
+            addCriterion("org_name >", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("company_id >=", value, "companyId");
+        public Criteria andOrgNameGreaterThanOrEqualTo(String value) {
+            addCriterion("org_name >=", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdLessThan(Integer value) {
-            addCriterion("company_id <", value, "companyId");
+        public Criteria andOrgNameLessThan(String value) {
+            addCriterion("org_name <", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdLessThanOrEqualTo(Integer value) {
-            addCriterion("company_id <=", value, "companyId");
+        public Criteria andOrgNameLessThanOrEqualTo(String value) {
+            addCriterion("org_name <=", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdIn(List<Integer> values) {
-            addCriterion("company_id in", values, "companyId");
+        public Criteria andOrgNameLike(String value) {
+            addCriterion("org_name like", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdNotIn(List<Integer> values) {
-            addCriterion("company_id not in", values, "companyId");
+        public Criteria andOrgNameNotLike(String value) {
+            addCriterion("org_name not like", value, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdBetween(Integer value1, Integer value2) {
-            addCriterion("company_id between", value1, value2, "companyId");
+        public Criteria andOrgNameIn(List<String> values) {
+            addCriterion("org_name in", values, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("company_id not between", value1, value2, "companyId");
+        public Criteria andOrgNameNotIn(List<String> values) {
+            addCriterion("org_name not in", values, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyNameIsNull() {
-            addCriterion("company_name is null");
+        public Criteria andOrgNameBetween(String value1, String value2) {
+            addCriterion("org_name between", value1, value2, "orgName");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyNameIsNotNull() {
-            addCriterion("company_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameEqualTo(String value) {
-            addCriterion("company_name =", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotEqualTo(String value) {
-            addCriterion("company_name <>", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameGreaterThan(String value) {
-            addCriterion("company_name >", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameGreaterThanOrEqualTo(String value) {
-            addCriterion("company_name >=", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLessThan(String value) {
-            addCriterion("company_name <", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLessThanOrEqualTo(String value) {
-            addCriterion("company_name <=", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameLike(String value) {
-            addCriterion("company_name like", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotLike(String value) {
-            addCriterion("company_name not like", value, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameIn(List<String> values) {
-            addCriterion("company_name in", values, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotIn(List<String> values) {
-            addCriterion("company_name not in", values, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameBetween(String value1, String value2) {
-            addCriterion("company_name between", value1, value2, "companyName");
-            return (Criteria) this;
-        }
-
-        public Criteria andCompanyNameNotBetween(String value1, String value2) {
-            addCriterion("company_name not between", value1, value2, "companyName");
+        public Criteria andOrgNameNotBetween(String value1, String value2) {
+            addCriterion("org_name not between", value1, value2, "orgName");
             return (Criteria) this;
         }
 
@@ -1002,6 +952,76 @@ public class SmsTaskExample {
 
         public Criteria andCreateIdNotBetween(Integer value1, Integer value2) {
             addCriterion("create_id not between", value1, value2, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIsNull() {
+            addCriterion("create_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIsNotNull() {
+            addCriterion("create_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameEqualTo(String value) {
+            addCriterion("create_name =", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotEqualTo(String value) {
+            addCriterion("create_name <>", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameGreaterThan(String value) {
+            addCriterion("create_name >", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameGreaterThanOrEqualTo(String value) {
+            addCriterion("create_name >=", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLessThan(String value) {
+            addCriterion("create_name <", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLessThanOrEqualTo(String value) {
+            addCriterion("create_name <=", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLike(String value) {
+            addCriterion("create_name like", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotLike(String value) {
+            addCriterion("create_name not like", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIn(List<String> values) {
+            addCriterion("create_name in", values, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotIn(List<String> values) {
+            addCriterion("create_name not in", values, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameBetween(String value1, String value2) {
+            addCriterion("create_name between", value1, value2, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotBetween(String value1, String value2) {
+            addCriterion("create_name not between", value1, value2, "createName");
             return (Criteria) this;
         }
 
@@ -1125,6 +1145,76 @@ public class SmsTaskExample {
             return (Criteria) this;
         }
 
+        public Criteria andUpdateNameIsNull() {
+            addCriterion("update_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameIsNotNull() {
+            addCriterion("update_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameEqualTo(String value) {
+            addCriterion("update_name =", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameNotEqualTo(String value) {
+            addCriterion("update_name <>", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameGreaterThan(String value) {
+            addCriterion("update_name >", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameGreaterThanOrEqualTo(String value) {
+            addCriterion("update_name >=", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameLessThan(String value) {
+            addCriterion("update_name <", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameLessThanOrEqualTo(String value) {
+            addCriterion("update_name <=", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameLike(String value) {
+            addCriterion("update_name like", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameNotLike(String value) {
+            addCriterion("update_name not like", value, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameIn(List<String> values) {
+            addCriterion("update_name in", values, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameNotIn(List<String> values) {
+            addCriterion("update_name not in", values, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameBetween(String value1, String value2) {
+            addCriterion("update_name between", value1, value2, "updateName");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateNameNotBetween(String value1, String value2) {
+            addCriterion("update_name not between", value1, value2, "updateName");
+            return (Criteria) this;
+        }
+
         public Criteria andUpdateTimeIsNull() {
             addCriterion("update_time is null");
             return (Criteria) this;
@@ -1182,76 +1272,6 @@ public class SmsTaskExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIsNull() {
-            addCriterion("org_code is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIsNotNull() {
-            addCriterion("org_code is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeEqualTo(String value) {
-            addCriterion("org_code =", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotEqualTo(String value) {
-            addCriterion("org_code <>", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeGreaterThan(String value) {
-            addCriterion("org_code >", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("org_code >=", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLessThan(String value) {
-            addCriterion("org_code <", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
-            addCriterion("org_code <=", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLike(String value) {
-            addCriterion("org_code like", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotLike(String value) {
-            addCriterion("org_code not like", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIn(List<String> values) {
-            addCriterion("org_code in", values, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotIn(List<String> values) {
-            addCriterion("org_code not in", values, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeBetween(String value1, String value2) {
-            addCriterion("org_code between", value1, value2, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotBetween(String value1, String value2) {
-            addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
     }

@@ -10,19 +10,17 @@ public class SmsTunnel implements Serializable {
 
     private String tunnelName;
 
-    private Integer companyId;
+    private Integer contentType;
 
-    private String companyName;
+    private String orgCode;
+
+    private String orgName;
 
     private Integer createId;
 
+    private String createName;
+
     private Date createTime;
-
-    private Integer updateId;
-
-    private Date updateTime;
-
-    private String orgCode;
 
     private String platformConfig;
 
@@ -52,20 +50,28 @@ public class SmsTunnel implements Serializable {
         this.tunnelName = tunnelName == null ? null : tunnelName.trim();
     }
 
-    public Integer getCompanyId() {
-        return companyId;
+    public Integer getContentType() {
+        return contentType;
     }
 
-    public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getOrgCode() {
+        return orgCode;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName == null ? null : companyName.trim();
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName == null ? null : orgName.trim();
     }
 
     public Integer getCreateId() {
@@ -76,36 +82,20 @@ public class SmsTunnel implements Serializable {
         this.createId = createId;
     }
 
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getUpdateId() {
-        return updateId;
-    }
-
-    public void setUpdateId(Integer updateId) {
-        this.updateId = updateId;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     public String getPlatformConfig() {
@@ -125,13 +115,12 @@ public class SmsTunnel implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", platformName=").append(platformName);
         sb.append(", tunnelName=").append(tunnelName);
-        sb.append(", companyId=").append(companyId);
-        sb.append(", companyName=").append(companyName);
-        sb.append(", createId=").append(createId);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateId=").append(updateId);
-        sb.append(", updateTime=").append(updateTime);
+        sb.append(", contentType=").append(contentType);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgName=").append(orgName);
+        sb.append(", createId=").append(createId);
+        sb.append(", createName=").append(createName);
+        sb.append(", createTime=").append(createTime);
         sb.append(", platformConfig=").append(platformConfig);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

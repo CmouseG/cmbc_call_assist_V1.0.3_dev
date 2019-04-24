@@ -6,9 +6,9 @@ spring:
     name: guiyu-sms-web
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.1.57:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: sms
-    password: sms@1234
+    url: jdbc:mysql://localhost:3306/db_guiji?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: root
+    password: root
   redis:
     database: 8
     host: 192.168.1.57
@@ -20,11 +20,10 @@ spring:
       max-idle: 8
       min-idle: 0
   rabbitmq:
-    host: 192.168.1.57
+    host: 127.0.0.1
     port: 5672
-    virtual-host: /
-    username: guiyu
-    password: 123456
+    username: guest
+    password: guest
   zipkin:
     rabbitmq:
       queue: zipkin
@@ -39,12 +38,14 @@ endpoints:
 management:
   security:
     enabled: false
-    
+
+ 
 #数据库连接配置
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:
   type: mysql
+
 
 #注册中心配置      
 eureka:
@@ -59,26 +60,14 @@ eureka:
 gateway:
   host: http://guiyu-cloud-zuul:18000/
 
+
 properties:
   error: properties/error.properties
   
-  
+
 rabbit:
   general:
     direct:
-      queue: SendMessageMQ.Sms|MessagesTaskMQ.Sms
+      queues: SendMessageMQ.direct.Sms|SendMessageTaskMQ.direct.Sms
 
- 
-#xxl-job admin中心配置
-xxl:
-  job:
-    admin:
-      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.57:18016/xxl-job-admin
-    executor:
-      ip:
-      port: 9017
-      logpath: /home/logs/guiyu-sms-web
-      logretentiondays: -1
-    accessToken:
 

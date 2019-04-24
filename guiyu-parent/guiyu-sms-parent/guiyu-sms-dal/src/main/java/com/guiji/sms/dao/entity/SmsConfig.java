@@ -14,29 +14,27 @@ public class SmsConfig implements Serializable {
 
     private String intentionTag;
 
-    private Integer smsTemplateId;
-
-    private String smsTemplateData;
+    private Integer contentType;
 
     private Integer auditingStatus;
 
     private Integer runStatus;
 
-    private Integer companyId;
+    private String orgCode;
 
-    private String companyName;
-
-    private Integer userId;
+    private String orgName;
 
     private Integer createId;
+
+    private String createName;
 
     private Date createTime;
 
     private Integer updateId;
 
-    private Date updateTime;
+    private String updateName;
 
-    private String orgCode;
+    private Date updateTime;
 
     private String smsContent;
 
@@ -82,20 +80,12 @@ public class SmsConfig implements Serializable {
         this.intentionTag = intentionTag == null ? null : intentionTag.trim();
     }
 
-    public Integer getSmsTemplateId() {
-        return smsTemplateId;
+    public Integer getContentType() {
+        return contentType;
     }
 
-    public void setSmsTemplateId(Integer smsTemplateId) {
-        this.smsTemplateId = smsTemplateId;
-    }
-
-    public String getSmsTemplateData() {
-        return smsTemplateData;
-    }
-
-    public void setSmsTemplateData(String smsTemplateData) {
-        this.smsTemplateData = smsTemplateData == null ? null : smsTemplateData.trim();
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 
     public Integer getAuditingStatus() {
@@ -114,28 +104,20 @@ public class SmsConfig implements Serializable {
         this.runStatus = runStatus;
     }
 
-    public Integer getCompanyId() {
-        return companyId;
+    public String getOrgCode() {
+        return orgCode;
     }
 
-    public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName == null ? null : companyName.trim();
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName == null ? null : orgName.trim();
     }
 
     public Integer getCreateId() {
@@ -144,6 +126,14 @@ public class SmsConfig implements Serializable {
 
     public void setCreateId(Integer createId) {
         this.createId = createId;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
     }
 
     public Date getCreateTime() {
@@ -162,20 +152,20 @@ public class SmsConfig implements Serializable {
         this.updateId = updateId;
     }
 
+    public String getUpdateName() {
+        return updateName;
+    }
+
+    public void setUpdateName(String updateName) {
+        this.updateName = updateName == null ? null : updateName.trim();
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     public String getSmsContent() {
@@ -197,18 +187,17 @@ public class SmsConfig implements Serializable {
         sb.append(", templateId=").append(templateId);
         sb.append(", templateName=").append(templateName);
         sb.append(", intentionTag=").append(intentionTag);
-        sb.append(", smsTemplateId=").append(smsTemplateId);
-        sb.append(", smsTemplateData=").append(smsTemplateData);
+        sb.append(", contentType=").append(contentType);
         sb.append(", auditingStatus=").append(auditingStatus);
         sb.append(", runStatus=").append(runStatus);
-        sb.append(", companyId=").append(companyId);
-        sb.append(", companyName=").append(companyName);
-        sb.append(", userId=").append(userId);
+        sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgName=").append(orgName);
         sb.append(", createId=").append(createId);
+        sb.append(", createName=").append(createName);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
+        sb.append(", updateName=").append(updateName);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", orgCode=").append(orgCode);
         sb.append(", smsContent=").append(smsContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

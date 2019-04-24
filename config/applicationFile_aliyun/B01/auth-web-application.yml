@@ -31,8 +31,7 @@ spring:
       max-idle: 300
   cache:
     type: redis
-    cache-names: shiro.session,shiro.time 
-    
+    cache-names: shiro.session,shiro.time   
   rabbitmq:
     host: 172.16.167.215
     port: 5672
@@ -91,3 +90,9 @@ weixin:
   pagePath:
     callReordUrl: pages/detail/detail?id= #小程序通话详情页面
     reordListUrl: pages/list/list #小程序通话记录列表页面
+
+
+rabbit:
+  general:
+    direct:
+      queue: OrgIdMQ.direct.Auth|SyncAgentMembers.direct.Auth|DelAgentMembers.direct.Auth 

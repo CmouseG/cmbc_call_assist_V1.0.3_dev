@@ -86,16 +86,12 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									if(null != dispatchPlanList && dispatchPlanList.size()>0){
 										len = dispatchPlanList.size();
 										logger.info("当前查询到的数据:"+len);
-										List<Long> syncRedisList = new ArrayList<Long>();
-										List<Integer> syncOrgIdList = new ArrayList<Integer>();
 										//进去队列之前，根据优line优先级进行排序
 										for(DispatchPlan plan: dispatchPlanList){
 											try {
 												//进去队列之前，根据优line优先级进行排序
 												DispatchPlan sortPlan = lineService.sortLine(plan);
 												this.pushPlanQueue(sortPlan, queue);
-												syncRedisList.add(sortPlan.getPlanUuidLong());
-												syncOrgIdList.add(sortPlan.getOrgId());
 											}catch(Exception ex){
 												logger.error("plan line排序异常或者推入redis队列异常", ex);
 											}
@@ -137,7 +133,6 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	public boolean pushPlanQueue(DispatchPlan plan, String queue){
 	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
 		boolean result = redisUtil.leftPush(queue, plan);
-	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, redisUtil.lGetListSize(queue));
 		return result;
 	}
 

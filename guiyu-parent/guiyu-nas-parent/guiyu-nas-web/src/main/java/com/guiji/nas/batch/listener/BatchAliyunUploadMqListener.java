@@ -39,7 +39,7 @@ public class BatchAliyunUploadMqListener {
 			res.setBusiId(req.getBusiId());
 			res.setSourceUrl(req.getSourceUrl());
 			res.setAliyunUrl(AliyunUtil.getAliyunBaseUrl() + fileName);
-			queueSender.send("aliyunNoticeQueue", res.toString());
+			queueSender.send("aliyunNoticeQueue", JsonUtils.bean2Json(res));
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			logger.info("error",e);

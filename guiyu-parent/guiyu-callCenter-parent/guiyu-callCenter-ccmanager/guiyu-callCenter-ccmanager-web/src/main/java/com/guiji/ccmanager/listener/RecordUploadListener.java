@@ -78,7 +78,7 @@ public class RecordUploadListener {
                 aliyunReqVO.setBusiId(busId);
                 aliyunReqVO.setSourceUrl(sourceUrl);
                 logger.info("发送到删除队列 [{}]",aliyunReqVO);
-                queueSender.send("nasFileDeleteQueue", JsonUtils.bean2Json(aliyunReqVO));
+                queueSender.send("fanoutNasFileDeleteQueue", JsonUtils.bean2Json(aliyunReqVO));
 
             }
 

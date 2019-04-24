@@ -165,7 +165,7 @@ public class ChargingServiceImpl implements ChargingService {
             //欠费状态
             arrearage.setIsArrearage(AcctArrearageStatusEnum.ARREARAGE.getStatus());
 
-            logger.info("通话计费通知欠费消息:{}", null != arrearage? JsonUtils.bean2Json(arrearage):null);
+            logger.info("通话计费通知欠费消息:{}", JsonUtils.bean2Json(arrearage));
             //通知欠费消息
             acctNotifyService.notifyArrearage(arrearage);
         }catch(Exception e){

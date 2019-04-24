@@ -9,6 +9,7 @@ import com.guiji.dispatch.enums.IsNotifyMsgEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.guiyu.message.component.QueueSender;
+import com.guiji.sms.api.bean.SendMsgReq;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,31 +24,16 @@ import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
-import com.guiji.dispatch.mq.ModularMqListener;
 import com.guiji.dispatch.thirdinterface.SuccPhonesThirdInterface;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.notice.api.INoticeSend;
 import com.guiji.notice.enm.NoticeType;
 import com.guiji.notice.entity.MessageSend;
-import com.guiji.sms.api.ISms;
-import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.wechat.vo.SendMsgReqVO;
 import com.rabbitmq.client.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 任务回调之后做处理
@@ -58,7 +44,7 @@ import java.util.List;
 @Component
 @RabbitListener(queues = "dispatch.SuccessPhoneMQ", containerFactory = "successMqRabbitFactory")
 public class SuccesPhone4MQLisener {
-	private static Logger logger = LoggerFactory.getLogger(ModularMqListener.class);
+	private static Logger logger = LoggerFactory.getLogger(SuccesPhone4MQLisener.class);
 
 	@Autowired
 	private DispatchPlanMapper dispatchPlanMapper;
@@ -111,13 +97,7 @@ public class SuccesPhone4MQLisener {
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
-				SendMReqVO vo = new SendMReqVO();
-				vo.setOrgCode(dispatchPlan.getOrgCode());
-				vo.setPhone(dispatchPlan.getPhone());
-				vo.setUserId(dispatchPlan.getUserId());
-				vo.setIntentionTag(mqSuccPhoneDto.getLabel());
-				vo.setTemplateId(dispatchPlan.getRobot());
-				queueSender.send("SendMessageMQ.Sms", JsonUtils.bean2Json(vo));
+				this.sendSms(dispatchPlan);
 			}
 		} catch (Exception e) {
 			logger.info("SuccesPhone4MQLisener消费数据有问题" + message);
@@ -126,6 +106,24 @@ public class SuccesPhone4MQLisener {
 			} catch (IOException e1) {
 				logger.info("SuccesPhone4MQLisener ack确认机制有问题");
 			}
+		}
+	}
+
+	/**
+	 * 发送短信
+	 * @param dispatchPlan
+	 */
+	private void sendSms(DispatchPlan dispatchPlan){
+		try{
+			SendMsgReq vo = new SendMsgReq();
+			vo.setOrgCode(dispatchPlan.getOrgCode());
+			vo.setPhone(dispatchPlan.getPhone());
+			vo.setUserId(Long.valueOf(dispatchPlan.getUserId()));
+			vo.setIntentionTag(dispatchPlan.getResult());
+			vo.setTemplateId(dispatchPlan.getRobot());
+			queueSender.send("SendMessageMQ.direct.Sms", JsonUtils.bean2Json(vo));
+		}catch(Exception e){
+			logger.error("发送短信失败", e);
 		}
 	}
 

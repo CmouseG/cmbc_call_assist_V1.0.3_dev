@@ -62,13 +62,15 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
     public List<BillingAcctChargingTotal> totalAcctChargingByDay(QueryAcctChargingTotalDto queryAcctChargingTotalDto,
                                                                  ResultPage<BillingAcctChargingTotal> page) {
         BillingAcctChargingTotal totalParam = null;
+        String beginDate = null;
+        String endDate = null;
         if(null != queryAcctChargingTotalDto){
             totalParam = new BillingAcctChargingTotal();
             BeanUtils.copyProperties(queryAcctChargingTotalDto, totalParam, BillingAcctChargingTotal.class);
+            beginDate = queryAcctChargingTotalDto.getBeginDate();
+            endDate = queryAcctChargingTotalDto.getEndDate();
         }
 
-        String beginDate = queryAcctChargingTotalDto.getBeginDate();
-        String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
             endDate = DateTimeUtils.DEFAULT_END_DATE;
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
@@ -80,13 +82,15 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
     @Override
     public int totalAcctChargingByDayCount(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
         BillingAcctChargingTotal totalParam = null;
+        String beginDate = null;
+        String endDate = null;
         if(null != queryAcctChargingTotalDto){
             totalParam = new BillingAcctChargingTotal();
             BeanUtils.copyProperties(queryAcctChargingTotalDto, totalParam, BillingAcctChargingTotal.class);
+            beginDate = queryAcctChargingTotalDto.getBeginDate();
+            endDate = queryAcctChargingTotalDto.getEndDate();
         }
 
-        String beginDate = queryAcctChargingTotalDto.getBeginDate();
-        String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
             endDate = DateTimeUtils.DEFAULT_END_DATE;
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
@@ -104,13 +108,15 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
     @Override
     public List<BillingAcctChargingTotal> totalAcctChargingByMonth(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingAcctChargingTotal> page) {
         BillingAcctChargingTotal totalParam = null;
+        String beginMonth = null;
+        String endMonth = null;
         if(null != queryAcctChargingTotalDto){
             totalParam = new BillingAcctChargingTotal();
             BeanUtils.copyProperties(queryAcctChargingTotalDto, totalParam, BillingAcctChargingTotal.class);
+            beginMonth = queryAcctChargingTotalDto.getBeginMonth();
+            endMonth = queryAcctChargingTotalDto.getEndMonth();
         }
 
-        String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
-        String endMonth = queryAcctChargingTotalDto.getEndMonth();
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){
             endMonth = DateTimeUtils.DEFAULT_END_MONTH;
         }else if(StringUtils.isEmpty(beginMonth) && !StringUtils.isEmpty(endMonth)){
@@ -127,12 +133,15 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
     @Override
     public int totalAcctChargingByMonthCount(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
         BillingAcctChargingTotal totalParam = null;
+        String beginMonth = null;
+        String endMonth = null;
         if(null != queryAcctChargingTotalDto){
             totalParam = new BillingAcctChargingTotal();
             BeanUtils.copyProperties(queryAcctChargingTotalDto, totalParam, BillingAcctChargingTotal.class);
+            beginMonth = queryAcctChargingTotalDto.getBeginMonth();
+            endMonth = queryAcctChargingTotalDto.getEndMonth();
         }
-        String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
-        String endMonth = queryAcctChargingTotalDto.getEndMonth();
+
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){
             endMonth = DateTimeUtils.DEFAULT_END_MONTH;
         }else if(StringUtils.isEmpty(beginMonth) && !StringUtils.isEmpty(endMonth)){

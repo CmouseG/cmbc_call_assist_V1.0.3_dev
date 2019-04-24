@@ -157,7 +157,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		}
 	}
 
-
+	@Async("asyncSuccPhoneExecutor")
 	public boolean pushPlanQueue(DispatchPlan plan, String queue){
 	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
 		boolean result = redisUtil.leftPush(queue, plan);

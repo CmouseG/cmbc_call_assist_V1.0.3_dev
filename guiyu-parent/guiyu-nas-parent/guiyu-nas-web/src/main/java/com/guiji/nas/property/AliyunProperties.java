@@ -37,13 +37,6 @@ public class AliyunProperties {
     
     @Value("${fdfs.webServerUrl:}")
     private String webServerUrl;
-    
-    @Value("${mqConcurrent:}")
-    private String mqConcurrent;
-    
-    @Value("${mqMaxConcurrent:}")
-    private String mqMaxConcurrent;
-    
 
     @Bean(name="AliyunProperties")
     public Properties init() throws IOException {
@@ -53,16 +46,6 @@ public class AliyunProperties {
         props.load(new InputStreamReader(defaultResource.getInputStream(),"utf-8"));
         
         return props;
-    }
-    
-    @Bean(name="getMqConcurrent")
-    public String getMqConcurrent() {
-        return mqConcurrent;
-    }
-    
-    @Bean(name="getMqMaxConcurrent")
-    public String getMqMaxConcurrent() {
-        return mqMaxConcurrent;
     }
 
     @Bean(name="getEndpoint")

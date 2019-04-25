@@ -23,18 +23,6 @@ public class AliyunUtil {
     private static String getAliyunBaseUrl;
     
     private static String getWebServerUrl;
-    
-    private static String getMqConcurrent;
-    
-    private static String getMqMaxConcurrent;
-    
-    public static String getMqConcurrent(){
-        return getMqConcurrent;
-    }
-    
-    public static String getMqMaxConcurrent(){
-        return getMqMaxConcurrent;
-    }
 
     public static String getEndpoint(){
         return getEndpoint;
@@ -58,16 +46,6 @@ public class AliyunUtil {
     
     public static String getAliyunBaseUrl(){
         return getAliyunBaseUrl;
-    }
-    
-    @Autowired(required = true)
-    public void getMqConcurrent(@Qualifier("getMqConcurrent") String getMqConcurrent) {
-        this.getMqConcurrent = getMqConcurrent;
-    }
-    
-    @Autowired(required = true)
-    public void getMqMaxConcurrent(@Qualifier("getMqMaxConcurrent") String getMqMaxConcurrent) {
-        this.getMqMaxConcurrent = getMqMaxConcurrent;
     }
     
     @Autowired(required = true)

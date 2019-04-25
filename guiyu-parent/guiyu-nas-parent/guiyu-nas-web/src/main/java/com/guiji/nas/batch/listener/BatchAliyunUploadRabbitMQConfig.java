@@ -24,8 +24,8 @@ public class BatchAliyunUploadRabbitMQConfig
             SimpleRabbitListenerContainerFactoryConfigurer configurer,
             ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConcurrentConsumers(Integer.parseInt(AliyunUtil.getMqConcurrent())); // 设置线程数
-        factory.setMaxConcurrentConsumers(Integer.parseInt(AliyunUtil.getMqMaxConcurrent())); // 最大线程数
+        factory.setConcurrentConsumers(5); // 设置线程数
+        factory.setMaxConcurrentConsumers(5); // 最大线程数
 
         configurer.configure(factory, connectionFactory);
         return factory;

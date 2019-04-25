@@ -86,10 +86,6 @@ rabbit:
       queue: aliyunUploadQueue|nasFileDeleteQueue #队列名称
 properties:
   error: properties/error.properties
-#线程数
-mqConcurrent: 5
-#最大线程数
-mqMaxConcurrent: 5
 #阿里云oss配置
 endpoint: 
 accessKeyId: 

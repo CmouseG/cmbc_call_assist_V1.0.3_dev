@@ -24,6 +24,8 @@ import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.model.UserResourceCacheWithVersion;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -94,7 +96,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
     @Override
     public boolean distributeByUser() throws Exception{
-        Lock lock = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
+        Lock lock = new Lock("planDistributeJobHandler.Joblock","planDistributeJobHandler.Joblock");
         if (distributedLockHandler.tryLock(lock, 1000L)) {
             try {
                 logger.info("根据用户模板线路分配拨打号码比例#start");
@@ -167,8 +169,16 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
                 if(!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis))
                 {
-                    phonePlanQueueService.cleanQueue();
-                    redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
+                    Lock lockChange = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
+                    if (distributedLockHandler.tryLock(lockChange, 1000L)) {
+                        try {
+                            redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER, IdGenUtil.uuid());
+                            redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN, userLineBotenceVOS);
+                            cleanQueueOfDeleted(userLineBotenceVOS, userLineBotenceVOSFromRedis);
+                        } finally {
+                            distributedLockHandler.releaseLock(lockChange);
+                        }
+                    }
                 }
 
                 logger.info("根据用户模板线路分配拨打号码比例#end");
@@ -178,6 +188,35 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         }
 
         return true;
+    }
+
+
+    private void cleanQueueOfDeleted(List<UserLineBotenceVO> newList, List<UserLineBotenceVO> oldList)
+    {
+        List<String> oldIdList = getUserBotenceList(oldList);
+        List<String> newIdList = getUserBotenceList(newList);
+
+        for (String str:oldIdList) {
+            if(!newIdList.contains(str))
+            {
+                String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+str;
+                phonePlanQueueService.cleanQueueByQueueName(queue);
+            }
+        }
+    }
+
+    private List<String> getUserBotenceList(List<UserLineBotenceVO> list)
+    {
+        List<String> tmpList = new ArrayList<>();
+        if(list == null || list.isEmpty())
+        {
+            return tmpList;
+        }
+        for (UserLineBotenceVO dto:list) {
+            tmpList.add(dto.getUserId() +"_"+ dto.getBotenceName());
+        }
+
+        return tmpList;
     }
 
     /**

@@ -10,6 +10,9 @@ public class RedisConstant {
         //推入redis总列表
         public static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
+        //推入redis总列表 版本号
+        public static final String REDIS_USER_ROBOT_LINE_MAX_PLAN_VER = "REDIS_USER_ROBOT_LINE_MAX_PLAN_VER";
+
         //用户线路机器人分配数据
         public static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
 

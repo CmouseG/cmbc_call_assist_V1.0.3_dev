@@ -37,7 +37,7 @@ public class SendMsgMQListener
 	{
 		try {
 			SendMsgReq sendMReq = JsonUtil.jsonStr2Bean(message, SendMsgReq.class);
-			log.info("MQ："+sendMReq.toString());
+//			log.info("MQ："+sendMReq.toString());
 			execute(sendMReq); // 处理消息
 		} catch (Exception e){
 			log.error(e.getMessage());
@@ -64,6 +64,7 @@ public class SendMsgMQListener
 		SmsPlatform platform = redisUtil.getT(tunnel.getPlatformName());
 		if(platform == null) {log.error("未能获取到短信平台"); return;}
 
+		log.info("MQ："+sendMReq.toString());
 		// 内部标识
 		String identification = platform.getIdentification();
 		// 手机号列表

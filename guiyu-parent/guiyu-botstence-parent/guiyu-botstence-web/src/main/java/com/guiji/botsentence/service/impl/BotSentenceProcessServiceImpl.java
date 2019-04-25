@@ -20,6 +20,8 @@ import com.guiji.botsentence.service.IBotSentenceTemplateService;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
 import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.util.enums.BranchNameEnum;
+import com.guiji.botsentence.util.enums.BranchTypeEnum;
+import com.guiji.botsentence.util.enums.CategoryEnum;
 import com.guiji.botsentence.util.enums.DomainNameEnum;
 import com.guiji.botsentence.vo.*;
 import com.guiji.common.exception.CommonException;
@@ -2408,27 +2410,27 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 		//获取新增分支的名称，统一以branch_开头，后面接数字
 		String branchName = getNewBranchName(processId);
-		String message = "";
+		BranchTypeEnum branchType = BranchTypeEnum.getTypeByKey(edge.getType());
 
-		if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {
-
-			iKeywordsVerifyService.verifyMainProcessBranch(edge.getIntentList(), processId, source.getDomainName(), null);
-
-			if(!CollectionUtils.isEmpty(edge.getIntentList())) {
-				String intents = botSentenceKeyWordsService.saveIntent(source.getDomainName(), process.getProcessId(), process.getTemplateId(), edge.getIntentList(), "01", null, userId);
-				if(StringUtils.isNotBlank(intents)) {
-					newBranch.setIntents(intents);
-				}
-			}
-		}else if(Constant.BRANCH_TYPE_POSITIVE.equals(edge.getType())){
+		//check not reject branch
+		if(BranchTypeEnum.NOT_REJECT == branchType){
 			//判断当前卡片向下是否已存在未拒绝的分支，如果存在，则不允许新增
-			BotSentenceBranchExample example = new BotSentenceBranchExample();
-			example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(source.getDomainName()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE);
-			int num = botSentenceBranchMapper.countByExample(example);
-			if(num > 0) {
+			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+			branchExample.createCriteria()
+					.andProcessIdEqualTo(processId)
+					.andDomainEqualTo(source.getDomainName())
+					.andTypeEqualTo(BranchTypeEnum.NOT_REJECT.getKey());
+			if(botSentenceBranchMapper.countByExample(branchExample) > 0) {
 				throw new CommonException("当前节点【" + source.getDomainName() + "】已存在'未拒绝'的分支");
 			}
 			branchName = "positive";
+		}
+
+		List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
+		if(!CollectionUtils.isEmpty(intentVOS)){
+			iKeywordsVerifyService.verifyMainProcessBranch(edge.getIntentList(), processId, source.getDomainName(), null);
+			String intentIds = botSentenceKeyWordsService.saveIntent(source.getDomainName(), process.getProcessId(), process.getTemplateId(), edge.getIntentList(), CategoryEnum.MAIN_PROCESS.getTypeKey(), null, userId);
+			newBranch.setIntents(intentIds);
 		}
 
 		newBranch.setDomain(source.getDomainName());
@@ -2485,46 +2487,35 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 		if(StringUtils.isNotBlank(branchId) && branchId.equals(botSentenceBranch.getBranchId())) {//如果编辑的是当前连线，才需要更新意图关键字，其它情况只需要更新连线即可
 
-			if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {//如果是一般类型
-				List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
-
-				iKeywordsVerifyService.verifyMainProcessBranch(intentVOS, processId, botSentenceBranch.getDomain(), branchId);
-
-				if(!CollectionUtils.isEmpty(intentVOS)){
-					String intentIds = botSentenceKeyWordsService.saveIntent(new_sourceDomain.getDomainName(), processId, botSentenceBranch.getTemplateId(), intentVOS, "01", botSentenceBranch, userId);
-					botSentenceBranch.setIntents(intentIds);
-				}
-
-				//如果原来是未拒绝，则需要更改branchname名称
-				if(Constant.BRANCH_TYPE_POSITIVE.equals(botSentenceBranch.getType())) {
-					//更新Branchname
-					String branchName = getNewBranchName(processId);
-					botSentenceBranch.setBranchName(branchName);
-				}
-				botSentenceBranch.setEnd(botSentenceBranch.getNext());
-			}else if(Constant.BRANCH_TYPE_POSITIVE.equals(edge.getType())) {//如果是未拒绝
+			BranchTypeEnum branchType = BranchTypeEnum.getTypeByKey(edge.getType());
+			//check not reject branch
+			if(BranchTypeEnum.NOT_REJECT == branchType){
 				//判断当前卡片向下是否已存在未拒绝的分支，如果存在，则不允许新增
-				BotSentenceBranchExample example = new BotSentenceBranchExample();
-				example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(botSentenceBranch.getDomain()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE)
-				.andBranchIdNotEqualTo(branchId);
-				int num = botSentenceBranchMapper.countByExample(example);
-				if(num > 0) {
+				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+				branchExample.createCriteria()
+						.andProcessIdEqualTo(processId)
+						.andDomainEqualTo(botSentenceBranch.getDomain())
+						.andTypeEqualTo(BranchTypeEnum.NOT_REJECT.getKey())
+						.andBranchIdNotEqualTo(branchId);
+				if(botSentenceBranchMapper.countByExample(branchExample) > 0) {
 					throw new CommonException("当前节点【" + botSentenceBranch.getDomain() + "】已存在'未拒绝'的分支");
 				}
-
-				//如果原来是一般类型，则需要删除意图信息
-				if(StringUtils.isNotBlank(botSentenceBranch.getIntents())) {
-					String []intents = botSentenceBranch.getIntents().split(",");
-					for(int i = 0 ; i < intents.length ; i++) {
-						botSentenceIntentMapper.deleteByPrimaryKey(new Long(intents[i]));
-					}
+				botSentenceBranch.setBranchName(BranchNameEnum.positive.name());
+			}else if(BranchTypeEnum.NORMAL == branchType){
+				BranchTypeEnum originType = BranchTypeEnum.getTypeByKey(botSentenceBranch.getType());
+				if(BranchTypeEnum.NOT_REJECT == originType){
+					botSentenceBranch.setBranchName(getNewBranchName(processId));
 				}
-				//更新Branchname
-				botSentenceBranch.setBranchName("positive");
-				botSentenceBranch.setIntents(null);
-				botSentenceBranch.setEnd(null);
+			}else {
+				throw new CommonException("不合法的分支类型");
 			}
 
+			List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
+			if(!CollectionUtils.isEmpty(intentVOS)){
+				iKeywordsVerifyService.verifyMainProcessBranch(intentVOS, processId, botSentenceBranch.getDomain(), branchId);
+				String intentIds = botSentenceKeyWordsService.saveIntent(new_sourceDomain.getDomainName(), processId, botSentenceBranch.getTemplateId(), intentVOS, CategoryEnum.MAIN_PROCESS.getTypeKey(), botSentenceBranch, userId);
+				botSentenceBranch.setIntents(intentIds);
+			}
 		}
 		botSentenceBranch.setType(edge.getType());
 		botSentenceBranchMapper.updateByPrimaryKey(botSentenceBranch);

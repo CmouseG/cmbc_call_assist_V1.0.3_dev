@@ -31,11 +31,13 @@ public interface DispatchPlanMapper {
 
     int updateByPrimaryKey(DispatchPlan record);
 
-	List<DispatchPlan> selectByCallHour(@Param("record")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
+	List<DispatchPlan> selectByCallHour(@Param("record")DispatchPlan record, @Param("orgId") Integer orgId);//@Param("orgIds")List<Integer> orgIds
 
 	List<DispatchPlan> selectByCallHour4UserId(@Param("record")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
 
 	int updateDispatchPlanListByStatusSYNC(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgIds")List<Integer> orgIds);
+
+    int updPlanByStatusSync(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgId") Integer orgId);
 
 	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(@Param("dis")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
 	

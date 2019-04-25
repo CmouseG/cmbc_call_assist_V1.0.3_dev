@@ -7,10 +7,13 @@ import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.ResHandler;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -41,11 +44,23 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	@Autowired
 	private IAuth auth;
 
+	@Autowired
+	private GetApiService getApiService;
+
 	/**
 	 * 根据用户 线路 模板 时间 查询任务信息
 	 */
 	@Override
 	public List<DispatchPlan> getPhonesByParams(Integer userId, String robot, String callHour, Integer limit) {
+		// 如果当前用户已经欠费的话，那么就删除
+		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
+		if (userIdList != null) {
+				if (userIdList.contains(String.valueOf(userId))) {
+//					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
+					return null;
+				}
+		}
+
 		List<DispatchPlan> planList = new ArrayList<DispatchPlan>();
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -62,30 +77,46 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 
-		List<Integer> orgIds = new ArrayList<>();
+		/*List<Integer> orgIds = new ArrayList<>();
 		orgIds.add(ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId))).getId().intValue());
-		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgIds);
-		if(null != selectByCallHour) {
-			// 如果当前用户已经欠费的话，那么就删除
-			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
-			if (userIdList != null) {
-				for (int j = 0; j < selectByCallHour.size(); j++) {
-					if (!userIdList.contains(String.valueOf(selectByCallHour.get(j).getUserId()))) {
-//					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
-						planList.add(selectByCallHour.get(j));
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgIds);*/
+		Integer orgId = getApiService.getOrgIdByUser(userId+"");
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgId);
+		if(null != selectByCallHour && selectByCallHour.size()>0) {
+			List<Long> ids = new ArrayList<>();
+			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
+			for (DispatchPlan plan : selectByCallHour) {
+				ids.add(plan.getPlanUuidLong());
+				//更新每条记录状态:已推送redis标识  优化修改 放到推到redis队列之后
+		//		dispatchMapper.updPlanByStatusSync(plan.getPlanUuidLong(), SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
+				plan.setStatusSync(SyncStatusEnum.ALREADY_SYNC.getStatus());
+				// 查询出每个任务下对应的线路
+				List<DispatchBatchLine> linesVO = null;
+				if(!tmpMap.containsKey(plan.getBatchId()))
+				{
+					linesVO = linesService.queryListByBatchId(plan.getBatchId());
+					if(linesVO != null)
+					{
+						tmpMap.put(plan.getBatchId(), linesVO);
 					}
 				}
+
+				if(tmpMap.containsKey(plan.getBatchId()))
+				{
+					plan.setLines(tmpMap.get(plan.getBatchId()));
+				}
+
+				planList.add(plan);
 			}
 
-			List<Long> ids = new ArrayList<>();
-			for (DispatchPlan plan : planList) {
-				ids.add(plan.getPlanUuidLong());
-			}
-			if (ids.size() > 0) {
+			//更新计划状态：已通知redis状态
+			dispatchMapper.updPlanByStatusSync(ids, SyncStatusEnum.ALREADY_SYNC.getStatus(), orgId);
+
+			/*if (ids.size() > 0) {
 				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1, orgIds);
-			}
+			}*/
 
-			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
+			/*Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
 			// 查询出每个任务下对应的线路
 			for (DispatchPlan bean : planList) {
 
@@ -103,7 +134,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 				{
 					bean.setLines(tmpMap.get(bean.getBatchId()));
 				}
-			}
+			}*/
 		}
 		return planList;
 	}
@@ -225,9 +256,12 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 
-		List<Integer> orgIds = new ArrayList<>();
+		/*List<Integer> orgIds = new ArrayList<>();
 		orgIds.add(ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId))).getId().intValue());
-		return dispatchMapper.selectByCallHour(dis,  orgIds);
+		return dispatchMapper.selectByCallHour(dis,  orgIds);*/
+		Integer orgId = getApiService.getOrgIdByUser(userId+"");
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgId);
+		return selectByCallHour;
 	}
 
 

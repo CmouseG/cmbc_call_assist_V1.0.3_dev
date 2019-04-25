@@ -27,7 +27,7 @@ public class CallRecordResource {
      * @param recordId
      * @return
      */
-    @RequestMapping(path = "/callrecords/{recordId}", method = RequestMethod.GET)
+/*    @RequestMapping(path = "/callrecords/{recordId}", method = RequestMethod.GET)
     public Result.ReturnData<CallOutRecord> getCallRecord(@PathVariable String recordId) {
         log.info("收到获取指定通话记录请求[{}]", recordId);
         CallOutRecord callOutRecord =callOutRecordService.findByRecordId(recordId);
@@ -35,7 +35,7 @@ public class CallRecordResource {
             return Result.ok(callOutRecord);
         }
        return Result.error(ErrorConstant.ERROR_NO_RECORD_BY_RECORDID);
-    }
+    }*/
 
     /**
      * 获取座席组通话信息

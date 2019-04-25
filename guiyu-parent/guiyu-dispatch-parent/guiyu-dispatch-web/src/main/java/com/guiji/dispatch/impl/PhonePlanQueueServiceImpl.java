@@ -4,7 +4,9 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
@@ -13,6 +15,8 @@ import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +38,12 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private DistributedLockHandler distributedLockHandler;
 	@Autowired
 	private IDispatchBatchLineService lineService;
+
+	@Autowired
+	private DispatchPlanMapper dispatchPlanMapper;
+
+	@Autowired
+	private ThreadPoolTaskExecutor asyncServiceExecutor;
 
 	@Override
 	public void execute() throws Exception {
@@ -70,25 +80,38 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										Thread.sleep(500);
 										break;
 									}
-										// mod by xujin
-										List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
-										if(dispatchPlanList.size()>0){
-											logger.info("当前查询到的数据"+dispatchPlanList.size());
-										}
-										if(dispatchPlanList.size()>0){
-											//进去队列之前，根据优line优先级进行排序
-											List<DispatchPlan> bak = new ArrayList<>();
-											bak.addAll(dispatchPlanList);
-											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
-											logger.info("sortLine", sortLine);
-											if(sortLine.size()>0){
-												pushPlan2Queue(sortLine,queue);
-											}else if (bak.size()>0){
-												logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
-												pushPlan2Queue(dispatchPlanList,queue);
+									// mod by xujin
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+									int len = 0;
+									if(null != dispatchPlanList && dispatchPlanList.size()>0){
+										len = dispatchPlanList.size();
+										logger.info("当前查询到的数据:"+len);
+										//进去队列之前，根据优line优先级进行排序
+										for(DispatchPlan plan: dispatchPlanList){
+											try {
+												//进去队列之前，根据优line优先级进行排序
+												DispatchPlan sortPlan = lineService.sortLine(plan);
+												this.pushPlanQueue(sortPlan, queue);
+											}catch(Exception ex){
+												logger.error("plan line排序异常或者推入redis队列异常", ex);
 											}
 										}
+
+									/*
+									//进去队列之前，根据优line优先级进行排序
+									List<DispatchPlan> bak = new ArrayList<>();
+									bak.addAll(dispatchPlanList);
+									List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
+									logger.info("sortLine", sortLine);
+									if(sortLine.size()>0){
+										pushPlan2Queue(sortLine,queue);
+									}else if (bak.size()>0){
+										logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
+										pushPlan2Queue(dispatchPlanList,queue);
 									}
+									*/
+									}
+								}
 							}
 							catch (Exception e) {
 								logger.info("PhonePlanQueueServiceImpl#execute:",e);
@@ -104,6 +127,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Async("asyncSuccPhoneExecutor")
+	public boolean pushPlanQueue(DispatchPlan plan, String queue){
+	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
+		boolean result = redisUtil.leftPush(queue, plan);
+		return result;
 	}
 
 	@Override

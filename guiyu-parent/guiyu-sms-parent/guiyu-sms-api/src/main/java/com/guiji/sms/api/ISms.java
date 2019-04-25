@@ -3,7 +3,7 @@ package com.guiji.sms.api;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.guiji.sms.api.bean.SendMsgReq;
+import com.guiji.sms.api.bean.SendMReqVO;
 
 /**
  * SMS对外服务
@@ -15,5 +15,5 @@ public interface ISms
 	 * 发短信
 	 */
 	@PostMapping("sendMessage")
-	public void sendMessage(SendMsgReq sendMsgReq);
+	public void sendMessage(SendMReqVO sendMsgReq);
 }

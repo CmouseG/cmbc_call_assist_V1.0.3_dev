@@ -3,7 +3,7 @@ package com.guiji.sms.api.bean;
 import lombok.Data;
 
 @Data
-public class SendMsgReq
+public class SendMReqVO
 {
 	private Long userId; //用户id
 	private String orgCode; //组织代码

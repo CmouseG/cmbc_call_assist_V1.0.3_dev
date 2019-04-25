@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.sms.api.bean.SendMsgReq;
+import com.guiji.sms.api.bean.SendMReqVO;
 import com.guiji.sms.dao.entity.SmsConfig;
 import com.guiji.sms.dao.entity.SmsPlatform;
 import com.guiji.sms.dao.entity.SmsTunnel;
@@ -36,7 +36,7 @@ public class SendMsgMQListener
 	public void process(String message)
 	{
 		try {
-			SendMsgReq sendMReq = JsonUtil.jsonStr2Bean(message, SendMsgReq.class);
+			SendMReqVO sendMReq = JsonUtil.jsonStr2Bean(message, SendMReqVO.class);
 //			log.info("MQ："+sendMReq.toString());
 			execute(sendMReq); // 处理消息
 		} catch (Exception e){
@@ -45,7 +45,7 @@ public class SendMsgMQListener
 	}
 
 	// 处理消息
-	private void execute(SendMsgReq sendMReq) throws Exception
+	private void execute(SendMReqVO sendMReq) throws Exception
 	{
 		String orgCode = sendMReq.getOrgCode();
 		String templateId = sendMReq.getTemplateId();

@@ -5,4 +5,4 @@
 3.fastdfs服务器文件删除队列，传入fastdfs服务器文件路径，删除该文件
 
 #执行
-通过RecordMoveHandler定时任务启动
+通过RecordMoveHandler定时任务启动推送消息到上传文件到阿里云队列

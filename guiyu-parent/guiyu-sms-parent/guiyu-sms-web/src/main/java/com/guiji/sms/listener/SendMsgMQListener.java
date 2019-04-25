@@ -21,7 +21,7 @@ import com.guiji.sms.service.ConfigService;
 import com.guiji.sms.utils.JsonUtil;
 import com.guiji.utils.RedisUtil;
 
-@RabbitListener(queues = "SendMessageMQ.direct.Sms")
+@RabbitListener(queues = "SendMessageMQ.Sms")
 @Component
 public class SendMsgMQListener
 {

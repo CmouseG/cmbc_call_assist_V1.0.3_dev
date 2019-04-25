@@ -34,12 +34,18 @@ public class SendMsgTaskMQListener
 	@RabbitHandler
 	public void process(String message)
 	{
+		SmsTask smsTask = null;
 		try {
-			SmsTask smsTask = JsonUtil.jsonStr2Bean(message, SmsTask.class);
+			smsTask = JsonUtil.jsonStr2Bean(message, SmsTask.class);
 			log.info("Task："+smsTask.toString());
-			executeTask(smsTask); // 执行任务
+			executeTask(smsTask); // 执行发送任务
 		} catch (Exception e){
 			log.error(e.getMessage());
+			// 修改任务状态
+			SmsTask failTask = new SmsTask();
+			failTask.setId(smsTask.getId());
+			failTask.setSendStatus(3); // 发送失败
+			taskMapper.updateByPrimaryKeySelective(failTask);
 		}
 	}
 
@@ -70,5 +76,11 @@ public class SendMsgTaskMQListener
 		params.put("createTime", new Date());
 		
 		SendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
+		
+		// 修改任务状态
+		SmsTask finishedTask = new SmsTask();
+		finishedTask.setId(smsTask.getId());
+		finishedTask.setSendStatus(2); // 已发送
+		taskMapper.updateByPrimaryKeySelective(finishedTask);
 	}
 }

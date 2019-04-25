@@ -78,3 +78,14 @@ ADD COLUMN `create_name`  varchar(32) NULL COMMENT '创建人名称' AFTER `crea
 ADD COLUMN `update_name`  varchar(32) NULL COMMENT '更新人名称' AFTER `update_id`;
 
 
+UPDATE sms_platform t SET t.content_type = 1;
+UPDATE sms_platform t SET t.content_type = 2 WHERE t.platform_name = '云讯科技';
+
+UPDATE sms_tunnel t SET t.content_type = 1;
+UPDATE sms_tunnel t SET t.content_type = 2 WHERE t.platform_name = '云讯科技';
+
+UPDATE sms_config t SET t.content_type = 1;
+UPDATE sms_config t SET t.content_type = 2 WHERE t.tunnel_name LIKE '云讯科技%';
+
+UPDATE sms_task t SET t.content_type = 1;
+UPDATE sms_task t SET t.content_type = 2 WHERE t.content_type LIKE '云讯科技%';

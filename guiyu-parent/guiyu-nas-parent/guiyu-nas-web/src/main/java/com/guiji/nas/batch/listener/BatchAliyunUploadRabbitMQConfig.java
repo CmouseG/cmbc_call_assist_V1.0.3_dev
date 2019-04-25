@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.guiji.nas.property.AliyunUtil;
 import com.guiji.nas.util.OssUtil;
 
 /**
@@ -23,8 +24,8 @@ public class BatchAliyunUploadRabbitMQConfig
             SimpleRabbitListenerContainerFactoryConfigurer configurer,
             ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConcurrentConsumers(15); // 设置线程数
-        factory.setMaxConcurrentConsumers(15); // 最大线程数
+        factory.setConcurrentConsumers(Integer.parseInt(AliyunUtil.getMqConcurrent())); // 设置线程数
+        factory.setMaxConcurrentConsumers(Integer.parseInt(AliyunUtil.getMqMaxConcurrent())); // 最大线程数
 
         configurer.configure(factory, connectionFactory);
         return factory;

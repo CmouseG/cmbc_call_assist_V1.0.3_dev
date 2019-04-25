@@ -11,6 +11,7 @@ import com.guiji.sms.controller.bean.Condition;
 import com.guiji.sms.controller.bean.SendDetailListRsp;
 import com.guiji.sms.dao.SmsSendDetailMapper;
 import com.guiji.sms.dao.entity.SmsSendDetailExample;
+import com.guiji.sms.dao.entity.SmsSendDetailExample.Criteria;
 import com.guiji.sms.service.SendDetailService;
 import com.guiji.sms.utils.DateUtil;
 
@@ -28,29 +29,30 @@ public class SendDetailServiceImpl implements SendDetailService
 	{
 		SendDetailListRsp rsp = new SendDetailListRsp();
 		SmsSendDetailExample example = new SmsSendDetailExample();
+		Criteria criteria = example.createCriteria();
 		Integer authLevel = authLevelData.getAuthLevel();
 		if(authLevel == 1) {
-			example.createCriteria().andCreateIdEqualTo(authLevelData.getUserId().intValue());
+			criteria.andCreateIdEqualTo(authLevelData.getUserId().intValue());
 		} else if(authLevel == 2) {
-			example.createCriteria().andOrgCodeEqualTo(authLevelData.getOrgCode());
+			criteria.andOrgCodeEqualTo(authLevelData.getOrgCode());
 		}else if(authLevel == 3) {
-			example.createCriteria().andOrgCodeLike(authLevelData.getOrgCode() + "%");
+			criteria.andOrgCodeLike(authLevelData.getOrgCode() + "%");
 		}
 		if(StringUtils.isNotEmpty(condition.getTaskName())){
-			example.createCriteria().andTaskNameLike(condition.getTaskName()+"%");
+			criteria.andTaskNameLike(condition.getTaskName()+"%");
 		}
 		if(StringUtils.isNotEmpty(condition.getOrgName())){
-			example.createCriteria().andOrgNameLike(condition.getOrgName()+"%");
+			criteria.andOrgNameLike(condition.getOrgName()+"%");
 		}
 		if(condition.getSendStatus() != null){
-			example.createCriteria().andSendStatusEqualTo(condition.getSendStatus());
+			criteria.andSendStatusEqualTo(condition.getSendStatus());
 		}
 		try{
 			if(StringUtils.isNotEmpty(condition.getStartDate())){
-				example.createCriteria().andSendTimeGreaterThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+				criteria.andSendTimeGreaterThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
 			}
 			if(StringUtils.isNotEmpty(condition.getEndDate())){
-				example.createCriteria().andSendTimeLessThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+				criteria.andSendTimeLessThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}catch (Exception e){
 			throw new SmsException(ExceptionEnum.ERROR_PARSE_DATE);

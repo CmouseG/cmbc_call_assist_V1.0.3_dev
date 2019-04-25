@@ -14,6 +14,7 @@ import com.guiji.sms.controller.bean.TaskReq;
 import com.guiji.sms.dao.SmsTaskMapper;
 import com.guiji.sms.dao.entity.SmsTask;
 import com.guiji.sms.dao.entity.SmsTaskExample;
+import com.guiji.sms.dao.entity.SmsTaskExample.Criteria;
 import com.guiji.sms.rabbitmq.DirectSender;
 import com.guiji.sms.service.TaskService;
 import com.guiji.sms.utils.AuthUtil;
@@ -41,25 +42,26 @@ public class TaskServiceImpl implements TaskService
 	{
 		TaskListRsp rsp = new TaskListRsp();
 		SmsTaskExample example = new SmsTaskExample();
+		Criteria criteria = example.createCriteria();
 		Integer authLevel = authLevelData.getAuthLevel();
 		if(authLevel == 1) {
-			example.createCriteria().andCreateIdEqualTo(authLevelData.getUserId().intValue());
+			criteria.andCreateIdEqualTo(authLevelData.getUserId().intValue());
 		} else if(authLevel == 2) {
-			example.createCriteria().andOrgCodeEqualTo(authLevelData.getOrgCode());
+			criteria.andOrgCodeEqualTo(authLevelData.getOrgCode());
 		}else if(authLevel == 3) {
-			example.createCriteria().andOrgCodeLike(authLevelData.getOrgCode() + "%");
+			criteria.andOrgCodeLike(authLevelData.getOrgCode() + "%");
 		}
 		if(StringUtils.isNotEmpty(condition.getTaskName())){
-			example.createCriteria().andTaskNameLike(condition.getTaskName()+"%");
+			criteria.andTaskNameLike(condition.getTaskName()+"%");
 		}
 		if(condition.getTaskStatus() != null){
-			example.createCriteria().andSendStatusEqualTo(condition.getTaskStatus());
+			criteria.andSendStatusEqualTo(condition.getTaskStatus());
 		}
 		if(StringUtils.isNotEmpty(condition.getStartDate())){
-			example.createCriteria().andSendTimeGreaterThanOrEqualTo(condition.getStartDate());
+			criteria.andSendTimeGreaterThanOrEqualTo(condition.getStartDate());
 		}
 		if(StringUtils.isNotEmpty(condition.getEndDate())){
-			example.createCriteria().andSendTimeLessThanOrEqualTo(condition.getEndDate());
+			criteria.andSendTimeLessThanOrEqualTo(condition.getEndDate());
 		}
 		rsp.setTotalNum(taskMapper.countByExample(example));
 		example.setLimitStart((condition.getPageNum()-1)*condition.getPageSize());

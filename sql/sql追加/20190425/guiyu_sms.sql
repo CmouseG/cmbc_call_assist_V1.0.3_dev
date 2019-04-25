@@ -40,6 +40,10 @@ ADD COLUMN `content_type`  int(1) NULL COMMENT '内容形式：1-短信内容；
 ADD COLUMN `create_name`  varchar(32) NULL COMMENT '创建人名称' AFTER `create_id`,
 ADD COLUMN `update_name`  varchar(32) NULL COMMENT '更新人名称' AFTER `update_id`;
 
+ALTER TABLE `sms_config`
+MODIFY COLUMN `auditing_status`  int(1) NULL DEFAULT 0 COMMENT '审核状态：0-待审核；1-已审核' AFTER `sms_content`,
+MODIFY COLUMN `run_status`  int(1) NULL DEFAULT 1 COMMENT '运行状态：0-停止；1-启动' AFTER `auditing_status`;
+
 
 ALTER TABLE sms_task_detail RENAME TO sms_send_detail;
 ALTER TABLE `sms_send_detail`

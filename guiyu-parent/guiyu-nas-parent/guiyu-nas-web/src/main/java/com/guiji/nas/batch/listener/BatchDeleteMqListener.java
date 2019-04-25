@@ -27,9 +27,11 @@ public class BatchDeleteMqListener {
 
 	@RabbitHandler
 	public void process(String message,Channel channel,Message message2) {
+		logger.info("删除fastdfs上文件队列接收消息:" + message);
 		try {
 			AliyunReqVO req = JsonUtils.json2Bean(message, AliyunReqVO.class);
 			nasService.deleteByUrl(req.getSourceUrl());
+			logger.info("fastdfs上文件删除成功:" + req.getSourceUrl());
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			logger.info("error",e);

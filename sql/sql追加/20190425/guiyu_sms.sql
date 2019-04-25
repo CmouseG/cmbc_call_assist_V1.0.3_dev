@@ -4,10 +4,11 @@ use guiyu_sms;
 ALTER TABLE `sms_platform`
 DROP COLUMN `update_id`,
 DROP COLUMN `update_time`,
-MODIFY COLUMN `platform_name`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '平台名称' AFTER `id`,
+MODIFY COLUMN `id`  int(11) NOT NULL AUTO_INCREMENT FIRST ,
+MODIFY COLUMN `platform_name`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '平台名称' AFTER `id`,
 MODIFY COLUMN `platform_params`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '平台参数' AFTER `platform_name`,
-MODIFY COLUMN `identification`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内部标识' AFTER `platform_params`,
-MODIFY COLUMN `org_code`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组织代码' AFTER `identification`,
+MODIFY COLUMN `identification`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '内部标识' AFTER `platform_params`,
+MODIFY COLUMN `org_code`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组织代码' AFTER `identification`,
 MODIFY COLUMN `create_id`  int(11) NULL DEFAULT NULL COMMENT '创建人id' AFTER `org_code`,
 ADD COLUMN `content_type`  int(1) NULL COMMENT '内容形式：1-短信内容；2-短信模版' AFTER `identification`,
 ADD COLUMN `create_name`  varchar(32) NULL COMMENT '创建人名称' AFTER `create_id`;
@@ -35,6 +36,7 @@ MODIFY COLUMN `org_code`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci
 CHANGE COLUMN `company_name` `org_name`  varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组织名称' AFTER `org_code`,
 MODIFY COLUMN `create_id`  int(11) NULL DEFAULT NULL COMMENT '创建人id' AFTER `org_name`,
 MODIFY COLUMN `update_id`  int(11) NULL DEFAULT NULL COMMENT '更新人id' AFTER `create_time`,
+ADD COLUMN `content_type`  int(1) NULL COMMENT '内容形式：1-短信内容；2-短信模版' AFTER `intention_tag`,
 ADD COLUMN `create_name`  varchar(32) NULL COMMENT '创建人名称' AFTER `create_id`,
 ADD COLUMN `update_name`  varchar(32) NULL COMMENT '更新人名称' AFTER `update_id`;
 
@@ -71,6 +73,7 @@ MODIFY COLUMN `org_code`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci
 CHANGE COLUMN `company_name` `org_name`  varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组织名称' AFTER `org_code`,
 MODIFY COLUMN `create_id`  int(11) NULL DEFAULT NULL COMMENT '创建人id' AFTER `org_name`,
 MODIFY COLUMN `update_id`  int(11) NULL DEFAULT NULL COMMENT '更新人id' AFTER `create_time`,
+ADD COLUMN `content_type`  int(1) NULL COMMENT '内容形式：1-短信内容；2-短信模版' AFTER `tunnel_name`,
 ADD COLUMN `create_name`  varchar(32) NULL COMMENT '创建人名称' AFTER `create_id`,
 ADD COLUMN `update_name`  varchar(32) NULL COMMENT '更新人名称' AFTER `update_id`;
 

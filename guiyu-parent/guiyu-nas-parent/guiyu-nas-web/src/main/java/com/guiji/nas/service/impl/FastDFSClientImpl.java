@@ -96,9 +96,9 @@ public class FastDFSClientImpl {
      * @return 
      */  
     public void deleteFile(String fileUrl) {  
-        if (fileUrl != null && !fileUrl.trim().equals("")) {  
+        /*if (fileUrl != null && !fileUrl.trim().equals("")) {
             return;  
-        }  
+        }  */
         try {  
             StorePath storePath = StorePath.praseFromUrl(fileUrl);  
             storageClient.deleteFile(storePath.getGroup(), storePath.getPath());  

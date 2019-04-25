@@ -729,6 +729,7 @@
              separator="," close=")">
       #{item}
     </foreach>
+    and status_sync=1
   </update>
 
   <update id="updPlanByStatusSync">

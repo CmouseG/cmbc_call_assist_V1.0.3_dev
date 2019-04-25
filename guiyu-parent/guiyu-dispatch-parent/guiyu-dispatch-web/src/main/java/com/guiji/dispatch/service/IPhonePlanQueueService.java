@@ -15,4 +15,6 @@ public interface IPhonePlanQueueService {
     boolean cleanQueue();
 
     boolean cleanQueueByUserId(String userId);
+
+    boolean cleanQueueByQueueName(String queueName);
 }

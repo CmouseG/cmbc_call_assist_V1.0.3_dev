@@ -12,6 +12,7 @@ import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	public void execute() throws Exception {
 		while (true) {
 			try {
+				// 从redis获取系统最大并发数版本号
+				String systemMaxPlanVer = redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER) == null ? ""
+						: (String) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER);
+
 				Lock lock = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
 				if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-					Thread.sleep(500);
+					Thread.sleep(100);
 					continue;
 				}
 
@@ -63,9 +68,18 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				}
 				String hour = String.valueOf(DateUtil.getCurrentHour());
 				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
+				List<String> oldIdBotenceList = getUserBotenceList(userLineRobotList);
+
 				if (userLineRobotList != null) {
 					//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
-					for (UserLineBotenceVO dto : userLineRobotList) {
+					LoopUser: for (UserLineBotenceVO dto : userLineRobotList) {
+						if (isVerChanged(systemMaxPlanVer)) {
+							if (!isNewAlotContains((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
+
+								continue;
+							}
+						}
+
 						//mod by xujin
 //						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
 						String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
@@ -73,13 +87,8 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						if (distributedLockHandler.tryLock(queueLock, 1000L))
 						{
 							try {
-
 								long currentQueueSize = redisUtil.lGetListSize(queue);
 								if (currentQueueSize < systemMaxPlan *2) {
-									if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-										Thread.sleep(500);
-										break;
-									}
 									// mod by xujin
 									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
 									int len = 0;
@@ -87,10 +96,19 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										len = dispatchPlanList.size();
 										logger.info("当前查询到的数据:"+len);
 										//进去队列之前，根据优line优先级进行排序
-										for(DispatchPlan plan: dispatchPlanList){
+										LoopPlan: for(DispatchPlan plan: dispatchPlanList){
 											try {
 												//进去队列之前，根据优line优先级进行排序
 												DispatchPlan sortPlan = lineService.sortLine(plan);
+												if (isVerChanged(systemMaxPlanVer)) {
+													if (!isNewAlotContains((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
+
+														this.pushPlan2Queue(dispatchPlanList, queue);
+														this.cleanQueueByQueueName(queue);
+
+														break LoopUser;
+													}
+												}
 												this.pushPlanQueue(sortPlan, queue);
 											}catch(Exception ex){
 												logger.error("plan line排序异常或者推入redis队列异常", ex);
@@ -129,6 +147,51 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		}
 	}
 
+
+	private boolean isNewAlotContains(List<UserLineBotenceVO> newList, String oldIdBotenceQueueName)
+	{
+		boolean containsFlg = false;
+		if(newList != null && !newList.isEmpty() )
+		{
+			for (UserLineBotenceVO dto:newList) {
+				if(StringUtils.equals(dto.getUserId() +"_"+ dto.getBotenceName(), oldIdBotenceQueueName))
+				{
+					containsFlg = true;
+					break;
+				}
+			}
+		}
+
+		return containsFlg;
+	}
+
+	private List<String> getUserBotenceList(List<UserLineBotenceVO> list)
+	{
+		List<String> tmpList = new ArrayList<>();
+		if(list == null || list.isEmpty())
+		{
+			return tmpList;
+		}
+		for (UserLineBotenceVO dto:list) {
+			tmpList.add(dto.getUserId() +"_"+ dto.getBotenceName());
+		}
+
+		return tmpList;
+	}
+
+	private boolean isVerChanged(String oldVer)
+	{
+		// 从redis获取系统最大并发数
+		String systemMaxPlanVerCurrent = (String) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER);
+		if(!StringUtils.equals(systemMaxPlanVerCurrent, oldVer))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+
 	@Async("asyncSuccPhoneExecutor")
 	public boolean pushPlanQueue(DispatchPlan plan, String queue){
 	//	logger.info("推入要拨打电话数据KEY:{},{}", queue, plan);
@@ -150,31 +213,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		Set<String> queueKeys = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT);
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
-				//1.获取redis锁，将拨打计划的redis锁住
-				Lock queueLock = new Lock("dispatch.lock" + queueKey, "dispatch.lock" + queueKey);
-				if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
-					try {
-
-						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
-						List<Long> planUuids = new ArrayList<Long>();
-						while (true) {
-							DispatchPlan dispatchPlan = (DispatchPlan) redisUtil.lrightPop(queueKey);
-							if (dispatchPlan == null) {
-								break;
-							} else {
-								planUuids.add(dispatchPlan.getPlanUuidLong());
-							}
-						}
-						if (planUuids.size() > 0) {
-							getPhonesInterface.resetPhoneSyncStatus(planUuids);
-						}
-					} catch (Exception e) {
-						logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-						continue;
-					} finally {
-						distributedLockHandler.releaseLock(queueLock);
-					}
-				}
+				cleanQueueByQueueName(queueKey);
 			}
 		}
 		return false;
@@ -186,31 +225,38 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		Set<String> queueKeys = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+userId);
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
-				//1.获取redis锁，将拨打计划的redis锁住
-				Lock queueLock = new Lock("dispatch.lock" + queueKey, "dispatch.lock" + queueKey);
-				if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
-					try {
+				cleanQueueByQueueName(queueKey);
+			}
+		}
+		return false;
+	}
 
-						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
-						List<Long> planUuids = new ArrayList<Long>();
-						while (true) {
-							DispatchPlan dispatchPlan = (DispatchPlan) redisUtil.lrightPop(queueKey);
-							if (dispatchPlan == null) {
-								break;
-							} else {
-								planUuids.add(dispatchPlan.getPlanUuidLong());
-							}
-						}
-						if (planUuids.size() > 0) {
-							getPhonesInterface.resetPhoneSyncStatus(planUuids);
-						}
-					} catch (Exception e) {
-						logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-						continue;
-					} finally {
-						distributedLockHandler.releaseLock(queueLock);
+	@Async("cleanQueueExecutor")
+	@Override
+	public boolean cleanQueueByQueueName(String queueName) {
+
+		//1.获取redis锁，将拨打计划的redis锁住
+		Lock queueLock = new Lock("dispatch.lock" + queueName, "dispatch.lock" + queueName);
+		if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
+			try {
+
+				//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
+				List<Long> planUuids = new ArrayList<Long>();
+				while (true) {
+					DispatchPlan dispatchPlan = (DispatchPlan) redisUtil.lrightPop(queueName);
+					if (dispatchPlan == null) {
+						break;
+					} else {
+						planUuids.add(dispatchPlan.getPlanUuidLong());
 					}
 				}
+				if (planUuids.size() > 0) {
+					getPhonesInterface.resetPhoneSyncStatus(planUuids);
+				}
+			} catch (Exception e) {
+				logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
+			} finally {
+				distributedLockHandler.releaseLock(queueLock);
 			}
 		}
 		return false;

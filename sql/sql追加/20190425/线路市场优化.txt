@@ -13,3 +13,10 @@ update sip_line_base_info set supplier_type=1 where org_code in (代理商的cod
 
 #### 第三步
 update sip_line_base_info set supplier_type=0 where supplier_type is null;
+
+
+alter table sip_line_base_info modify except_areas varchar(300) null comment '地区盲区';
+
+alter table sip_line_share modify except_areas varchar(300) null comment '地区盲区';
+
+alter table sip_line_exclusive modify except_areas varchar(300) null comment '地区盲区';

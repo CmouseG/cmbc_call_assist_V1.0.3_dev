@@ -2,6 +2,7 @@ package com.guiji.nas.batch.listener;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -33,7 +34,7 @@ public class BatchAliyunUploadMqListener {
 		logger.info("阿里云上传队列接收消息:" + message);
 		try {
 			AliyunReqVO req = JsonUtils.json2Bean(message, AliyunReqVO.class);
-			String fileName = OssUtil.getInstance().upload(req.getSourceUrl());
+			String fileName = OssUtil.getInstance().upload(StringUtils.replace(req.getSourceUrl(),"tel.guiji.ai","172.16.167.213"));
 			AliyunRspVO res = new AliyunRspVO();
 			res.setBusiId(req.getBusiId());
 			res.setSourceUrl(req.getSourceUrl());

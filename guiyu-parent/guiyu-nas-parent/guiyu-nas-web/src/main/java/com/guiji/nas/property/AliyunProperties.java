@@ -37,7 +37,6 @@ public class AliyunProperties {
     
     @Value("${fdfs.webServerUrl:}")
     private String webServerUrl;
-    
 
     @Bean(name="AliyunProperties")
     public Properties init() throws IOException {

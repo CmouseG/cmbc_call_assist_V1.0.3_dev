@@ -1,5 +1,6 @@
 package com.guiji.callcenter.dao;
 
+import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 
@@ -7,6 +8,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.callcenter.dao.entityext.CallIdRecordUrl;
 import org.apache.ibatis.annotations.Param;
 
@@ -43,4 +45,7 @@ public interface CallOutPlanMapper {
 
     List<CallIdRecordUrl> selectCallIdRecordUrl(@Param("callId") BigInteger callId);
     List<CallIdRecordUrl> selectDetailIdRecordUrl(@Param("callDetailId") BigInteger callDetailId);
+    List<CallOutRecord> getUnuploadCall(@Param("startTime") String startTime, @Param("endTime") String endTime,
+                                        @Param("serverId") String serverId);
+    List<CallOutDetailRecord> getUnuploadDetailByCallId(@Param("callId") BigInteger callId);
 }

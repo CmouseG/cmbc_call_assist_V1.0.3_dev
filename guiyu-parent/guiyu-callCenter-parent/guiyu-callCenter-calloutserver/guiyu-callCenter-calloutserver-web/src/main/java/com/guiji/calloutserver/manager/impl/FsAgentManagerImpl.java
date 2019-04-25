@@ -57,34 +57,34 @@ public class FsAgentManagerImpl implements FsAgentManager {
         request.setRecordId(recordId);
         request.setRecordType(recordType);
 
-        Result.ReturnData returnData = null;
-        try{
-            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
+//        Result.ReturnData returnData = null;
+//        try{
+//            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+//                @Override
+//                public Result.ReturnData execute() {
                     return iTemplate.uploadrecord(request);
-                }
+//                }
+//
+//                @Override
+//                public void onErrorResult(Result.ReturnData result) {
+//                    //TODO: 报警
+//                    log.warn("上传文件失败，错误码是[{}][{}],request[{}]", result.getCode(), result.getMsg(),request);
+//                }
+//                @Override
+//                public boolean trueBreakOnCode(String code) {
+//                    if(code.equals("0300006") || code.equals("0300001") || code.equals("0300009")){
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            }, 3, 100, 300, 600);
+//        }catch (Exception ex){
+//            log.warn("上传文件出现异常", ex);
+//            //TODO: 报警，上传文件异常
+//        }
 
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-                    //TODO: 报警
-                    log.warn("上传文件失败，错误码是[{}][{}],request[{}]", result.getCode(), result.getMsg(),request);
-                }
-                @Override
-                public boolean trueBreakOnCode(String code) {
-                    if(code.equals("0300006") || code.equals("0300001") || code.equals("0300009")){
-                        return true;
-                    }
-                    return false;
-                }
-            }, 3, 100, 300, 600);
-        }catch (Exception ex){
-            log.warn("上传文件出现异常", ex);
-            //TODO: 报警，上传文件异常
-        }
-
-        Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
-        return returnData;
+//        Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
+//        return returnData;
     }
 
     @Override

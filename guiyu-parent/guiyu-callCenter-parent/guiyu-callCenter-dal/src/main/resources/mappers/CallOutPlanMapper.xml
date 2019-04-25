@@ -249,7 +249,28 @@
     order by a.call_detail_id
     limit 0,3000
   </select>
-
+  <select id="getUnuploadCall" resultType="com.guiji.callcenter.dao.entity.CallOutRecord" >
+    SELECT b.call_id as callId, b.record_file as recordFile, b.record_url as recordUrl
+    FROM
+    call_out_plan_0 a,call_out_record b
+    WHERE a.call_id = b.call_id
+    AND a.serverId = #{serverId}
+    AND accurate_intent !='F'
+    AND a.duration >0 AND a.create_time &lt; #{endTime}
+    AND a.create_time > #{startTime}
+    AND b.record_url IS NULL
+  </select>
+  <select id="getUnuploadDetailByCallId" resultType="com.guiji.callcenter.dao.entity.CallOutDetailRecord" >
+    SELECT b.call_id as callId, b.call_detail_id as callDetailId,
+    b.agent_record_file as agentRecordFile, b.agent_record_url as botRecordUrl,
+    b.customer_record_file as customerRecordFile ,b.customer_record_url as customerRecordUrl
+    FROM
+    call_out_detail a, call_out_detail_record b
+    WHERE
+    a.call_detail_id = b.call_detail_id  and a.call_id = #{callId}
+    AND ( (a.agent_record_file is not null AND agent_record_url is null) or
+    (a.customer_record_file is not null AND customer_record_url is null)   )
+  </select>
   <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map" >
     select count(*)
     from call_out_plan

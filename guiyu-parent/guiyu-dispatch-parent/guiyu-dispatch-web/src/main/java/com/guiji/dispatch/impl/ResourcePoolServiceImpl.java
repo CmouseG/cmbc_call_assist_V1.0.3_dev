@@ -100,6 +100,9 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         if (distributedLockHandler.tryLock(lock, 1000L)) {
             try {
                 logger.info("根据用户模板线路分配拨打号码比例#start");
+
+                List<String> userIdList = (List<String>) redisUtil.get("USER_BILLING_DATA");
+
                 //查询当前时间段有拨打计划的[用户|线路|模板]
                 String hour = String.valueOf(DateUtil.getCurrentHour());
                 //mod by xujin

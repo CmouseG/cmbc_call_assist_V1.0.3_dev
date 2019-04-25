@@ -12,6 +12,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.GateWayLineOccupyVo;
@@ -61,6 +62,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	private ICallPlan callPlanCenter;
 	@Autowired
 	private DistributedLockHandler distributedLockHandler;
+	@Autowired
+	private IPhonePlanQueueService phonePlanQueueService;
 
 	@Override
 	public void pushHandler() {
@@ -95,6 +98,15 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 							//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
+								}
+
+								List<String> userIdList = (List<String>) redisUtil.get("USER_BILLING_DATA");
+								if(userIdList!=null){
+									if (userIdList.contains(String.valueOf(dto.getUserId()))) {
+										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + dto.getUserId());
+										phonePlanQueueService.cleanQueueByQueueName(queue);
+										continue;
+									}
 								}
 
 								//判断用户模板是否有可用机器人
@@ -151,31 +163,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                         continue;
                                     }
 									callBean.setLineList(lines);
-								} catch (IllegalAccessException e) {
-									updateStatusSync(dispatchRedis.getPlanUuidLong());
-									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
-									continue;
-								} catch (InvocationTargetException e) {
+								} catch (Exception e) {
 									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 									continue;
 								}
 
-								List<String> userIdList = (List<String>) redisUtil.get("USER_BILLING_DATA");
-								if(userIdList!=null){
-									if (userIdList.contains(String.valueOf(callBean.getUserId()))) {
-										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + callBean.getUserId());
-										updateStatusSync(dispatchRedis.getPlanUuidLong());
-										continue;
-									}
-								}
-
-								if(userIdList == null){
-									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
-									Thread.sleep(2000);
-									updateStatusSync(dispatchRedis.getPlanUuidLong());
-									continue;
-								}
 								// 增加推送次数
 								addVariable(callBean, queueCount);
 								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()
@@ -188,8 +181,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									logger.info("启动呼叫中心任务失败");
 									// 减少推送次数
 									cutVariable(callBean, queueCount);
-									//休眠10S
-									Thread.sleep(10000);
 									continue;
 								}else{
 								    //推送成功，则标识网关SIM卡路线被占用

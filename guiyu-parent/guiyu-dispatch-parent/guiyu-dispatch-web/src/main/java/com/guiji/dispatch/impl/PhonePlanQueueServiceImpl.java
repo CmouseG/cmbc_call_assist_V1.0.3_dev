@@ -56,7 +56,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 				Lock lock = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
 				if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-					Thread.sleep(500);
+					Thread.sleep(100);
 					continue;
 				}
 
@@ -73,9 +73,11 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				if (userLineRobotList != null) {
 					//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					LoopUser: for (UserLineBotenceVO dto : userLineRobotList) {
-						if(isVerChanged(systemMaxPlanVer) || distributedLockHandler.isLockExist(lock))
-						{
-							break;
+						if (isVerChanged(systemMaxPlanVer)) {
+							if (!isNewAlotContains((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
+
+								continue;
+							}
 						}
 
 						//mod by xujin
@@ -99,7 +101,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 												//进去队列之前，根据优line优先级进行排序
 												DispatchPlan sortPlan = lineService.sortLine(plan);
 												if (isVerChanged(systemMaxPlanVer)) {
-													if (!isNeedQueueOfDeleted((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
+													if (!isNewAlotContains((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
 
 														this.pushPlan2Queue(dispatchPlanList, queue);
 														this.cleanQueueByQueueName(queue);
@@ -146,7 +148,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	}
 
 
-	private boolean isNeedQueueOfDeleted(List<UserLineBotenceVO> newList, String oldIdBotenceQueueName)
+	private boolean isNewAlotContains(List<UserLineBotenceVO> newList, String oldIdBotenceQueueName)
 	{
 		boolean containsFlg = false;
 		if(newList != null && !newList.isEmpty() )
@@ -180,8 +182,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private boolean isVerChanged(String oldVer)
 	{
 		// 从redis获取系统最大并发数
-		String systemMaxPlanVerCurrent = redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER) == null ? ""
-				: (String) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER);
+		String systemMaxPlanVerCurrent = (String) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER);
 		if(!StringUtils.equals(systemMaxPlanVerCurrent, oldVer))
 		{
 			return true;

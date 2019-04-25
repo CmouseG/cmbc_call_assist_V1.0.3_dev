@@ -21,6 +21,8 @@ public class AliyunUtil {
     private static String getBucketName;
     
     private static String getAliyunBaseUrl;
+    
+    private static String getWebServerUrl;
 
     public static String getEndpoint(){
         return getEndpoint;
@@ -28,6 +30,10 @@ public class AliyunUtil {
     
     public static String getAccessKeyId(){
         return getAccessKeyId;
+    }
+    
+    public static String getWebServerUrl(){
+        return getWebServerUrl;
     }
     
     public static String getAccessKeySecret(){
@@ -40,6 +46,11 @@ public class AliyunUtil {
     
     public static String getAliyunBaseUrl(){
         return getAliyunBaseUrl;
+    }
+    
+    @Autowired(required = true)
+    public void getWebServerUrl(@Qualifier("getWebServerUrl") String getWebServerUrl) {
+        this.getWebServerUrl = getWebServerUrl;
     }
 
     @Autowired(required = true)

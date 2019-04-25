@@ -42,5 +42,7 @@ UPDATE sys_organization
 SET invalid_date = DATE_FORMAT(NOW(), '%Y-%m-%d')
 WHERE (invalid_date IS NULL OR invalid_date = '');
 
+UPDATE sys_organization SET invalid_date = '2050-12-30' WHERE `code` = '1';
+
 
 INSERT INTO `guiyu_base`.`sys_menu` (`name`, `description`, `url`, `pid`, `permission`, `is_show`, `create_id`, `create_time`, `update_id`, `update_time`, `type`, `level`, `appid`, `remarks`, `del_flag`, `sys_type`) VALUES ('系统管理-开户管理-延期', NULL, 'system_account_delay', '21', 'system_account_delay', '0', '1', '2019-04-24 18:17:18', '1', '2019-04-24 18:17:52', '2', '3', '0', '0', '0', NULL);

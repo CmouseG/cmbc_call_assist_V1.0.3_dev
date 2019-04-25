@@ -476,7 +476,7 @@
 		AND t.`password` = #{password}
 		AND t.`status` = 1
 		AND(o.effective_date <![CDATA[<=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
-		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d') OR ISNULL(o.invalid_date))
+		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
 	</select>
 
 

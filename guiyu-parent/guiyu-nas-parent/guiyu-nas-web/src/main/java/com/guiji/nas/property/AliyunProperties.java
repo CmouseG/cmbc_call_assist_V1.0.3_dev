@@ -35,6 +35,9 @@ public class AliyunProperties {
     @Value("${aliyunBaseUrl:}")
     private String aliyunBaseUrl;
     
+    @Value("${fdfs.webServerUrl:}")
+    private String webServerUrl;
+    
 
     @Bean(name="AliyunProperties")
     public Properties init() throws IOException {
@@ -49,6 +52,11 @@ public class AliyunProperties {
     @Bean(name="getEndpoint")
     public String getEndpoint() {
         return endpoint;
+    }
+    
+    @Bean(name="getWebServerUrl")
+    public String getWebServerUrl() {
+        return webServerUrl;
     }
     
     @Bean(name="getAccessKeyId")

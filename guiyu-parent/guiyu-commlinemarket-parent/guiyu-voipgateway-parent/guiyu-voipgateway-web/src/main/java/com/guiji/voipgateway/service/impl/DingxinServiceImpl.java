@@ -12,6 +12,7 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +129,10 @@ public class DingxinServiceImpl implements ThirdGateWayService {
 
         List<TblPort> tblPorts = tblPortMapper.selectByExample(tblPortExample);
 
+        if(CollectionUtils.isEmpty(tblPorts)) {
+            return new ArrayList<>();
+        }
+
         List<Integer> ids = Lists.newArrayList();
         Map<Integer, TblPort> map = new HashMap<>();
 
@@ -142,6 +147,10 @@ public class DingxinServiceImpl implements ThirdGateWayService {
         tblGwpExample.createCriteria().andPortUuidIn(ids);
 
         List<TblGwp> tblGwps = tblGwpMapper.selectByExample(tblGwpExample);
+
+        if(CollectionUtils.isEmpty(tblGwps)) {
+            return new ArrayList<>();
+        }
 
         List<SimPort> simPorts = Lists.newArrayList();
 

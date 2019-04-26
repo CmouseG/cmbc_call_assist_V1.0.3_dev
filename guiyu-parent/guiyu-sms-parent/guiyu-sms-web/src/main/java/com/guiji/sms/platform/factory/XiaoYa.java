@@ -99,7 +99,7 @@ public class XiaoYa implements ISendMessage
 		// 返回参数
 		String respcode = returnData[0];
 		String respdesc = "";
-		if("0".equals(result)){
+		if("0".equals(respcode)){
 			respdesc = returnData[5];
 			log.info("发送成功:respcode:{},respdesc:{}", respcode, respdesc);
 			record.setSendStatus(1);

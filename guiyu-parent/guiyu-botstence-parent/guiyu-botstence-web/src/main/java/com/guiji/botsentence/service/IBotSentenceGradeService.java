@@ -27,5 +27,9 @@ public interface IBotSentenceGradeService {
 	public String generateGradeEvaluate(String processId, String gradeName);
 	
 	public String getIntentNameByRuleNo(String processId, String ruleNo);
+
+	void saveGradeRuleList(List<BotSentenceGradeRule> gradeRules, String userId);
+
+	String concatRulesForShow(String processId, List<BotSentenceGradeRule> gradeRules);
 	
 }

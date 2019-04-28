@@ -4,7 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
+import com.guiji.botsentence.service.IVoiceInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +36,25 @@ public class VoliceContoller {
 	private Logger logger = LoggerFactory.getLogger(VoliceContoller.class);
 	@Autowired
 	private IVoliceService service;
+
+	@Resource
+	private IVoiceInfoService iVoiceInfoService;
 	
 	@Autowired
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
 	@Value("${offline}")
 	private boolean offline;
+
+	@RequestMapping("getTtsParamsCountByTemplateId")
+	@ResponseBody
+	public ServerResult<Integer> getTtsParamsCountByTemplateId(@JsonParam String templateId){
+		if(StringUtils.isBlank(templateId)){
+			throw new CommonException("请求参数不能为空！");
+		}
+
+		return ServerResult.createBySuccess(iVoiceInfoService.getTtsParamsCountByTemplateId(templateId));
+	}
 	
 	@RequestMapping("queryVoliceInfoList")
 	@ResponseBody

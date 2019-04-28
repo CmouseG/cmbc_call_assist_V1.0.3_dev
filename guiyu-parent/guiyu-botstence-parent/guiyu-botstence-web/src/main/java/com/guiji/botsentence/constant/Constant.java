@@ -9,6 +9,17 @@ package com.guiji.botsentence.constant;
  */
 public class Constant {
 
+	private Constant() {
+	}
+
+	public static final String TEXT_ADD = "【新增】";
+
+	public static final String TEXT_MODIFY = "【修改】";
+
+	public static final String VOICE_TYPE_NORMAL = "00";
+
+	public static final String VOICE_TYPE_RECOVER = "01";
+
 	/**
 	 * 流程，制作中
 	 */

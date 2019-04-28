@@ -4,14 +4,14 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
-import static com.guiji.botsentence.util.enums.CategoryEnum.BUSINESS_QA;
-import static com.guiji.botsentence.util.enums.CategoryEnum.COMMON_DIALOGUE;
+import static com.guiji.botsentence.util.enums.CategoryEnum.*;
 
 public enum DomainNameEnum {
     NORMAL_QUESTION("一般问题", BUSINESS_QA),
     NO_MATCH_RESPONSE("未匹配响应", COMMON_DIALOGUE),
     END_BUSY("结束_在忙", COMMON_DIALOGUE),
     BUSY("在忙", COMMON_DIALOGUE),
+    INVITATION("邀约", MAIN_PROCESS),
     ;
 
     private static Map<String, DomainNameEnum> nameToEnumMap = Maps.newHashMap();

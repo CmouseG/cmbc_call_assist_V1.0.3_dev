@@ -289,6 +289,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			domainVO.setName(domainName);
 			jsonObject.put("name", domainName);
+			jsonObject.put("category", botSentenceDomain.getCategory());
+			jsonObject.put("type", botSentenceDomain.getType());
 						
 			// 设置com_domain
 			String comDomian = botSentenceDomain.getComDomain();

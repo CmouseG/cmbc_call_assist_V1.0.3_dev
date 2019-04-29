@@ -45,7 +45,7 @@ public class SendMsgMQListener
 	}
 
 	// 处理消息
-	private void execute(SendMReqVO sendMReq) throws Exception
+	private void execute(SendMReqVO sendMReq)
 	{
 		String orgCode = sendMReq.getOrgCode();
 		String templateId = sendMReq.getTemplateId();
@@ -54,9 +54,9 @@ public class SendMsgMQListener
 		SmsConfig config = redisUtil.getT(orgCode+"_"+templateId+"_"+intentionTag);
 		if(config == null){
 			config = configService.getSendConfig(templateId,intentionTag,orgCode);
+			if(config == null){return;}
 			redisUtil.set(orgCode+"_"+templateId+"_"+intentionTag, config);
 		}
-		if(config == null) {log.error("未能获取到短信配置"); return;}
 		// 获取短信通道
 		SmsTunnel tunnel = redisUtil.getT(config.getTunnelName());
 		if(tunnel == null) {log.error("未能获取到短信通道"); return;}

@@ -30,7 +30,7 @@ public class AuthUtil
 		if(orgName != null) {return orgName;}
 		ReturnData<SysOrganization> organization = org.getOrgByCode(orgCode);
 		orgName = organization.getBody().getName();
-		redisUtil.set(Constants.SMS_ORGNAME+orgCode, orgName, 30*60);
+		redisUtil.set(Constants.SMS_ORGNAME+orgCode, orgName, 30*60*1L);
 		return orgName;
 	}
 	
@@ -43,7 +43,7 @@ public class AuthUtil
 		if(userName != null) {return userName;}
 		ReturnData<SysUser> user = auth.getUserById(userId);
 		userName = user.getBody().getUsername();
-		redisUtil.set(Constants.SMS_USERNAME+userId, userName, 30*60);
+		redisUtil.set(Constants.SMS_USERNAME+userId, userName, 30*60*1L);
 		return userName;
 	}
 }

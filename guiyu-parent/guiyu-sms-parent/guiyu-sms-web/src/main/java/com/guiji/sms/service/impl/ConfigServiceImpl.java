@@ -1,7 +1,9 @@
 package com.guiji.sms.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +39,11 @@ public class ConfigServiceImpl implements ConfigService
 		example.createCriteria().andTemplateIdEqualTo(templateId)
 								.andIntentionTagLike("%"+intentionTag+"%")
 								.andOrgCodeLike(orgCode+"%")
-								.andAuditingStatusEqualTo(1)
-								.andRunStatusEqualTo(1);
-		return configMapper.selectByExampleWithBLOBs(example).get(0);
+								.andAuditingStatusEqualTo(1) // 已审核
+								.andRunStatusEqualTo(1); // 已启动
+		List<SmsConfig> configs = configMapper.selectByExampleWithBLOBs(example);
+		if(CollectionUtils.isEmpty(configs)){return null;}
+		return configs.get(0);
 	}
 
 	/**

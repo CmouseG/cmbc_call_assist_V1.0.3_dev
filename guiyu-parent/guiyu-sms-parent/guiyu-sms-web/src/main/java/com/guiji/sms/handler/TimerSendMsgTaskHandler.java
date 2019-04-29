@@ -33,7 +33,7 @@ public class TimerSendMsgTaskHandler implements SchedulingConfigurer
 	@Autowired
 	DirectSender sender;
 	
-	public static String cron = "0 0/1 * * * *"; // 频度为1min执行一次
+	private static String cron = "0 0/1 * * * *"; // 频度为1min执行一次
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar)
 	{

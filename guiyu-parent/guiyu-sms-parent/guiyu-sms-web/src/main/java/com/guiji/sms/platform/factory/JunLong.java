@@ -26,6 +26,7 @@ import com.guiji.sms.common.SmsException;
 import com.guiji.sms.dao.entity.SmsSendDetail;
 import com.guiji.sms.platform.ISendMessage;
 import com.guiji.sms.queue.SendDetailQueue;
+import com.guiji.sms.utils.CryptographyUtil;
 import com.guiji.sms.utils.MapUtil;
 import com.guiji.sms.utils.SetDetailParamsUtil;
 
@@ -62,7 +63,7 @@ public class JunLong implements ISendMessage
 		SmsSendDetail record = null;
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 		paramsList.add(new BasicNameValuePair("username",  params.getString("username")));
-		paramsList.add(new BasicNameValuePair("password", params.getString("password")));
+		paramsList.add(new BasicNameValuePair("password", CryptographyUtil.encodeMD5_32bit_UpperCase(params.getString("password"))));
 		paramsList.add(new BasicNameValuePair("extend", params.getString("extend")));
 		paramsList.add(new BasicNameValuePair("mobile", phone));
 		paramsList.add(new BasicNameValuePair("content", params.getString("smsContent")));

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.api.IOrg;
 import com.guiji.auth.exception.CheckConditionException;
-import com.guiji.auth.model.OrgInfo;
+import com.guiji.auth.model.OrgRoleInfo;
 import com.guiji.auth.model.OrgVO;
 import com.guiji.auth.model.OrganizationVO;
 import com.guiji.auth.service.OrganizationService;
@@ -212,7 +212,7 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@PostMapping("getAuthOrgTree")
-	public ReturnData<List<OrgInfo>> getAuthOrgTree(String orgName,
+	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(String orgName,
 			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		return Result.ok(organizationService.getAuthOrgTree(orgName, userId,authLevel,orgCode,true));

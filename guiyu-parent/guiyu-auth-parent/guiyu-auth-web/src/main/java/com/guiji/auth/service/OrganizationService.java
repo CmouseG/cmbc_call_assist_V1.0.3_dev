@@ -19,9 +19,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
-import com.guiji.auth.model.OrgInfo;
+import com.guiji.auth.model.OrgRoleInfo;
 import com.guiji.auth.model.OrganizationVO;
-import com.guiji.auth.model.RoleInfo;
 import com.guiji.auth.model.UpdateOrgReq;
 import com.guiji.auth.util.DataLocalCacheUtil;
 import com.guiji.auth.util.HttpClientUtil;
@@ -538,8 +537,8 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<OrgInfo> getAuthOrgTree(String orgName, Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
-		List<OrgInfo> resultList = new ArrayList<>();
+	public List<OrgRoleInfo> getAuthOrgTree(String orgName, Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
+		List<OrgRoleInfo> resultList = new ArrayList<>();
 		SysOrganizationExample example=new SysOrganizationExample();
 		Criteria criteria = example.createCriteria();
 		if(authLevel == 1 || authLevel == 2){
@@ -548,44 +547,44 @@ public class OrganizationService {
 			criteria.andCodeLike(orgCode+"%");
 		}
 		if(orgName != null){
-			criteria.andNameLike(orgName+"%");
+			criteria.andNameLike("%"+orgName+"%");
 		}
 		example.setOrderByClause("code");
 		List<SysOrganization> allOrgs = sysOrganizationMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(allOrgs)){return null;}
 		
-		List<OrgInfo> orgInfos = new ArrayList<>();
+		List<OrgRoleInfo> orgInfos = new ArrayList<>();
 		// 在所有组织下添加对应的角色
 		for(SysOrganization org : allOrgs) 
 		{
-			OrgInfo orgInfo = this.org2OrgRoleInfo(org);
+			OrgRoleInfo orgInfo = this.org2OrgRoleInfo(org);
 			String code = org.getCode();
 			List<SysRole> roleList = roleService.getRolesByOrg(code);
 			if (CollectionUtils.isNotEmpty(roleList)){
 				for (SysRole role : roleList){
-					orgInfo.addRoleChild(this.role2OrgRoleInfo(role));
+					orgInfo.addChild(this.role2OrgRoleInfo(role));
 				}
 			}
 			orgInfos.add(orgInfo); //所有添加了角色的组织集合
 		}
 		
-		Map<String, OrgInfo> map = new HashMap<>();
+		Map<String, OrgRoleInfo> map = new HashMap<>();
 		orgInfos.stream().forEach(orgInfo -> map.put(orgInfo.getOrgCode(), orgInfo));
-		for(OrgInfo orgInfo : orgInfos)
+		for(OrgRoleInfo orgInfo : orgInfos)
 		{
 			String code = orgInfo.getOrgCode();
 			if(code.equals("1")){continue;}
 			String parentCode = getParentOrgCode(code);
 			if(map.containsKey(parentCode))
 			{
-				OrgInfo parentOrgInfo = map.get(parentCode);
-				parentOrgInfo.addOrgChild(orgInfo);
+				OrgRoleInfo parentOrgInfo = map.get(parentCode);
+				parentOrgInfo.addChild(orgInfo);
 				map.remove(code);
 				map.put(parentCode, parentOrgInfo);
 			}
 		}
 		map.values().stream().forEach(orgInfo -> resultList.add(orgInfo));
-		Comparator<OrgInfo> comparator = (o1, o2) -> o1.getOrgCode().split("\\.").length - o2.getOrgCode().split("\\.").length;
+		Comparator<OrgRoleInfo> comparator = (o1, o2) -> o1.getOrgCode().split("\\.").length - o2.getOrgCode().split("\\.").length;
 		Collections.sort(resultList, comparator);
 		
 		return resultList;
@@ -596,8 +595,8 @@ public class OrganizationService {
 	 * @param org
 	 * @return
 	 */
-	private OrgInfo org2OrgRoleInfo(SysOrganization org) {
-		OrgInfo vo = new OrgInfo();
+	private OrgRoleInfo org2OrgRoleInfo(SysOrganization org) {
+		OrgRoleInfo vo = new OrgRoleInfo();
 		vo.setId(org.getId().longValue());
 		vo.setName(org.getName());
 		vo.setType(1);
@@ -609,8 +608,8 @@ public class OrganizationService {
 	 * @param org
 	 * @return
 	 */
-	private RoleInfo role2OrgRoleInfo(SysRole sysRole) {
-		RoleInfo vo = new RoleInfo();
+	private OrgRoleInfo role2OrgRoleInfo(SysRole sysRole) {
+		OrgRoleInfo vo = new OrgRoleInfo();
 		BeanUtil.copyProperties(sysRole, vo);
 		vo.setId(Long.valueOf(sysRole.getId()));
 		vo.setName(sysRole.getName());

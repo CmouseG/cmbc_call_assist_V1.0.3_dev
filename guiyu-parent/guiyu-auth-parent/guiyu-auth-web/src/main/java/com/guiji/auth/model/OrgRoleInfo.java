@@ -1,6 +1,8 @@
 package com.guiji.auth.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /** 
 * @ClassName: OrgRoleInfo 
@@ -9,7 +11,7 @@ import java.util.Date;
 * @date 2019年3月15日 下午4:46:13 
 * @version V1.0  
 */
-public class RoleInfo {
+public class OrgRoleInfo {
 	
 	//主键ID
 	private Long id;
@@ -36,6 +38,9 @@ public class RoleInfo {
     private Date updateTime;
     //数据查询权限
     private Integer dataAuthLevel;
+    
+    //下级
+  	private List<OrgRoleInfo> children;
 	
     public Long getId()
 	{
@@ -133,5 +138,19 @@ public class RoleInfo {
 	{
 		this.dataAuthLevel = dataAuthLevel;
 	}
-	
+	public List<OrgRoleInfo> getChildren()
+	{
+		return children;
+	}
+	public void setChildren(List<OrgRoleInfo> children)
+	{
+		this.children = children;
+	}
+	public void addChild(OrgRoleInfo child)
+	{
+		if(children == null){
+			children = new ArrayList<OrgRoleInfo>();
+		}
+		children.add(child);
+	}
 }

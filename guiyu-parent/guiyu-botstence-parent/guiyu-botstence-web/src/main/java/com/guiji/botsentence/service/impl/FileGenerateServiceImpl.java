@@ -289,6 +289,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			domainVO.setName(domainName);
 			jsonObject.put("name", domainName);
+			jsonObject.put("category", botSentenceDomain.getCategory());
+			jsonObject.put("type", botSentenceDomain.getType());
 						
 			// 设置com_domain
 			String comDomian = botSentenceDomain.getComDomain();
@@ -354,7 +356,9 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 								map.put(branchName, BranchNodeVO);
 								allKeywords.addAll(keywords);
 								branchShow.add(map);
-							} else if (branchDomain.equals("一般问题") && branchName.startsWith("special") && !Constant.NEED_AGENT_YES.equals(needAgent)) {
+							} else if (branchDomain.equals("一般问题")
+									&& branchName.startsWith("special")
+									&& !Constant.NEED_AGENT_YES.equals(needAgent)) {
 								BranchSpecialQuestionVO BranchNodeVO = new BranchSpecialQuestionVO();
 								BranchNodeVO.setNext(botSentenceBranch.getNext());
 								List<String> keywords = getIntentKeys(botSentenceBranch.getIntents());
@@ -380,14 +384,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 								branchShow.add(map);
 								allKeywords.addAll(keywords);
 							}else if(branchName.startsWith("refuse_")){
-								
 								refuseResponse.addAll(getVolies(botSentenceBranch.getResponse(), voliceMap));
-								/*refuseBranchNodeVO.setNext(botSentenceBranch.getNext());
-								refuseBranchNodeVO.setKeys(getIntentKeys(botSentenceBranch.getIntents()));
-								refuseBranchNodeVO.setEnd(botSentenceBranch.getEnd());
-								refuseBranchNodeVO.setIs_special_limit_free(true);
-								map.put(branchName, refuseBranchNodeVO);
-								branchShow.add(map);*/
 							} else {
 								BranchNegativeVO BranchNodeVO = new BranchNegativeVO();
 								BranchNodeVO.setNext(botSentenceBranch.getNext());
@@ -415,10 +412,14 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			
 			//处理挽回话术(除结束之外的每个主domain都必须有)
-			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))){
+			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory())
+					&& !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))){
 				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
 				if(!Constant.DOMAIN_TYPE_AGENT.equals(botSentenceDomain.getType())) {
-					intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
+					intentExample.createCriteria()
+							.andProcessIdEqualTo(processId)
+							.andDomainEqualTo("拒绝")
+							.andBranchNameEqualTo("negative");
 					List<BotSentenceBranch> intentList = botSentenceBranchMapper.selectByExample(intentExample);
 					if(null != intentList && intentList.size() > 0) {
 						List<String> keywords = getIntentKeys(intentList.get(0).getIntents());
@@ -486,7 +487,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 						refuseBranchNodeVO.setNext(domainName);
 						refuseBranchNodeVO.setKeys(newRefuseKeyWords);
 						refuseBranchNodeVO.setEnd("结束");
-						refuseBranchNodeVO.setIs_special_limit_free(true);
+//						refuseBranchNodeVO.setIs_special_limit_free(true);
 						refuseBranchNodeVO.setResponse(refuseResponse);
 						map.put("refuse_" + domainName, refuseBranchNodeVO);
 						branchShow.add(map);

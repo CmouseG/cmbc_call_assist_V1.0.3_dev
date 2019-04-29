@@ -23,13 +23,13 @@ import java.util.Map;
 @Service
 public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
 
-    private static String INTENT_ERROR_FORMAT = "意图【%s】与【%s】的关键词【%s】重复<br/>";
+    private static final String INTENT_ERROR_FORMAT = "意图【%s】与【%s】的关键词【%s】重复<br/>";
 
-    private static String BRANCH_ERROR_FORMAT = "意图【%s】与【分支%s-%s】的关键词【%s】重复<br/>";
+    private static final String BRANCH_ERROR_FORMAT = "意图【%s】与【分支%s-%s】的关键词【%s】重复<br/>";
 
-    private static String COMMON_DIALOG_ERROR_FORMAT = "意图【%s】与【通用对话%s-%s】的关键词【%s】重复<br/>";
+    private static final String COMMON_DIALOG_ERROR_FORMAT = "意图【%s】与【通用对话%s-%s】的关键词【%s】重复<br/>";
 
-    private static String BUSINESS_ANSWER_ERROR_FORMAT = "意图【%s】与【业务问答%s-%s】的关键词【%s】重复<br/>";
+    private static final String BUSINESS_ANSWER_ERROR_FORMAT = "意图【%s】与【业务问答%s-%s】的关键词【%s】重复<br/>";
 
     @Resource
     private BotSentenceBranchMapper botSentenceBranchMapper;

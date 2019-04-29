@@ -1,30 +1,28 @@
 package com.guiji.botsentence.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import com.guiji.botsentence.dao.BotSentenceBranchMapper;
+import com.guiji.botsentence.dao.BotSentenceGradeDetailMapper;
+import com.guiji.botsentence.dao.BotSentenceGradeMapper;
+import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
+import com.guiji.botsentence.dao.entity.*;
+import com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper;
+import com.guiji.botsentence.service.IBotSentenceGradeService;
+import com.guiji.botsentence.util.enums.DomainNameEnum;
+import com.guiji.botsentence.util.enums.GradeRuleTypeEnum;
+import com.guiji.botsentence.vo.GradeEvaluateVO;
+import com.guiji.common.exception.CommonException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeDetailMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGrade;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeDetail;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeDetailExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRule;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample;
-import com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper;
-import com.guiji.botsentence.service.IBotSentenceGradeService;
-import com.guiji.botsentence.vo.GradeEvaluateVO;
-import com.guiji.common.exception.CommonException;
+import java.util.Date;
+import java.util.List;
+
+import static com.guiji.botsentence.util.enums.GradeRuleTypeEnum.EFFECTIVE_DIALOGUE_TIMES;
+import static com.guiji.botsentence.util.enums.GradeRuleTypeEnum.USER_NO_SPEAK_TIMES;
 
 /**
  * 意向服务
@@ -159,6 +157,20 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 				}else {
 					evaluate = "'一般问题' in 经过域 and " + "'" + detail.getValue2() + ".responses'" + " in 一般问题['进入分支']";
 				}
+			}else if(USER_NO_SPEAK_TIMES.getKey().equals(detail.getType())) {
+				String concatValues= USER_NO_SPEAK_TIMES.getEvaluate() +  detail.getValue2() + detail.getValue3();
+				if(StringUtils.isNotBlank(evaluate)) {
+					evaluate = evaluate + " and " + "(" + concatValues + ")";
+				}else {
+					evaluate = concatValues;
+				}
+			}else if(EFFECTIVE_DIALOGUE_TIMES.getKey().equals(detail.getType())) {
+				String concatValues= EFFECTIVE_DIALOGUE_TIMES.getEvaluate() +  detail.getValue2() + detail.getValue3();
+				if(StringUtils.isNotBlank(evaluate)) {
+					evaluate = evaluate + " and " + "(" + concatValues + ")";
+				}else {
+					evaluate = concatValues;
+				}
 			}
 		}
 		
@@ -168,10 +180,8 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 
 	@Override
 	public String generateGradeEvaluate(String processId, String intentName) {
-		GradeEvaluateVO responseVO = new GradeEvaluateVO();
 		List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctRuleNoByProcessIdAndIntentName(processId, intentName);
 		String result = "";
-		String evaluateShow = "";
 		if(null != ruleNoList && ruleNoList.size() > 0) {
 			for(int m = 0 ; m < ruleNoList.size() ; m++) {
 				String ruleNo = ruleNoList.get(m);
@@ -214,77 +224,133 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 		}
 		return null;
 	}
-	
-	
-	public String generateGradeShowEvaluate(String processId, String intentName) {
-		List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctRuleNoByProcessIdAndIntentName(processId, intentName);
-		String result = "";
-		if(null != ruleNoList && ruleNoList.size() > 0) {
-			for(int m = 0 ; m < ruleNoList.size() ; m++) {
-				String ruleNo = ruleNoList.get(m);
-				BotSentenceGradeRuleExample example = new BotSentenceGradeRuleExample();;
-				example.createCriteria().andProcessIdEqualTo(processId).andRuleNoEqualTo(ruleNo).andIntentNameEqualTo(intentName);
-				example.setOrderByClause(" show_seq");
-				List<BotSentenceGradeRule> list = botSentenceGradeRuleMapper.selectByExample(example);
-				if(null != list && list.size() > 0) {
-					String ruleEvaluate = "";
-					if(list.size() == 1) {
-						ruleEvaluate = concatEvaluate(processId, list);
-					}else {
-						//for(int i = 0 ; i < list.size() ; i++) {
-							//if(i == list.size()-1) {
-								ruleEvaluate = ruleEvaluate + "(" + concatEvaluate(processId, list) + ")";
-							//}else {
-								//ruleEvaluate = ruleEvaluate + "(" + concatEvaluate(processId, list) + ")" + " 且 ";
-							//}
-						//}
-					}
-					if(m == 0) {
-						result = "(" + ruleEvaluate + ")";
-					}else {
-						result = result + " 或 " + "(" + ruleEvaluate + ")";
-					}
-				}
-			}
-		}
-		return result;
-	}
-	
-	
-	private String concatEvaluate(String processId, List<BotSentenceGradeRule> list) {
-		String result = "";
-		for(int i = 0 ; i < list.size() ; i++) {
-			String temp;
-			BotSentenceGradeRule rule = list.get(i);
-			if("01".equals(rule.getType())) {
-				temp = " 触发" + "'" + rule.getValue2() + "'";
-			}else if("02".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "次";
-			}else if("03".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "轮";
-			}else if("04".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "秒";
-			}else if("05".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "个";
-			}else if("06".equals(rule.getType())) {
-				BotSentenceBranchExample mainExample = new BotSentenceBranchExample();
-				mainExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题").andBranchNameEqualTo(rule.getValue2());
-				List<BotSentenceBranch> mainBranchList = botSentenceBranchMapper.selectByExample(mainExample);
-				if(null != mainBranchList && mainBranchList.size() > 0) {
-					temp = " 触发一般问题" + "'" + mainBranchList.get(0).getUserAsk() + "'";
-				}else {
-					temp = " 触发一般问题" + "'" + rule.getValue2() + "'";
-				}
-			}else {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3();
-			}
-			if(i == 0) {
-				result = temp;
-			}else {
-				result = result + " 且 " + temp;
-			}
-		}
-		return result;
+
+	@Override
+	public void saveGradeRuleList(List<BotSentenceGradeRule> gradeRules, String userId) {
+		// TODO: 19-4-26 need complete
 	}
 
+    @Override
+    public String concatRulesForShow(String processId, List<BotSentenceGradeRule> gradeRules) {
+	    StringBuilder rulesBuilder = new StringBuilder();
+
+	    gradeRules.forEach(rule -> {
+			GradeRuleTypeEnum ruleType = GradeRuleTypeEnum.getTypeByKey(rule.getType());
+			if(null == ruleType){
+				throw new CommonException("未识别的意向标签类型");
+			}
+			StringBuilder ruleBuilder = new StringBuilder();
+	    	switch (ruleType){
+				case TRIGGER_MAIN_PROCESS:
+					ruleBuilder
+							.append("触发'")
+							.append(rule.getValue2())
+							.append("'");
+					break;
+				case REJECTED_TIMES:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("次");
+					break;
+				case EFFECTIVE_MAIN_PROCESS_DIALOGUE_TIMES:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("轮");
+					break;
+				case CALL_DURATION:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("秒");
+					break;
+				case TRIGGER_BUSINESS_QA_TIMES:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("个");
+					break;
+				case TRIGGER_ONE_BUSINESS_QA:
+					BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+					branchExample.createCriteria()
+							.andProcessIdEqualTo(processId)
+							.andDomainEqualTo(DomainNameEnum.NORMAL_QUESTION.getKey())
+							.andBranchNameEqualTo(rule.getValue2());
+					List<BotSentenceBranch> branches = botSentenceBranchMapper.selectByExample(branchExample);
+					if(CollectionUtils.isEmpty(branches)){
+						throw new CommonException("对应的一般问题不存在");
+					}
+					ruleBuilder
+							.append("触发一般问题'")
+							.append(branches.get(0).getUserAsk())
+							.append("'");
+					break;
+				case USER_NO_SPEAK_TIMES:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("次");
+					break;
+				case EFFECTIVE_DIALOGUE_TIMES:
+					ruleBuilder
+							.append(rule.getValue1())
+							.append(rule.getValue2())
+							.append(rule.getValue3())
+							.append("轮");
+					break;
+			}
+
+			if(0 == rulesBuilder.length()){
+				rulesBuilder.append(ruleBuilder.toString());
+			}else {
+				rulesBuilder
+						.append(" 且 ")
+						.append(ruleBuilder.toString());
+			}
+        });
+        return rulesBuilder.toString();
+    }
+
+    public String generateGradeShowEvaluate(String processId, String intentName) {
+		List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctRuleNoByProcessIdAndIntentName(processId, intentName);
+		if(CollectionUtils.isEmpty(ruleNoList)){
+			return "";
+		}
+
+		StringBuilder showEvaluate = new StringBuilder();
+		ruleNoList.forEach(ruleNo -> {
+			BotSentenceGradeRuleExample gradeRuleExample = new BotSentenceGradeRuleExample();
+			gradeRuleExample.createCriteria()
+					.andProcessIdEqualTo(processId)
+					.andRuleNoEqualTo(ruleNo)
+					.andIntentNameEqualTo(intentName);
+			gradeRuleExample.setOrderByClause("show_seq");
+			List<BotSentenceGradeRule> gradeRules = botSentenceGradeRuleMapper.selectByExample(gradeRuleExample);
+			String rulesForShow = concatRulesForShow(processId, gradeRules);
+
+			if(StringUtils.isBlank(rulesForShow)){
+				return;
+			}
+
+			if(0 == showEvaluate.length()){
+				showEvaluate.append(rulesForShow);
+			}else {
+				showEvaluate
+						.append(" 或 ")
+						.append(rulesForShow);
+			}
+		});
+
+		if(0 == showEvaluate.length()){
+			return "";
+		}else {
+			return showEvaluate.toString();
+		}
+	}
 }

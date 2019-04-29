@@ -19,6 +19,10 @@ import com.guiji.botsentence.service.IBotSentenceProcessService;
 import com.guiji.botsentence.service.IBotSentenceTemplateService;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
 import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.util.enums.BranchNameEnum;
+import com.guiji.botsentence.util.enums.BranchTypeEnum;
+import com.guiji.botsentence.util.enums.CategoryEnum;
+import com.guiji.botsentence.util.enums.DomainNameEnum;
 import com.guiji.botsentence.vo.*;
 import com.guiji.common.exception.CommonException;
 import com.guiji.component.client.util.BeanUtil;
@@ -1536,40 +1540,22 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}*/
 		
 	}
-
-	/*@Override
-	@Transactional
-	public void updateCommonDialog(String voliceId, String content, String keywords, String intentId, String branchId) {
-		if(StringUtils.isBlank(voliceId) || StringUtils.isBlank(content)) {
-			throw new CommonException("更新失败，请求数据为空!");
-		}
-		
-		String userId = UserUtil.getUserId();
-		VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
-		volice.setContent(content.replace("\n", "").trim());
-		volice.setLstUpdateTime(new Date(System.currentTimeMillis()));
-		volice.setLstUpdateUser(userId);
-		if(!"【新增】".equals(volice.getFlag())) {
-			volice.setFlag("【修改】");
-		}
-		voliceServiceImpl.saveVoliceInfo(volice);
-		
-		updateProcessState(volice.getProcessId());
-		
-	}*/
 	
 	
 	@Override
 	@Transactional
 	public void updateCommonDialog(CommonDialogVO commonDialog, String userId) {
 
-
 		String content = commonDialog.getContent();
 		long voliceId = commonDialog.getVoliceId();
 		String branchId = commonDialog.getBranchId();
 		
 		BotSentenceBranch branch = botSentenceBranchMapper.selectByPrimaryKey(branchId);
-		
+
+		if(null == branch){
+			throw new CommonException("更新失败，为找到相应的通用对话!");
+		}
+
 		//不需要校验关键词的域
 		List<String> notValidateList = new ArrayList<>();
 		notValidateList.add("失败邀约");
@@ -1580,17 +1566,28 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		notValidateList.add("结束_未匹配");
 
 		if(!notValidateList.contains(commonDialog.getYujin())) {
+			String intendIdsStr = null;
 			if(!CollectionUtils.isEmpty(commonDialog.getIntentList())){
 				iKeywordsVerifyService.verifyCommonDialogBranch(commonDialog.getIntentList(), commonDialog.getProcessId(), commonDialog.getBranchId());
+				intendIdsStr = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
 			}
-			//更新branch的意图
-			if(null != branch) {
-				if(CollectionUtils.isEmpty(commonDialog.getIntentList())){
-					branch.setIntents(null);
-				}else {
-					//新增意图
-					String intentIds2 = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
-					branch.setIntents(intentIds2);
+			branch.setIntents(intendIdsStr);
+
+			DomainNameEnum domainNameEnum = DomainNameEnum.getDomainByName(branch.getDomain());
+			if(DomainNameEnum.END_BUSY == domainNameEnum){
+
+				branch.setIntents(null);
+				//获取在忙的关键词
+				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+				branchExample.createCriteria()
+						.andProcessIdEqualTo(branch.getProcessId())
+						.andDomainEqualTo(DomainNameEnum.BUSY.getKey())
+						.andBranchNameEqualTo(BranchNameEnum.negative.name());
+				List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
+				if(!CollectionUtils.isEmpty(branchList)){
+					BotSentenceBranch busyBranch = branchList.get(0);
+					busyBranch.setIntents(intendIdsStr);
+					botSentenceBranchMapper.updateByPrimaryKey(busyBranch);
 				}
 			}
 		}
@@ -1599,7 +1596,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		if((!"号码过滤".equals(commonDialog.getDomain())) && (!"投诉".equals(commonDialog.getDomain())) 
 				&& !"拒绝".equals(commonDialog.getDomain()) && !"用户不清楚".equals(commonDialog.getDomain())) {
 
-			if(null == commonDialog || StringUtils.isBlank(commonDialog.getContent()) || StringUtils.isBlank(commonDialog.getBranchId())) {
+			if(StringUtils.isBlank(commonDialog.getContent()) || StringUtils.isBlank(commonDialog.getBranchId())) {
 				throw new CommonException("更新失败，请求数据为空!");
 			}
 			
@@ -2413,27 +2410,27 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 		//获取新增分支的名称，统一以branch_开头，后面接数字
 		String branchName = getNewBranchName(processId);
-		String message = "";
+		BranchTypeEnum branchType = BranchTypeEnum.getTypeByKey(edge.getType());
 
-		if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {
-
-			iKeywordsVerifyService.verifyMainProcessBranch(edge.getIntentList(), processId, source.getDomainName(), null);
-
-			if(!CollectionUtils.isEmpty(edge.getIntentList())) {
-				String intents = botSentenceKeyWordsService.saveIntent(source.getDomainName(), process.getProcessId(), process.getTemplateId(), edge.getIntentList(), "01", null, userId);
-				if(StringUtils.isNotBlank(intents)) {
-					newBranch.setIntents(intents);
-				}
-			}
-		}else if(Constant.BRANCH_TYPE_POSITIVE.equals(edge.getType())){
+		//check not reject branch
+		if(BranchTypeEnum.NOT_REJECT == branchType){
 			//判断当前卡片向下是否已存在未拒绝的分支，如果存在，则不允许新增
-			BotSentenceBranchExample example = new BotSentenceBranchExample();
-			example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(source.getDomainName()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE);
-			int num = botSentenceBranchMapper.countByExample(example);
-			if(num > 0) {
+			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+			branchExample.createCriteria()
+					.andProcessIdEqualTo(processId)
+					.andDomainEqualTo(source.getDomainName())
+					.andTypeEqualTo(BranchTypeEnum.NOT_REJECT.getKey());
+			if(botSentenceBranchMapper.countByExample(branchExample) > 0) {
 				throw new CommonException("当前节点【" + source.getDomainName() + "】已存在'未拒绝'的分支");
 			}
 			branchName = "positive";
+		}
+
+		List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
+		if(!CollectionUtils.isEmpty(intentVOS)){
+			iKeywordsVerifyService.verifyMainProcessBranch(edge.getIntentList(), processId, source.getDomainName(), null);
+			String intentIds = botSentenceKeyWordsService.saveIntent(source.getDomainName(), process.getProcessId(), process.getTemplateId(), edge.getIntentList(), CategoryEnum.MAIN_PROCESS.getTypeKey(), null, userId);
+			newBranch.setIntents(intentIds);
 		}
 
 		newBranch.setDomain(source.getDomainName());
@@ -2490,46 +2487,35 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 		if(StringUtils.isNotBlank(branchId) && branchId.equals(botSentenceBranch.getBranchId())) {//如果编辑的是当前连线，才需要更新意图关键字，其它情况只需要更新连线即可
 
-			if(Constant.BRANCH_TYPE_NORMAL.equals(edge.getType())) {//如果是一般类型
-				List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
-
-				iKeywordsVerifyService.verifyMainProcessBranch(intentVOS, processId, botSentenceBranch.getDomain(), branchId);
-
-				if(!CollectionUtils.isEmpty(intentVOS)){
-					String intentIds = botSentenceKeyWordsService.saveIntent(new_sourceDomain.getDomainName(), processId, botSentenceBranch.getTemplateId(), intentVOS, "01", botSentenceBranch, userId);
-					botSentenceBranch.setIntents(intentIds);
-				}
-
-				//如果原来是未拒绝，则需要更改branchname名称
-				if(Constant.BRANCH_TYPE_POSITIVE.equals(botSentenceBranch.getType())) {
-					//更新Branchname
-					String branchName = getNewBranchName(processId);
-					botSentenceBranch.setBranchName(branchName);
-				}
-				botSentenceBranch.setEnd(botSentenceBranch.getNext());
-			}else if(Constant.BRANCH_TYPE_POSITIVE.equals(edge.getType())) {//如果是未拒绝
+			BranchTypeEnum branchType = BranchTypeEnum.getTypeByKey(edge.getType());
+			//check not reject branch
+			if(BranchTypeEnum.NOT_REJECT == branchType){
 				//判断当前卡片向下是否已存在未拒绝的分支，如果存在，则不允许新增
-				BotSentenceBranchExample example = new BotSentenceBranchExample();
-				example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(botSentenceBranch.getDomain()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE)
-				.andBranchIdNotEqualTo(branchId);
-				int num = botSentenceBranchMapper.countByExample(example);
-				if(num > 0) {
+				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+				branchExample.createCriteria()
+						.andProcessIdEqualTo(processId)
+						.andDomainEqualTo(botSentenceBranch.getDomain())
+						.andTypeEqualTo(BranchTypeEnum.NOT_REJECT.getKey())
+						.andBranchIdNotEqualTo(branchId);
+				if(botSentenceBranchMapper.countByExample(branchExample) > 0) {
 					throw new CommonException("当前节点【" + botSentenceBranch.getDomain() + "】已存在'未拒绝'的分支");
 				}
-
-				//如果原来是一般类型，则需要删除意图信息
-				if(StringUtils.isNotBlank(botSentenceBranch.getIntents())) {
-					String []intents = botSentenceBranch.getIntents().split(",");
-					for(int i = 0 ; i < intents.length ; i++) {
-						botSentenceIntentMapper.deleteByPrimaryKey(new Long(intents[i]));
-					}
+				botSentenceBranch.setBranchName(BranchNameEnum.positive.name());
+			}else if(BranchTypeEnum.NORMAL == branchType){
+				BranchTypeEnum originType = BranchTypeEnum.getTypeByKey(botSentenceBranch.getType());
+				if(BranchTypeEnum.NOT_REJECT == originType){
+					botSentenceBranch.setBranchName(getNewBranchName(processId));
 				}
-				//更新Branchname
-				botSentenceBranch.setBranchName("positive");
-				botSentenceBranch.setIntents(null);
-				botSentenceBranch.setEnd(null);
+			}else {
+				throw new CommonException("不合法的分支类型");
 			}
 
+			List<BotSentenceIntentVO> intentVOS = edge.getIntentList();
+			if(!CollectionUtils.isEmpty(intentVOS)){
+				iKeywordsVerifyService.verifyMainProcessBranch(intentVOS, processId, botSentenceBranch.getDomain(), branchId);
+				String intentIds = botSentenceKeyWordsService.saveIntent(new_sourceDomain.getDomainName(), processId, botSentenceBranch.getTemplateId(), intentVOS, CategoryEnum.MAIN_PROCESS.getTypeKey(), botSentenceBranch, userId);
+				botSentenceBranch.setIntents(intentIds);
+			}
 		}
 		botSentenceBranch.setType(edge.getType());
 		botSentenceBranchMapper.updateByPrimaryKey(botSentenceBranch);
@@ -3026,75 +3012,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		return null;
 	}
-
-	/*@Override
-	@Transactional
-	public String deleteDomainSimple(String domainId) {
-		//获取当前domain向下的所有domain列表，并逐个删除
-		List<BotSentenceBranch> list = new ArrayList<>();
-		List<String> domainIdList = new ArrayList<>();
-
-		BotSentenceDomain domain = botSentenceDomainMapper.selectByPrimaryKey(domainId);
-		String processId = domain.getProcessId();
-
-		//添加当前domain本身
-		domainIdList.add(domain.getDomainName());
-
-		if(StringUtils.isBlank(domain.getComDomain())) {
-			deleteOneDomain(processId, domainId);
-		}else {
-			//判断是否有其它domain与当前domain指向同一个下级节点，如果有，则只删除当前domain本身，如果没有，则删除向下所有节点
-			BotSentenceDomainExample existExample = new BotSentenceDomainExample();
-			existExample.createCriteria().andProcessIdEqualTo(processId).andComDomainEqualTo(domain.getComDomain()).andCategoryEqualTo("1");
-			int num = botSentenceDomainMapper.countByExample(existExample);
-			if(num > 1) {
-				deleteOneDomain(processId, domainId);
-			}else {
-				//先查询当前domain所有指向的next节点
-				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-				branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(domain.getDomainName());
-				list = botSentenceBranchMapper.selectByExample(branchExample);
-
-				while(null != list && list.size() > 0) {
-
-					if(null != list && list.size() > 0) {
-						List<String> domainNameList = new ArrayList<>();
-
-						for(BotSentenceBranch branch : list) {
-							if(StringUtils.isNotBlank(branch.getNext())) {
-
-								if(!domainIdList.contains(branch.getNext())) {
-									domainIdList.add(branch.getNext());
-									domainNameList.add(branch.getNext());
-								}
-							}
-						}
-						if(domainNameList.size()>0) {
-							BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
-							branchExample2.createCriteria().andProcessIdEqualTo(processId).andDomainIn(domainNameList);
-							list = botSentenceBranchMapper.selectByExample(branchExample2);
-						}else {
-							break;
-						}
-					}
-				}
-
-				BotSentenceDomainExample domainExample = new BotSentenceDomainExample();
-				domainExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(domainIdList).andCategoryEqualTo("1");
-				List<BotSentenceDomain> domain_list = botSentenceDomainMapper.selectByExample(domainExample);
-				if(null != domain_list && domain_list.size() > 0) {
-					for(BotSentenceDomain temp : domain_list) {
-						deleteOneDomain(processId, temp.getDomainId());
-					}
-				}
-			}
-		}
-
-
-
-		return processId;
-	}*/
-
 
 	@Override
 	@Transactional

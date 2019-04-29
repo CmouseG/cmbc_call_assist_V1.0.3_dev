@@ -1,5 +1,7 @@
 package com.guiji.botsentence.vo;
 
+import com.guiji.botsentence.dao.entity.VoliceInfo;
+
 import java.util.List;
 
 public class BusinessAnswerVo {
@@ -33,6 +35,8 @@ public class BusinessAnswerVo {
 	private String end;
 	
 	private List<BotSentenceIntentVO> intentList;
+
+	private List<VoliceInfo> voiceInfoList;
 	
 	public String getProcessId() {
 		return processId;
@@ -152,5 +156,13 @@ public class BusinessAnswerVo {
 
 	public void setIntentList(List<BotSentenceIntentVO> intentList) {
 		this.intentList = intentList;
+	}
+
+	public List<VoliceInfo> getVoiceInfoList() {
+		return voiceInfoList;
+	}
+
+	public void setVoiceInfoList(List<VoliceInfo> voiceInfoList) {
+		this.voiceInfoList = voiceInfoList;
 	}
 }

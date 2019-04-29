@@ -115,18 +115,12 @@ public class DataLocalCacheUtil {
 				}else {
 					userAuth.setAuthLevel(1); //默认1-查询个人
 				}
-				if(userAuth!=null) {
-					//内存10分钟有效
-					LocalCacheUtil.set("KEY_USER_AUTH"+userId, userAuth, LocalCacheUtil.TEN_MIN);
-					return userAuth;
-				}else {
-					log.error("用户ID:{},查询不到用户信息，返回：{}",userId,userAuth);
-				}
+				//内存10分钟有效
+				LocalCacheUtil.set("KEY_USER_AUTH"+userId, userAuth, LocalCacheUtil.TEN_MIN);
+				return userAuth;
 			}
 		}
 		return null;
 	}
-	
-	
 	
 }

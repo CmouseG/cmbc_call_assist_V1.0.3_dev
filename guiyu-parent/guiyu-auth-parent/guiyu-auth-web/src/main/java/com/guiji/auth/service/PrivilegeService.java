@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,10 +150,13 @@ public class PrivilegeService {
 					addResourceIdList = resourceIdList;
 				}else {
 					List<String> existResourceIdList = this.getAllResourceIds(existPrivilegeList);
-					//本次变更后比之前多出来的ID
-					addResourceIdList = ArrayUtils.getDiffIds(existResourceIdList.toArray(new String[existResourceIdList.size()]),resourceIdList.toArray(new String[resourceIdList.size()]));
-					//本次变更后需要减少的ID
-					delResourceIdList = ArrayUtils.getDiffIds(resourceIdList.toArray(new String[resourceIdList.size()]),existResourceIdList.toArray(new String[existResourceIdList.size()]));
+					if(CollectionUtils.isNotEmpty(existResourceIdList))
+					{
+						//本次变更后比之前多出来的ID
+						addResourceIdList = ArrayUtils.getDiffIds(existResourceIdList.toArray(new String[existResourceIdList.size()]),resourceIdList.toArray(new String[resourceIdList.size()]));
+						//本次变更后需要减少的ID
+						delResourceIdList = ArrayUtils.getDiffIds(resourceIdList.toArray(new String[resourceIdList.size()]),existResourceIdList.toArray(new String[existResourceIdList.size()]));
+					}
 				}
 				if(addResourceIdList!=null && !addResourceIdList.isEmpty()) {
 					log.info("授权对象类型:{}，授权id:{}，资源类型：{},本次新增资源：{}",authType,authId,resourceType,addResourceIdList);
@@ -237,7 +241,10 @@ public class PrivilegeService {
 			}else if(AuthObjTypeEnum.ORG.getCode()==authType) {
 				//删除企业以及下级数据
 				criteria.andOrgCodeLike(orgCode+"%");
-				criteria.andAuthTypeIn(new ArrayList<Integer>(){{add(AuthObjTypeEnum.ORG.getCode());add(AuthObjTypeEnum.ROLE.getCode());}});
+				List<Integer> list = new ArrayList<>();
+				list.add(AuthObjTypeEnum.ORG.getCode());
+				list.add(AuthObjTypeEnum.ROLE.getCode());
+				criteria.andAuthTypeIn(list);
 			}else {
 				criteria.andAuthTypeEqualTo(authType);
 				criteria.andAuthIdEqualTo(authId);

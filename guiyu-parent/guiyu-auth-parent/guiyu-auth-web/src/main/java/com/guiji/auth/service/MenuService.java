@@ -204,7 +204,7 @@ public class MenuService {
 	public Map<String,Object> getMenus(Long userId){
 		if(userId!=null) {
 			Map<String,Object> map = new HashMap<String,Object>();
-			List<SysRole> roleList = userService.getRoleByUserId(Long.valueOf(userId));
+			List<SysRole> roleList = userService.getRoleByUserId(userId);
 			if(roleList!=null && !roleList.isEmpty()) {
 				//现在用户只有1个角色
 				SysRole sysRole = roleList.get(0);

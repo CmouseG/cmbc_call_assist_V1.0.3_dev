@@ -1,5 +1,6 @@
 package com.guiji.auth.service;
 
+import com.alibaba.fastjson.util.IOUtils;
 import com.guiji.auth.exception.GuiyuAuthExceptionEnum;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
@@ -232,25 +233,27 @@ public class AnnouncementService {
             f = new File(file.getOriginalFilename());
             inputStreamToFile(ins, f);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return f;
     }
 
     private void inputStreamToFile(InputStream ins, File file) {
+    	OutputStream os = null;
         try {
-            OutputStream os = new FileOutputStream(file);
+        	os = new FileOutputStream(file);
             int bytesRead = 0;
             byte[] buffer = new byte[8192];
             while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
                 os.write(buffer, 0, bytesRead);
             }
-            os.close();
-            ins.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+        	logger.error(e.getMessage());
+        } finally {
+        	IOUtils.close(os);
+        	IOUtils.close(ins);
+		}
     }
 
 }

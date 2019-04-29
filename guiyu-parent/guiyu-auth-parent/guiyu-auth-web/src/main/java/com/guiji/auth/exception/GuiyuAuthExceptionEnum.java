@@ -47,16 +47,10 @@ public enum GuiyuAuthExceptionEnum implements ExceptionEnum {
 		return errorCode;
 	}
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
-
 	public String getMsg() {
 		return msg;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+
 }
   

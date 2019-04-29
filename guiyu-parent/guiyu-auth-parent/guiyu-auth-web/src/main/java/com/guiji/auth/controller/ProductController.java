@@ -80,11 +80,11 @@ public class ProductController implements IProduct{
 		productService.save(product);
 		if (product.getIndustryIds() != null && !product.getIndustryIds().isEmpty()) {
 			//给企业绑定行业资源
-			privilegeService.savePrivlegeTree(userId.intValue(), orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.TRADE.getCode(), product.getIndustryIds());
+			privilegeService.savePrivlegeTree(userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.TRADE.getCode(), product.getIndustryIds());
 		}
 		if (product.getMenuIds() != null && !product.getMenuIds().isEmpty()) {
 			//给企业绑定菜单资源
-			privilegeService.savePrivlegeTree(userId.intValue(), orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.MENU.getCode(), product.getMenuIds());
+			privilegeService.savePrivlegeTree(userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.MENU.getCode(), product.getMenuIds());
 		}
 		return Result.ok();
 	}
@@ -173,7 +173,9 @@ public class ProductController implements IProduct{
 			condition = new ProductCondition();
 		}
 		if(condition.getProductStatus()==null || condition.getProductStatus().isEmpty()) {
-			condition.setProductStatus(new ArrayList<Integer>(){{add(ProductStatusEnum.OK.getCode());}});	//默认查询正常状态的产品
+			List<Integer> list = new ArrayList<>();
+			list.add(ProductStatusEnum.OK.getCode());
+			condition.setProductStatus(list);	//默认查询正常状态的产品
 		}
 		Page<SysProduct> page = productService.queryProductPageByCondition(condition);
 		Page<ProductVO> rtnPage = new Page<ProductVO>(condition.getPageNo(),page.getTotalRecord(),this.product2VO(page.getRecords()));

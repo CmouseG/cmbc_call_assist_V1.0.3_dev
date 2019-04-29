@@ -1,6 +1,8 @@
 package com.guiji.auth.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,14 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
-import com.guiji.auth.model.OrgRoleInfo;
+import com.guiji.auth.model.OrgInfo;
 import com.guiji.auth.model.OrganizationVO;
-import com.guiji.auth.model.SaveOrgReq;
+import com.guiji.auth.model.RoleInfo;
 import com.guiji.auth.model.UpdateOrgReq;
 import com.guiji.auth.util.DataLocalCacheUtil;
 import com.guiji.auth.util.HttpClientUtil;
@@ -47,7 +48,6 @@ import com.guiji.user.dao.entity.SysPrivilege;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
-import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 
@@ -407,18 +407,21 @@ public class OrganizationService {
 		return sysOrganizationMapper.existChildren(record);
 	}
 	
-	public SysOrganization getOrgByCode(String code){
-		SysOrganization sysOrganization = (SysOrganization) redisUtil.get(REDIS_ORG_BY_CODE+code);
-		if (sysOrganization == null) {
-			SysOrganizationExample example=new SysOrganizationExample();
+	public SysOrganization getOrgByCode(String code)
+	{
+		SysOrganization sysOrganization = (SysOrganization) redisUtil.get(REDIS_ORG_BY_CODE + code);
+		if (sysOrganization == null)
+		{
+			SysOrganizationExample example = new SysOrganizationExample();
 			example.createCriteria().andDelFlagEqualTo(0).andCodeEqualTo(code);
-			List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
-			if(list.size()>0){
+			List<SysOrganization> list = sysOrganizationMapper.selectByExample(example);
+			if (CollectionUtils.isNotEmpty(list))
+			{
 				sysOrganization = list.get(0);
+				List<Integer> product = sysOrganizationMapper.getProductByOrganizationId(sysOrganization.getId().longValue());
+				sysOrganization.setProduct(product);
+				redisUtil.set(REDIS_ORG_BY_CODE + code, sysOrganization);
 			}
-            List<Integer> product = sysOrganizationMapper.getProductByOrganizationId(sysOrganization.getId().longValue());
-			sysOrganization.setProduct(product);
-			redisUtil.set(REDIS_ORG_BY_CODE+code,sysOrganization);
 		}
 		return sysOrganization;
 	}
@@ -535,68 +538,57 @@ public class OrganizationService {
 	 * @param orgCode
 	 * @return
 	 */
-	public List<OrgRoleInfo> getAuthOrgTree(Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
+	public List<OrgInfo> getAuthOrgTree(String orgName, Long userId, Integer authLevel, String orgCode ,boolean isNeedRole){
+		List<OrgInfo> resultList = new ArrayList<>();
 		SysOrganizationExample example=new SysOrganizationExample();
+		Criteria criteria = example.createCriteria();
 		if(authLevel == 1 || authLevel == 2){
-			example.createCriteria().andCodeEqualTo(orgCode);
+			criteria.andCodeEqualTo(orgCode);
 		}else {
-			example.createCriteria().andCodeLike(orgCode+"%");
+			criteria.andCodeLike(orgCode+"%");
 		}
-		example.setOrderByClause(" code");
-		List<SysOrganization> allList = sysOrganizationMapper.selectByExample(example);
-		if(allList!=null && !allList.isEmpty()) {
-			Map<String,OrgRoleInfo> map=new HashMap<>();
-			List<OrgRoleInfo> list=new ArrayList<>();
-			for(SysOrganization item:allList) {
-				String code=item.getCode();
-				if(orgCode.equals(code)){
-					OrgRoleInfo root = this.org2OrgRoleInfo(item);
-					if(isNeedRole) {
-						//如果需要挂角色
-						List<SysRole> roleList = roleService.getRolesByOrg(code);
-						if(roleList!=null && !roleList.isEmpty()) {
-							for(SysRole role:roleList) {
-								if(root.getChildren()==null || root.getChildren().isEmpty()) {
-									root.setChildren(new ArrayList<OrgRoleInfo>());
-								}
-								root.getChildren().add(this.role2OrgRoleInfo(role));
-							}
-						}
-					}
-					list.add(root);
-					String rootCode = item.getCode();
-					if(!rootCode.endsWith(".")) {
-						rootCode = rootCode + ".";
-					}
-					map.put(rootCode, root);
-				}else{
-					int last2 = item.getCode().lastIndexOf(".",item.getCode().lastIndexOf(".")-1);	//倒数第2个.
-					OrgRoleInfo parent=map.get(item.getCode().substring(0, last2+1));
-					OrgRoleInfo current = this.org2OrgRoleInfo(item);
-					if(parent!=null){
-						if(isNeedRole) {
-							//如果需要挂角色
-							List<SysRole> roleList = roleService.getRolesByOrg(item.getCode());
-							if(roleList!=null && !roleList.isEmpty()) {
-								for(SysRole role:roleList) {
-									if(current.getChildren()==null || current.getChildren().isEmpty()) {
-										current.setChildren(new ArrayList<OrgRoleInfo>());
-									}
-									current.getChildren().add(this.role2OrgRoleInfo(role));
-								}
-							}
-						}
-						if(parent.getChildren()==null || parent.getChildren().isEmpty()) {
-							parent.setChildren(new ArrayList<OrgRoleInfo>());
-						}
-						parent.getChildren().add(current);
-						map.put(item.getCode(), current);
-					}
+		if(orgName != null){
+			criteria.andNameLike(orgName+"%");
+		}
+		example.setOrderByClause("code");
+		List<SysOrganization> allOrgs = sysOrganizationMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(allOrgs)){return null;}
+		
+		List<OrgInfo> orgInfos = new ArrayList<>();
+		// 在所有组织下添加对应的角色
+		for(SysOrganization org : allOrgs) 
+		{
+			OrgInfo orgInfo = this.org2OrgRoleInfo(org);
+			String code = org.getCode();
+			List<SysRole> roleList = roleService.getRolesByOrg(code);
+			if (CollectionUtils.isNotEmpty(roleList)){
+				for (SysRole role : roleList){
+					orgInfo.addRoleChild(this.role2OrgRoleInfo(role));
 				}
 			}
-			return list;
+			orgInfos.add(orgInfo); //所有添加了角色的组织集合
 		}
-		return null;
+		
+		Map<String, OrgInfo> map = new HashMap<>();
+		orgInfos.stream().forEach(orgInfo -> map.put(orgInfo.getOrgCode(), orgInfo));
+		for(OrgInfo orgInfo : orgInfos)
+		{
+			String code = orgInfo.getOrgCode();
+			if(code.equals("1")){continue;}
+			String parentCode = getParentOrgCode(code);
+			if(map.containsKey(parentCode))
+			{
+				OrgInfo parentOrgInfo = map.get(parentCode);
+				parentOrgInfo.addOrgChild(orgInfo);
+				map.remove(code);
+				map.put(parentCode, parentOrgInfo);
+			}
+		}
+		map.values().stream().forEach(orgInfo -> resultList.add(orgInfo));
+		Comparator<OrgInfo> comparator = (o1, o2) -> o1.getOrgCode().split("\\.").length - o2.getOrgCode().split("\\.").length;
+		Collections.sort(resultList, comparator);
+		
+		return resultList;
 	}
 	
 	/**
@@ -604,8 +596,8 @@ public class OrganizationService {
 	 * @param org
 	 * @return
 	 */
-	private OrgRoleInfo org2OrgRoleInfo(SysOrganization org) {
-		OrgRoleInfo vo = new OrgRoleInfo();
+	private OrgInfo org2OrgRoleInfo(SysOrganization org) {
+		OrgInfo vo = new OrgInfo();
 		vo.setId(org.getId().longValue());
 		vo.setName(org.getName());
 		vo.setType(1);
@@ -617,8 +609,8 @@ public class OrganizationService {
 	 * @param org
 	 * @return
 	 */
-	private OrgRoleInfo role2OrgRoleInfo(SysRole sysRole) {
-		OrgRoleInfo vo = new OrgRoleInfo();
+	private RoleInfo role2OrgRoleInfo(SysRole sysRole) {
+		RoleInfo vo = new RoleInfo();
 		BeanUtil.copyProperties(sysRole, vo);
 		vo.setId(Long.valueOf(sysRole.getId()));
 		vo.setName(sysRole.getName());
@@ -804,6 +796,19 @@ public class OrganizationService {
 		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
 		parentOrgCode = "1.".equals(parentOrgCode)? "1" : parentOrgCode;
 		return this.getOrgByCode(parentOrgCode);
+	}
+	
+	/**
+	 * 获取上一级组织
+	 * 系统的上一级就是自己
+	 */
+	public String getParentOrgCode(String orgCode)
+	{
+		if("1".equals(orgCode)){
+			 return orgCode;
+		}
+		String parentOrgCode = orgCode.substring(0, orgCode.lastIndexOf(".")).substring(0, orgCode.substring(0, orgCode.lastIndexOf(".")).lastIndexOf(".")+1);
+		return parentOrgCode = "1.".equals(parentOrgCode)? "1" : parentOrgCode;
 	}
 	
 	/**

@@ -49,7 +49,7 @@ public class RoleService {
 //		mapperExt.addMenus(role.getId(),menuIds);
 		//角色绑定菜单
 		if(menuIds!=null && menuIds.length>0) {
-			List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
+			List<String> menuIdList = Arrays.asList(menuIds);
 			privilegeService.savePrivlegeTree(role.getCreateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 		}
 	}

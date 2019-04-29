@@ -18,12 +18,15 @@ import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExt;
 
-@FeignClient("guiyu-auth-web")
+@FeignClient(value = "guiyu-auth-web")
 public interface IAuth {
 	
 	@RequestMapping(value = "/user/getUserById")
 	public ReturnData<SysUser> getUserById(@RequestParam("userId") Long userId);
-	
+
+	@RequestMapping(value = "/user/getUserByAccessKey")
+	public ReturnData<SysUser> getUserByAccessKey(@RequestParam("accessKey") String accessKey);
+
 	@RequestMapping("/user/getRoleByUserId")
 	public ReturnData<List<SysRole>> getRoleByUserId(@RequestParam("userId") Long userId);
 	

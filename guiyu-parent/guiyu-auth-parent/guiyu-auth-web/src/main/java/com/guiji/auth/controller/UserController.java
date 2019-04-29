@@ -163,6 +163,12 @@ public class UserController implements IAuth {
 		return Result.ok(sysUser);
 	}
 
+	@Override
+	public ReturnData<SysUser> getUserByAccessKey(String accessKey) {
+		SysUser sysUser = service.getUserByAccessKey(accessKey);
+		return Result.ok(sysUser);
+	}
+
 	@RequestMapping("/user/getUserByName")
 	public ReturnData<List<SysUser>> getUserByName(String username) {
 		return Result.ok(service.getUserByName(username));

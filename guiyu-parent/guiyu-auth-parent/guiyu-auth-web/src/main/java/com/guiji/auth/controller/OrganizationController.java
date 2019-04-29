@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.api.IOrg;
 import com.guiji.auth.exception.CheckConditionException;
-import com.guiji.auth.model.OrgRoleInfo;
+import com.guiji.auth.model.OrgInfo;
 import com.guiji.auth.model.OrgVO;
 import com.guiji.auth.model.OrganizationVO;
 import com.guiji.auth.service.OrganizationService;
@@ -210,9 +211,11 @@ public class OrganizationController implements IOrg{
 	 * @param orgCode
 	 * @return
 	 */
-	@RequestMapping("getAuthOrgTree")
-	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
-		return Result.ok(organizationService.getAuthOrgTree(userId,authLevel,orgCode,true));
+	@PostMapping("getAuthOrgTree")
+	public ReturnData<List<OrgInfo>> getAuthOrgTree(String orgName,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
+	{
+		return Result.ok(organizationService.getAuthOrgTree(orgName, userId,authLevel,orgCode,true));
 	}
 	
 	/**
@@ -222,7 +225,7 @@ public class OrganizationController implements IOrg{
 	public ReturnData<List<OrgVO>> queryAllOrgByUserId(@RequestHeader Long userId) {
 		List<OrgVO> organizationList = new ArrayList<>();
 		SysOrganization organization = userService.getOrgByUserId(userId);
-		List<Map> orgVOMap = organizationService.querySubOrgByOrgId(organization.getId().intValue());
+		List<Map> orgVOMap = organizationService.querySubOrgByOrgId(organization.getId());
 		for (Map orgMap : orgVOMap) {
 			OrgVO orgVo = new OrgVO();
 			orgVo.setOrgId((Integer) orgMap.get("id"));

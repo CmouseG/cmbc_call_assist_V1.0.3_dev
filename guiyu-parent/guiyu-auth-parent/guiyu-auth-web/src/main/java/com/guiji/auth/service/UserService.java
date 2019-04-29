@@ -1,18 +1,5 @@
 package com.guiji.auth.service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.guiji.auth.constants.AuthConstants;
 import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.MenuTypeEnum;
@@ -24,6 +11,7 @@ import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgVO;
@@ -31,20 +19,22 @@ import com.guiji.user.dao.SysMenuMapper;
 import com.guiji.user.dao.SysRoleUserMapper;
 import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.SysUserMapper;
-import com.guiji.user.dao.entity.SysMenu;
-import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysPrivilege;
-import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysRoleUser;
-import com.guiji.user.dao.entity.SysRoleUserExample;
-import com.guiji.user.dao.entity.SysUser;
-import com.guiji.user.dao.entity.SysUserExample;
-import com.guiji.user.dao.entity.SysUserExt;
+import com.guiji.user.dao.entity.*;
 import com.guiji.user.vo.UserParamVo;
 import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 import com.guiji.wechat.api.WeChatApi;
 import com.guiji.wechat.vo.SendMsgReqVO;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
 
 
 @Service
@@ -52,10 +42,10 @@ public class UserService {
 
 	@Autowired
 	private SysUserMapper mapper;
-	
+
 	@Autowired
 	private IRobotRemote iRobotRemote;
-	
+
 	@Autowired
 	private OrganizationService organizationService;
 
@@ -67,7 +57,7 @@ public class UserService {
 
 	@Autowired
 	private RedisUtil redisUtil;
-	
+
 	@Autowired
 	SysMenuMapper sysMenuMapper;
 	@Autowired
@@ -75,15 +65,15 @@ public class UserService {
 
 	@Autowired
 	private LineMarketRemote lineMarketRemote;
-	
+
 	@Autowired
     private WeChatApi weChatApi;
-	
+
 	@Autowired
 	private SysRoleUserMapper sysRoleUserMapper;
 	@Autowired
 	RoleService roleService;
-	
+
 	@Autowired
 	AgentGroupChangeService agentGroupChangeService;
 
@@ -105,14 +95,14 @@ public class UserService {
 		agentGroupChangeService.bindAgentMembers(user, roleId);
 		noticeSetting.addNoticeSettingReceiver(user.getId());
 	}
-	
+
 	/**
 	 * 修改
 	 * @param user
 	 */
 	public void update(SysUser user,Long roleId){
 		user.setUpdateTime(new Date());
-		Long oldRoleId = roleService.getRoleByUserId(user.getId().longValue()).getId().longValue();
+		Long oldRoleId = roleService.getRoleByUserId(user.getId()).getId().longValue();
 		agentGroupChangeService.updateBindAgentMembers(user,oldRoleId,roleId);
 		mapper.updateByPrimaryKeySelective(user);
 		mapper.addRole(user.getId(),roleId);
@@ -120,7 +110,7 @@ public class UserService {
 		redisUtil.del(REDIS_ROLE_BY_USERID+user.getId());
 		redisUtil.del(REDIS_ORG_BY_USERID+user.getId());
 	}
-	
+
 	/**
 	 * 删除用户
 	 * @param id
@@ -135,7 +125,7 @@ public class UserService {
 	public Long getUserId(String username,String password){
 		return mapper.getUserId( username, password);
 	}
-	
+
 	public SysUser getUserById(Long id){
 		SysUser sysUser = (SysUser) redisUtil.get(REDIS_USER_BY_ID+id);
 		if (sysUser == null) {
@@ -144,11 +134,11 @@ public class UserService {
 		}
 		return sysUser;
 	}
-	
+
 	public List<SysUser> getUserByName(String userName){
 		return mapper.getUserByName(userName);
 	}
-	
+
 	public List<SysRole> getRoleByUserId(Long id){
 		List<SysRole> sysRoleList = (List<SysRole>) redisUtil.get(REDIS_ROLE_BY_USERID+id);
 		if (sysRoleList == null) {
@@ -168,7 +158,7 @@ public class UserService {
 		}
 		return sysOrganization;
 	}
-	
+
 	public Page<Object>  getUserByPage(UserParamVo param){
 		Page<Object> page=new Page<>();
 		int count=mapper.countByParamVo(param);
@@ -177,12 +167,12 @@ public class UserService {
 		page.setRecords(userList);
 		return page;
 	}
-	
+
 	public boolean existUserName(SysUser user){
 		return mapper.existUserName(user);
 	}
-	
-	
+
+
 	public void changePassword(String newPass,String oldPass,Long userId) throws Exception{
 		newPass=AuthUtil.encrypt(newPass);
 		oldPass=AuthUtil.encrypt(oldPass);
@@ -195,11 +185,11 @@ public class UserService {
 			throw new GuiyuException("旧密码与原密码不符");
 		}
 	}
-	
+
 	public void updateUserData(SysUser user){
 		mapper.updateByPrimaryKeySelective(user);
 	}
-	
+
 	public Map<String,Object> getUserInfo(Long userId){
 		Map<String,Object> result=new HashMap<>();
 		SysUser user=mapper.selectByPrimaryKey(userId);
@@ -210,17 +200,51 @@ public class UserService {
 		result.put("call", callData.getBody());
 		return result;
 	}
-	
+
+	@Autowired
+	QueueSender queueSender;
+
+	public static final String NOTIFY_UPDATE_USER = "third.api.user";
+
+	public static final String NOTIFY_UPDATE_USER_KEY = "third.api.key";
+
 	public String changeAccessKey(Long userId){
-		String key=AuthUtil.encryptMd2();
+
+		//先查出原来的key
+		SysUser sysUser = mapper.selectByPrimaryKey(userId);
+
+		String oldKey = sysUser.getAccessKey();
+
 		SysUser record=new SysUser();
 		record.setId(userId);
 		record.setUpdateId(userId);
-		record.setAccessKey(key);
-		mapper.updateByPrimaryKeySelective(record);
-		return key;
+		boolean flag = true;
+		int count = 0;
+		while (flag) {
+			String key = RandomStringUtils.randomAlphanumeric(10);
+			record.setAccessKey(key);
+			try{
+				count ++;
+				mapper.updateByPrimaryKeySelective(record);
+				flag = false;
+				//通知删除旧的缓存信息 -- 三方api用
+				if(StringUtils.isNotEmpty(oldKey)) {
+					queueSender.send(NOTIFY_UPDATE_USER_KEY, oldKey);
+				}
+				//通知删除用户缓存信息 -- 三方api用
+				queueSender.send(NOTIFY_UPDATE_USER, userId.toString());
+			} catch (DuplicateKeyException ex) {
+
+			} finally {
+				if(count > 10) {
+					flag = false;
+				}
+			}
+		}
+
+		return record.getAccessKey();
 	}
-	
+
 	public String changeSecretKey(Long userId){
 		String key=AuthUtil.encryptMd2();
 		SysUser record=new SysUser();
@@ -228,6 +252,19 @@ public class UserService {
 		record.setUpdateId(userId);
 		record.setSecretKey(key);
 		mapper.updateByPrimaryKeySelective(record);
+
+        //查出key
+        SysUser sysUser = mapper.selectByPrimaryKey(userId);
+
+        String oldKey = sysUser.getAccessKey();
+
+        //通知删除旧的缓存信息 -- 三方api用
+        if(StringUtils.isNotEmpty(oldKey)) {
+            queueSender.send(NOTIFY_UPDATE_USER_KEY, oldKey);
+        }
+
+		//通知更新缓存信息 -- 三方api用
+		queueSender.send(NOTIFY_UPDATE_USER, userId.toString());
 		return key;
 	}
 
@@ -255,11 +292,23 @@ public class UserService {
 		return null;
     }
 
+	public SysUser getUserByAccessKey(String accessKey) {
+
+		SysUserExample example =  new SysUserExample();
+		example.createCriteria()
+				.andAccessKeyEqualTo(accessKey);
+		List<SysUser> list = mapper.selectByExample(example);
+		if(list!=null && list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
+
 	public List<SysUser> getAllUserByOrgCode(String orgCode){
 		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);
 		return sysUserList;
 	}
-	
+
 	/**
 	 * 查询拥有某个角色的用户列表
 	 * @param roleId
@@ -340,7 +389,7 @@ public class UserService {
 	    sendMsgReqVO.addData("remark", "如需再绑定，请在个人中心进行绑定");
 		weChatApi.send(sendMsgReqVO);
 	}
-	
+
 	/**
 	 * 查询用户权限范围内的菜单或者按钮
 	 * @param userId
@@ -374,8 +423,8 @@ public class UserService {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * 是否坐席人员
 	 * @param userId

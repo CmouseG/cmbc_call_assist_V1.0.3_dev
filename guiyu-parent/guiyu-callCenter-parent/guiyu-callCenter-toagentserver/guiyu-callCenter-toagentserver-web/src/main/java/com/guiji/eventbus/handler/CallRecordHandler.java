@@ -68,6 +68,13 @@ public class CallRecordHandler {
      * @param userId
      */
     public void uploadDetailsRecord(CallDetail callDetail, ECallDirection callDirection, Long userId) {
+
+        if(callDirection == ECallDirection.OUTBOUND){
+            callOutDetailRecordService.save(callDetail.toCallOutDetailRecord());
+        }else{
+            callInDetailRecordService.save(callDetail.toCallInDetailRecord());
+        }
+
         String busiType = "detailrecord";
         log.info("开始上传客户录音,callId[{}][{}]", callDetail.getCallId(), callDetail.getCallDetailId());
         //上传客户说话录音
@@ -89,12 +96,6 @@ public class CallRecordHandler {
                     busiId, callDetail.getAgentRecordFile(), busiType, userId, RecordType.AGENT_RECORD);
             log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", busiId, callDetail.getAgentRecordFile(), returnData);
 //            callDetail.setAgentRecordUrl(recordVO.getFileUrl());
-        }
-
-        if(callDirection == ECallDirection.OUTBOUND){
-            callOutDetailRecordService.save(callDetail.toCallOutDetailRecord());
-        }else{
-            callInDetailRecordService.save(callDetail.toCallInDetailRecord());
         }
     }
 }

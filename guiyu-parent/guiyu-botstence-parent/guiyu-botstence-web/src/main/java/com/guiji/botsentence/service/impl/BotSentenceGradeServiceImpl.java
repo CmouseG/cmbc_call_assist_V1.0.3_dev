@@ -149,9 +149,9 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 				}
 			}else if("05".equals(detail.getType())) {//触发业务问答次数
 				if(StringUtils.isNotBlank(evaluate)) {
-					evaluate = evaluate + " and ('一般回答计数'" + detail.getValue2() + detail.getValue3() + ")"; 
+					evaluate = evaluate + " and (一般回答计数" + detail.getValue2() + detail.getValue3() + ")";
 				}else {
-					evaluate = "'一般回答计数'" + detail.getValue2() + detail.getValue3(); 
+					evaluate = "一般回答计数" + detail.getValue2() + detail.getValue3();
 				}
 			}else if("06".equals(detail.getType())) {//触发某个业务问答
 				if(StringUtils.isNotBlank(evaluate)) {

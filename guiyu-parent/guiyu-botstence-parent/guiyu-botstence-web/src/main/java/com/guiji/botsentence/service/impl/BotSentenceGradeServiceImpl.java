@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
-import static com.guiji.botsentence.util.enums.GradeRuleTypeEnum.EFFECTIVE_DIALOGUE_TIMES;
-import static com.guiji.botsentence.util.enums.GradeRuleTypeEnum.USER_NO_SPEAK_TIMES;
+import static com.guiji.botsentence.util.enums.GradeRuleTypeEnum.*;
 
 /**
  * 意向服务
@@ -145,11 +144,12 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 				}else {
 					evaluate = "接通时长" + detail.getValue2() + detail.getValue3();
 				}
-			}else if("05".equals(detail.getType())) {//触发业务问答次数
+			}else if(TRIGGER_BUSINESS_QA_TIMES.getKey().equals(detail.getType())) {//触发业务问答次数
+				String concatValues= TRIGGER_BUSINESS_QA_TIMES.getEvaluate() +  detail.getValue2() + detail.getValue3();
 				if(StringUtils.isNotBlank(evaluate)) {
-					evaluate = evaluate + " and ('一般回答计数'" + detail.getValue2() + detail.getValue3() + ")"; 
+					evaluate = evaluate + " and " + "(" + concatValues + ")";
 				}else {
-					evaluate = "'一般回答计数'" + detail.getValue2() + detail.getValue3(); 
+					evaluate = concatValues;
 				}
 			}else if("06".equals(detail.getType())) {//触发某个业务问答
 				if(StringUtils.isNotBlank(evaluate)) {

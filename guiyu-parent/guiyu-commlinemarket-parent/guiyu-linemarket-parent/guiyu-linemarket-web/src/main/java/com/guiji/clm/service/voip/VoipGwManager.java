@@ -556,6 +556,8 @@ public class VoipGwManager {
 				rtnList.add(vo);
 			}
 
+			voipGwInfo = voipGwInfoMapper.selectByPrimaryKey(list.get(0).getGwId());
+
 			//如果是鼎信，需端口减1，保持展示与设备一致
 			if(BrandConfig.DINGXIN.equals(voipGwInfo.getGwBrand())) {
 				for (VoipGwPortVO vo : rtnList) {

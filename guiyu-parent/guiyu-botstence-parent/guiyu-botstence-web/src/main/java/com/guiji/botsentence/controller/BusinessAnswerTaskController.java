@@ -31,22 +31,10 @@ public class BusinessAnswerTaskController {
 	@RequestMapping(value="/queryBusinessAnswerList")
 	public ServerResult<List<BusinessAnswerTaskExt>> queryBusinessAnswerListByPage(@JsonParam String processId) {
 		logger.info("当前请求参数: processId= " + processId);
-		/*logger.info("当前请求参数: pageSize= " + pageSize);
-		logger.info("当前请求参数: pageNo = " + pageNo);*/
 		if(StringUtils.isBlank(processId)) {
 			return ServerResult.createByErrorMessage("请求参数为空!");
 		}
 		List<BusinessAnswerTaskExt> list = service.queryBusinessAnswerListByPage(processId);
-		
-		/*Page<BusinessAnswerTaskExt> page = new Page<BusinessAnswerTaskExt>();
-		page.setPageSize(pageSize);
-		page.setPageNo(pageNo);
-		
-		//计算总记录数量
-		int totalNum = service.countBusinessAnswerNum(processId);
-		page.setTotal(totalNum);
-		page.setRecords(list);*/
-		
 		return ServerResult.createBySuccess(list);
 	}
 	

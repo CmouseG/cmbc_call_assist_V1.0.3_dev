@@ -1,39 +1,33 @@
 package com.guiji.botsentence.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.guiji.botsentence.dao.BotSentenceGradeMapper;
+import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
+import com.guiji.botsentence.dao.entity.BotSentenceGrade;
+import com.guiji.botsentence.dao.entity.BotSentenceGradeDetail;
+import com.guiji.botsentence.dao.entity.BotSentenceGradeRule;
+import com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample;
+import com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper;
+import com.guiji.botsentence.service.IBotSentenceGradeService;
+import com.guiji.botsentence.service.impl.BotSentenceGradeServiceImpl;
+import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
+import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.vo.BotSentenceGradeVO;
+import com.guiji.common.exception.CommonException;
+import com.guiji.component.client.config.JsonParam;
+import com.guiji.component.result.ServerResult;
 import org.apache.commons.lang.StringUtils;
-import org.mapstruct.BeforeMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGrade;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeDetail;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRule;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample;
-import com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper;
-import com.guiji.botsentence.service.impl.BotSentenceGradeServiceImpl;
-import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
-import com.guiji.botsentence.service.impl.BotsentenceVariableServiceImpl;
-import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.vo.BotSentenceGradeVO;
-import com.guiji.component.client.config.JsonParam;
-import com.guiji.common.exception.CommonException;
-import com.guiji.component.result.ServerResult;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="botSentenceGrade")
@@ -41,6 +35,9 @@ public class BotSentenceGradeController {
 
 	@Autowired
 	private BotSentenceGradeServiceImpl botSentenceGradeService;
+
+	@Resource
+	private IBotSentenceGradeService iBotSentenceGradeService;
 	
 	@Autowired
 	private BotSentenceGradeRuleMapper botSentenceGradeRuleMapper;
@@ -50,12 +47,6 @@ public class BotSentenceGradeController {
 	
 	@Autowired
 	private BotSentenceGradeRuleExtMapper botSentenceGradeRuleExtMapper;
-	
-	@Autowired
-	private BotSentenceBranchMapper botSentenceBranchMapper;
-	
-	@Autowired
-	private BotsentenceVariableServiceImpl botsentenceVariableService;
 	
 	@Autowired
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
@@ -114,23 +105,8 @@ public class BotSentenceGradeController {
 				grade.setProcessId(processId);
 				grade.setStatOrder(intentName);
 				botSentenceGradeMapper.insert(grade);
-			}else {
-				/*String statOrder = grade.getStatOrder();
-				if(StringUtils.isNotBlank(statOrder) && !BotSentenceUtil.StringToList(statOrder).contains(intentName)) {
-					statOrder = statOrder + "," + intentName;
-					grade.setStatOrder(statOrder);
-					botSentenceGradeMapper.updateByPrimaryKey(grade); 
-				}else {
-					if(StringUtils.isBlank(statOrder)) {
-						statOrder = intentName;
-						grade.setStatOrder(statOrder);
-						botSentenceGradeMapper.updateByPrimaryKey(grade); 
-					}
-				}*/
 			}
-			
-			
-			
+
 			if(!isNew) {
 				//获取原先的意向名
 				BotSentenceGradeRuleExample example = new BotSentenceGradeRuleExample();
@@ -179,13 +155,12 @@ public class BotSentenceGradeController {
 						example1.setOrderByClause(" show_seq");
 						List<BotSentenceGradeRule> list = botSentenceGradeRuleMapper.selectByExample(example1);
 						if(null != list && list.size() > 0) {
-							String evaluate = concatEvaluate(processId, list);
 							BotSentenceGradeVO vo = new BotSentenceGradeVO();
 							vo.setCrtTime(list.get(0).getCrtTime());
 							vo.setIntentName(name);
 							vo.setRuleNo(ruleNo);
 							vo.setRemark(list.get(0).getRemark());
-							vo.setEvaluate(evaluate);
+							vo.setEvaluate(iBotSentenceGradeService.concatRulesForShow(processId, list));
 							vo.setInitStat(grade.getInitStat());
 							results.add(vo);
 						}
@@ -193,46 +168,7 @@ public class BotSentenceGradeController {
 				}
 			}
 		}
-		
-		
-		
 		return ServerResult.createBySuccess(results);
-	}
-	
-	private String concatEvaluate(String processId, List<BotSentenceGradeRule> list) {
-		String result = "";
-		for(int i = 0 ; i < list.size() ; i++) {
-			String temp;
-			BotSentenceGradeRule rule = list.get(i);
-			if("01".equals(rule.getType())) {
-				temp = " 触发" + "'" + rule.getValue2() + "'";
-			}else if("02".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "次";
-			}else if("03".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "轮";
-			}else if("04".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "秒";
-			}else if("05".equals(rule.getType())) {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3() + "个";
-			}else if("06".equals(rule.getType())) {
-				BotSentenceBranchExample mainExample = new BotSentenceBranchExample();
-				mainExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题").andBranchNameEqualTo(rule.getValue2());
-				List<BotSentenceBranch> mainBranchList = botSentenceBranchMapper.selectByExample(mainExample);
-				if(null != mainBranchList && mainBranchList.size() > 0) {
-					temp = " 触发一般问题" + "'" + mainBranchList.get(0).getUserAsk() + "'";
-				}else {
-					temp = " 触发一般问题" + "'" + rule.getValue2() + "'";
-				}
-			}else {
-				temp = rule.getValue1() + "" + rule.getValue2() + "" + rule.getValue3();
-			}
-			if(i == 0) {
-				result = temp;
-			}else {
-				result = result + " 且 " + temp;
-			}
-		}
-		return result;
 	}
 	
 	@RequestMapping(value="deleteBotSentenceGrade")

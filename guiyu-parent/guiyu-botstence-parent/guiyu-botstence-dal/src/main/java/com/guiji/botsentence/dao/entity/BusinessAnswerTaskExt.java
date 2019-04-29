@@ -41,7 +41,9 @@ public class BusinessAnswerTaskExt {
 	private List intentList;
 	
 	private String end;
-	
+
+	private List<VoliceInfo> voiceInfoList;
+
 	public String getProcessId() {
 		return processId;
 	}
@@ -193,6 +195,12 @@ public class BusinessAnswerTaskExt {
 	public void setEnd(String end) {
 		this.end = end;
 	}
-	
-	
+
+	public List<VoliceInfo> getVoiceInfoList() {
+		return voiceInfoList;
+	}
+
+	public void setVoiceInfoList(List<VoliceInfo> voiceInfoList) {
+		this.voiceInfoList = voiceInfoList;
+	}
 }

@@ -1,45 +1,31 @@
 package com.guiji.botsentence.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.guiji.botsentence.constant.Constant;
+import com.guiji.botsentence.dao.BotSentenceBranchMapper;
+import com.guiji.botsentence.dao.BotSentenceIntentMapper;
+import com.guiji.botsentence.dao.BotSentenceProcessMapper;
+import com.guiji.botsentence.dao.VoliceInfoMapper;
+import com.guiji.botsentence.dao.entity.*;
+import com.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper;
+import com.guiji.botsentence.service.BusinessAnswerTaskService;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
+import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.util.enums.DomainNameEnum;
+import com.guiji.botsentence.vo.BotSentenceIntentVO;
+import com.guiji.botsentence.vo.BusinessAnswerVo;
+import com.guiji.common.exception.CommonException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.dao.BotSentenceAdditionMapper;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceProcessMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.VoliceInfoMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.BusinessAnswerTaskExt;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper;
-import com.guiji.botsentence.service.BusinessAnswerTaskService;
-import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.vo.BotSentenceIntentVO;
-import com.guiji.botsentence.vo.BusinessAnswerVo;
-import com.guiji.common.exception.CommonException;
 
 import javax.annotation.Resource;
+import java.util.*;
 
 @Service
 public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService{
@@ -55,7 +41,6 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 	
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
-	
 
 	@Autowired
 	private BotSentenceBranchMapper botSentenceBranchMapper;
@@ -64,31 +49,15 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
 	@Autowired
-	private BotSentenceAdditionMapper botSentenceAdditionMapper;
-	
-	@Autowired
-	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
-	
-	@Autowired
-	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
-	
-	@Autowired
 	private VoliceServiceImpl voliceServiceImpl;
 	
 	@Autowired
 	private BotSentenceKeyWordsServiceImpl botSentenceKeyWordsService;
-	
-	@Autowired
-	private BotSentenceKeyWordsValidateServiceImpl botSentenceKeyWordsValidateService;
 
 	@Resource
 	private IKeywordsVerifyService iKeywordsVerifyService;
 
-	private static final String DOMAIN="一般问题";
-	
 	private static final String SPECIAL ="special_";
-	
-	private static final String AGENT ="agent";
 	
 	private Logger logger = LoggerFactory.getLogger(BusinessAnswerTaskServiceImpl.class);
 	
@@ -97,7 +66,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 	 */
 	@Override
 	public List<BusinessAnswerTaskExt> queryBusinessAnswerListByPage(String processId) {
-		List<BusinessAnswerTaskExt>  list=mapper.queryBusinessAnswerTaskExtById(processId);
+		List<BusinessAnswerTaskExt> list=mapper.queryBusinessAnswerTaskExtById(processId);
 		int index = 1;
 		for(BusinessAnswerTaskExt item:list){
 			item.setIndex(index);
@@ -106,22 +75,12 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			//查询关键词库列表
 			List<BotSentenceIntentVO> intentList = botSentenceKeyWordsService.getIntent(item.getBranchId());
 			item.setIntentList(intentList);
-			
-			
 
-			String voliceIds= item.getVoliceId();
-			if(org.apache.commons.lang.StringUtils.isNotBlank(voliceIds)){
-				String voliceId=splitId(voliceIds);
-				if(org.apache.commons.lang.StringUtils.isNotBlank(voliceId)) {
-					item.setVoliceId(voliceId);
-					Map<String,String> map=mapper.queryVoliceUrlByIntentId(voliceId);
-					if(null != map) {
-						item.setVoliceUrl(map.get("volice_url"));
-						item.setContent(map.get("content"));
-					}
-				}else {
-					item.setVoliceId(null);
-				}
+			List<Long> voiceIdList = JSON.parseArray(item.getVoliceId(), Long.class);
+			if(!CollectionUtils.isEmpty(voiceIdList)){
+				VoliceInfoExample voiceExample = new VoliceInfoExample();
+				voiceExample.createCriteria().andVoliceIdIn(voiceIdList);
+				item.setVoiceInfoList(voliceInfoMapper.selectByExample(voiceExample));
 			}
 			index++;
 		}
@@ -157,16 +116,16 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		branch.setProcessId(record.getProcessId());
 		
 		if(null != record.getIntentList() && record.getIntentList().size() > 0) {
-			String intents = botSentenceKeyWordsService.saveIntent(DOMAIN, process.getProcessId(), process.getTemplateId(), record.getIntentList(), "02", null, userId);
+			String intents = botSentenceKeyWordsService.saveIntent(DomainNameEnum.NORMAL_QUESTION.getKey(), process.getProcessId(), process.getTemplateId(), record.getIntentList(), "02", null, userId);
 			if(org.apache.commons.lang.StringUtils.isNotBlank(intents)) {
 				branch.setIntents(intents);
 			}
 		}
 		
 		branch.setUserAsk(record.getUserAsk().replace("\n", "").trim().replace(",", "，"));
-		branch.setDomain(DOMAIN);
-		branch.setNext(DOMAIN);
-		branch.setEnd("邀约");
+		branch.setDomain(DomainNameEnum.NORMAL_QUESTION.getKey());
+		branch.setNext(DomainNameEnum.NORMAL_QUESTION.getKey());
+		branch.setEnd(DomainNameEnum.INVITATION.getKey());
 		branch.setTemplateId(process.getTemplateId());
 		branch.setBranchName(branchName);
 		branch.setNeedAgent(null);//默认设置不需要转人工
@@ -191,26 +150,29 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			}
 			branch.setResponse("[]");
 		}else {
-			if(StringUtils.isEmpty(record.getContent())) {
+			List<VoliceInfo> voiceInfoList = record.getVoiceInfoList();
+			if(CollectionUtils.isEmpty(voiceInfoList)) {
 				throw new CommonException("请先保存文案内容!");
 			}
-			//插入音频信息
-			VoliceInfo voliceInfo=new VoliceInfo();
-			voliceInfo.setContent(record.getContent().replace("\n", "").trim());
-			voliceInfo.setProcessId(record.getProcessId());
-			voliceInfo.setTemplateId(process.getTemplateId());
-			voliceInfo.setType("00");
-			voliceInfo.setDomainName(DOMAIN);
-			voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
-			voliceInfo.setCrtUser(userId);
-			voliceInfo.setFlag("【新增】");
-			voliceServiceImpl.saveVoliceInfo(voliceInfo, userId);
-			branch.setResponse("["+voliceInfo.getVoliceId()+"]");
+
+			List<Long> newVoiceIds = Lists.newArrayList();
+
+			voiceInfoList.forEach(voiceInfo -> {
+				voiceInfo.setContent(voiceInfo.getContent().replace("\n", "").trim());
+				voiceInfo.setProcessId(record.getProcessId());
+				voiceInfo.setTemplateId(branch.getTemplateId());
+				voiceInfo.setType(Constant.VOICE_TYPE_NORMAL);
+				voiceInfo.setDomainName(DomainNameEnum.NORMAL_QUESTION.getKey());
+				voiceInfo.setCrtTime(new Date());
+				voiceInfo.setCrtUser(userId);
+				voiceInfo.setFlag(Constant.TEXT_ADD);
+				newVoiceIds.add(voliceServiceImpl.saveVoliceInfo(voiceInfo, userId));
+			});
+
+			branch.setResponse(JSON.toJSONString(newVoiceIds));
 		}
-		branch.setCrtTime(new Date(System.currentTimeMillis()));
+		branch.setCrtTime(new Date());
 		branch.setCrtUser(userId);
-		
-		
 		botSentenceBranchMapper.insertSelective(branch);
 		
 		//更新话术流程状态
@@ -284,50 +246,6 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		return forselect_keywords;
 	}
 	
-	/**
-	 * 
-	 * @param addKeyword   不带双引号的关键字，例如：位置，在哪里，公司地址 
-	 * @param forselect_keywords  select.json的一般问答内容,带双引号
-	 * @return
-	 */
-	private String addKeywords(String addKeyword, String forselect_keywords) {
-		logger.info("需要新增的关键字: " + addKeyword);
-		String[] keys = addKeyword.split(",");
-		
-		List<String> selectKeywordList = BotSentenceUtil.getKeywords(forselect_keywords);
-		String leftSelectKeyWord = selectKeywordList.get(0);
-		
-		String[] select_keyword_array = leftSelectKeyWord.split(",");
-		List<String> select_keyword_list = Arrays.asList(select_keyword_array);
-		
-		
-		for(int i = 0 ; i < keys.length ; i++) {
-			if(!select_keyword_list.contains("\"" + keys[i] + "\"")) {
-				forselect_keywords = forselect_keywords.substring(0, forselect_keywords.length() -1 ) + ",\"" + keys[i] + "\"]";
-			}
-		}
-		
-		
-		/*if(forselect_keywords.indexOf("[\"" + keyword + "\"") > 0) {
-			logger.info("新增select关键词: " + keyword);
-			return forselect_keywords;
-		}
-		
-		if(forselect_keywords.indexOf(",\"" + keyword + "\",") > 0) {
-			logger.info("新增select关键词: " + keyword);
-			return forselect_keywords;
-		}
-		
-		if(forselect_keywords.indexOf(",\"" + keyword + "\"]") > 0) {
-			logger.info("新增select关键词: " + keyword);
-			return forselect_keywords;
-		}
-		
-		forselect_keywords = forselect_keywords.substring(0, forselect_keywords.length() -1 ) + ",\"" + keyword + "\"]";
-		*/
-		return forselect_keywords;
-	}
-	
 
 	@Override
 	@Transactional
@@ -350,7 +268,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		
 		//删除select.json关键字
 		BotSentenceIntentExample example = new BotSentenceIntentExample();
-		example.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andDomainNameEqualTo(DOMAIN).andForSelectEqualTo(1);
+		example.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andDomainNameEqualTo(DomainNameEnum.NORMAL_QUESTION.getKey()).andForSelectEqualTo(1);
 		List<BotSentenceIntent> list = botSentenceIntentMapper.selectByExampleWithBLOBs(example);
 		String forselect_keywords = "";
 		BotSentenceIntent forselect_intent = null;
@@ -396,7 +314,6 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		
 		BotSentenceBranch oldbranch = botSentenceBranchMapper.selectByPrimaryKey(record.getBranchId());
 		String oldAgentIntent = oldbranch.getAgentIntent();
-		String oldNext = oldbranch.getNext();
 		logger.info("当前转人工意图: " + oldAgentIntent);
 
 		List<BotSentenceIntentVO> intentVOS = record.getIntentList();
@@ -415,7 +332,10 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		if(org.apache.commons.lang.StringUtils.isNotBlank(record.getWeight())) {
 			branch.setWeight(record.getWeight());
 		}
-		if(org.apache.commons.lang.StringUtils.isNotBlank(record.getRule()) && Constant.BRANCH_RULE_02.equals(record.getRule())) {
+
+		//判断是否跳转主流程
+		if(org.apache.commons.lang.StringUtils.isNotBlank(record.getRule())
+				&& Constant.BRANCH_RULE_02.equals(record.getRule())) {
 			branch.setRule(record.getRule());
 			if(StringUtils.isEmpty(record.getEnd())){
 				throw new CommonException("请选择跳转逻辑!");
@@ -425,7 +345,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			String responses = branch.getResponse();
 			if(org.apache.commons.lang.StringUtils.isNotBlank(responses) && responses.length() > 2) {
 				responses = responses.substring(1, responses.length() - 1);
-				String array[] = responses.split(",");
+				String[] array = responses.split(",");
 				for(String temp : array) {
 					voliceServiceImpl.deleteVolice(branch.getProcessId(), temp);
 				}
@@ -442,45 +362,51 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 				}
 				branch.setNeedAgent(Constant.NEED_AGENT_YES);//设置需要转人工
 			}
-			
 		}else {
-			if(StringUtils.isEmpty(record.getContent())) {
+			List<VoliceInfo> voiceInfoList = record.getVoiceInfoList();
+			if(CollectionUtils.isEmpty(voiceInfoList)) {
 				throw new CommonException("请先保存文案内容!");
 			}
-			branch.setEnd("邀约");
+
+			branch.setEnd(DomainNameEnum.INVITATION.getKey());
 			branch.setRule(null);
-			VoliceInfo voliceInfo=new VoliceInfo();
-			
-			if(org.apache.commons.lang.StringUtils.isNotBlank(record.getVoliceId())) {
-				//更新音频信息
-				voliceInfo=voliceInfoMapper.selectByPrimaryKey(new Long(record.getVoliceId()));
-				//if(!voliceInfo.getContent().equals(record.getContent()) && !"【新增】".equals(voliceInfo.getFlag())) {
-				if(!"【新增】".equals(voliceInfo.getFlag())) {
-					voliceInfo.setFlag("【修改】");
+
+			List<Long> originVoiceIds = JSON.parseArray(branch.getResponse(), Long.class);
+			List<Long> newVoiceIds = Lists.newArrayList();
+
+			voiceInfoList.forEach(voiceInfo -> {
+				if(null != voiceInfo.getVoliceId()){
+					VoliceInfo originInfo = voliceInfoMapper.selectByPrimaryKey(voiceInfo.getVoliceId());
+					if(null == originInfo){
+						throw new CommonException(voiceInfo.getVoliceId() + "录音记录不存在!");
+					}
+					originInfo.setContent(voiceInfo.getContent().replace("\n", "").trim());
+					originInfo.setFlag(Constant.TEXT_MODIFY);
+					originInfo.setLstUpdateTime(new Date());
+					originInfo.setLstUpdateUser(userId);
+					voliceServiceImpl.saveVoliceInfo(originInfo, userId);
+					newVoiceIds.add(voiceInfo.getVoliceId());
+				}else {
+					voiceInfo.setContent(voiceInfo.getContent().replace("\n", "").trim());
+					voiceInfo.setProcessId(record.getProcessId());
+					voiceInfo.setTemplateId(branch.getTemplateId());
+					voiceInfo.setType(Constant.VOICE_TYPE_NORMAL);
+					voiceInfo.setDomainName(DomainNameEnum.NORMAL_QUESTION.getKey());
+					voiceInfo.setCrtTime(new Date());
+					voiceInfo.setCrtUser(userId);
+					voiceInfo.setFlag(Constant.TEXT_ADD);
+					newVoiceIds.add(voliceServiceImpl.saveVoliceInfo(voiceInfo, userId));
 				}
-				voliceInfo.setContent(record.getContent().replace("\n", "").trim());
-				voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
-				voliceInfo.setLstUpdateUser(userId);
-				logger.info("当前flag: " + voliceInfo.getFlag());
-				voliceServiceImpl.saveVoliceInfo(voliceInfo, userId);
-			}else {
-				//插入音频信息
-				voliceInfo.setContent(record.getContent().replace("\n", "").trim());
-				voliceInfo.setProcessId(record.getProcessId());
-				voliceInfo.setTemplateId(oldbranch.getTemplateId());
-				voliceInfo.setType("00");
-				voliceInfo.setDomainName(DOMAIN);
-				voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
-				voliceInfo.setCrtUser(userId);
-				voliceInfo.setFlag("【新增】");
-				voliceServiceImpl.saveVoliceInfo(voliceInfo, userId);
-				branch.setResponse("["+voliceInfo.getVoliceId()+"]");
-			}
-			
-			branch.setResponse("["+voliceInfo.getVoliceId()+"]");
-			
+			});
+
+			branch.setResponse(JSON.toJSONString(newVoiceIds));
+
+			originVoiceIds.removeAll(newVoiceIds);
+			originVoiceIds.forEach(voiceId -> {
+				voliceServiceImpl.deleteVolice(branch.getProcessId(), String.valueOf(voiceId));
+			});
 		}
-		branch.setLstUpdateTime(new Date(System.currentTimeMillis()));
+		branch.setLstUpdateTime(new Date());
 		branch.setLstUpdateUser(userId);
 		
 		//保存关键词库信息
@@ -509,20 +435,6 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			return ids.split(",")[0].trim();
 		}
 		return null;
-	}
-
-	private String joinString(String[] array){
-		StringBuffer buffer=new StringBuffer();
-		for(String item:array){
-			buffer.append(item);
-			buffer.append(",");
-		}
-		String resultString=buffer.toString();
-		return resultString.substring(0, resultString.length()-1);
-	}
-
-	public static void main(String[] args) {
-		System.out.println("zpdcsmb_40575_en".substring(0, "zpdcsmb_40575_en".length()-3));
 	}
 
 	@Override

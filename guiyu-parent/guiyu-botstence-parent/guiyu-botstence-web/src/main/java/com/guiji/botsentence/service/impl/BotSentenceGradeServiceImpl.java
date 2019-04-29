@@ -338,21 +338,12 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 				return;
 			}
 
-			if(gradeRules.size() > 1){
-				rulesForShow = "(" + rulesForShow + ")";
-			}
-
 			if(0 == showEvaluate.length()){
-				showEvaluate
-						.append("(")
-						.append(rulesForShow)
-						.append(")");
+				showEvaluate.append(rulesForShow);
 			}else {
 				showEvaluate
 						.append(" 或 ")
-						.append("(")
-						.append(rulesForShow)
-						.append(")");
+						.append(rulesForShow);
 			}
 		});
 

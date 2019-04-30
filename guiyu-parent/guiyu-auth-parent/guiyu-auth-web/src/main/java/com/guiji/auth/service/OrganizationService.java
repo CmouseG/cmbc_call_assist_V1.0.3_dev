@@ -32,6 +32,7 @@ import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
@@ -58,6 +59,8 @@ public class OrganizationService {
 
 	@Autowired
 	private QueueSender queueSender;
+	@Autowired
+	private FanoutSender fanoutSender;
 	@Autowired
 	private SysOrganizationMapper sysOrganizationMapper;
 	@Autowired
@@ -104,6 +107,7 @@ public class OrganizationService {
 //			throw new GuiyuException("请求三方接口失败!");
 //		}
 		queueSender.send("OrgIdMQ.direct.Auth", record.getId().toString());
+		fanoutSender.send("addOrgNotice.fanoutExchange.Auth", record.getId().toString());
 		if(record.getProduct()!=null && !record.getProduct().isEmpty()) {
 			//如果参数产品不为空，那么以选择的产品为准
 			sysOrganizationMapper.insertOrganizationProduct(record.getId().longValue(),record.getCreateId(),record.getProduct());

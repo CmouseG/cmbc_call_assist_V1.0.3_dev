@@ -25,7 +25,7 @@ public class SendDetailQueue
 		try {
 			queue.put(record);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 			throw new SmsException(ExceptionEnum.ERROR_INTERRUPTED);
 		}
 	}
@@ -36,7 +36,7 @@ public class SendDetailQueue
 		try {
 			record = queue.take();
 		} catch (Exception e){
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 			throw new SmsException(ExceptionEnum.ERROR_INTERRUPTED);
 		}
 		return record;

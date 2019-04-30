@@ -3,6 +3,7 @@ package com.guiji.eventbus.handler;
 import com.google.common.base.Strings;
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.component.result.Result;
+import com.guiji.constant.Constant;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
@@ -87,8 +88,19 @@ public class ToAgentHandler {
     @AllowConcurrentEvents
     public void handleAgentAnswerEvent(AgentAnswerEvent event){
         log.info("收到AgentAnswerEvent[{}]", event);
+        String seqId = event.getSeqId();
+        String callid;
+        Integer orgId;
+        try {
+            String[] arr = seqId.split(Constant.UUID_SEPARATE);
+            callid = arr[0];
+            orgId = Integer.valueOf(arr[1]);
+        }catch (Exception e){
+            return;
+        }
         try{
-            CallPlan callPlan = callPlanService.findByCallId(event.getSeqId(), event.getCallDirection());
+
+            CallPlan callPlan = callPlanService.findByCallId(callid, event.getCallDirection(),orgId);
             Preconditions.checkNotNull(callPlan, "not exist callPlan:" + event.getCustomerUuid());
 
             callPlan.setAgentId(event.getAgentId());
@@ -110,7 +122,7 @@ public class ToAgentHandler {
             callPlanService.update(callPlan);
 
             //读取之前的机器人对话内容，然后推送到前台
-            List<CallDetail> callDetailList = callDetailService.findByCallPlanId(event.getSeqId(), event.getCallDirection());
+            List<CallDetail> callDetailList = callDetailService.findByCallPlanId(callid, event.getCallDirection(), orgId);
             Preconditions.checkState(callDetailList!=null && callDetailList.size()>0, "null call detail to customer:" + event.getCustomerUuid());
             log.info("读取到的机器人对话内容数量为[{}],准备推送到verto", callDetailList.size());
             for (CallDetail callDetail : callDetailList) {
@@ -191,6 +203,7 @@ public class ToAgentHandler {
             CallPlan callPlan = event.getCallPlan();
             CallDetail callDetail = new CallDetail();
             callDetail.setCallId(callPlan.getCallId());
+            callDetail.setOrgId(callPlan.getOrgId());
             callDetail.setCustomerSayText(event.getAsrText());
             callDetail.setCustomerSayTime(DateUtil.getDateByDateAndFormat(event.getAsrStartTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
             callDetail.setCustomerRecordFile(event.getFilePath());
@@ -226,6 +239,7 @@ public class ToAgentHandler {
 
         CallDetail callDetail = new CallDetail();
         callDetail.setCallId(callPlan.getCallId());
+        callDetail.setOrgId(callPlan.getOrgId());
         callDetail.setCallDetailType(ECallDetailType.TOAGENT_AGENT_ANSWER.ordinal());
         callDetail.setAsrDuration(event.getAsrDuration().intValue());
         callDetail.setTotalDuration(event.getAsrDuration().intValue());

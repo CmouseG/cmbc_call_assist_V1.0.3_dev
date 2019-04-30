@@ -15,11 +15,12 @@ public interface BatchExportService {
 //                                CallRecordListReq callRecordListReq, Integer isDesensitization);
 
 
-    void generateExcelFile(Date finalStart, Date finalEnd, Integer authLevel, String s, String orgCode,
+    void generateExcelFile(Date finalStart, Date finalEnd, Integer authLevel, String s, Integer orgId,
                            CallRecordListReq callRecordListReq, Integer isDesensitization, String recordId);
 
-    void generateAudioFile(Date finalStart, Date finalEnd, Integer authLevel, String s, String orgCode,
+    void generateAudioFile(Date finalStart, Date finalEnd, Integer authLevel, String s, Integer orgId,
                            CallRecordListReq callRecordListReq, Integer isDesensitization, String recordId);
 
-    int countTotalNum(Date start, Date end, Integer authLevel, String s, String orgCode, CallRecordListReq callRecordListReq);
+    int countTotalNum(Date start, Date end, Integer authLevel, String s, String orgCode,
+                      CallRecordListReq callRecordListReq,Integer orgId);
 }

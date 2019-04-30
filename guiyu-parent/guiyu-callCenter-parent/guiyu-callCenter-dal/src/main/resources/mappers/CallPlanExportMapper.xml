@@ -25,6 +25,15 @@
         <foreach collection="callIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+        <if test="orgId != null">
+            and a.org_id = #{orgId}
+        </if>
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
 
             order by a.create_time desc
 

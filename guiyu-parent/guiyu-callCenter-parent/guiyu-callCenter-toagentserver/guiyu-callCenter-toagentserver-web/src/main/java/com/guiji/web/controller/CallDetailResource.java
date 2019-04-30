@@ -28,7 +28,7 @@ public class CallDetailResource {
      *
      * @return
      */
-    @RequestMapping(path = "/calldetail", method = RequestMethod.GET)
+   /* @RequestMapping(path = "/calldetail", method = RequestMethod.GET)
     public ApiResponse queryQueues(@RequestParam("callRecordId") String callRecordId) {
         log.info("收到根据callrecordId查询通话详情请求callRecordId:[{}]",callRecordId);
         ApiResponse apiResponse = new ApiResponse();
@@ -46,5 +46,5 @@ public class CallDetailResource {
         }
         log.info("获取根据callrecordId查询通话详情返回结果[{}]", apiResponse);
         return apiResponse;
-    }
+    }*/
 }

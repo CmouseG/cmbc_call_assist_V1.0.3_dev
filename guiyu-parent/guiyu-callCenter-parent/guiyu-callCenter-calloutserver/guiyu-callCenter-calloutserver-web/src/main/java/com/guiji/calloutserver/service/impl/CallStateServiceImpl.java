@@ -1,8 +1,10 @@
 package com.guiji.calloutserver.service.impl;
 
+import com.guiji.auth.api.IOrg;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +42,8 @@ public class CallStateServiceImpl implements CallStateService {
     CallingCountManager callingCountManager;
     @Autowired
     LineCountWService lineCountWService;
+    @Autowired
+    IOrg iorg;
 
     @Async
     @Override
@@ -48,7 +53,8 @@ public class CallStateServiceImpl implements CallStateService {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         //转人工对话可能会比较长，不包括转人工的状态
-        criteria.andCallStateLessThanOrEqualTo(ECallState.to_agent.ordinal());
+        criteria.andCallStateLessThanOrEqualTo(ECallState.to_agent.ordinal())
+                .andOrgIdIn(getAllOrgIds());
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, -7);
@@ -72,7 +78,7 @@ public class CallStateServiceImpl implements CallStateService {
             for (CallOutPlan callOutPlan : list) {
                 try {
                     AiHangupReq hangupReq = new AiHangupReq();
-                    hangupReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
+                    hangupReq.setSeqId(callOutPlan.getCallId().toString()+Constant.UUID_SEPARATE+callOutPlan.getOrgId());
                     hangupReq.setAiNo(callOutPlan.getAiId());
                     hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
                     hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
@@ -92,12 +98,32 @@ public class CallStateServiceImpl implements CallStateService {
                 //计数减一
                 callingCountManager.removeOneCall();
                 lineCountWService.addWCount(callOutPlan.getLineId(),callOutPlan.getOrgCode(),callOutPlan.getCustomerId());
+
+                //修改calloutplan的状态，放到后面，防止刚修改完状态，就接到启动计划
+                CallOutPlanExample exampleUpdate = new CallOutPlanExample();
+                exampleUpdate.createCriteria().andCallIdEqualTo(callOutPlan.getCallId())
+                        .andOrgIdEqualTo(callOutPlan.getOrgId());
+                callOutPlanMapper.updateCallStateIntentReason(updateCallPlan, exampleUpdate);
             }
-            //修改calloutplan的状态，放到后面，防止刚修改完状态，就接到启动计划
-            callOutPlanMapper.updateCallStateIntentReason(updateCallPlan, example);
 
         }
 
         log.info("---结束，将状态没有回调的通话记录修改状态,回调---");
+    }
+
+    public List<Integer> getAllOrgIds()
+    {
+        Result.ReturnData<List<Integer>> resp = iorg.getAllOrgId();
+        List<Integer> result = null;
+        if (resp != null && resp.getBody() != null) {
+            result = resp.getBody();
+        }
+
+        if(result == null)
+        {
+            result = new ArrayList<>();
+        }
+
+        return  result;
     }
 }

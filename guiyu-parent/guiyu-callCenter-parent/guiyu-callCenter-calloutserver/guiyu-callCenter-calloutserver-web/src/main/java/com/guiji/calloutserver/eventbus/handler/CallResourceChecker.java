@@ -3,6 +3,7 @@ package com.guiji.calloutserver.eventbus.handler;
 import com.google.common.base.Preconditions;
 import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.FsAgentManager;
@@ -60,7 +61,7 @@ public class CallResourceChecker {
 
         AiCallApplyReq aiCallApplyReq = new AiCallApplyReq();
         aiCallApplyReq.setPhoneNo(callOutPlan.getPhoneNum());
-        aiCallApplyReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
+        aiCallApplyReq.setSeqId(callOutPlan.getCallId().toString()+ Constant.UUID_SEPARATE+callOutPlan.getOrgId());
         aiCallApplyReq.setTemplateId(callOutPlan.getTempId());
         aiCallApplyReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
         aiCallApplyReq.setDisSeqId(callOutPlan.getPlanUuid());

@@ -129,7 +129,7 @@ public class AsrHandler {
                 event.setAsrText("线路异常3002");
             }
 
-            buildCallOutDetail(callPlan.getCallId(), event);
+            buildCallOutDetail(callPlan.getCallId(), event, callPlan.getOrgId());
 
         } catch (Exception ex) {
             log.warn("handleNormalAsr: 在处理AliAsr时出错异常", ex);
@@ -208,12 +208,13 @@ public class AsrHandler {
     }
 
 
-    public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event) {
+    public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event ,Integer orgId) {
 
         //开场白之前的asr识别不记录，识别太灵敏了，导致太多无用通话记录
         if (StringUtils.isNotBlank(event.getAsrText())) {
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callId);
+            callDetail.setOrgId(orgId);
 
 //            Long duration = event.getAsrDuration();
 //            if (event.getAsrDuration() == null || event.getAsrDuration() <= 0) {

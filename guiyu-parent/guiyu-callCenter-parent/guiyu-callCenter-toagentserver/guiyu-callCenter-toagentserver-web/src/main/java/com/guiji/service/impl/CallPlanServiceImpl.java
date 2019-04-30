@@ -51,11 +51,11 @@ public class CallPlanServiceImpl implements CallPlanService {
     }
 
     @Override
-    public CallPlan findByCallId(String callId, ECallDirection callDirection) {
+    public CallPlan findByCallId(String callId, ECallDirection callDirection, Integer orgId) {
         log.debug("开始查找指定的通话记录，recordId[{}], callDirection[{}]", callId, callDirection);
         CallPlan callplan = new CallPlan();
         if(callDirection == ECallDirection.OUTBOUND){
-            CallOutPlan callOutPlan = callOutPlanService.findByCallId(callId);
+            CallOutPlan callOutPlan = callOutPlanService.findByCallId(callId, orgId);
             BeanUtils.copyProperties(callOutPlan, callplan);
         }else if(callDirection == ECallDirection.INBOUND){
             CallInPlan callInPlan = callInPlanService.findByCallId(callId);

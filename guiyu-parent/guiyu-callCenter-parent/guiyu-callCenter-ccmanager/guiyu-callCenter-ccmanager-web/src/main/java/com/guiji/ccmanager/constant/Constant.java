@@ -15,6 +15,7 @@ public class Constant {
     public static final String SUCCESS_CALLINSERVER= "0306000";
 
     public static final String PROTOCOL = "http://";
+    public static final String UUID_SEPARATE = "__";
 
     public static final String SUCCESS_COMMON = "0";
 

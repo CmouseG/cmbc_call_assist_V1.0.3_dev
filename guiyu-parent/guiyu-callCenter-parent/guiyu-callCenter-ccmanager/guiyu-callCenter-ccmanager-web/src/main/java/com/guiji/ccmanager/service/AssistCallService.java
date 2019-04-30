@@ -5,5 +5,5 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import java.math.BigInteger;
 
 public interface AssistCallService {
-    CallOutPlan getCallOutplan(BigInteger callId);
+    CallOutPlan getCallOutplan(BigInteger callId, Integer orgId);
 }

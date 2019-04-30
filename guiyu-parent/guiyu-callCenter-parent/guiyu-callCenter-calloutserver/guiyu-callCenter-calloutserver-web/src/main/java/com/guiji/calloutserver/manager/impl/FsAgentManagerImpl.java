@@ -62,7 +62,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
 //            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
 //                @Override
 //                public Result.ReturnData execute() {
-                    return iTemplate.uploadrecord(request);
+        return iTemplate.uploadrecord(request);
 //                }
 //
 //                @Override

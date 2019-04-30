@@ -1,5 +1,7 @@
 package com.guiji.ccmanager.service;
 
+import java.util.List;
+
 public interface AuthService {
 
 
@@ -17,4 +19,17 @@ public interface AuthService {
      * @return
      */
     String getUserName(Long userId);
+
+    List<Integer> getAllOrgIds(Integer orgId);
+
+    List<Integer> getAllOrgIds();
+
+
+    /**
+     * 获取相关的组织list
+     * @param authLevel
+     * @param orgId
+     * @return
+     */
+    List<Integer> getOrgIdsByAuthlevel(Integer authLevel, Integer orgId);
 }

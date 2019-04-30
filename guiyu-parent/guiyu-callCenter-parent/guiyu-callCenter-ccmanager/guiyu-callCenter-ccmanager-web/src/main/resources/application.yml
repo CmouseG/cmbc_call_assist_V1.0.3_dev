@@ -45,8 +45,8 @@ mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:
   type: mysql
-  
-#注册中心配置      
+
+#注册中心配置
 eureka:
   instance:
     #ip-address: 47.96.151.197

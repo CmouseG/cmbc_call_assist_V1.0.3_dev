@@ -3,6 +3,7 @@ package com.guiji.fs;
 import com.guiji.cache.CallCache;
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.config.FsBotConfig;
+import com.guiji.constant.Constant;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
@@ -250,13 +251,25 @@ public class FsEventHandler {
         CallCache.CallInfo callInfo = callCache.getCallInfo(uuid);
 
         event.setCallDirection(callInfo.getCallDirection());
-        CallPlan callPlan = callPlanService.findByCallId(callInfo.getSeqId(), event.getCallDirection());
+
+        String seqId = callInfo.getSeqId();
+        String callid;
+        Integer orgId;
+        try {
+            String[] arr = seqId.split(Constant.UUID_SEPARATE);
+            callid = arr[0];
+            orgId = Integer.valueOf(arr[1]);
+        }catch (Exception e){
+            return;
+        }
+
+        CallPlan callPlan = callPlanService.findByCallId(callid, event.getCallDirection(), orgId);
+        if(callPlan.getCallState() != CallState.agent_answer.ordinal()){
+            log.info("座席尚未接听，忽略该asr， seqId[{}]", callInfo.getSeqId());
+            return;
+        }
 
         if (callPlan != null) {
-            if(callPlan.getCallState() != CallState.agent_answer.ordinal()){
-                log.info("座席尚未接听，忽略该asr， seqId[{}]", callInfo.getSeqId());
-                return;
-            }
             event.setCallPlan(callPlan);
             if (callInfo.getUserType() == EUserType.CUSTOMER) {
                 event.setUuid(uuid);

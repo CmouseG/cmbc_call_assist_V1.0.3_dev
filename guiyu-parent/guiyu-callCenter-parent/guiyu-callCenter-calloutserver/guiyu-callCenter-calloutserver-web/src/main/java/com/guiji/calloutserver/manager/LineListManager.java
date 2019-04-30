@@ -13,16 +13,16 @@ public interface LineListManager {
 
     /**
      * 获取下一个线路
-     * @param uuid
+     * @param callId
      */
-    Integer popNewLine(String uuid);
+    Integer popNewLine(String callId);
 
 
     /**
      * 线路是否都打完了
      *
-     * @param uuid
+     * @param callId
      * @return
      */
-    boolean isEnd(String uuid);
+    boolean isEnd(String callId);
 }

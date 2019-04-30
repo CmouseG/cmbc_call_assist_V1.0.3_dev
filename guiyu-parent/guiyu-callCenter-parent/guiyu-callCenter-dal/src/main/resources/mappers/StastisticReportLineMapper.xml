@@ -21,7 +21,12 @@
         AND create_time &lt;  #{enTime}
         AND
         call_state>6
-
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY hangup_code,line_id,is_cancel,org_code,customer_id
     </select>
 

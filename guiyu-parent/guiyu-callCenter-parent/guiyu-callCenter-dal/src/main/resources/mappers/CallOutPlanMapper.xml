@@ -1,1013 +1,1041 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.callcenter.dao.CallOutPlanMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    <id column="call_id" property="callId" jdbcType="BIGINT" />
-    <result column="plan_uuid" property="planUuid" jdbcType="VARCHAR" />
-    <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
-    <result column="customer_id" property="customerId" jdbcType="INTEGER" />
-    <result column="temp_id" property="tempId" jdbcType="VARCHAR" />
-    <result column="line_id" property="lineId" jdbcType="INTEGER" />
-    <result column="serverId" property="serverid" jdbcType="VARCHAR" />
-    <result column="agent_id" property="agentId" jdbcType="VARCHAR" />
-    <result column="agent_answer_time" property="agentAnswerTime" jdbcType="TIMESTAMP" />
-    <result column="agent_channel_uuid" property="agentChannelUuid" jdbcType="VARCHAR" />
-    <result column="agent_group_id" property="agentGroupId" jdbcType="VARCHAR" />
-    <result column="agent_start_time" property="agentStartTime" jdbcType="TIMESTAMP" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="call_start_time" property="callStartTime" jdbcType="TIMESTAMP" />
-    <result column="hangup_time" property="hangupTime" jdbcType="TIMESTAMP" />
-    <result column="answer_time" property="answerTime" jdbcType="TIMESTAMP" />
-    <result column="duration" property="duration" jdbcType="INTEGER" />
-    <result column="bill_sec" property="billSec" jdbcType="INTEGER" />
-    <result column="call_direction" property="callDirection" jdbcType="INTEGER" />
-    <result column="call_state" property="callState" jdbcType="INTEGER" />
-    <result column="hangup_direction" property="hangupDirection" jdbcType="INTEGER" />
-    <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
-    <result column="reason" property="reason" jdbcType="VARCHAR" />
-    <result column="hangup_code" property="hangupCode" jdbcType="VARCHAR" />
-    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
-    <result column="has_tts" property="hasTts" jdbcType="BIT" />
-    <result column="ai_id" property="aiId" jdbcType="VARCHAR" />
-    <result column="freason" property="freason" jdbcType="INTEGER" />
-    <result column="isdel" property="isdel" jdbcType="INTEGER" />
-    <result column="isread" property="isread" jdbcType="INTEGER" />
-    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
-    <result column="batch_id" property="batchId" jdbcType="INTEGER" />
-    <result column="talk_num" property="talkNum" jdbcType="INTEGER" />
-    <result column="is_cancel" property="isCancel" jdbcType="INTEGER" />
-    <result column="is_answer" property="isAnswer" jdbcType="INTEGER" />
-    <result column="intervened" property="intervened" jdbcType="BIT" />
-    <result column="params" property="params" jdbcType="VARCHAR" />
-    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+<mapper namespace="com.guiji.callcenter.dao.CallOutPlanMapper">
+    <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutPlan">
+        <id column="call_id" property="callId" jdbcType="BIGINT"/>
+        <result column="plan_uuid" property="planUuid" jdbcType="VARCHAR"/>
+        <result column="phone_num" property="phoneNum" jdbcType="VARCHAR"/>
+        <result column="customer_id" property="customerId" jdbcType="INTEGER"/>
+        <result column="temp_id" property="tempId" jdbcType="VARCHAR"/>
+        <result column="line_id" property="lineId" jdbcType="INTEGER"/>
+        <result column="serverId" property="serverid" jdbcType="VARCHAR"/>
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR"/>
+        <result column="agent_answer_time" property="agentAnswerTime" jdbcType="TIMESTAMP"/>
+        <result column="agent_channel_uuid" property="agentChannelUuid" jdbcType="VARCHAR"/>
+        <result column="agent_group_id" property="agentGroupId" jdbcType="VARCHAR"/>
+        <result column="agent_start_time" property="agentStartTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="call_start_time" property="callStartTime" jdbcType="TIMESTAMP"/>
+        <result column="hangup_time" property="hangupTime" jdbcType="TIMESTAMP"/>
+        <result column="answer_time" property="answerTime" jdbcType="TIMESTAMP"/>
+        <result column="duration" property="duration" jdbcType="INTEGER"/>
+        <result column="bill_sec" property="billSec" jdbcType="INTEGER"/>
+        <result column="call_direction" property="callDirection" jdbcType="INTEGER"/>
+        <result column="call_state" property="callState" jdbcType="INTEGER"/>
+        <result column="hangup_direction" property="hangupDirection" jdbcType="INTEGER"/>
+        <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="hangup_code" property="hangupCode" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="has_tts" property="hasTts" jdbcType="BIT"/>
+        <result column="ai_id" property="aiId" jdbcType="VARCHAR"/>
+        <result column="freason" property="freason" jdbcType="INTEGER"/>
+        <result column="isdel" property="isdel" jdbcType="INTEGER"/>
+        <result column="isread" property="isread" jdbcType="INTEGER"/>
+        <result column="org_code" property="orgCode" jdbcType="VARCHAR"/>
+        <result column="org_id" property="orgId" jdbcType="INTEGER"/>
+        <result column="batch_id" property="batchId" jdbcType="INTEGER"/>
+        <result column="talk_num" property="talkNum" jdbcType="INTEGER"/>
+        <result column="is_cancel" property="isCancel" jdbcType="INTEGER"/>
+        <result column="is_answer" property="isAnswer" jdbcType="INTEGER"/>
+        <result column="intervened" property="intervened" jdbcType="BIT"/>
+        <result column="params" property="params" jdbcType="VARCHAR"/>
+        <result column="line_name" property="lineName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Example_Where_Clause2" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and a.${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and a.${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and a.${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and a.${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Example_Where_Clause2">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and a.${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and a.${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and a.${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and a.${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        call_id, plan_uuid, phone_num, customer_id, temp_id, line_id, serverId, agent_id,
+        agent_answer_time, agent_channel_uuid, agent_group_id, agent_start_time, create_time,
+        call_start_time, hangup_time, answer_time, duration, bill_sec, call_direction, call_state,
+        hangup_direction, accurate_intent, reason, hangup_code, remarks, has_tts, ai_id,
+        freason, isdel, isread, org_code, org_id, batch_id, talk_num, is_cancel, is_answer,
+        intervened, params
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap"
+            parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample">
+        select
+        <if test="distinct">
+            distinct
         </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List" >
-    call_id, plan_uuid, phone_num, customer_id, temp_id, line_id, serverId, agent_id,
-    agent_answer_time, agent_channel_uuid, agent_group_id, agent_start_time, create_time,
-    call_start_time, hangup_time, answer_time, duration, bill_sec, call_direction, call_state,
-    hangup_direction, accurate_intent, reason, hangup_code, remarks, has_tts, ai_id,
-    freason, isdel, isread, org_code, batch_id, talk_num, is_cancel, is_answer, intervened,
-    params
-  </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from call_out_plan
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
-  <select id="selectCallIds4Encrypt" resultType="java.math.BigInteger" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
-    select
-    call_id
-    from call_out_plan
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
-  <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
-    select
-    call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
-    temp_id, agent_id, agent_answer_time,a.customer_id,a.line_id,
-    agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
-    hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
-    accurate_intent, reason, hangup_code, remarks, has_tts, ai_id, freason,intervened,
-    isdel, isread, params
-    from call_out_plan a
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause2" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
-  <select id="selectCallPlanRecordIds4Encrypt" resultType="java.math.BigInteger" parameterType="java.util.Map" >
-    select a.call_id
-    from call_out_plan a
-    where a.isdel =0
-    and a.call_state >=7
-      <if test="accurateIntent != null" >
-          and a.accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
-      </if>
-      <if test="time != null" >
-          and a.call_start_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
-      </if>
-      <if test="authLevel ==1" >
-          AND customer_id = #{customerId}
-      </if>
-      <if test="authLevel ==2" >
-          AND org_code = #{orgCode}
-      </if>
-      <if test="authLevel ==3" >
-          AND org_code like CONCAT(#{orgCode},'%')
-      </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from call_out_plan
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0">
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
+    <select id="selectCallIds4Encrypt" resultType="java.math.BigInteger"
+            parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample">
+        select
+        call_id
+        from call_out_plan
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0">
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
+    <select id="selectByExample4Encrypt" resultMap="BaseResultMap"
+            parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample">
+        select
+        call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
+        temp_id, agent_id, agent_answer_time,a.customer_id,a.line_id,
+        agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
+        hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
+        accurate_intent, reason, hangup_code, remarks, has_tts, ai_id, freason,intervened,
+        isdel, isread, params
+        from call_out_plan a
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause2"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0">
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
+    <select id="selectCallPlanRecordIds4Encrypt" resultType="java.math.BigInteger" parameterType="java.util.Map">
+        select a.call_id
+        from call_out_plan a
+        where a.isdel =0
+        and a.call_state >=7
+        <if test="accurateIntent != null">
+            and a.accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
+        </if>
+        <if test="time != null">
+            and a.call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+        </if>
+        <if test="authLevel ==1">
+            AND customer_id = #{customerId}
+        </if>
+        <if test="authLevel ==2">
+            AND org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3">
+            AND org_code like CONCAT(#{orgCode},'%')
+        </if>
 
-      order by a.create_time desc
-      limit #{limitStart} , #{limitEnd}
-  </select>
-  <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" >
-    select
-    CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
-    a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
-    from call_out_plan a
-    left join call_out_record b on a.call_id = b.call_id
-    where a.call_id
-    <foreach collection="idList"
-             index="index" open="in(" close=")" separator=",">
-      #{idList[${index}]}
-    </foreach>
-    order by a.create_time desc
-  </select>
-  <select id="selectCallIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
-    select
-    a.call_id as callId, b.record_url as recordUrl
-    from call_out_plan a
-    left join call_out_record b on a.call_id = b.call_id
-    where b.record_url is not null
-    <if test="callId != null" >
-      and a.call_id > #{callId}
-    </if>
-    order by a.call_id
-    limit 0,3000
-  </select>
-  <select id="selectDetailIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
-    select
-    a.call_detail_id as callDetailId, a.call_id as callId,
-    b.customer_record_url as customerRecordUrl, b.bot_record_url as botRecordUrl
-    from call_out_detail a
-    left join call_out_detail_record b on a.call_detail_id = b.call_detail_id
-    where (b.customer_record_url is not null or b.bot_record_url is not null)
-    <if test="callDetailId != null" >
-      and a.call_detail_id > #{callDetailId}
-    </if>
-    order by a.call_detail_id
-    limit 0,3000
-  </select>
-  <select id="getUnuploadCall" resultType="com.guiji.callcenter.dao.entity.CallOutRecord" >
-    SELECT b.call_id as callId, b.record_file as recordFile, b.record_url as recordUrl
-    FROM
-    call_out_plan a,call_out_record b
-    WHERE a.call_id = b.call_id
-    AND a.serverId = #{serverId}
-    AND accurate_intent !='F'
-    AND accurate_intent !='W'
-    AND a.duration >0 AND a.create_time &lt; #{endTime}
-    AND a.create_time > #{startTime}
-    AND b.record_url IS NULL
-  </select>
-  <select id="getUnuploadDetailByCallId" resultType="com.guiji.callcenter.dao.entity.CallOutDetailRecord" >
-    SELECT b.call_id as callId, b.call_detail_id as callDetailId,
-    b.agent_record_file as agentRecordFile, b.agent_record_url as botRecordUrl,
-    b.customer_record_file as customerRecordFile ,b.customer_record_url as customerRecordUrl
-    FROM
-    call_out_plan a,call_out_detail_record b
-    WHERE
-    a.call_id = b.call_id
-    AND a.serverId = #{serverId}
-    AND accurate_intent !='F'
-    AND accurate_intent !='W'
-    AND a.duration >0 AND a.create_time &lt; #{endTime}
-    AND a.create_time > #{startTime}
-    AND ( (b.agent_record_file is not null AND b.agent_record_url is null) or
-    (b.customer_record_file is not null AND b.customer_record_url is null)   )
-  </select>
-  <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map" >
-    select count(*)
-    from call_out_plan
-    where isdel =0
-    and call_state >=7
-    <if test="accurateIntent != null" >
-      and accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
-    </if>
-    <if test="time != null" >
-      and call_start_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
-    </if>
-    <if test="orgCode != null" >
-      and org_code like CONCAT(#{orgCode},'%')
-    </if>
-    <!--        <if test="customerId != null" >
-                and customer_id = #{customerId}
-            </if>-->
+        order by a.create_time desc
+        limit #{limitStart} , #{limitEnd}
+    </select>
+    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map">
+        select
+        CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num,
+        SUBSTR(a.phone_num,4,4), '****')) AS phone ,
+        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,
+        a.isread as isbrowse,a.talk_num, a.org_id as orgId
+        from call_out_plan a
+        left join call_out_record b on a.call_id = b.call_id
+        where a.call_id
+        <foreach collection="idList"
+                 index="index" open="in(" close=")" separator=",">
+            #{idList[${index}]}
+        </foreach>
+        order by a.create_time desc
+    </select>
+    <select id="selectCallIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
+        select
+        a.call_id as callId, b.record_url as recordUrl
+        from call_out_plan a
+        left join call_out_record b on a.call_id = b.call_id
+        where b.record_url is not null
+        <if test="callId != null" >
+            and a.call_id > #{callId}
+        </if>
+        order by a.call_id
+        limit 0,3000
+    </select>
+    <select id="selectDetailIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
+        select
+        a.call_detail_id as callDetailId, a.call_id as callId,
+        b.customer_record_url as customerRecordUrl, b.bot_record_url as botRecordUrl
+        from call_out_detail a
+        left join call_out_detail_record b on a.call_detail_id = b.call_detail_id
+        where (b.customer_record_url is not null or b.bot_record_url is not null)
+        <if test="callDetailId != null" >
+            and a.call_detail_id > #{callDetailId}
+        </if>
+        order by a.call_detail_id
+        limit 0,3000
+    </select>
+    <select id="getUnuploadCall" resultType="com.guiji.callcenter.dao.entity.CallOutRecord" >
+        SELECT b.call_id as callId, b.record_file as recordFile, b.record_url as recordUrl
+        FROM
+        call_out_plan a,call_out_record b
+        WHERE a.call_id = b.call_id
+        AND a.serverId = #{serverId}
+        AND accurate_intent !='F'
+        AND accurate_intent !='W'
+        AND a.duration >0 AND a.create_time &lt; #{endTime}
+        AND a.create_time > #{startTime}
+        AND b.record_url IS NULL
+    </select>
+    <select id="getUnuploadDetailByCallId" resultType="com.guiji.callcenter.dao.entity.CallOutDetailRecord" >
+        SELECT b.call_id as callId, b.call_detail_id as callDetailId,
+        b.agent_record_file as agentRecordFile, b.agent_record_url as botRecordUrl,
+        b.customer_record_file as customerRecordFile ,b.customer_record_url as customerRecordUrl
+        FROM
+        call_out_plan a,call_out_detail_record b
+        WHERE
+        a.call_id = b.call_id
+        AND a.serverId = #{serverId}
+        AND accurate_intent !='F'
+        AND accurate_intent !='W'
+        AND a.duration >0 AND a.create_time &lt; #{endTime}
+        AND a.create_time > #{startTime}
+        AND ( (b.agent_record_file is not null AND b.agent_record_url is null) or
+        (b.customer_record_file is not null AND b.customer_record_url is null)   )
+    </select>
+    <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*)
+        from call_out_plan
+        where isdel =0
+        and call_state >=7
+        <if test="accurateIntent != null">
+            and accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
+        </if>
+        <if test="time != null">
+            and call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+        </if>
+        <if test="orgCode != null">
+            and org_code like CONCAT(#{orgCode},'%')
+        </if>
+        <!--        <if test="customerId != null" >
+                    and customer_id = #{customerId}
+                </if>-->
 
-  </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger" >
-    select
-    <include refid="Base_Column_List" />
-    from call_out_plan
-    where call_id = #{callId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.math.BigInteger" >
-    delete from call_out_plan
-    where call_id = #{callId,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
-    delete from call_out_plan
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan"  useGeneratedKeys="true" keyProperty="callId">
-    insert into call_out_plan (plan_uuid, phone_num,
-    customer_id, temp_id, line_id,
-    serverId, agent_id, agent_answer_time,
-    agent_channel_uuid, agent_group_id, agent_start_time,
-    create_time, call_start_time, hangup_time,
-    answer_time, duration, bill_sec,
-    call_direction, call_state, hangup_direction,
-    accurate_intent, reason, hangup_code,
-    remarks, has_tts, ai_id,
-    freason, isdel, isread,
-    org_code, batch_id, talk_num,
-    is_cancel, is_answer, intervened,
-    params)
-    values (#{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR},
-    #{customerId,jdbcType=INTEGER}, #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER},
-    #{serverid,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP},
-    #{agentChannelUuid,jdbcType=VARCHAR}, #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP},
-    #{createTime,jdbcType=TIMESTAMP}, #{callStartTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP},
-    #{answerTime,jdbcType=TIMESTAMP}, #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER},
-    #{callDirection,jdbcType=INTEGER}, #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER},
-    #{accurateIntent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR},
-    #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR},
-    #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER},
-    #{orgCode,jdbcType=VARCHAR}, #{batchId,jdbcType=INTEGER}, #{talkNum,jdbcType=INTEGER},
-    #{isCancel,jdbcType=INTEGER}, #{isAnswer,jdbcType=INTEGER}, #{intervened,jdbcType=BIT},
-    #{params,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" useGeneratedKeys="true" keyProperty="callId">
-    insert into call_out_plan
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="callId != null" >
-        call_id,
-      </if>
-      <if test="planUuid != null" >
-        plan_uuid,
-      </if>
-      <if test="phoneNum != null" >
-        phone_num,
-      </if>
-      <if test="customerId != null" >
-        customer_id,
-      </if>
-      <if test="tempId != null" >
-        temp_id,
-      </if>
-      <if test="lineId != null" >
-        line_id,
-      </if>
-      <if test="serverid != null" >
-        serverId,
-      </if>
-      <if test="agentId != null" >
-        agent_id,
-      </if>
-      <if test="agentAnswerTime != null" >
-        agent_answer_time,
-      </if>
-      <if test="agentChannelUuid != null" >
-        agent_channel_uuid,
-      </if>
-      <if test="agentGroupId != null" >
-        agent_group_id,
-      </if>
-      <if test="agentStartTime != null" >
-        agent_start_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="callStartTime != null" >
-        call_start_time,
-      </if>
-      <if test="hangupTime != null" >
-        hangup_time,
-      </if>
-      <if test="answerTime != null" >
-        answer_time,
-      </if>
-      <if test="duration != null" >
-        duration,
-      </if>
-      <if test="billSec != null" >
-        bill_sec,
-      </if>
-      <if test="callDirection != null" >
-        call_direction,
-      </if>
-      <if test="callState != null" >
-        call_state,
-      </if>
-      <if test="hangupDirection != null" >
-        hangup_direction,
-      </if>
-      <if test="accurateIntent != null" >
-        accurate_intent,
-      </if>
-      <if test="reason != null" >
-        reason,
-      </if>
-      <if test="hangupCode != null" >
-        hangup_code,
-      </if>
-      <if test="remarks != null" >
-        remarks,
-      </if>
-      <if test="hasTts != null" >
-        has_tts,
-      </if>
-      <if test="aiId != null" >
-        ai_id,
-      </if>
-      <if test="freason != null" >
-        freason,
-      </if>
-      <if test="isdel != null" >
-        isdel,
-      </if>
-      <if test="isread != null" >
-        isread,
-      </if>
-      <if test="orgCode != null" >
-        org_code,
-      </if>
-      <if test="batchId != null" >
-        batch_id,
-      </if>
-      <if test="talkNum != null" >
-        talk_num,
-      </if>
-      <if test="isCancel != null" >
-        is_cancel,
-      </if>
-      <if test="isAnswer != null" >
-        is_answer,
-      </if>
-      <if test="intervened != null" >
-        intervened,
-      </if>
-      <if test="params != null" >
-        params,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="callId != null" >
-        #{callId,jdbcType=BIGINT},
-      </if>
-      <if test="planUuid != null" >
-        #{planUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="phoneNum != null" >
-        #{phoneNum,jdbcType=VARCHAR},
-      </if>
-      <if test="customerId != null" >
-        #{customerId,jdbcType=INTEGER},
-      </if>
-      <if test="tempId != null" >
-        #{tempId,jdbcType=VARCHAR},
-      </if>
-      <if test="lineId != null" >
-        #{lineId,jdbcType=INTEGER},
-      </if>
-      <if test="serverid != null" >
-        #{serverid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentId != null" >
-        #{agentId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentAnswerTime != null" >
-        #{agentAnswerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="agentChannelUuid != null" >
-        #{agentChannelUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentGroupId != null" >
-        #{agentGroupId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentStartTime != null" >
-        #{agentStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="callStartTime != null" >
-        #{callStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="hangupTime != null" >
-        #{hangupTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="answerTime != null" >
-        #{answerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="duration != null" >
-        #{duration,jdbcType=INTEGER},
-      </if>
-      <if test="billSec != null" >
-        #{billSec,jdbcType=INTEGER},
-      </if>
-      <if test="callDirection != null" >
-        #{callDirection,jdbcType=INTEGER},
-      </if>
-      <if test="callState != null" >
-        #{callState,jdbcType=INTEGER},
-      </if>
-      <if test="hangupDirection != null" >
-        #{hangupDirection,jdbcType=INTEGER},
-      </if>
-      <if test="accurateIntent != null" >
-        #{accurateIntent,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null" >
-        #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="hangupCode != null" >
-        #{hangupCode,jdbcType=VARCHAR},
-      </if>
-      <if test="remarks != null" >
-        #{remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="hasTts != null" >
-        #{hasTts,jdbcType=BIT},
-      </if>
-      <if test="aiId != null" >
-        #{aiId,jdbcType=VARCHAR},
-      </if>
-      <if test="freason != null" >
-        #{freason,jdbcType=INTEGER},
-      </if>
-      <if test="isdel != null" >
-        #{isdel,jdbcType=INTEGER},
-      </if>
-      <if test="isread != null" >
-        #{isread,jdbcType=INTEGER},
-      </if>
-      <if test="orgCode != null" >
-        #{orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="batchId != null" >
-        #{batchId,jdbcType=INTEGER},
-      </if>
-      <if test="talkNum != null" >
-        #{talkNum,jdbcType=INTEGER},
-      </if>
-      <if test="isCancel != null" >
-        #{isCancel,jdbcType=INTEGER},
-      </if>
-      <if test="isAnswer != null" >
-        #{isAnswer,jdbcType=INTEGER},
-      </if>
-      <if test="intervened != null" >
-        #{intervened,jdbcType=BIT},
-      </if>
-      <if test="params != null" >
-        #{params,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" resultType="java.lang.Integer" >
-    select count(*) from call_out_plan
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update call_out_plan
-    <set >
-      <if test="record.callId != null" >
-        call_id = #{record.callId,jdbcType=BIGINT},
-      </if>
-      <if test="record.planUuid != null" >
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger">
+        select
+        <include refid="Base_Column_List"/>
+        from call_out_plan
+        where call_id = #{callId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.math.BigInteger">
+        delete from call_out_plan
+        where call_id = #{callId,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample">
+        delete from call_out_plan
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" useGeneratedKeys="true"
+            keyProperty="callId">
+        insert into call_out_plan (plan_uuid, phone_num,
+        customer_id, temp_id, line_id,
+        serverId, agent_id, agent_answer_time,
+        agent_channel_uuid, agent_group_id, agent_start_time,
+        create_time, call_start_time, hangup_time,
+        answer_time, duration, bill_sec,
+        call_direction, call_state, hangup_direction,
+        accurate_intent, reason, hangup_code,
+        remarks, has_tts, ai_id,
+        freason, isdel, isread,
+        org_code, org_id, batch_id,
+        talk_num, is_cancel, is_answer,
+        intervened, params)
+        values (#{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR},
+        #{customerId,jdbcType=INTEGER}, #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER},
+        #{serverid,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP},
+        #{agentChannelUuid,jdbcType=VARCHAR}, #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP},
+        #{createTime,jdbcType=TIMESTAMP}, #{callStartTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP},
+        #{answerTime,jdbcType=TIMESTAMP}, #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER},
+        #{callDirection,jdbcType=INTEGER}, #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER},
+        #{accurateIntent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR},
+        #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER},
+        #{orgCode,jdbcType=VARCHAR}, #{orgId,jdbcType=INTEGER}, #{batchId,jdbcType=INTEGER},
+        #{talkNum,jdbcType=INTEGER}, #{isCancel,jdbcType=INTEGER}, #{isAnswer,jdbcType=INTEGER},
+        #{intervened,jdbcType=BIT}, #{params,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" useGeneratedKeys="true"
+            keyProperty="callId">
+        insert into call_out_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="callId != null">
+                call_id,
+            </if>
+            <if test="planUuid != null">
+                plan_uuid,
+            </if>
+            <if test="phoneNum != null">
+                phone_num,
+            </if>
+            <if test="customerId != null">
+                customer_id,
+            </if>
+            <if test="tempId != null">
+                temp_id,
+            </if>
+            <if test="lineId != null">
+                line_id,
+            </if>
+            <if test="serverid != null">
+                serverId,
+            </if>
+            <if test="agentId != null">
+                agent_id,
+            </if>
+            <if test="agentAnswerTime != null">
+                agent_answer_time,
+            </if>
+            <if test="agentChannelUuid != null">
+                agent_channel_uuid,
+            </if>
+            <if test="agentGroupId != null">
+                agent_group_id,
+            </if>
+            <if test="agentStartTime != null">
+                agent_start_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="callStartTime != null">
+                call_start_time,
+            </if>
+            <if test="hangupTime != null">
+                hangup_time,
+            </if>
+            <if test="answerTime != null">
+                answer_time,
+            </if>
+            <if test="duration != null">
+                duration,
+            </if>
+            <if test="billSec != null">
+                bill_sec,
+            </if>
+            <if test="callDirection != null">
+                call_direction,
+            </if>
+            <if test="callState != null">
+                call_state,
+            </if>
+            <if test="hangupDirection != null">
+                hangup_direction,
+            </if>
+            <if test="accurateIntent != null">
+                accurate_intent,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="hangupCode != null">
+                hangup_code,
+            </if>
+            <if test="remarks != null">
+                remarks,
+            </if>
+            <if test="hasTts != null">
+                has_tts,
+            </if>
+            <if test="aiId != null">
+                ai_id,
+            </if>
+            <if test="freason != null">
+                freason,
+            </if>
+            <if test="isdel != null">
+                isdel,
+            </if>
+            <if test="isread != null">
+                isread,
+            </if>
+            <if test="orgCode != null">
+                org_code,
+            </if>
+            <if test="orgId != null">
+                org_id,
+            </if>
+            <if test="batchId != null">
+                batch_id,
+            </if>
+            <if test="talkNum != null">
+                talk_num,
+            </if>
+            <if test="isCancel != null">
+                is_cancel,
+            </if>
+            <if test="isAnswer != null">
+                is_answer,
+            </if>
+            <if test="intervened != null">
+                intervened,
+            </if>
+            <if test="params != null">
+                params,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="callId != null">
+                #{callId,jdbcType=BIGINT},
+            </if>
+            <if test="planUuid != null">
+                #{planUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null">
+                #{customerId,jdbcType=INTEGER},
+            </if>
+            <if test="tempId != null">
+                #{tempId,jdbcType=VARCHAR},
+            </if>
+            <if test="lineId != null">
+                #{lineId,jdbcType=INTEGER},
+            </if>
+            <if test="serverid != null">
+                #{serverid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentId != null">
+                #{agentId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentAnswerTime != null">
+                #{agentAnswerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="agentChannelUuid != null">
+                #{agentChannelUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentGroupId != null">
+                #{agentGroupId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentStartTime != null">
+                #{agentStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="callStartTime != null">
+                #{callStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="hangupTime != null">
+                #{hangupTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="answerTime != null">
+                #{answerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="duration != null">
+                #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="billSec != null">
+                #{billSec,jdbcType=INTEGER},
+            </if>
+            <if test="callDirection != null">
+                #{callDirection,jdbcType=INTEGER},
+            </if>
+            <if test="callState != null">
+                #{callState,jdbcType=INTEGER},
+            </if>
+            <if test="hangupDirection != null">
+                #{hangupDirection,jdbcType=INTEGER},
+            </if>
+            <if test="accurateIntent != null">
+                #{accurateIntent,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="hangupCode != null">
+                #{hangupCode,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="hasTts != null">
+                #{hasTts,jdbcType=BIT},
+            </if>
+            <if test="aiId != null">
+                #{aiId,jdbcType=VARCHAR},
+            </if>
+            <if test="freason != null">
+                #{freason,jdbcType=INTEGER},
+            </if>
+            <if test="isdel != null">
+                #{isdel,jdbcType=INTEGER},
+            </if>
+            <if test="isread != null">
+                #{isread,jdbcType=INTEGER},
+            </if>
+            <if test="orgCode != null">
+                #{orgCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orgId != null">
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="batchId != null">
+                #{batchId,jdbcType=INTEGER},
+            </if>
+            <if test="talkNum != null">
+                #{talkNum,jdbcType=INTEGER},
+            </if>
+            <if test="isCancel != null">
+                #{isCancel,jdbcType=INTEGER},
+            </if>
+            <if test="isAnswer != null">
+                #{isAnswer,jdbcType=INTEGER},
+            </if>
+            <if test="intervened != null">
+                #{intervened,jdbcType=BIT},
+            </if>
+            <if test="params != null">
+                #{params,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample"
+            resultType="java.lang.Integer">
+        select count(*) from call_out_plan
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update call_out_plan
+        <set>
+            <if test="record.callId != null">
+                call_id = #{record.callId,jdbcType=BIGINT},
+            </if>
+            <if test="record.planUuid != null">
+                plan_uuid = #{record.planUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.phoneNum != null">
+                phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record.customerId != null">
+                customer_id = #{record.customerId,jdbcType=INTEGER},
+            </if>
+            <if test="record.tempId != null">
+                temp_id = #{record.tempId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.lineId != null">
+                line_id = #{record.lineId,jdbcType=INTEGER},
+            </if>
+            <if test="record.serverid != null">
+                serverId = #{record.serverid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.agentId != null">
+                agent_id = #{record.agentId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.agentAnswerTime != null">
+                agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.agentChannelUuid != null">
+                agent_channel_uuid = #{record.agentChannelUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.agentGroupId != null">
+                agent_group_id = #{record.agentGroupId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.agentStartTime != null">
+                agent_start_time = #{record.agentStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.callStartTime != null">
+                call_start_time = #{record.callStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.hangupTime != null">
+                hangup_time = #{record.hangupTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.answerTime != null">
+                answer_time = #{record.answerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.duration != null">
+                duration = #{record.duration,jdbcType=INTEGER},
+            </if>
+            <if test="record.billSec != null">
+                bill_sec = #{record.billSec,jdbcType=INTEGER},
+            </if>
+            <if test="record.callDirection != null">
+                call_direction = #{record.callDirection,jdbcType=INTEGER},
+            </if>
+            <if test="record.callState != null">
+                call_state = #{record.callState,jdbcType=INTEGER},
+            </if>
+            <if test="record.hangupDirection != null">
+                hangup_direction = #{record.hangupDirection,jdbcType=INTEGER},
+            </if>
+            <if test="record.accurateIntent != null">
+                accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
+            </if>
+            <if test="record.reason != null">
+                reason = #{record.reason,jdbcType=VARCHAR},
+            </if>
+            <if test="record.hangupCode != null">
+                hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remarks != null">
+                remarks = #{record.remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="record.hasTts != null">
+                has_tts = #{record.hasTts,jdbcType=BIT},
+            </if>
+            <if test="record.aiId != null">
+                ai_id = #{record.aiId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.freason != null">
+                freason = #{record.freason,jdbcType=INTEGER},
+            </if>
+            <if test="record.isdel != null">
+                isdel = #{record.isdel,jdbcType=INTEGER},
+            </if>
+            <if test="record.isread != null">
+                isread = #{record.isread,jdbcType=INTEGER},
+            </if>
+            <if test="record.orgCode != null">
+                org_code = #{record.orgCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.orgId != null">
+                org_id = #{record.orgId,jdbcType=INTEGER},
+            </if>
+            <if test="record.batchId != null">
+                batch_id = #{record.batchId,jdbcType=INTEGER},
+            </if>
+            <if test="record.talkNum != null">
+                talk_num = #{record.talkNum,jdbcType=INTEGER},
+            </if>
+            <if test="record.isCancel != null">
+                is_cancel = #{record.isCancel,jdbcType=INTEGER},
+            </if>
+            <if test="record.isAnswer != null">
+                is_answer = #{record.isAnswer,jdbcType=INTEGER},
+            </if>
+            <if test="record.intervened != null">
+                intervened = #{record.intervened,jdbcType=BIT},
+            </if>
+            <if test="record.params != null">
+                params = #{record.params,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateNotOverWriteIntent" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan">
+        update call_out_plan
+        <set>
+            <if test="planUuid != null">
+                plan_uuid = #{planUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                phone_num = #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId,jdbcType=INTEGER},
+            </if>
+            <if test="tempId != null">
+                temp_id = #{tempId,jdbcType=VARCHAR},
+            </if>
+            <if test="lineId != null">
+                line_id = #{lineId,jdbcType=INTEGER},
+            </if>
+            <if test="serverid != null">
+                serverId = #{serverid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentId != null">
+                agent_id = #{agentId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentAnswerTime != null">
+                agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="agentChannelUuid != null">
+                agent_channel_uuid = #{agentChannelUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentGroupId != null">
+                agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentStartTime != null">
+                agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="callStartTime != null">
+                call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="hangupTime != null">
+                hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="answerTime != null">
+                answer_time = #{answerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="billSec != null">
+                bill_sec = #{billSec,jdbcType=INTEGER},
+            </if>
+            <if test="callDirection != null">
+                call_direction = #{callDirection,jdbcType=INTEGER},
+            </if>
+            <if test="callState != null">
+                call_state = #{callState,jdbcType=INTEGER},
+            </if>
+            <if test="hangupDirection != null">
+                hangup_direction = #{hangupDirection,jdbcType=INTEGER},
+            </if>
+            <if test="accurateIntent != null">
+                reason = IF( accurate_intent IS NULL or accurate_intent ='W',#{reason,jdbcType=VARCHAR}, reason),
+                accurate_intent = IF( accurate_intent IS NULL or accurate_intent
+                ='W',#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
+            </if>
+
+            <if test="hangupCode != null">
+                hangup_code = #{hangupCode,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="hasTts != null">
+                has_tts = #{hasTts,jdbcType=BIT},
+            </if>
+            <if test="aiId != null">
+                ai_id = #{aiId,jdbcType=VARCHAR},
+            </if>
+            <if test="freason != null">
+                freason = #{freason,jdbcType=INTEGER},
+            </if>
+            <if test="isdel != null">
+                isdel = #{isdel,jdbcType=INTEGER},
+            </if>
+            <if test="isread != null">
+                isread = #{isread,jdbcType=INTEGER},
+            </if>
+            <if test="orgCode != null">
+                org_code = #{orgCode,jdbcType=VARCHAR},
+            </if>
+            <if test="batchId != null">
+                batch_id = #{batchId,jdbcType=INTEGER},
+            </if>
+            <if test="talkNum != null">
+                talk_num = #{talkNum,jdbcType=INTEGER},
+            </if>
+            <if test="isCancel != null">
+                is_cancel = #{isCancel,jdbcType=INTEGER},
+            </if>
+            <if test="isAnswer != null">
+                is_answer = #{isAnswer,jdbcType=INTEGER},
+            </if>
+        </set>
+        where call_id = #{callId,jdbcType=BIGINT}  and org_id = #{orgId,jdbcType=INTEGER},
+
+    </update>
+    <update id="updateCallStateIntentReason" parameterType="map">
+        update call_out_plan
+        SET
+        <if test="record.callState != null">
+            call_state = #{record.callState,jdbcType=INTEGER},
+        </if>
+        reason = IF(accurate_intent IS NULL,#{record.reason,jdbcType=VARCHAR},reason ),
+        accurate_intent = IF(accurate_intent IS NULL,#{record.accurateIntent,jdbcType=VARCHAR}, accurate_intent)
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update call_out_plan
+        set call_id = #{record.callId,jdbcType=BIGINT},
         plan_uuid = #{record.planUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.phoneNum != null" >
         phone_num = #{record.phoneNum,jdbcType=VARCHAR},
-      </if>
-      <if test="record.customerId != null" >
         customer_id = #{record.customerId,jdbcType=INTEGER},
-      </if>
-      <if test="record.tempId != null" >
         temp_id = #{record.tempId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.lineId != null" >
         line_id = #{record.lineId,jdbcType=INTEGER},
-      </if>
-      <if test="record.serverid != null" >
         serverId = #{record.serverid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.agentId != null" >
         agent_id = #{record.agentId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.agentAnswerTime != null" >
         agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.agentChannelUuid != null" >
         agent_channel_uuid = #{record.agentChannelUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.agentGroupId != null" >
         agent_group_id = #{record.agentGroupId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.agentStartTime != null" >
         agent_start_time = #{record.agentStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.callStartTime != null" >
         call_start_time = #{record.callStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.hangupTime != null" >
         hangup_time = #{record.hangupTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.answerTime != null" >
         answer_time = #{record.answerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.duration != null" >
         duration = #{record.duration,jdbcType=INTEGER},
-      </if>
-      <if test="record.billSec != null" >
         bill_sec = #{record.billSec,jdbcType=INTEGER},
-      </if>
-      <if test="record.callDirection != null" >
         call_direction = #{record.callDirection,jdbcType=INTEGER},
-      </if>
-      <if test="record.callState != null" >
         call_state = #{record.callState,jdbcType=INTEGER},
-      </if>
-      <if test="record.hangupDirection != null" >
         hangup_direction = #{record.hangupDirection,jdbcType=INTEGER},
-      </if>
-      <if test="record.accurateIntent != null" >
         accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
-      </if>
-      <if test="record.reason != null" >
         reason = #{record.reason,jdbcType=VARCHAR},
-      </if>
-      <if test="record.hangupCode != null" >
         hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
-      </if>
-      <if test="record.remarks != null" >
         remarks = #{record.remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="record.hasTts != null" >
         has_tts = #{record.hasTts,jdbcType=BIT},
-      </if>
-      <if test="record.aiId != null" >
         ai_id = #{record.aiId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.freason != null" >
         freason = #{record.freason,jdbcType=INTEGER},
-      </if>
-      <if test="record.isdel != null" >
         isdel = #{record.isdel,jdbcType=INTEGER},
-      </if>
-      <if test="record.isread != null" >
         isread = #{record.isread,jdbcType=INTEGER},
-      </if>
-      <if test="record.orgCode != null" >
         org_code = #{record.orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="record.batchId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
         batch_id = #{record.batchId,jdbcType=INTEGER},
-      </if>
-      <if test="record.talkNum != null" >
         talk_num = #{record.talkNum,jdbcType=INTEGER},
-      </if>
-      <if test="record.isCancel != null" >
         is_cancel = #{record.isCancel,jdbcType=INTEGER},
-      </if>
-      <if test="record.isAnswer != null" >
         is_answer = #{record.isAnswer,jdbcType=INTEGER},
-      </if>
-      <if test="record.intervened != null" >
         intervened = #{record.intervened,jdbcType=BIT},
-      </if>
-      <if test="record.params != null" >
-        params = #{record.params,jdbcType=VARCHAR},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateNotOverWriteIntent" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    update call_out_plan
-    <set >
-      <if test="planUuid != null" >
-        plan_uuid = #{planUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="phoneNum != null" >
+        params = #{record.params,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan">
+        update call_out_plan
+        <set>
+            <if test="planUuid != null">
+                plan_uuid = #{planUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                phone_num = #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="customerId != null">
+                customer_id = #{customerId,jdbcType=INTEGER},
+            </if>
+            <if test="tempId != null">
+                temp_id = #{tempId,jdbcType=VARCHAR},
+            </if>
+            <if test="lineId != null">
+                line_id = #{lineId,jdbcType=INTEGER},
+            </if>
+            <if test="serverid != null">
+                serverId = #{serverid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentId != null">
+                agent_id = #{agentId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentAnswerTime != null">
+                agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="agentChannelUuid != null">
+                agent_channel_uuid = #{agentChannelUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="agentGroupId != null">
+                agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
+            </if>
+            <if test="agentStartTime != null">
+                agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="callStartTime != null">
+                call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="hangupTime != null">
+                hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="answerTime != null">
+                answer_time = #{answerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="billSec != null">
+                bill_sec = #{billSec,jdbcType=INTEGER},
+            </if>
+            <if test="callDirection != null">
+                call_direction = #{callDirection,jdbcType=INTEGER},
+            </if>
+            <if test="callState != null">
+                call_state = #{callState,jdbcType=INTEGER},
+            </if>
+            <if test="hangupDirection != null">
+                hangup_direction = #{hangupDirection,jdbcType=INTEGER},
+            </if>
+            <if test="accurateIntent != null">
+                accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="hangupCode != null">
+                hangup_code = #{hangupCode,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="hasTts != null">
+                has_tts = #{hasTts,jdbcType=BIT},
+            </if>
+            <if test="aiId != null">
+                ai_id = #{aiId,jdbcType=VARCHAR},
+            </if>
+            <if test="freason != null">
+                freason = #{freason,jdbcType=INTEGER},
+            </if>
+            <if test="isdel != null">
+                isdel = #{isdel,jdbcType=INTEGER},
+            </if>
+            <if test="isread != null">
+                isread = #{isread,jdbcType=INTEGER},
+            </if>
+            <if test="orgCode != null">
+                org_code = #{orgCode,jdbcType=VARCHAR},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="batchId != null">
+                batch_id = #{batchId,jdbcType=INTEGER},
+            </if>
+            <if test="talkNum != null">
+                talk_num = #{talkNum,jdbcType=INTEGER},
+            </if>
+            <if test="isCancel != null">
+                is_cancel = #{isCancel,jdbcType=INTEGER},
+            </if>
+            <if test="isAnswer != null">
+                is_answer = #{isAnswer,jdbcType=INTEGER},
+            </if>
+            <if test="intervened != null">
+                intervened = #{intervened,jdbcType=BIT},
+            </if>
+            <if test="params != null">
+                params = #{params,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where call_id = #{callId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan">
+        update call_out_plan
+        set plan_uuid = #{planUuid,jdbcType=VARCHAR},
         phone_num = #{phoneNum,jdbcType=VARCHAR},
-      </if>
-      <if test="customerId != null" >
         customer_id = #{customerId,jdbcType=INTEGER},
-      </if>
-      <if test="tempId != null" >
         temp_id = #{tempId,jdbcType=VARCHAR},
-      </if>
-      <if test="lineId != null" >
         line_id = #{lineId,jdbcType=INTEGER},
-      </if>
-      <if test="serverid != null" >
         serverId = #{serverid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentId != null" >
         agent_id = #{agentId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentAnswerTime != null" >
         agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="agentChannelUuid != null" >
         agent_channel_uuid = #{agentChannelUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentGroupId != null" >
         agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentStartTime != null" >
         agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="callStartTime != null" >
         call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="hangupTime != null" >
         hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="answerTime != null" >
         answer_time = #{answerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="duration != null" >
         duration = #{duration,jdbcType=INTEGER},
-      </if>
-      <if test="billSec != null" >
         bill_sec = #{billSec,jdbcType=INTEGER},
-      </if>
-      <if test="callDirection != null" >
         call_direction = #{callDirection,jdbcType=INTEGER},
-      </if>
-      <if test="callState != null" >
         call_state = #{callState,jdbcType=INTEGER},
-      </if>
-      <if test="hangupDirection != null" >
         hangup_direction = #{hangupDirection,jdbcType=INTEGER},
-      </if>
-      <if test="accurateIntent != null" >
-        reason = IF( accurate_intent IS NULL or accurate_intent ='W',#{reason,jdbcType=VARCHAR}, reason),
-        accurate_intent = IF( accurate_intent IS NULL  or accurate_intent ='W',#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
-      </if>
-
-      <if test="hangupCode != null" >
-        hangup_code = #{hangupCode,jdbcType=VARCHAR},
-      </if>
-      <if test="remarks != null" >
-        remarks = #{remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="hasTts != null" >
-        has_tts = #{hasTts,jdbcType=BIT},
-      </if>
-      <if test="aiId != null" >
-        ai_id = #{aiId,jdbcType=VARCHAR},
-      </if>
-      <if test="freason != null" >
-        freason = #{freason,jdbcType=INTEGER},
-      </if>
-      <if test="isdel != null" >
-        isdel = #{isdel,jdbcType=INTEGER},
-      </if>
-      <if test="isread != null" >
-        isread = #{isread,jdbcType=INTEGER},
-      </if>
-      <if test="orgCode != null" >
-        org_code = #{orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="batchId != null" >
-        batch_id = #{batchId,jdbcType=INTEGER},
-      </if>
-      <if test="talkNum != null" >
-        talk_num = #{talkNum,jdbcType=INTEGER},
-      </if>
-      <if test="isCancel != null" >
-        is_cancel = #{isCancel,jdbcType=INTEGER},
-      </if>
-      <if test="isAnswer != null" >
-        is_answer = #{isAnswer,jdbcType=INTEGER},
-      </if>
-    </set>
-    where call_id = #{callId,jdbcType=BIGINT}
-  </update>
-  <update id="updateCallStateIntentReason" parameterType="map" >
-    update call_out_plan
-    SET
-    <if test="record.callState != null" >
-      call_state = #{record.callState,jdbcType=INTEGER},
-    </if>
-    reason = IF(accurate_intent IS NULL,#{record.reason,jdbcType=VARCHAR},reason ),
-    accurate_intent = IF(accurate_intent IS NULL,#{record.accurateIntent,jdbcType=VARCHAR}, accurate_intent)
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update call_out_plan
-    set call_id = #{record.callId,jdbcType=BIGINT},
-    plan_uuid = #{record.planUuid,jdbcType=VARCHAR},
-    phone_num = #{record.phoneNum,jdbcType=VARCHAR},
-    customer_id = #{record.customerId,jdbcType=INTEGER},
-    temp_id = #{record.tempId,jdbcType=VARCHAR},
-    line_id = #{record.lineId,jdbcType=INTEGER},
-    serverId = #{record.serverid,jdbcType=VARCHAR},
-    agent_id = #{record.agentId,jdbcType=VARCHAR},
-    agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
-    agent_channel_uuid = #{record.agentChannelUuid,jdbcType=VARCHAR},
-    agent_group_id = #{record.agentGroupId,jdbcType=VARCHAR},
-    agent_start_time = #{record.agentStartTime,jdbcType=TIMESTAMP},
-    create_time = #{record.createTime,jdbcType=TIMESTAMP},
-    call_start_time = #{record.callStartTime,jdbcType=TIMESTAMP},
-    hangup_time = #{record.hangupTime,jdbcType=TIMESTAMP},
-    answer_time = #{record.answerTime,jdbcType=TIMESTAMP},
-    duration = #{record.duration,jdbcType=INTEGER},
-    bill_sec = #{record.billSec,jdbcType=INTEGER},
-    call_direction = #{record.callDirection,jdbcType=INTEGER},
-    call_state = #{record.callState,jdbcType=INTEGER},
-    hangup_direction = #{record.hangupDirection,jdbcType=INTEGER},
-    accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
-    reason = #{record.reason,jdbcType=VARCHAR},
-    hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
-    remarks = #{record.remarks,jdbcType=VARCHAR},
-    has_tts = #{record.hasTts,jdbcType=BIT},
-    ai_id = #{record.aiId,jdbcType=VARCHAR},
-    freason = #{record.freason,jdbcType=INTEGER},
-    isdel = #{record.isdel,jdbcType=INTEGER},
-    isread = #{record.isread,jdbcType=INTEGER},
-    org_code = #{record.orgCode,jdbcType=VARCHAR},
-    batch_id = #{record.batchId,jdbcType=INTEGER},
-    talk_num = #{record.talkNum,jdbcType=INTEGER},
-    is_cancel = #{record.isCancel,jdbcType=INTEGER},
-    is_answer = #{record.isAnswer,jdbcType=INTEGER},
-    intervened = #{record.intervened,jdbcType=BIT},
-    params = #{record.params,jdbcType=VARCHAR}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    update call_out_plan
-    <set >
-      <if test="planUuid != null" >
-        plan_uuid = #{planUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="phoneNum != null" >
-        phone_num = #{phoneNum,jdbcType=VARCHAR},
-      </if>
-      <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=INTEGER},
-      </if>
-      <if test="tempId != null" >
-        temp_id = #{tempId,jdbcType=VARCHAR},
-      </if>
-      <if test="lineId != null" >
-        line_id = #{lineId,jdbcType=INTEGER},
-      </if>
-      <if test="serverid != null" >
-        serverId = #{serverid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentId != null" >
-        agent_id = #{agentId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentAnswerTime != null" >
-        agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="agentChannelUuid != null" >
-        agent_channel_uuid = #{agentChannelUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="agentGroupId != null" >
-        agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
-      </if>
-      <if test="agentStartTime != null" >
-        agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="callStartTime != null" >
-        call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="hangupTime != null" >
-        hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="answerTime != null" >
-        answer_time = #{answerTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="duration != null" >
-        duration = #{duration,jdbcType=INTEGER},
-      </if>
-      <if test="billSec != null" >
-        bill_sec = #{billSec,jdbcType=INTEGER},
-      </if>
-      <if test="callDirection != null" >
-        call_direction = #{callDirection,jdbcType=INTEGER},
-      </if>
-      <if test="callState != null" >
-        call_state = #{callState,jdbcType=INTEGER},
-      </if>
-      <if test="hangupDirection != null" >
-        hangup_direction = #{hangupDirection,jdbcType=INTEGER},
-      </if>
-      <if test="accurateIntent != null" >
         accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null" >
         reason = #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="hangupCode != null" >
         hangup_code = #{hangupCode,jdbcType=VARCHAR},
-      </if>
-      <if test="remarks != null" >
         remarks = #{remarks,jdbcType=VARCHAR},
-      </if>
-      <if test="hasTts != null" >
         has_tts = #{hasTts,jdbcType=BIT},
-      </if>
-      <if test="aiId != null" >
         ai_id = #{aiId,jdbcType=VARCHAR},
-      </if>
-      <if test="freason != null" >
         freason = #{freason,jdbcType=INTEGER},
-      </if>
-      <if test="isdel != null" >
         isdel = #{isdel,jdbcType=INTEGER},
-      </if>
-      <if test="isread != null" >
         isread = #{isread,jdbcType=INTEGER},
-      </if>
-      <if test="orgCode != null" >
         org_code = #{orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="batchId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
         batch_id = #{batchId,jdbcType=INTEGER},
-      </if>
-      <if test="talkNum != null" >
         talk_num = #{talkNum,jdbcType=INTEGER},
-      </if>
-      <if test="isCancel != null" >
         is_cancel = #{isCancel,jdbcType=INTEGER},
-      </if>
-      <if test="isAnswer != null" >
         is_answer = #{isAnswer,jdbcType=INTEGER},
-      </if>
-      <if test="intervened != null" >
         intervened = #{intervened,jdbcType=BIT},
-      </if>
-      <if test="params != null" >
-        params = #{params,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where call_id = #{callId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    update call_out_plan
-    set plan_uuid = #{planUuid,jdbcType=VARCHAR},
-    phone_num = #{phoneNum,jdbcType=VARCHAR},
-    customer_id = #{customerId,jdbcType=INTEGER},
-    temp_id = #{tempId,jdbcType=VARCHAR},
-    line_id = #{lineId,jdbcType=INTEGER},
-    serverId = #{serverid,jdbcType=VARCHAR},
-    agent_id = #{agentId,jdbcType=VARCHAR},
-    agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
-    agent_channel_uuid = #{agentChannelUuid,jdbcType=VARCHAR},
-    agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
-    agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
-    create_time = #{createTime,jdbcType=TIMESTAMP},
-    call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
-    hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
-    answer_time = #{answerTime,jdbcType=TIMESTAMP},
-    duration = #{duration,jdbcType=INTEGER},
-    bill_sec = #{billSec,jdbcType=INTEGER},
-    call_direction = #{callDirection,jdbcType=INTEGER},
-    call_state = #{callState,jdbcType=INTEGER},
-    hangup_direction = #{hangupDirection,jdbcType=INTEGER},
-    accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
-    reason = #{reason,jdbcType=VARCHAR},
-    hangup_code = #{hangupCode,jdbcType=VARCHAR},
-    remarks = #{remarks,jdbcType=VARCHAR},
-    has_tts = #{hasTts,jdbcType=BIT},
-    ai_id = #{aiId,jdbcType=VARCHAR},
-    freason = #{freason,jdbcType=INTEGER},
-    isdel = #{isdel,jdbcType=INTEGER},
-    isread = #{isread,jdbcType=INTEGER},
-    org_code = #{orgCode,jdbcType=VARCHAR},
-    batch_id = #{batchId,jdbcType=INTEGER},
-    talk_num = #{talkNum,jdbcType=INTEGER},
-    is_cancel = #{isCancel,jdbcType=INTEGER},
-    is_answer = #{isAnswer,jdbcType=INTEGER},
-    intervened = #{intervened,jdbcType=BIT},
-    params = #{params,jdbcType=VARCHAR}
-    where call_id = #{callId,jdbcType=BIGINT}
-  </update>
+        params = #{params,jdbcType=VARCHAR}
+        where call_id = #{callId,jdbcType=BIGINT}
+    </update>
 </mapper>

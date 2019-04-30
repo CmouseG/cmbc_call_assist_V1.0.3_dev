@@ -99,7 +99,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
     }
 
 
-    @Override
+/*    @Override
     @ApiOperation(value = "获取callId获取通话记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "call_out_plan的id", dataType = "String", paramType = "query", required = true)
@@ -114,7 +114,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
             return Result.ok(CallOutPlanApi);
         }
         return Result.ok();
-    }
+    }*/
 
 /*    @Override
     public Result.ReturnData<TempIsOkResult> isTempOk(@RequestBody List<String> tempIdList) {

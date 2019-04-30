@@ -6,6 +6,7 @@ import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.daoNoSharing.LineRateMapper;
 import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +37,21 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     ReportCallDayMapper reportCallDayMapper;
     @Autowired
     LineRateMapper lineRateMapper;
+    @Autowired
+    AuthService authService;
 
     @Override
     @Transactional
     public void reportCallDayScheduler() {
 
+        List<Integer> orgIds = authService.getAllOrgIds();
+
         statisticMapper.deleteReportCallDay();
         //sharding jdbc 不支持 case when操作，所以分开来操作
-        List<ReportCallDay> list30 = statisticMapper.countReportCallDayDruation30();
-        List<ReportCallDay> list10 = statisticMapper.countReportCallDayDruation10();
-        List<ReportCallDay> list5 = statisticMapper.countReportCallDayDruation5();
-        List<ReportCallDay> list0 = statisticMapper.countReportCallDayDruation0();
+        List<ReportCallDay> list30 = statisticMapper.countReportCallDayDruation30(orgIds);
+        List<ReportCallDay> list10 = statisticMapper.countReportCallDayDruation10(orgIds);
+        List<ReportCallDay> list5 = statisticMapper.countReportCallDayDruation5(orgIds);
+        List<ReportCallDay> list0 = statisticMapper.countReportCallDayDruation0(orgIds);
 
         List<ReportCallDay> list = new ArrayList<>();
         if(list30!=null && list30.size() >0){
@@ -72,11 +77,12 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Transactional
     public void reportCallTodayScheduler() {
 
+        List<Integer> orgIds = authService.getAllOrgIds();
         //sharding jdbc 不支持 case when操作，所以分开来操作
-        List<ReportCallDay> list30 = statisticMapper.countReportCallToday30();
-        List<ReportCallDay> list10 = statisticMapper.countReportCallToday10();
-        List<ReportCallDay> list5 = statisticMapper.countReportCallToday5();
-        List<ReportCallDay> list0 = statisticMapper.countReportCallToday0();
+        List<ReportCallDay> list30 = statisticMapper.countReportCallToday30(orgIds);
+        List<ReportCallDay> list10 = statisticMapper.countReportCallToday10(orgIds);
+        List<ReportCallDay> list5 = statisticMapper.countReportCallToday5(orgIds);
+        List<ReportCallDay> list0 = statisticMapper.countReportCallToday0(orgIds);
 
         List<ReportCallDay> list = new ArrayList<>();
         if(list30!=null && list30.size() >0){
@@ -101,9 +107,10 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Override
     @Transactional
     public void reportCallHourScheduler() {
+        List<Integer> orgIds = authService.getAllOrgIds();
         statisticMapper.deleteReportCallHour();
-        List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut();
-        List<ReportCallHour> listConnect = statisticMapper.countReportCallHourConnect();
+        List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut(orgIds);
+        List<ReportCallHour> listConnect = statisticMapper.countReportCallHourConnect(orgIds);
         if(listOut!=null && listOut.size()>0){
             if(listConnect!=null && listConnect.size()>0){
                 for(ReportCallHour out:listOut){

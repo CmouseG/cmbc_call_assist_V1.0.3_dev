@@ -19,7 +19,6 @@ import com.guiji.dict.api.ISysDict;
 import com.guiji.dict.vo.SysDictVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -123,7 +122,7 @@ public class CallPlanDispatchHandler {
             }
         }
         //重新查询一次，意向标签可能不准确
-        CallOutPlan realCallOutPlan = callOutPlanService.findByCallId(callPlan.getCallId());
+        CallOutPlan realCallOutPlan = callOutPlanService.findByCallId(callPlan.getCallId(), callPlan.getOrgId());
         dispatchService.successSchedule(realCallOutPlan.getPlanUuid(),realCallOutPlan.getPhoneNum(),realCallOutPlan.getAccurateIntent(),
                 realCallOutPlan.getCustomerId(), realCallOutPlan.getLineId(), realCallOutPlan.getTempId(), true);
 

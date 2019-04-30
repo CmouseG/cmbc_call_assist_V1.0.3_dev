@@ -3,6 +3,7 @@ package com.guiji.calloutserver.fs;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.EslEventType;
 import com.guiji.calloutserver.entity.InnerAsrResponse;
 import com.guiji.calloutserver.eventbus.event.*;
@@ -168,10 +169,22 @@ public class FsEventHandler {
             event.setAsrDuration(innerAsrResponse.getDuration());
         }
 
-        String uuid = eventHeaders.get("UUID");
-        CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(uuid));
+        String uuidLong = eventHeaders.get("UUID");
+        String uuid;
+        Integer orgId;
+        BigInteger bigIntegerId = null;
+        try {
+            String[] arr = uuidLong.split(Constant.UUID_SEPARATE);
+            uuid = arr[0];
+            orgId = Integer.valueOf(arr[1]);
+            bigIntegerId = new BigInteger(uuid);
+        }catch (Exception e){
+            return;
+        }
+
+        CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
         if (callPlan != null) {
-            event.setUuid(uuid);
+            event.setUuid(uuidLong);
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
             asrCustomerEvent.setCallPlan(callPlan);
@@ -184,8 +197,8 @@ public class FsEventHandler {
     }
 
     private void postAliAsrErrorEvent(Map<String, String> eventHeaders) {
-       //{"header":{"namespace":"Default","name":"TaskFailed","status":40000005,"message_id":"40a3ea36b8ec48d594c9f526719fabbe",
-       //"task_id":"8baa37799e4746249e850bead2f62e4a","status_text":"Gateway:TOO_MANY_REQUESTS:Too many requests!"}}
+        //{"header":{"namespace":"Default","name":"TaskFailed","status":40000005,"message_id":"40a3ea36b8ec48d594c9f526719fabbe",
+        //"task_id":"8baa37799e4746249e850bead2f62e4a","status_text":"Gateway:TOO_MANY_REQUESTS:Too many requests!"}}
 
         log.info("收到asr错误事件 [{}]",eventHeaders);
         String uuid = eventHeaders.get("UUID");

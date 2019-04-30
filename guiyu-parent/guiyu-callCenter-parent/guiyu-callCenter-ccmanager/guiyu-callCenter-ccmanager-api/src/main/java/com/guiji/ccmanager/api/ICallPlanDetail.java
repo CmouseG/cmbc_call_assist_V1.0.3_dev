@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.api;
 
+import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.ccmanager.vo.CallRecordReq;
 import com.guiji.component.result.Result;
@@ -21,11 +22,8 @@ import java.util.Map;
 public interface ICallPlanDetail {
 
     @ApiOperation(value = "查看通话记录详情")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
-    })
-    @PostMapping(value = "getCallPlanDetailRecord")
-    Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds);
+    @PostMapping(value="getCallPlanDetailRecord")
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(@RequestBody CallPlanUuidQuery callPlanUuidQuery);
 
 
     @ApiOperation(value = "查看通话记录详情，前台页面使用,后台可使用")
@@ -33,7 +31,7 @@ public interface ICallPlanDetail {
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value = "getCallDetailApi")
-    Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(@RequestParam(value="callId") String callId);
+    Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(@RequestParam(value="callId") String callId,@RequestParam(value="orgId") Integer orgId);
 
     @ApiOperation(value = "获取通话记录列表")
     @PostMapping(value = "getCallRecordList")
@@ -41,5 +39,7 @@ public interface ICallPlanDetail {
 
     @ApiOperation(value = "通过电话号码，获取通话记录列表")
     @GetMapping(value = "getCallRecordListByPhone")
-    Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone);
+    Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone,
+                                                     @RequestParam(value="authLevel")  Integer authLevel,
+                                                     @RequestParam(value="orgId")  Integer orgId);
 }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.MyCallOutPlanMapper">
+
+
+    <sql id="Select_Where_SQL">
+        <where>
+            <if test="startDate != null">
+                and create_time > #{startDate}
+            </if>
+            <if test="endDate != null">
+                and create_time &lt; #{endDate}
+            </if>
+            <if test="phoneNum != null">
+                and phone_num like CONCAT('%',#{phoneNum},'%')
+            </if>
+            <if test="durationMin != null">
+                and duration > #{durationMin}
+            </if>
+            <if test="durationMax != null">
+                and duration &lt;= #{durationMax}
+            </if>
+
+            <if test="billSecMin != null">
+                and bill_sec > #{billSecMin}
+            </if>
+            <if test="billSecMax != null">
+                and bill_sec &lt;= #{billSecMax}
+            </if>
+            <if test="accurateIntent != null">
+                and accurate_intent = #{accurateIntent}
+            </if>
+            <if test="accurateIntentList != null and accurateIntentList.size()>0">
+                and accurate_intent in
+                <foreach collection="accurateIntentList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="reason != null">
+                and reason = #{reason}
+            </if>
+            <if test="reasonList != null and reasonList.size()>0">
+                and reason in
+                <foreach collection="reasonList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="callId != null">
+                and call_id = #{callId}
+            </if>
+            <if test="tempId != null">
+                and temp_id = #{tempId}
+            </if>
+            <if test="isRead != null">
+                and isread = #{isRead}
+            </if>
+            <if test="customerId != null">
+                and ( customer_id = #{customerId}
+                <if test="agentId != null">
+                    or agent_id = #{agentId}
+                </if>
+                )
+            </if>
+            <if test="queryUser != null">
+                and customer_id = #{queryUser}
+            </if>
+            <if test="intervened != null">
+                and intervened = #{intervened}
+            </if>
+            <if test="batchId != null">
+                and batch_id = #{batchId}
+            </if>
+            <if test="orgId != null">
+                and org_id = #{orgId}
+            </if>
+            <if test="orgIdList != null and orgIdList.size()>0">
+                and org_id in
+                <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="callIdList != null and callIdList.size()>0">
+                and call_id in
+                <foreach collection="callIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="notInList != null and notInList.size()>0">
+                and call_id not in
+                <foreach collection="notInList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="isdel != null">
+                and isdel = #{isdel}
+            </if>
+            <if test="callStateMin != null">
+                and call_state >= #{callStateMin}
+            </if>
+            <if test="minCallId != null">
+                and call_id > #{minCallId}
+            </if>
+            <if test="time != null">
+                and call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCallOutPlanList" resultType="com.guiji.callcenter.dao.entity.CallOutPlan">
+        select
+        call_id as callId,
+        <choose>
+            <when test="isDesensitization != null">
+                IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phoneNum ,
+            </when>
+            <otherwise>
+                phone_num as phoneNum,
+            </otherwise>
+        </choose>
+        customer_id as customerId, temp_id as tempId, line_id as lineId,
+        call_start_time as callStartTime, hangup_time as hangupTime, answer_time as answerTime, duration,
+        bill_sec as billSec, accurate_intent as accurateIntent, reason, hangup_code as hangupCode , remarks,
+        freason, talk_num as talkNum, is_cancel as isCancel, is_answer as isAnswer, intervened
+        from call_out_plan
+        <include refid="Select_Where_SQL" />
+        order by create_time desc
+        <if test="limitStart != null">
+           limit  #{limitStart},#{limitEnd}
+        </if>
+    </select>
+
+    <select id="countCallOutPlan" resultType="java.lang.Integer">
+        select count(*)
+        from call_out_plan
+        <include refid="Select_Where_SQL" />
+    </select>
+
+    <select id="selectCallIdList" resultType="java.math.BigInteger">
+        select
+        call_id as callId
+        from call_out_plan
+        <include refid="Select_Where_SQL" />
+        order by create_time desc
+        <if test="limitStart != null">
+            limit  #{limitStart},#{limitEnd}
+        </if>
+    </select>
+
+</mapper>

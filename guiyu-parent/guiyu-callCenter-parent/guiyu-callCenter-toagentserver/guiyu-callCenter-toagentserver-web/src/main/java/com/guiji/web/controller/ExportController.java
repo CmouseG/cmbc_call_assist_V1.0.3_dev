@@ -1,6 +1,7 @@
 package com.guiji.web.controller;
 
 import com.guiji.component.jurisdiction.Jurisdiction;
+import com.guiji.constant.Constant;
 import com.guiji.service.*;
 import com.guiji.web.request.ExportcalldetailsVO;
 import com.guiji.web.request.ExportregistrationsVO;
@@ -43,12 +44,20 @@ public class ExportController {
      *
      * @return
      */
-    @RequestMapping(path = "/exportcalldetails", method = RequestMethod.POST)
+ /*   @RequestMapping(path = "/exportcalldetails", method = RequestMethod.POST)
     public ApiResponse getExportCalldetails(@RequestBody ExportcalldetailsVO vo, HttpServletResponse response) {
-        log.info("收到根据callId获取对话详情的请求");
-        callDetailService.getExportCalldetails(vo.getCallId(), response);
-        return null;
-    }
+        String seqId = vo.getCallId();
+        log.info("收到根据callId获取对话详情的请求[{}]",seqId);
+        try {
+            String[] arr = seqId.split(Constant.UUID_SEPARATE);
+            callDetailService.getExportCalldetails(arr[0], response, Integer.valueOf(arr[1]));
+            return null;
+        }catch (Exception e){
+            return null;
+        }
+
+
+    }*/
 
     /**
      * 初始化测试

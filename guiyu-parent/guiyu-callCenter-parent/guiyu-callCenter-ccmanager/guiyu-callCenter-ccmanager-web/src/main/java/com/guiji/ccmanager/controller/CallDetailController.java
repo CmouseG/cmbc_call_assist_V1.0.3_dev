@@ -1,10 +1,16 @@
 package com.guiji.ccmanager.controller;
 
+import com.google.common.collect.Lists;
+import com.guiji.callcenter.dao.entity.Agent;
+import com.guiji.callcenter.dao.entity.AgentExample;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
+import com.guiji.callcenter.dao.entityext.MyCallOutPlanQueryEntity;
 import com.guiji.ccmanager.api.ICallPlanDetail;
+import com.guiji.ccmanager.constant.AuthLevelEnum;
 import com.guiji.ccmanager.constant.Constant;
+import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.DateUtils;
@@ -67,9 +73,13 @@ public class CallDetailController implements ICallPlanDetail {
 
     @ApiOperation(value = "通过电话号码，获取通话记录列表")
     @GetMapping(value = "getCallRecordListByPhone")
-    public Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone){
+    public Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone,
+                                                            @RequestParam(value="authLevel")  Integer authLevel,
+                                                            @RequestParam(value="orgId")  Integer orgId){
 
-        List<CallOutPlan> list = callDetailService.getCallRecordListByPhone(phone);
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+
+        List<CallOutPlan> list = callDetailService.getCallRecordListByPhone(phone, orgIdList);
         List resultList = new ArrayList();
         if(list!=null && list.size()>0){
 
@@ -96,15 +106,6 @@ public class CallDetailController implements ICallPlanDetail {
     @PostMapping(value = "getCallRecordList")
     public Result.ReturnData<Map> getCallRecordList(@RequestBody CallRecordReq callRecordReq){
 
-
-/*        if(!callRecordReq.getSuperAdmin()){//不是管理员
-            if (authService.isAgentOrCompanyAdmin(Long.valueOf(callRecordReq.getUserId())) ) {//代理商 或者企业管理员
-                callRecordReq.setUserId(null);
-            } else {
-                callRecordReq.setOrgCode(null);
-            }
-        }*/
-
         Map numMap = new HashMap();
 
         List<Map> list = callDetailService.getCallRecordList(callRecordReq);
@@ -127,7 +128,8 @@ public class CallDetailController implements ICallPlanDetail {
     @Jurisdiction("callCenter_callHistory_defquery")
     @GetMapping(value = "getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId,
-                                                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization,
+                                                                         @RequestHeader String orgCode,@RequestHeader Integer orgId,
+                                                                         @RequestHeader Integer isDesensitization,
                                                                          @RequestHeader Integer authLevel) {
 
         log.info("get request getCallRecord，callRecordListReq[{}]",callRecordListReq);
@@ -148,9 +150,10 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(callRecordListReq.getPageSize());
         int pageNoInt = Integer.parseInt(callRecordListReq.getPageNo());
 
+
         List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,authLevel,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
-                callRecordListReq, isDesensitization);
-        int count = callDetailService.callrecordCount(start,end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+                callRecordListReq, isDesensitization, orgId);
+        int count = callDetailService.callrecordCount(start,end,authLevel,String.valueOf(userId),orgCode, callRecordListReq, orgId);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
@@ -176,14 +179,16 @@ public class CallDetailController implements ICallPlanDetail {
     @Jurisdiction("callCenter_callHistory_detail")
     @GetMapping(value="getCallDetail")
     public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId,@RequestHeader Integer isDesensitization,
-                                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
+                                                                   @RequestHeader Integer authLevel, @RequestHeader Integer orgId,
+                                                                   @RequestHeader Boolean isSuperAdmin){
 
         log.info("get request getCallDetail，callId[{}]", callId);
 
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), orgIdList);
         //修改状态为已读
         if(!isSuperAdmin){
             if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
@@ -212,27 +217,18 @@ public class CallDetailController implements ICallPlanDetail {
     }
 
     @Override
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(String callId) {
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(@RequestParam(value="callId") String callId,@RequestParam(value="orgId") Integer orgId) {
         log.info("get request getCallDetailApi，callId[{}]", callId);
 
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), Lists.newArrayList(orgId));
         //修改状态为已读
         if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
             callDetailService.updateIsRead(callId);
         }
-        //请求调度中心，获取attach字段
-    /*    try{
-            String planUuid = callOutPlanVO.getPlanUuid();
-            Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
-            if(result.success){
-                callOutPlanVO.setAttach(result.getBody());
-            }
-        } catch (Exception e){
-            log.error("queryPlanRemarkById请求调度中心异常，callId[{}]", callId);
-        }*/
+        //获取attach字段
         callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);
@@ -240,29 +236,27 @@ public class CallDetailController implements ICallPlanDetail {
     }
 
     @ApiOperation(value = "查看通话记录详情")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
-    })
     @PostMapping(value="getCallPlanDetailRecord")
-    public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(@RequestBody List<String> callIds){
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(@RequestBody CallPlanUuidQuery callPlanUuidQuery){
 
-        log.info("get request getCallPlanDetailRecord，callIds[{}]", callIds);
+        log.info("get request getCallPlanDetailRecord，callPlanUuidQuery[{}]", callPlanUuidQuery);
 
-        List<CallPlanDetailRecordVO> callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callIds);
+        List<CallPlanDetailRecordVO> callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callPlanUuidQuery);
 
-        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callIds);
         return Result.ok(callPlanDetailRecordVO);
     }
 
     @ApiOperation(value = "下载通话记录")
     @PostMapping(value="downloadDialogue")
-    public void downloadDialogue(@RequestBody Map map,HttpServletResponse resp) throws UnsupportedEncodingException {
+    public void downloadDialogue(@RequestBody Map map,HttpServletResponse resp,
+                                 @RequestHeader Integer authLevel, @RequestHeader Integer orgId) throws UnsupportedEncodingException {
         String fileName = "通话记录.xls";
         HttpDownload.setHeader(resp, fileName);
 
         //生成文件
         String callId = (String) map.get("callId");
-        String context = callDetailService.getDialogue(callId);
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+        String context = callDetailService.getDialogue(callId, orgIdList);
 
         OutputStream out=null;
         try {
@@ -309,7 +303,7 @@ public class CallDetailController implements ICallPlanDetail {
     @Jurisdiction("callCenter_callHistory_exportOne")
     @PostMapping(value="downloadDialogueZip")
     public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp,@RequestHeader Long userId,
-                                      @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
+                                      @RequestHeader Integer authLevel, @RequestHeader Integer orgId, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
 
         log.info("---------------start downloadDialogueZip----------");
         if(reqMap.get("callIds")==null){
@@ -327,8 +321,11 @@ public class CallDetailController implements ICallPlanDetail {
             idList.add(new BigInteger(callId));
         }
         //生成文件
-        Map<String,String> map = callDetailService.getDialogues(idList);
-        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList,isDesensitization);
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = new MyCallOutPlanQueryEntity();
+        myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
+        Map<String,String> map = callDetailService.getDialogues(idList, myCallOutPlanQueryEntity);
+        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList,isDesensitization, myCallOutPlanQueryEntity);
 
         if(listPlan==null || listPlan.size()==0){
             return "无通话记录";
@@ -443,7 +440,7 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiOperation(value = "下载通话记录压缩包,callIds以逗号分隔")
     @Jurisdiction("callCenter_callHistory_exportVideos")
     @PostMapping(value="downloadRecordZip")
-    public String downloadRecordZip(@RequestBody Map reqMap, HttpServletResponse resp) throws UnsupportedEncodingException {
+    public String downloadRecordZip(@RequestBody Map reqMap,HttpServletResponse resp) throws UnsupportedEncodingException {
         log.info("---------------start downloadRecordZip----------");
         if(reqMap.get("callIds")==null){
             return "Missing Parameters";
@@ -503,11 +500,13 @@ public class CallDetailController implements ICallPlanDetail {
     })
     @Jurisdiction("callCenter_callHistory_delete,callCenter_callHistory_batchDeletes")
     @GetMapping(value="delRecord")
-    public Result.ReturnData<Boolean> delRecord(@RequestParam String callIds){
+    public Result.ReturnData<Boolean> delRecord(@RequestParam String callIds,@RequestHeader Integer authLevel,
+                                                @RequestHeader Integer orgId){
         if(StringUtils.isBlank(callIds)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        callDetailService.delRecord(callIds);
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+        callDetailService.delRecord(callIds, orgIdList);
         return Result.ok(true);
     }
 
@@ -519,9 +518,10 @@ public class CallDetailController implements ICallPlanDetail {
     })
     @PostMapping(value="updateCallDetailCustomerSayText")
     public Result.ReturnData<List<CallPlanDetailRecordVO>> updateCallDetailCustomerSayText(@RequestBody @Validated CallDetailUpdateReq callDetailUpdateReq,
-                                                                                           @RequestHeader Long userId){
-
-        callDetailService.updateCallDetailCustomerSayText(callDetailUpdateReq,userId);
+                                                                                           @RequestHeader Long userId,@RequestHeader Integer authLevel,
+                                                                                           @RequestHeader Integer orgId){
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
+        callDetailService.updateCallDetailCustomerSayText(callDetailUpdateReq,userId,orgIdList);
         return Result.ok();
     }
 

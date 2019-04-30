@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.helper;
 
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.entity.AIResponse;
 import com.guiji.calloutserver.entity.Channel;
 import com.guiji.calloutserver.eventbus.handler.AfterMediaChecker;
@@ -52,7 +53,7 @@ public class ChannelHelper {
 
     /**
      * 向FreeSWITCH通道播放机器人说话
-     * @param uuid  通道uuid
+     * @param uuid  通道uuid , uuid带orgId
      * @param mediaFile 媒体文件
      * @param mediaFileDuration 媒体文件时长
      * @param isPrologue    是否是开场白
@@ -87,8 +88,9 @@ public class ChannelHelper {
     }
 
 
-    public void playAiReponse(AIResponse aiResponse, boolean isLock, boolean isPrologue){
-        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isLock, false, isPrologue);
+    public void playAiReponse(AIResponse aiResponse, boolean isLock, boolean isPrologue, Integer orgId){
+        playFile(aiResponse.getCallId()+ Constant.UUID_SEPARATE+orgId, aiResponse.getWavFile(),
+                aiResponse.getWavDuration(),  isLock, false, isPrologue);
     }
 
     public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isPrologue) {

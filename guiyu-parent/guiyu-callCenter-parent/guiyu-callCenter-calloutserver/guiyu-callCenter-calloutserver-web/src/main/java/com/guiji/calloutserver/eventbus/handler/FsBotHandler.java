@@ -5,21 +5,18 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
-import com.guiji.callcenter.dao.entity.CallOutDetail;
-import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
-import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.*;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
+import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
 import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
-import com.guiji.calloutserver.manager.AIManager;
-import com.guiji.calloutserver.manager.CallLineAvailableManager;
-import com.guiji.calloutserver.manager.CallingCountManager;
-import com.guiji.calloutserver.manager.LineListManager;
+import com.guiji.calloutserver.manager.*;
 import com.guiji.calloutserver.service.*;
 import com.guiji.robot.model.AiCallNextReq;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -36,20 +34,28 @@ import java.util.Date;
 public class FsBotHandler {
     @Autowired
     AIManager aiManager;
+
     @Autowired
     ChannelHelper channelHelper;
+
     @Autowired
     CallOutPlanService callOutPlanService;
+
     @Autowired
     CallOutDetailService callOutDetailService;
+
     @Autowired
     CallOutDetailRecordService callOutDetailRecordService;
+
     @Autowired
     AsyncEventBus asyncEventBus;
+
     @Autowired
     RobotNextHelper robotNextHelper;
+
     @Autowired
     CallingCountManager callingCountManager;
+
     @Autowired
     LocalFsServer localFsServer;
     @Autowired
@@ -75,34 +81,41 @@ public class FsBotHandler {
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
             String uuid = event.getUuid();
+            String callid;
+            Integer orgId;
             BigInteger bigIntegerId = null;
-            try{
-                bigIntegerId = new BigInteger(uuid);
+            try {
+                String[] arr = uuid.split(Constant.UUID_SEPARATE);
+                callid = arr[0];
+                orgId = Integer.valueOf(arr[1]);
+                bigIntegerId = new BigInteger(callid);
             }catch (Exception e){
                 return;
             }
-            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId);
+            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
             if (callPlan == null) {
-                log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
+                log.info("未知的应答事件，事件uuid[{}]，跳过处理", uuid);
                 return;
             }
             //防止没有收到channel_progress事件，将状态改为线路已通
-            callLineAvailableManager.lineAreAvailable(uuid);
-            callLineAvailableManager.channelAlreadyAnswer(uuid);
+            callLineAvailableManager.lineAreAvailable(callid);
+            callLineAvailableManager.channelAlreadyAnswer(callid);
 
-            AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
+            AIInitRequest request = new AIInitRequest(uuid,callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(),
+                    String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 
             Long startTime = new Date().getTime();
 
             AIResponse aiResponse = null;
             try{
-                aiResponse = aiManager.applyAi(request);
+                aiResponse = aiManager.applyAi(request,callid);
                 Preconditions.checkNotNull(aiResponse, "aiResponse is null error");
             }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态  //todo 此处应该有告警，没有机器人资源
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
                 CallOutPlan callPlanUpdate = new CallOutPlan();
                 callPlanUpdate.setCallId(callPlan.getCallId());
+                callPlanUpdate.setOrgId(orgId);
                 callPlanUpdate.setCallState(ECallState.norobot_fail.ordinal());
                 if(callPlan.getAccurateIntent()==null){
                     callPlanUpdate.setAccurateIntent("W");
@@ -117,10 +130,10 @@ public class FsBotHandler {
 
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
-            channelHelper.playAiReponse(aiResponse, false,true);
+            channelHelper.playAiReponse(aiResponse, false,true,orgId);
 
             //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况  todo 情况是否还有，需要验证
-            CallOutPlan callPlanNew = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
+            CallOutPlan callPlanNew = callOutPlanService.findByCallId(bigIntegerId, orgId);
             if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
@@ -133,6 +146,7 @@ public class FsBotHandler {
 //            String detailID = IdGenUtil.uuid();
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callPlan.getCallId());
+            callDetail.setOrgId(orgId);
 //            callDetail.setCallDetailId(detailID);
             callDetail.setAiDuration(Math.toIntExact(endTime - startTime));
             callDetail.setTotalDuration(callDetail.getAiDuration());
@@ -158,14 +172,13 @@ public class FsBotHandler {
             aiCallNextReq.setTemplateId(callPlan.getTempId());
             aiCallNextReq.setAiNo(aiResponse.getAiId());
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
-            aiCallNextReq.setSeqId(String.valueOf(callPlan.getCallId()));
-            robotNextHelper.startAiCallNextTimer(aiCallNextReq,callPlan.getAgentGroupId());
+            aiCallNextReq.setSeqId(uuid);
+            robotNextHelper.startAiCallNextTimer(aiCallNextReq,callPlan.getAgentGroupId(),callid,orgId);
         } catch (Exception ex) {
             //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);
         }
     }
-
 
     /**
      * 正常应答播放
@@ -182,28 +195,30 @@ public class FsBotHandler {
      *
      * @param sellbotResponse
      */
-    public void playToAgent(AIResponse sellbotResponse,String agentGroupId) {
+    public void playToAgent(AIResponse sellbotResponse,String agentGroupId,Integer orgId) {
 
-        CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()));
+        String uuid = sellbotResponse.getCallId()+Constant.UUID_SEPARATE+orgId;
+        CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()), orgId);
         if(realCallPlan.getAgentId()==null){//非协呼
 
             //获取转人工的队列号
             CallOutPlan callPlan = new CallOutPlan();
             callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
+            callPlan.setOrgId(orgId);
             callPlan.setAgentStartTime(new Date());
             callPlan.setCallState(ECallState.to_agent.ordinal());
             callOutPlanService.update(callPlan);
 
             //播放完提示音后，将当前呼叫转到座席组
-            channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
+            channelHelper.playAndTransferToAgentGroup(uuid,sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
         }
         log.info("在开始转人工后，释放ai资源");
         aiManager.releaseAi(realCallPlan);
 
         //停止定时任务
-        robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
+        robotNextHelper.stopAiCallNextTimer(uuid);
         //构建事件抛出
-        ToAgentEvent toAgentEvent = new ToAgentEvent(realCallPlan);
+        ToAgentEvent toAgentEvent = new ToAgentEvent(uuid);
         asyncEventBus.post(toAgentEvent);
 
     }
@@ -216,13 +231,18 @@ public class FsBotHandler {
 
         try {
             String uuid = event.getUuid();
+            String callId;
+            Integer orgId;
             BigInteger bigIntegerId = null;
-            try{
-                bigIntegerId = new BigInteger(uuid);
+            try {
+                String[] arr = uuid.split(Constant.UUID_SEPARATE);
+                callId = arr[0];
+                orgId = Integer.valueOf(arr[1]);
+                bigIntegerId = new BigInteger(callId);
             }catch (Exception e){
                 return;
             }
-            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId);
+            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
             if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;
@@ -232,19 +252,19 @@ public class FsBotHandler {
 
             boolean goEndProcess = false;
             //如果通了，则走原来的流程...
-            if (callLineAvailableManager.isAvailable(uuid)) {
-                log.info("线路是可用的，callId[{}],lineId[{}]",uuid,callPlan.getLineId());
+            if (callLineAvailableManager.isAvailable(callId)) {
+                log.info("线路是可用的，callId[{}],lineId[{}]",callId,callPlan.getLineId());
                 callLineResultService.addLineResult(callPlan, true);
                 goEndProcess = true;
-            } else if (lineListManager.isEnd(uuid)) {//最后一条线路了，则走原来的流程...
-                log.info("最后一条线路了，callId[{}],lineId[{}]",uuid,callPlan.getLineId());
+            } else if (lineListManager.isEnd(callId)) {//最后一条线路了，则走原来的流程...
+                log.info("最后一条线路了，callId[{}],lineId[{}]",callId,callPlan.getLineId());
                 callLineResultService.addLineResult(callPlan, false);
                 goEndProcess = true;
             } else { //这次没有打通，还有线路，继续打下一条线路
                 callLineResultService.addLineResult(callPlan, false);
 
                 //重置callOutPlan的一些状态,line_id,call_start_time,call_state
-                Integer lineId = lineListManager.popNewLine(uuid);
+                Integer lineId = lineListManager.popNewLine(callId);
                 callPlan.setLineId(lineId);
                 Date date = new Date();
                 callPlan.setCallStartTime(date);
@@ -262,29 +282,16 @@ public class FsBotHandler {
                 Integer duration = event.getDuration();
                 Integer billSec = event.getBillSec();
                 //将calloutdetail里面的意向标签更新到calloutplan里面
-                CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
-                callPlan.setTalkNum(callOutDetailService.getTalkNum(new BigInteger(event.getUuid())));
+                CallOutDetail callOutDetail = callOutDetailService.getLastDetail(uuid,orgId);
+                callPlan.setTalkNum(callOutDetailService.getTalkNum(bigIntegerId,orgId));
                 if (callOutDetail != null) {
                     log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
                     callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                     callPlan.setReason(callOutDetail.getReason());
                 }else {//电话没打出去
-
-                    if (callPlan.getAccurateIntent() == null) {
-                        if (event.getRtpAudioInMediaPacketCount()==null || event.getRtpAudioInMediaPacketCount().equals("0")) {
-                            callPlan.setAccurateIntent("N");
-                            callPlan.setReason("线路异常3001");
-                        }
-                    }
-
                     if (callPlan.getAccurateIntent() == null) {
                         if (duration != null) {
-                            if(duration.intValue() <= 10 && StringUtils.isNotBlank(hangUp) && StringUtils.isNumeric(hangUp) && Integer.valueOf(hangUp)>=400 ){
-                                callPlan.setAccurateIntent("W");
-                                if (callPlan.getReason() == null) {
-                                    callPlan.setReason(hangUp);
-                                }
-                            }else if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
+                            if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
                                 log.info("挂断后，设置意向标签为F,callId[{}]", uuid);
                                 callPlan.setAccurateIntent("F");
                                 if (duration.intValue() >= 55) {
@@ -344,8 +351,8 @@ public class FsBotHandler {
                 asyncEventBus.post(statisticReportEvent);
 
                 //释放实时通道相关资源
-                log.info("开始释放Channel资源,uuid[{}]", event.getUuid());
-                channelHelper.hangup(event.getUuid());
+                log.info("开始释放Channel资源,uuid[{}]", uuid);
+                channelHelper.hangup(uuid);
 
                 //释放ai资源
                 log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());

@@ -10,7 +10,6 @@ public class AIResponse {
     private boolean result;
     private String msg;
 
-    //通话uuid，也是FreeSWITCH的通道uuid
     private String callId;
 
     //机器人标识该次通话的id

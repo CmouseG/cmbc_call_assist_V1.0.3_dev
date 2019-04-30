@@ -58,7 +58,7 @@ public class CallRecordHandler {
         CallDetail callDetail = uploadRecordEvent.getCallDetail();
         log.info("开始处理录音文件，callDetail[{}]", callDetail);
 
-        CallPlan callPlan = callPlanService.findByCallId(callDetail.getCallId().toString(), uploadRecordEvent.getCallDirection());
+        CallPlan callPlan = callPlanService.findByCallId(callDetail.getCallId().toString(), uploadRecordEvent.getCallDirection(), callDetail.getOrgId());
         uploadDetailsRecord(callDetail, uploadRecordEvent.getCallDirection(), Long.valueOf(callPlan.getCustomerId()));
     }
 

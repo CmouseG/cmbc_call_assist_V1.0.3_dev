@@ -11,7 +11,7 @@ public interface AIManager {
      *
      post /remote/aiCallNex
      */
-    AIResponse applyAi(AIInitRequest aiRequest) throws Exception;
+    AIResponse applyAi(AIInitRequest aiRequest,String callid) throws Exception;
 
     /**
      * 检查是否可以打断

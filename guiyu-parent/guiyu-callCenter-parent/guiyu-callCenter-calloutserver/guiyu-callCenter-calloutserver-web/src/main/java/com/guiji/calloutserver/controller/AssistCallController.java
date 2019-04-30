@@ -21,7 +21,6 @@ import com.guiji.component.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,9 +55,9 @@ public class AssistCallController implements IAssistCall {
     }
 
 
-    /**
+/*    *//**
      * 协呼  废弃
-     */
+     *//*
     @GetMapping("/assistToAgent")
     public Result.ReturnData assistToAgent(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){
 
@@ -78,9 +77,9 @@ public class AssistCallController implements IAssistCall {
     }
 
 
-    /**
+    *//**
      * 关闭机器人  废弃
-     */
+     *//*
     @GetMapping("/assistCloseRobot")
     public Result.ReturnData assistCloseRobot(@RequestParam("callId") String callId){
 
@@ -98,15 +97,26 @@ public class AssistCallController implements IAssistCall {
             return Result.error(Constant.ERROR_CALLCOUNT_FAILED);
         }
 
-    }
+    }*/
 
     @GetMapping("/assistToAgentAndCloseRobot")
-    public Result.ReturnData assistToAgentAndCloseRobot(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){
+    public Result.ReturnData assistToAgentAndCloseRobot(@RequestParam("uuid") String uuid,@RequestParam("agentGroupId") String agentGroupId){
 
-        log.info("接到assistToAgentAndCloseRobot请求，callId[{}],agentGroupId[{}]",callId,agentGroupId);
-        BigInteger bigInteCallId = new BigInteger(callId);
+        log.info("接到assistToAgentAndCloseRobot请求，uuid[{}],agentGroupId[{}]",uuid,agentGroupId);
 
-        CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId);
+        String callId;
+        Integer orgId;
+        BigInteger bigInteCallId = null;
+        try {
+            String[] arr = uuid.split(Constant.UUID_SEPARATE);
+            callId = arr[0];
+            orgId = Integer.valueOf(arr[1]);
+            bigInteCallId = new BigInteger(callId);
+        }catch (Exception e){
+            return Result.error("0305016");
+        }
+
+        CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId, orgId);
         if(realCallPlan.getCallState()>=ECallState.hangup_ok.ordinal()){
             return Result.error("0305015");
         }
@@ -148,7 +158,7 @@ public class AssistCallController implements IAssistCall {
         //停止定时任务
         robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
         //构建事件抛出
-        ToAgentEvent toAgentEvent = new ToAgentEvent(realCallPlan);
+        ToAgentEvent toAgentEvent = new ToAgentEvent(uuid);
         asyncEventBus.post(toAgentEvent);
 
         return Result.ok();

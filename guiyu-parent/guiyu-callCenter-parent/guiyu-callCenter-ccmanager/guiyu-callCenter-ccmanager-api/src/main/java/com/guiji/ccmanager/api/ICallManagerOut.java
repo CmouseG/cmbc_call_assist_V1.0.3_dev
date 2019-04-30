@@ -48,10 +48,10 @@ public interface ICallManagerOut {
     public Result.ReturnData<List<LineConcurrent>> getLineNameAndCount(@RequestParam(value = "customerId", required = true) String customerId,
                                                                        @RequestParam(value = "isSuperAdmin", required = true) Boolean isSuperAdmin);
 
-    @ApiOperation(value = "获取callId获取通话记录")
+/*    @ApiOperation(value = "获取callId获取通话记录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "call_out_plan的id", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecordById")
-    Result.ReturnData<CallOutPlan> getCallRecordById(@RequestParam(value = "callId", required = true) String callId);
+    Result.ReturnData<CallOutPlan> getCallRecordById(@RequestParam(value = "callId", required = true) String callId);*/
 }

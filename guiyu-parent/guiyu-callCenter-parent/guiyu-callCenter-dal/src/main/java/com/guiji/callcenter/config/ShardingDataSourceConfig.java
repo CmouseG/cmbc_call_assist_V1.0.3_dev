@@ -5,6 +5,8 @@ import com.guiji.callcenter.sharding.PreciseShardingInt;
 import com.guiji.callcenter.sharding.PreciseShardingString;
 import com.guiji.callcenter.sharding.RangeShardingInt;
 import com.guiji.callcenter.sharding.RangeShardingString;
+import io.shardingsphere.api.algorithm.sharding.standard.PreciseShardingAlgorithm;
+import io.shardingsphere.api.algorithm.sharding.standard.RangeShardingAlgorithm;
 import io.shardingsphere.api.config.TableRuleConfiguration;
 import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfiguration;
 import io.shardingsphere.core.keygen.DefaultKeyGenerator;
@@ -80,27 +82,34 @@ public class ShardingDataSourceConfig {
 	 * @return
 	 */
 	private List<TableRuleConfiguration> tableRuleConfigurations() {
-		TableRuleConfiguration result = new TableRuleConfiguration();
-		result.setLogicTable("call_out_plan");
-		result.setActualDataNodes("guiyu_callcenter.call_out_plan_0,guiyu_callcenter.call_out_plan_1");
-		result.setTableShardingStrategyConfig( new StandardShardingStrategyConfiguration(
-				"phone_num", new PreciseShardingString(), new RangeShardingString()));
+
 		DefaultKeyGenerator.setWorkerId(Long.valueOf(workId));
-		result.setKeyGeneratorColumnName("call_id");
 
-		TableRuleConfiguration result2 = new TableRuleConfiguration();
-		result2.setLogicTable("call_out_detail");
-		result2.setActualDataNodes("guiyu_callcenter.call_out_detail_0,guiyu_callcenter.call_out_detail_1");
-		result2.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(
-				"sharding_value", new PreciseShardingInt(), new RangeShardingInt()));
-		result2.setKeyGeneratorColumnName("call_detail_id");
+		List<TableRuleConfiguration> list = new ArrayList<>();
 
-		List<TableRuleConfiguration> reslutList = new ArrayList<>();
-		reslutList.add(result);
-		reslutList.add(result2);
-
-		return reslutList;
+		String shardingColumn = "org_id";
+		list.add(createTblConfig("call_out_plan",shardingColumn,
+						new OrgIdPreciseSharding("call_out_plan_"),
+						new OrgIdRangeSharding("call_out_plan_")));
+		list.add(createTblConfig("call_out_detail",shardingColumn,
+						new OrgIdPreciseSharding("call_out_detail_"),
+						new OrgIdRangeSharding("call_out_detail_")));
+		return list;
 	}
+
+	private TableRuleConfiguration createTblConfig(String logicTable,String shardingColumn,
+												   PreciseShardingAlgorithm preciseSharding,
+												   RangeShardingAlgorithm rangeSharding) {
+
+		TableRuleConfiguration tblConfig = new TableRuleConfiguration();
+		tblConfig.setLogicTable(logicTable);
+
+		tblConfig.setTableShardingStrategyConfig(
+				new StandardShardingStrategyConfiguration(shardingColumn, preciseSharding, rangeSharding));
+
+		return tblConfig;
+	}
+
 	//定义sqlSessionFactory的bean
 	@Bean(name = "sqlSessionFactoryPrimary")
 	@Primary

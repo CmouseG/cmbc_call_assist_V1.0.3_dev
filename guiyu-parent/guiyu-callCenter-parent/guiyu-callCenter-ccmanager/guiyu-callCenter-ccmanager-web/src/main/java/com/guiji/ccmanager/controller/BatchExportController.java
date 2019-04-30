@@ -58,7 +58,8 @@ public class BatchExportController {
     @PostMapping(value = "batchExportCallRecord")
     public String batchExportCallRecord(@RequestBody CallRecordListReq callRecordListReq,
                                         @RequestHeader Long userId, @RequestHeader Integer authLevel,
-                                        @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
+                                        @RequestHeader String orgCode, @RequestHeader Integer orgId,
+                                        @RequestHeader Integer isDesensitization) {
 
         log.info("get request 批量导出 batchExportCallRecord，callRecordListReq[{}]",callRecordListReq);
 
@@ -86,7 +87,7 @@ public class BatchExportController {
             }
 
         }else{//全选
-            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq, orgId);
             callRecordListReq.setStartCount("1");
             if(totalNum>1000000){
                 totalNum=1000000;
@@ -115,7 +116,7 @@ public class BatchExportController {
                 @Override
                 public void run() {
                     log.info("导出通话记录excel，线程开始啦,callRecordListReq[{}]",callRecordListReq);
-                    batchExportService.generateExcelFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
+                    batchExportService.generateExcelFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgId,
                             callRecordListReq, isDesensitization, recordId);
                 }
             });
@@ -207,7 +208,8 @@ public class BatchExportController {
     @PostMapping(value = "batchExportCallAudio")
     public String batchExportCallAudio(@RequestBody CallRecordListReq callRecordListReq,
                                         @RequestHeader Long userId, @RequestHeader Integer authLevel,
-                                        @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
+                                        @RequestHeader String orgCode, @RequestHeader Integer orgId,
+                                       @RequestHeader Integer isDesensitization) {
 
         log.info("get request 批量导出音频文件 batchExportCallAudio，callRecordListReq[{}]",callRecordListReq);
 
@@ -236,7 +238,7 @@ public class BatchExportController {
             }
 
         }else{//全选
-            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
+            totalNum = batchExportService.countTotalNum(start, end,authLevel,String.valueOf(userId),orgCode, callRecordListReq, orgId);
             callRecordListReq.setStartCount("1");
             if(totalNum>1000000){
                 totalNum=1000000;
@@ -265,7 +267,7 @@ public class BatchExportController {
                 @Override
                 public void run() {
                     log.info("导出录音文件，线程开始啦,callRecordListReq[{}]",callRecordListReq);
-                    batchExportService.generateAudioFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgCode,
+                    batchExportService.generateAudioFile(finalStart, finalEnd,authLevel,String.valueOf(userId),orgId,
                             callRecordListReq, isDesensitization, recordId);
                 }
             });

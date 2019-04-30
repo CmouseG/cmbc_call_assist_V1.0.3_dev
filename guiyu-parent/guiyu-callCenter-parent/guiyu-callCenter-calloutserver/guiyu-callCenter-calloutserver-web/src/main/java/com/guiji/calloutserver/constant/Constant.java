@@ -9,4 +9,7 @@ public class Constant {
     public static final String ERROR_CALLCOUNT_OUTLIMIT= "0305013";
     public static final String ERROR_CALLCOUNT_FAILED= "0305014";
 
+
+    public static final String UUID_SEPARATE= "__";
+
 }

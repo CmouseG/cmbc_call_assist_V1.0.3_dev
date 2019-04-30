@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StastisticReportLineShardingMapper {
 
-    List<ReportLineCode> selectLineHangupCodeReport(@Param("startTime") Date startTime, @Param("enTime") Date enTime);
+    List<ReportLineCode> selectLineHangupCodeReport(@Param("startTime") Date startTime, @Param("enTime") Date enTime, @Param("orgIdList") List<Integer> orgIdList);
 
 }

@@ -15,5 +15,5 @@ public interface CallOutDetailService {
 
     CallOutDetail insert(CallOutDetail detail);
 
-    List<CallOutDetail> findByCallPlanId(String callPlanId);
+    List<CallOutDetail> findByCallPlanId(String callPlanId,Integer orgId);
 }

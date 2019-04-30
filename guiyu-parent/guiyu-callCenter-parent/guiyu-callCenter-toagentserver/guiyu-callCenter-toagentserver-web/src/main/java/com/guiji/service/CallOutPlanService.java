@@ -18,15 +18,15 @@ public interface CallOutPlanService {
 
     void update(CallOutPlan callPlan);
 
-    CallOutPlan findByCallId(String recordId);
+    CallOutPlan findByCallId(String recordId,Integer orgId);
 
-    QueryQueueCalls queueCalls(String queueId,Long customerId);
+    QueryQueueCalls queueCalls(String queueId,Agent agent,Integer orgId,Integer authLevel);
 
-    void updateLabel(UpdateLabelRequest request);
+    void updateLabel(UpdateLabelRequest request,Integer orgId,Integer authLevel);
 
     QueryRecordInDetail queryCallrecord(String callrecordId);
 
-    QueryRecordInDetail getRealCallInfo(String mobile);
+    QueryRecordInDetail getRealCallInfo(String mobile,Integer authLevel,Integer orgId);
 
     CallOutPlan findByUuidOrAgentChannelUuid(String uuid);
 

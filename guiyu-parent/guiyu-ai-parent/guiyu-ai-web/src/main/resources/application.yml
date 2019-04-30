@@ -38,6 +38,6 @@ properties:
   error: properties/error.properties
 
 
-guiyu_tts_2_url: http://localhost:38001/ # guiyu-tts2.0服务地址
+guiyu_tts_2_url: http://localhost:38002/ # guiyu-tts2.0服务地址
 notifyAiUrl: http://localhost:18051/callback # ai服务地址
 

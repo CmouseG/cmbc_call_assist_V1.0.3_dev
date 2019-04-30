@@ -9,6 +9,7 @@ import lombok.Data;
 public class SynPostReq
 {
 	private String busId;
-	private String model;
-	private String content;
+	private String version; //tts版本（cpu/gpu）
+	private String model; // 模型
+	private String content; // 需要合成的句子
 }

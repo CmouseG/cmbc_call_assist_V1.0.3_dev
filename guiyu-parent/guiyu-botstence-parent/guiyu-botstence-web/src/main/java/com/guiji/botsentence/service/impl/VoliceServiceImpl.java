@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.DOMImplementationList;
 
@@ -437,18 +438,23 @@ public class VoliceServiceImpl implements IVoliceService {
 		}
 
 		// 查询一般问题
-		List<BusinessAnswerTaskExt> list = businessAnswerTaskService.queryBusinessAnswerListByPage(processId);
-		if (null != list && list.size() > 0) {
-			for (BusinessAnswerTaskExt temp : list) {
-				if (!voliceid_list.contains(temp.getVoliceId())) {
-					if(StringUtils.isNotBlank(temp.getVoliceId())) {
-						voliceid_list.add(temp.getVoliceId());
-						List<VoliceInfoExt> extlist = getVoliceInfoExtList(processId, new Long(temp.getVoliceId()),
-								"业务问答" + temp.getIndex());
-						voliceInfo_list.addAll(extlist);
-					}
+		List<BusinessAnswerTaskExt> answerQAs = businessAnswerTaskService.queryBusinessAnswerListByPage(processId);
+		if(!CollectionUtils.isEmpty(answerQAs)){
+			answerQAs.forEach(answerQA ->{
+				List<VoliceInfo> voiceInfoList = answerQA.getVoiceInfoList();
+				if(CollectionUtils.isEmpty(voiceInfoList)){
+					return;
 				}
-			}
+
+				voiceInfoList.forEach(voiceInfo -> {
+					if(voliceid_list.contains(String.valueOf(voiceInfo.getVoliceId()))){
+						return;
+					}
+					List<VoliceInfoExt> voiceInfoExtList = getVoliceInfoExtList(processId, voiceInfo.getVoliceId(), "业务问答" + answerQA.getIndex());
+					voliceid_list.add(String.valueOf(voiceInfo.getVoliceId()));
+					voliceInfo_list.addAll(voiceInfoExtList);
+				});
+			});
 		}
 
 		// 查询通用对话

@@ -125,7 +125,7 @@ public class AsrHandler {
 
             aiManager.sendAiRequest(aiRequest);
 
-            if(dealWithError3002(callPlan.getCallId().toString(), event.getAsrText())){
+            if(dealWithError3002(callPlan.getCallId().toString(), event.getAsrText(), callPlan.getOrgId())){
                 event.setAsrText("线路异常3002");
             }
 
@@ -145,7 +145,7 @@ public class AsrHandler {
      *
      * 线路异常3002返回true
      */
-    public boolean dealWithError3002(String callId, String asrText){
+    public boolean dealWithError3002(String callId, String asrText, Integer orgId){
         String key = ASR_BLANK+callId;
         if(StringUtils.isBlank(asrText)){ //识别为空
             Integer value =  caches.getIfPresent(key);
@@ -159,6 +159,7 @@ public class AsrHandler {
                     //修改意向标签和意向备注
                     CallOutPlan callOutPlan = new CallOutPlan();
                     callOutPlan.setCallId(new BigInteger(callId));
+                    callOutPlan.setOrgId(orgId);
                     callOutPlan.setAccurateIntent("N");
                     callOutPlan.setReason("线路异常3002");
                     callOutPlanService.update(callOutPlan);

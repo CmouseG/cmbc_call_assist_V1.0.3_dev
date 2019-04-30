@@ -10,6 +10,7 @@ import com.guiji.calloutserver.util.DateUtils;
 import com.guiji.fsagent.entity.RecordType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -32,13 +33,15 @@ public class CheckRecordUrlServiceImpl implements CheckRecordUrlService {
     FsAgentManager fsAgentManager;
     @Autowired
     EurekaManager eurekaManager;
+    @Value("${callFileCheck.day.ago}")
+    private Integer checkDaysAgo;
 
     @Override
     public void checkRecordUrl() {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        Date startDate = DateUtils.getDaysAgo(3); //3天之前
+        Date startDate = DateUtils.getDaysAgo(checkDaysAgo); //3天之前
         Date endDate = DateUtils.getHoursAgoDate(5); //5个小时之前
 
         String startTime = sdf.format(startDate);
@@ -57,28 +60,32 @@ public class CheckRecordUrlServiceImpl implements CheckRecordUrlService {
                 BigInteger callId = callOutRecord.getCallId();
                 fsAgentManager.uploadRecord(callId.toString(), callId.toString(), callOutRecord.getRecordFile(), "mainrecord",
                         null, RecordType.TOTAL_RECORD);
-                //查询明细
-                List<CallOutDetailRecord> detailList = callOutPlanMapper.getUnuploadDetailByCallId(callId);
-                if (detailList != null && detailList.size() > 0) {
-                    for (CallOutDetailRecord callOutDetailRecord : detailList) {
+            }
+        }
 
-                        BigInteger callDetailId = callOutDetailRecord.getCallDetailId();
-                        if (callOutDetailRecord.getCustomerRecordFile() != null && callOutDetailRecord.getCustomerRecordUrl() == null) {
-                            String busiId = "customer_" + callId + "_" + callDetailId;
-                            fsAgentManager.uploadRecord(callDetailId.toString(),
-                                    busiId, callOutDetailRecord.getCustomerRecordFile(), "detailrecord", null, RecordType.CUSTOMER_RECORD);
-                        } else if (callOutDetailRecord.getAgentRecordFile() != null && callOutDetailRecord.getAgentRecordUrl() == null) {
-                            String busiId = "agent_" + callId + "_" + callDetailId;
-                            fsAgentManager.uploadRecord(callDetailId.toString(),
-                                    busiId, callOutDetailRecord.getAgentRecordFile(), "detailrecord", null, RecordType.AGENT_RECORD);
-                        }
 
-                    }
+        log.info("查询未上传的分段录音，startTime[{}], endTime[{}]", startTime, endTime);
+
+        List<CallOutDetailRecord> detailList = callOutPlanMapper.getUnuploadDetailByCallId(startTime, endTime, serverId);
+
+        if (detailList != null && detailList.size() > 0) {
+            log.info("查询未上传的分段录音，detailList[{}]", detailList.size());
+
+            for (CallOutDetailRecord callOutDetailRecord : detailList) {
+
+                BigInteger callDetailId = callOutDetailRecord.getCallDetailId();
+                if (callOutDetailRecord.getCustomerRecordFile() != null && callOutDetailRecord.getCustomerRecordUrl() == null) {
+                    String busiId = "customer_" + callOutDetailRecord.getCallId() + "_" + callDetailId;
+                    fsAgentManager.uploadRecord(callDetailId.toString(),
+                            busiId, callOutDetailRecord.getCustomerRecordFile(), "detailrecord", null, RecordType.CUSTOMER_RECORD);
+                } else if (callOutDetailRecord.getAgentRecordFile() != null && callOutDetailRecord.getAgentRecordUrl() == null) {
+                    String busiId = "agent_" + callOutDetailRecord.getCallId() + "_" + callDetailId;
+                    fsAgentManager.uploadRecord(callDetailId.toString(),
+                            busiId, callOutDetailRecord.getAgentRecordFile(), "detailrecord", null, RecordType.AGENT_RECORD);
                 }
+
             }
         }
     }
-
-
 
 }

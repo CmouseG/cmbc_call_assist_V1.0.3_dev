@@ -252,10 +252,11 @@
   <select id="getUnuploadCall" resultType="com.guiji.callcenter.dao.entity.CallOutRecord" >
     SELECT b.call_id as callId, b.record_file as recordFile, b.record_url as recordUrl
     FROM
-    call_out_plan_0 a,call_out_record b
+    call_out_plan a,call_out_record b
     WHERE a.call_id = b.call_id
     AND a.serverId = #{serverId}
     AND accurate_intent !='F'
+    AND accurate_intent !='W'
     AND a.duration >0 AND a.create_time &lt; #{endTime}
     AND a.create_time > #{startTime}
     AND b.record_url IS NULL
@@ -265,9 +266,14 @@
     b.agent_record_file as agentRecordFile, b.agent_record_url as botRecordUrl,
     b.customer_record_file as customerRecordFile ,b.customer_record_url as customerRecordUrl
     FROM
-    call_out_detail_record b
+    call_out_plan a,call_out_detail_record b
     WHERE
-    b.call_id = #{callId}
+    a.call_id = b.call_id
+    AND a.serverId = #{serverId}
+    AND accurate_intent !='F'
+    AND accurate_intent !='W'
+    AND a.duration >0 AND a.create_time &lt; #{endTime}
+    AND a.create_time > #{startTime}
     AND ( (b.agent_record_file is not null AND b.agent_record_url is null) or
     (b.customer_record_file is not null AND b.customer_record_url is null)   )
   </select>

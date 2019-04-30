@@ -32,6 +32,9 @@ public class FsEventHandler {
     @Autowired
     FsBotConfig fsBotConfig;
 
+    @Autowired
+    LocalFsServer localFsServer;
+
     public void handleEvent(EslEvent eslEvent) {
         String eventName = eslEvent.getEventName();
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();
@@ -67,6 +70,9 @@ public class FsEventHandler {
             } else if (eventType == EslEventType.CHANNEL_PROGRESS_MEDIA || eventType == EslEventType.CHANNEL_PROGRESS) {
                 log.info("开始处理CHANNEL_PROGRESS事件[{}]", eslEvent);
                 postChannelProgressEvent(eventHeaders);
+            }else if (eventType == EslEventType.EV_ALIASR_E) {
+                log.info("开始处理EV_ALIASR_E事件[{}]", eslEvent);
+                postAliAsrErrorEvent(eventHeaders);
             }
             log.info("事件处理结束");
         } catch (Exception ex) {
@@ -132,6 +138,7 @@ public class FsEventHandler {
                 .hangupStamp(endStamp)
                 .hangupDisposition(eventHeaders.get("variable_sip_hangup_disposition"))
                 .sipHangupCause(eventHeaders.get("variable_sip_term_status"))
+                .rtpAudioInMediaPacketCount(eventHeaders.get("rtp_audio_in_media_packet_count"))
                 .build();
 
         log.info("构建好ChannelHangupEvent[{}], 等待后续处理", event);
@@ -173,6 +180,44 @@ public class FsEventHandler {
 //            event.setUuid(callPlan.getAgentChannelUuid());
         } else {
             log.warn("收到的Asr事件不属于当前系统(没有根据agentChannelUuid查到计划)，跳过处理，eventHeaders:[{}]", eventHeaders);
+        }
+    }
+
+    private void postAliAsrErrorEvent(Map<String, String> eventHeaders) {
+       //{"header":{"namespace":"Default","name":"TaskFailed","status":40000005,"message_id":"40a3ea36b8ec48d594c9f526719fabbe",
+       //"task_id":"8baa37799e4746249e850bead2f62e4a","status_text":"Gateway:TOO_MANY_REQUESTS:Too many requests!"}}
+
+        log.info("收到asr错误事件 [{}]",eventHeaders);
+        String uuid = eventHeaders.get("UUID");
+        BigInteger callId;
+        try {
+            callId = new BigInteger(uuid);
+        }catch (Exception e){
+            return;
+        }
+        String status = eventHeaders.get("status");
+        String reason = null;
+        if(status.equals("40000001")){
+            reason = "ASR异常4001";
+        }else if(status.equals("40000002")){
+            reason = "ASR异常4002";
+        }else if(status.equals("40000003")){
+            reason = "ASR异常4003";
+        }else if(status.equals("40000004")){
+            reason = "ASR异常4004";
+        }else if(status.equals("40000005")){
+            reason = "ASR异常4005";
+        }else if(status.equals("40020105")){
+            reason = "ASR异常4006";
+        }
+        if(reason!=null){
+            log.info("asr错误识别 callId[{}],reason[{}]",callId,reason);
+            localFsServer.hangup(uuid); //挂断电话
+            CallOutPlan callOutPlan = new CallOutPlan();
+            callOutPlan.setCallId(callId);
+            callOutPlan.setAccurateIntent("N");
+            callOutPlan.setReason(reason);
+            callOutPlanService.update(callOutPlan);
         }
     }
 }

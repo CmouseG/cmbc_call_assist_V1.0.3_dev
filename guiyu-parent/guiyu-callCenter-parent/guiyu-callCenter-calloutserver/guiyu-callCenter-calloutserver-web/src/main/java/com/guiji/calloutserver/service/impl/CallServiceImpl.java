@@ -14,6 +14,7 @@ import com.guiji.fsline.entity.FsLineVO;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +44,8 @@ public class CallServiceImpl implements CallService {
     CallLineAvailableManager callLineAvailableManager;
     @Autowired
     ISysDict iSysDict;
+    @Value("${callInspect.open}")
+    Boolean callInspectOpen;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -62,8 +65,9 @@ public class CallServiceImpl implements CallService {
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                        ", record_session:/usr/local/freeswitch/recordings/%s" +
-                        ", park' inline",
+                        (callInspectOpen ?
+                                ", tone_detect:busy 450 r 0 hangup normal_clearing 3, record_session:/usr/local/freeswitch/recordings/%s, park' inline":
+                                ", record_session:/usr/local/freeswitch/recordings/%s, park' inline"),
                 callid,
                 callplan.getLineId(),
                 callplan.getPhoneNum(),

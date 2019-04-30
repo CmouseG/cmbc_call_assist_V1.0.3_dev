@@ -52,7 +52,7 @@ public class SendDetailServiceImpl implements SendDetailService
 				criteria.andSendTimeGreaterThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
 			}
 			if(StringUtils.isNotEmpty(condition.getEndDate())){
-				criteria.andSendTimeLessThanOrEqualTo(DateUtil.parse(condition.getStartDate(), "yyyy-MM-dd HH:mm:ss"));
+				criteria.andSendTimeLessThanOrEqualTo(DateUtil.parse(condition.getEndDate(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}catch (Exception e){
 			throw new SmsException(ExceptionEnum.ERROR_PARSE_DATE);

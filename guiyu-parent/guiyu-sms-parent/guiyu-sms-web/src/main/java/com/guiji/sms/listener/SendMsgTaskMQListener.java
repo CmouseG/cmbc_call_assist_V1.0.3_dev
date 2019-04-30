@@ -39,7 +39,7 @@ public class SendMsgTaskMQListener
 		try {
 			executeTask(smsTask); // 执行发送任务
 		} catch (Exception e){
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 			// 修改任务状态
 			smsTask.setSendStatus(3); // 发送失败
 			taskMapper.updateByPrimaryKey(smsTask);

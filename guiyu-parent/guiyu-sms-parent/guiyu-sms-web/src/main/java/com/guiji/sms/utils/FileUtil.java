@@ -38,7 +38,7 @@ public class FileUtil
 			ExcelReader excelReader = new ExcelReader(inputStream, null, handler);
 			excelReader.read(new Sheet(1, 1));
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 			throw new SmsException(ExceptionEnum.ERROR_PARSE_EXCEL);
 		} finally {
 			IOUtils.close(inputStream);

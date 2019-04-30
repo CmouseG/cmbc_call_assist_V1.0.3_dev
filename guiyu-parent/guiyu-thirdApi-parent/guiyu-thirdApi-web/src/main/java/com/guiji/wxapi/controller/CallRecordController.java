@@ -44,8 +44,8 @@ public class CallRecordController {
 
     @ApiOperation(value = "获取单条通话记录详情")
     @GetMapping("getCallDetailById")
-    public Result.ReturnData<CallOutPlanVO> getCallDetail(String id) {
-        Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetailApi(id);
+    public Result.ReturnData<CallOutPlanVO> getCallDetail(String id,Integer orgId) {
+        Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetailApi(id,orgId);
         CallPlanDetailRecordVO callOutPlanVO = result.getBody();
         if (callOutPlanVO != null) {
             CallOutPlanVO resCallOutPlan = new CallOutPlanVO();
@@ -105,7 +105,7 @@ public class CallRecordController {
     @GetMapping("getCallRecordList")
     public Result.ReturnData<Map> getCallRecordList(String size, String page, String time, String label, @RequestHeader Integer isDesensitization,
                                                     @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode,
-                                                    @RequestHeader Integer authLevel) {
+                                                    @RequestHeader Integer authLevel, @RequestHeader Integer orgId) {
 
         if(StringUtils.isBlank(label)){
             return Result.error(Constant.ERROR_PARAM);
@@ -128,6 +128,7 @@ public class CallRecordController {
         callRecordReq.setUserId(userId);
         callRecordReq.setIsDesensitization(isDesensitization);
         callRecordReq.setAuthLevel(authLevel);
+        callRecordReq.setOrgId(orgId);
 
         Result.ReturnData<Map> result = iCallPlanDetail.getCallRecordList(callRecordReq);
 
@@ -136,12 +137,12 @@ public class CallRecordController {
 
     @ApiOperation(value = "号码搜索")
     @GetMapping("getCallRecordListByPhone")
-    public Result.ReturnData<List> getCallRecordListByPhone(String phone){
+    public Result.ReturnData<List> getCallRecordListByPhone(String phone,@RequestHeader Integer authLevel,@RequestHeader Integer orgId){
 
         if(StringUtils.isBlank(phone)){
             return Result.error(Constant.ERROR_PARAM);
         }
 
-        return iCallPlanDetail.getCallRecordListByPhone(phone);
+        return iCallPlanDetail.getCallRecordListByPhone(phone,authLevel,orgId);
     }
 }

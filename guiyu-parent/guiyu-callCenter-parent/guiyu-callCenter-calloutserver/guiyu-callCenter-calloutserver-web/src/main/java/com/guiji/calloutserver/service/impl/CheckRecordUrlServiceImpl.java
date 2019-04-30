@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
+import com.guiji.calloutserver.service.AuthService;
 import com.guiji.calloutserver.service.CheckRecordUrlService;
 import com.guiji.calloutserver.util.DateUtils;
 import com.guiji.fsagent.entity.RecordType;
@@ -35,6 +36,8 @@ public class CheckRecordUrlServiceImpl implements CheckRecordUrlService {
     EurekaManager eurekaManager;
     @Value("${callFileCheck.day.ago}")
     private Integer checkDaysAgo;
+    @Autowired
+    AuthService authService;
 
     @Override
     public void checkRecordUrl() {
@@ -47,11 +50,11 @@ public class CheckRecordUrlServiceImpl implements CheckRecordUrlService {
         String startTime = sdf.format(startDate);
         String endTime = sdf.format(endDate);
         String serverId = eurekaManager.getInstanceId();
-
+        List<Integer> orgIds = authService.getAllOrgIds();
 
         log.info("查询未上传的全程录音，startTime[{}], endTime[{}]", startTime, endTime);
 
-        List<CallOutRecord> list = callOutPlanMapper.getUnuploadCall(startTime, endTime, serverId);
+        List<CallOutRecord> list = callOutPlanMapper.getUnuploadCall(startTime, endTime, serverId, orgIds);
 
         if (list != null && list.size() > 0) {
             log.info("查询未上传的录音，list大小[{}]", list.size());
@@ -66,7 +69,7 @@ public class CheckRecordUrlServiceImpl implements CheckRecordUrlService {
 
         log.info("查询未上传的分段录音，startTime[{}], endTime[{}]", startTime, endTime);
 
-        List<CallOutDetailRecord> detailList = callOutPlanMapper.getUnuploadDetailByCallId(startTime, endTime, serverId);
+        List<CallOutDetailRecord> detailList = callOutPlanMapper.getUnuploadDetailByCallId(startTime, endTime, serverId , orgIds);
 
         if (detailList != null && detailList.size() > 0) {
             log.info("查询未上传的分段录音，detailList[{}]", detailList.size());

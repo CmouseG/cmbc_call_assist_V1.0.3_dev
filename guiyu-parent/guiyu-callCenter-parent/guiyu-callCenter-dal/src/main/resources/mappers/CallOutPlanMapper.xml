@@ -269,6 +269,12 @@
         AND a.duration >0 AND a.create_time &lt; #{endTime}
         AND a.create_time > #{startTime}
         AND b.record_url IS NULL
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
     <select id="getUnuploadDetailByCallId" resultType="com.guiji.callcenter.dao.entity.CallOutDetailRecord" >
         SELECT b.call_id as callId, b.call_detail_id as callDetailId,
@@ -285,6 +291,12 @@
         AND a.create_time > #{startTime}
         AND ( (b.agent_record_file is not null AND b.agent_record_url is null) or
         (b.customer_record_file is not null AND b.customer_record_url is null)   )
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
     <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map">
         select count(*)

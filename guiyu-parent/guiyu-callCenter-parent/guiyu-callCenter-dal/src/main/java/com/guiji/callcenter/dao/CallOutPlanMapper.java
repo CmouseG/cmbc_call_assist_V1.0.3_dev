@@ -46,7 +46,7 @@ public interface CallOutPlanMapper {
     List<CallIdRecordUrl> selectCallIdRecordUrl(@Param("callId") BigInteger callId);
     List<CallIdRecordUrl> selectDetailIdRecordUrl(@Param("callDetailId") BigInteger callDetailId);
     List<CallOutRecord> getUnuploadCall(@Param("startTime") String startTime, @Param("endTime") String endTime,
-                                        @Param("serverId") String serverId);
+                                        @Param("serverId") String serverId, @Param("orgIdList") List<Integer> orgIdList);
     List<CallOutDetailRecord> getUnuploadDetailByCallId(@Param("startTime") String startTime, @Param("endTime") String endTime,
-                                                        @Param("serverId") String serverId);
+                                                        @Param("serverId") String serverId, @Param("orgIdList") List<Integer> orgIdList);
 }

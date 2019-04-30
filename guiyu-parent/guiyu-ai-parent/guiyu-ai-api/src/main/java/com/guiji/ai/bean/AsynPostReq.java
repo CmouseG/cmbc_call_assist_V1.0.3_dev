@@ -11,7 +11,8 @@ import lombok.Data;
 public class AsynPostReq
 {
     private String busId;
-    private String model;
-    private List<String> contents;
-    private String notifyUrl;
+    private String version; //tts版本（cpu/gpu）
+    private String model; // 模型
+    private List<String> contents; // 需要合成的句子集合
+    private String notifyUrl; // 回调地址
 }

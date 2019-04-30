@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RabbitListener(queues = "OrgIdMQ.direct.Auth")
+@RabbitListener(queues = "AddOrgNotice.fanout.Dispatch")
 public class CreateTableOfShardingMQListener
 {
 

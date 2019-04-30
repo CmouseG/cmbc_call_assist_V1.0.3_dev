@@ -93,8 +93,8 @@ rabbit:
     direct: 
       queue: SyncAgentMembers.direct.Auth|DelAgentMembers.direct.Auth
     fanout: 
-      exchange: addOrgNotice.fanoutExchange.Auth
-      queue:  OrgIdMQ.direct.Auth,AddOrgNotice.fanout.CallCenter
+      exchange: AddOrgNotice.fanoutExchange.Auth
+      queue: AddOrgNotice.fanout.Dispatch,AddOrgNotice.fanout.CallCenter
 
 
     

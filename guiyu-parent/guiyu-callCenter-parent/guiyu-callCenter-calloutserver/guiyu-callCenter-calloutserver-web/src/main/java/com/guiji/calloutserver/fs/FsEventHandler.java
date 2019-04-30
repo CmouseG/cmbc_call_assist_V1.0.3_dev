@@ -202,12 +202,16 @@ public class FsEventHandler {
 
         log.info("收到asr错误事件 [{}]",eventHeaders);
         String uuid = eventHeaders.get("UUID");
-        BigInteger callId;
+        Integer orgId;
+        BigInteger callId = null;
         try {
-            callId = new BigInteger(uuid);
+            String[] arr = uuid.split(Constant.UUID_SEPARATE);
+            callId = new BigInteger(arr[0]);
+            orgId = Integer.valueOf(arr[1]);
         }catch (Exception e){
             return;
         }
+
         String status = eventHeaders.get("status");
         String reason = null;
         if(status.equals("40000001")){
@@ -228,6 +232,7 @@ public class FsEventHandler {
             localFsServer.hangup(uuid); //挂断电话
             CallOutPlan callOutPlan = new CallOutPlan();
             callOutPlan.setCallId(callId);
+            callOutPlan.setOrgId(orgId);
             callOutPlan.setAccurateIntent("N");
             callOutPlan.setReason(reason);
             callOutPlanService.update(callOutPlan);

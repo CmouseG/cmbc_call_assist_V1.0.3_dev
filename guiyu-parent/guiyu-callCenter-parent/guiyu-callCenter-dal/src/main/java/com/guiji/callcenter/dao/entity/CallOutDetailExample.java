@@ -1016,66 +1016,6 @@ public class CallOutDetailExample {
             return (Criteria) this;
         }
 
-        public Criteria andShardingValueIsNull() {
-            addCriterion("sharding_value is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueIsNotNull() {
-            addCriterion("sharding_value is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueEqualTo(Integer value) {
-            addCriterion("sharding_value =", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueNotEqualTo(Integer value) {
-            addCriterion("sharding_value <>", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueGreaterThan(Integer value) {
-            addCriterion("sharding_value >", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueGreaterThanOrEqualTo(Integer value) {
-            addCriterion("sharding_value >=", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueLessThan(Integer value) {
-            addCriterion("sharding_value <", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueLessThanOrEqualTo(Integer value) {
-            addCriterion("sharding_value <=", value, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueIn(List<Integer> values) {
-            addCriterion("sharding_value in", values, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueNotIn(List<Integer> values) {
-            addCriterion("sharding_value not in", values, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueBetween(Integer value1, Integer value2) {
-            addCriterion("sharding_value between", value1, value2, "shardingValue");
-            return (Criteria) this;
-        }
-
-        public Criteria andShardingValueNotBetween(Integer value1, Integer value2) {
-            addCriterion("sharding_value not between", value1, value2, "shardingValue");
-            return (Criteria) this;
-        }
-
         public Criteria andIsupdateIsNull() {
             addCriterion("isupdate is null");
             return (Criteria) this;
@@ -1273,6 +1213,66 @@ public class CallOutDetailExample {
 
         public Criteria andKeywordsNotBetween(String value1, String value2) {
             addCriterion("keywords not between", value1, value2, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIsNull() {
+            addCriterion("org_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIsNotNull() {
+            addCriterion("org_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdEqualTo(Integer value) {
+            addCriterion("org_id =", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotEqualTo(Integer value) {
+            addCriterion("org_id <>", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThan(Integer value) {
+            addCriterion("org_id >", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("org_id >=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThan(Integer value) {
+            addCriterion("org_id <", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThanOrEqualTo(Integer value) {
+            addCriterion("org_id <=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIn(List<Integer> values) {
+            addCriterion("org_id in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotIn(List<Integer> values) {
+            addCriterion("org_id not in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdBetween(Integer value1, Integer value2) {
+            addCriterion("org_id between", value1, value2, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("org_id not between", value1, value2, "orgId");
             return (Criteria) this;
         }
     }

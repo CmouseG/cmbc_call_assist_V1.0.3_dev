@@ -35,4 +35,7 @@ public class ChannelHangupEvent {
 
     //sip挂机错误码
     private String sipHangupCause;
+
+    //rtp_audio_in_media_packet_count
+    private String rtpAudioInMediaPacketCount;
 }

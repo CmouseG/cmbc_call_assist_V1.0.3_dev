@@ -4,8 +4,10 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.AgentMapper;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.CallOutRecordMapper;
+import com.guiji.callcenter.dao.MyCallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
+import com.guiji.callcenter.dao.entityext.MyCallOutPlanQueryEntity;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.controller.BatchExportController;
 import com.guiji.ccmanager.entity.CallOutPlanQueryEntity;
@@ -70,36 +72,25 @@ public class BatchExportServiceImpl implements BatchExportService {
     CallOutRecordMapper callOutRecordMapper;
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
+    @Autowired
+    MyCallOutPlanMapper myCallOutPlanMapper;
 
 
     private static final int batchCount = 30000;
     private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
 
     @Override
-    public int countTotalNum(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode, CallRecordListReq callRecordListReq) {
-        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
-        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
-        callOutPlanQueryEntity.setStartDate(startDate);
-        callOutPlanQueryEntity.setEndDate(endDate);
-        callOutPlanQueryEntity.setCustomerId(customerId);
-        callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setAuthLevel(authLevel);
-        if(callRecordListReq.getCheckAll()!=null &&callRecordListReq.getCheckAll() &&
-                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
-            List<String> list = callRecordListReq.getExcludeList();
-            List<BigInteger> notInList = new ArrayList<>();
-            for(String callId :list){
-                notInList.add(new BigInteger(callId));
-            }
-            callOutPlanQueryEntity.setNotInList(notInList);
-        }
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), null);
+    public int countTotalNum(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
+                             CallRecordListReq callRecordListReq, Integer orgId) {
 
-        return callOutPlanMapper.countByExample(example);
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = callDetailService.prepareQuery(startDate, endDate,authLevel,customerId,callRecordListReq,orgId);
+
+        int result = myCallOutPlanMapper.countCallOutPlan(myCallOutPlanQueryEntity);
+        return result;
     }
 
     @Override
-    public void generateExcelFile(Date finalStart, Date finalEnd, Integer authLevel, String userId, String orgCode,
+    public void generateExcelFile(Date finalStart, Date finalEnd, Integer authLevel, String userId, Integer orgId,
                                   CallRecordListReq callRecordListReq, Integer isDesensitization, String recordId) {
 
         String userName = userId;
@@ -128,19 +119,18 @@ public class BatchExportServiceImpl implements BatchExportService {
         for (int i = 1; i <= excelCount; i++) {
             log.info("第[{}]个excel开始生产",i);
             List<BigInteger> idList;
+            MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = callDetailService.prepareQuery(finalStart, finalEnd,authLevel,userId,callRecordListReq,orgId);
             if (i == excelCount) {
-                idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
-                        callRecordListReq, isDesensitization, minId, remainder);
+                idList = callrecord(myCallOutPlanQueryEntity, callRecordListReq, minId, remainder);
             } else {
-                idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
-                        callRecordListReq, isDesensitization, minId, batchCount);
+                idList = callrecord(myCallOutPlanQueryEntity, callRecordListReq, minId, batchCount);
             }
             if (idList != null && idList.size() > 0) {
                 int listSize = idList.size();
                 minId = idList.get(listSize - 1);
 
                 try {
-                    writeExcel(idList, isDesensitization, userName, uuidDir);
+                    writeExcel(myCallOutPlanQueryEntity, idList, isDesensitization, userName, uuidDir);
                 } catch (Exception e) {
                     log.error("生成excel文件出现异常", e);
                 }
@@ -197,14 +187,15 @@ public class BatchExportServiceImpl implements BatchExportService {
     }
 
 
-    public void writeExcel(List<BigInteger> idList, Integer isDesensitization, String userName, String uuidDir) throws Exception {
+    public void writeExcel(MyCallOutPlanQueryEntity myCallOutPlanQueryEntity, List<BigInteger> idList,
+                           Integer isDesensitization, String userName, String uuidDir) throws Exception {
 
 
         log.info("idList准备完毕，准备获取对话详情和通话记录,size[{}]", idList.size());
         //对话详情
-        Map<String, String> map = callDetailService.getDialogues(idList);
+        Map<String, String> map = callDetailService.getDialogues(idList, myCallOutPlanQueryEntity);
         //通话记录
-        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList, isDesensitization);
+        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList, isDesensitization, myCallOutPlanQueryEntity);
         log.info("已获取对话详情和通话记录信息");
 
         int listSize = listPlan.size();
@@ -240,36 +231,9 @@ public class BatchExportServiceImpl implements BatchExportService {
     }
 
     //    @Override
-    public List<BigInteger> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
-                                       CallRecordListReq callRecordListReq, Integer isDesensitization, BigInteger minId, int pageSize) {
+    public List<BigInteger> callrecord(MyCallOutPlanQueryEntity myCallOutPlanQueryEntity, CallRecordListReq callRecordListReq, BigInteger minId, int pageSize) {
 
-        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
-        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
-        callOutPlanQueryEntity.setStartDate(startDate);
-        callOutPlanQueryEntity.setEndDate(endDate);
-        callOutPlanQueryEntity.setCustomerId(customerId);
-        callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setAuthLevel(authLevel);
-        if(callRecordListReq.getCheckAll()!=null && callRecordListReq.getCheckAll() &&
-                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
-            List<String> list = callRecordListReq.getExcludeList();
-            List<BigInteger> notInList = new ArrayList<>();
-            for(String callId :list){
-               notInList.add(new BigInteger(callId));
-            }
-            callOutPlanQueryEntity.setNotInList(notInList);
-        }
-        if(callRecordListReq.getCheckAll()==null || !callRecordListReq.getCheckAll()){
-            List<String> list = callRecordListReq.getIncludeList();
-            List<BigInteger> inList = new ArrayList<>();
-            for(String callId :list){
-                inList.add(new BigInteger(callId));
-            }
-            callOutPlanQueryEntity.setInList(inList);
-
-        }
-
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity, callRecordListReq.getCustomerId(), minId);
+//        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = callDetailService.prepareQuery(startDate, endDate,authLevel,customerId,callRecordListReq,orgId);
 
         int limitStart = 0;
         if (minId == null) {
@@ -280,17 +244,10 @@ public class BatchExportServiceImpl implements BatchExportService {
             }
         }
 
-//        String endCount = callRecordListReq.getEndCount();
-//        int pageSize = Integer.valueOf(endCount).intValue() - limitStart;
-//        int pageSize = 200000;
+        myCallOutPlanQueryEntity.setLimitStart(limitStart);
+        myCallOutPlanQueryEntity.setLimitEnd(pageSize);
 
-        example.setLimitStart(limitStart);
-        example.setLimitEnd(pageSize);
-        example.setOrderByClause("create_time desc");
-        example.setIsDesensitization(isDesensitization);
-
-        List<BigInteger> listIds = callOutPlanMapper.selectCallIds4Encrypt(example);
-
+        List<BigInteger> listIds = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
 
         return listIds;
     }
@@ -406,7 +363,7 @@ public class BatchExportServiceImpl implements BatchExportService {
 
 
     @Override
-    public void generateAudioFile(Date finalStart, Date finalEnd, Integer authLevel, String userId, String orgCode,
+    public void generateAudioFile(Date finalStart, Date finalEnd, Integer authLevel, String userId, Integer orgId,
                                   CallRecordListReq callRecordListReq, Integer isDesensitization, String recordId) {
 
         int startCount = Integer.valueOf(callRecordListReq.getStartCount());
@@ -427,13 +384,13 @@ public class BatchExportServiceImpl implements BatchExportService {
 
         for (int i = 1; i <= excelCount; i++) {
 
+            MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = callDetailService.prepareQuery(finalStart, finalEnd,authLevel,userId,callRecordListReq,orgId);
+
             List<BigInteger> idList;
             if (i == excelCount) {
-                idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
-                        callRecordListReq, isDesensitization, minId, remainder);
+                idList = callrecord(myCallOutPlanQueryEntity, callRecordListReq, minId, remainder);
             } else {
-                idList = callrecord(finalStart, finalEnd, authLevel, userId, orgCode,
-                        callRecordListReq, isDesensitization, minId, batchCount);
+                idList = callrecord(myCallOutPlanQueryEntity, callRecordListReq, minId, batchCount);
             }
             if (idList != null && idList.size() > 0) {
                 int listSize = idList.size();

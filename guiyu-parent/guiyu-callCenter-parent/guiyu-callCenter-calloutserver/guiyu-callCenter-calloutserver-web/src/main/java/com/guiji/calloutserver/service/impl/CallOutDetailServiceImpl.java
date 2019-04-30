@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @Auther: 魏驰
@@ -27,7 +26,7 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     @Override
     public void save(CallOutDetail callOutDetail) {
         //设置分表字段的值
-        callOutDetail.setShardingValue(new Random().nextInt(100));
+//        callOutDetail.setShardingValue(new Random().nextInt(100));
         //处理  意向标签  accurate_intent":"D*有效对话轮数:0</br>未命中关键词
 
         String intent = callOutDetail.getAccurateIntent();
@@ -57,12 +56,13 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
     }
     @Override
-    public CallOutDetail getLastDetail(String callId) {
+    public CallOutDetail getLastDetail(String callId,Integer orgId) {
 
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(new BigInteger(callId));
-        criteria.andAccurateIntentIsNotNull();
+        criteria.andCallIdEqualTo(new BigInteger(callId))
+                .andOrgIdEqualTo(orgId)
+                .andAccurateIntentIsNotNull();
         example.setOrderByClause("bot_answer_time desc");
         example.setLimitStart(0);
         example.setLimitEnd(1);
@@ -74,10 +74,11 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     }
 
     @Override
-    public Integer getTalkNum(BigInteger callId) {
+    public Integer getTalkNum(BigInteger callId, Integer orgId) {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
         criteria.andCallIdEqualTo(callId);
+        criteria.andOrgIdEqualTo(orgId);
         criteria.andBotAnswerTimeIsNotNull();
         return callOutDetailMapper.countByExample(example);
     }

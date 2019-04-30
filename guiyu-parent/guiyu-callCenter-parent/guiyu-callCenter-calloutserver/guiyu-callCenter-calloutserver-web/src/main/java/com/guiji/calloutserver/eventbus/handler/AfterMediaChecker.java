@@ -40,7 +40,7 @@ public class AfterMediaChecker {
     @Subscribe
     @AllowConcurrentEvents
     public void handleToAgent(ToAgentEvent toAgentEvent){
-        String uuid = toAgentEvent.getCallPlan().getCallId().toString();
+        String uuid = toAgentEvent.getUuid();
         log.info("收到ToAgentEvent，开始从MediaChecker中移除计时器, uuid[{}]", uuid);
         removeMediaCheck(uuid);
     }

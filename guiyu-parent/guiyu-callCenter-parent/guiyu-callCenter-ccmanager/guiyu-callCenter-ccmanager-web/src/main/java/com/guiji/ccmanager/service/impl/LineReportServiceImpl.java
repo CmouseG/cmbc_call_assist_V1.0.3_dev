@@ -6,6 +6,7 @@ import com.guiji.callcenter.dao.StastisticReportLineShardingMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.LineReportService;
 import com.guiji.ccmanager.utils.DateUtils;
 import com.guiji.clm.api.LineMarketRemote;
@@ -38,6 +39,8 @@ public class LineReportServiceImpl implements LineReportService {
     LineInfoMapper lineInfoMapper;
     @Autowired
     LineMarketRemote lineMarketRemote;
+    @Autowired
+    AuthService authService;
 
     @Override
     @Transactional
@@ -58,9 +61,10 @@ public class LineReportServiceImpl implements LineReportService {
 
         logger.info("开始统计report_line_code,startTime[{}],endTime[{}]",startTime,endTime);
 
+        List<Integer> orgIds = authService.getAllOrgIds();
         //先删除，防止重跑
         stastisticReportLineMapper.deleteReportLineCode(endTime);
-        List<ReportLineCode> list = stastisticReportLineShardingMapper.selectLineHangupCodeReport(startTime,endTime);
+        List<ReportLineCode> list = stastisticReportLineShardingMapper.selectLineHangupCodeReport(startTime,endTime,orgIds);
 
         if(list!=null && list.size()>0){
 

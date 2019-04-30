@@ -1,5 +1,7 @@
 package com.guiji.manager;
 
+import com.guiji.component.result.Result;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 
@@ -16,11 +18,11 @@ public interface FsAgentManager {
      */
     void init(FsBindVO fsBindVO);
 
-     /**
-      * 上传录音文件
-      * @param fileName  文件名称
-      * @param busiType  业务类型
-      * @return
-      */
-    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId);
+    /**
+     * 上传录音文件
+     * @param fileName  文件名称
+     * @param busiType  业务类型
+     * @return
+     */
+    Result.ReturnData uploadRecord(String recordId, String busiId, String fileName, String busiType, Long userId, RecordType recordType);;
 }

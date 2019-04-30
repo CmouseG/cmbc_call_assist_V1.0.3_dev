@@ -54,14 +54,14 @@ public class AIManagerImpl implements AIManager {
     /**
      * 申请新的ai资源
      */
-    public AIResponse applyAi(AIInitRequest aiRequest) throws Exception {
+    public AIResponse applyAi(AIInitRequest aiRequest,String callid) throws Exception {
 
         AiCallStartReq aiCallStartReq = new AiCallStartReq();
         aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
         aiCallStartReq.setAiNo(aiRequest.getAiId());
         String tempId = aiRequest.getTempId();
         aiCallStartReq.setTemplateId(tempId);
-        aiCallStartReq.setSeqId(String.valueOf(aiRequest.getUuid()));
+        aiCallStartReq.setSeqId(aiRequest.getUuid());
         aiCallStartReq.setUserId(aiRequest.getUserId());
         aiCallStartReq.setDisSeqId(aiRequest.getPlanUuid());
 
@@ -107,16 +107,16 @@ public class AIManagerImpl implements AIManager {
         AIResponse aiResponse = new AIResponse();
         aiResponse.setResult(true);
         aiResponse.setMatched(true);
-        aiResponse.setCallId(aiRequest.getUuid());
+        aiResponse.setCallId(callid);
         aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
         aiResponse.setReason(sellbotResponse.getReason());
 
-        String wavFilename = robotNextHelper.getWavFilename(sellbotResponse.getWav_filename(),tempId,aiRequest.getUuid());
+        String wavFilename = robotNextHelper.getWavFilename(sellbotResponse.getWav_filename(),tempId,callid);
         Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
         aiResponse.setWavFile(wavFilename);
         aiResponse.setAiId(aiCallNext.getAiNo());
         aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-        double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
+        double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,callid);
 //        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
         aiResponse.setWavDuration(wavDruation);
         return aiResponse;
@@ -132,14 +132,27 @@ public class AIManagerImpl implements AIManager {
      */
     public void sendAiRequest(AIRequest aiRequest) throws Exception {
 
+        String uuid = aiRequest.getUuid();
+        String callId;
+        Integer orgId;
+        BigInteger bigIntegerId = null;
+        try {
+            String[] arr = uuid.split(Constant.UUID_SEPARATE);
+            callId = arr[0];
+            orgId = Integer.valueOf(arr[1]);
+            bigIntegerId = new BigInteger(callId);
+        }catch (Exception e){
+            return;
+        }
+
         log.info("开始发起sellbot请求，request[{}]", aiRequest);
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(aiRequest.getUuid()));
+            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
 
             AiFlowMsgPushReq aiFlowMsgPushReq = new AiFlowMsgPushReq();
             aiFlowMsgPushReq.setAiNo(callPlan.getAiId());
             aiFlowMsgPushReq.setSentence(aiRequest.getSentence());
-            aiFlowMsgPushReq.setSeqId(aiRequest.getUuid());
+            aiFlowMsgPushReq.setSeqId(uuid);
             aiFlowMsgPushReq.setTemplateId(callPlan.getTempId());
             aiFlowMsgPushReq.setTimestamp(new Date().getTime());
             aiFlowMsgPushReq.setUserId(String.valueOf(callPlan.getCustomerId()));
@@ -157,7 +170,7 @@ public class AIManagerImpl implements AIManager {
     @Override
     public void releaseAi(CallOutPlan callOutPlan) {
         AiHangupReq hangupReq = new AiHangupReq();
-        hangupReq.setSeqId(callOutPlan.getCallId().toString());
+        hangupReq.setSeqId(callOutPlan.getCallId().toString()+Constant.UUID_SEPARATE+callOutPlan.getOrgId());
         hangupReq.setAiNo(callOutPlan.getAiId());
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));

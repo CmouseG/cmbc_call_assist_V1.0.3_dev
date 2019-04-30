@@ -19,23 +19,23 @@ public interface StatisticMapper {
 
     void updateTodayCountAndDruation(ReportCallToday reportCallToday);
 
-    List<ReportCallDay> countReportCallToday30();
-    List<ReportCallDay> countReportCallToday10();
-    List<ReportCallDay> countReportCallToday5();
-    List<ReportCallDay> countReportCallToday0();
+    List<ReportCallDay> countReportCallToday30(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallToday10(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallToday5(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallToday0(@Param("orgIdList") List<Integer> orgIdList);
 
-    List<ReportCallDay> countReportCallDayDruation30();
-    List<ReportCallDay> countReportCallDayDruation10();
-    List<ReportCallDay> countReportCallDayDruation5();
-    List<ReportCallDay> countReportCallDayDruation0();
+    List<ReportCallDay> countReportCallDayDruation30(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallDayDruation10(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallDayDruation5(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallDay> countReportCallDayDruation0(@Param("orgIdList") List<Integer> orgIdList);
 
     void insertReportCallDay(List<ReportCallDay> list);
     void insertReportCallToday(List<ReportCallDay> list);
 
     void deleteReportCallDay();
 
-    List<ReportCallHour> countReportCallHourOut();
-    List<ReportCallHour> countReportCallHourConnect();
+    List<ReportCallHour> countReportCallHourOut(@Param("orgIdList") List<Integer> orgIdList);
+    List<ReportCallHour> countReportCallHourConnect(@Param("orgIdList") List<Integer> orgIdList);
 
     void insertReportCallHour(List<ReportCallHour> listOut);
 

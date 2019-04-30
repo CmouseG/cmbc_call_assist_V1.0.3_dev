@@ -100,10 +100,10 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallDetail> findByCallPlanId(String callPlanId, ECallDirection callDirection) {
+    public List<CallDetail> findByCallPlanId(String callPlanId, ECallDirection callDirection,Integer orgId) {
         List<CallDetail> callDetails = new ArrayList<>();
         if(callDirection == ECallDirection.OUTBOUND){
-            List<CallOutDetail> callOutDetails = callOutDetailService.findByCallPlanId(callPlanId);
+            List<CallOutDetail> callOutDetails = callOutDetailService.findByCallPlanId(callPlanId, orgId);
             List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(new BigInteger(callPlanId));
 
             //读取录音文件，拼装到结果中
@@ -144,8 +144,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public void getExportCalldetails(String callPlanId, HttpServletResponse response) {
-        List<CallOutDetail> callOutDetails = callOutDetailService.findByCallPlanId(callPlanId);
+    public void getExportCalldetails(String callPlanId, HttpServletResponse response, Integer orgId) {
+        List<CallOutDetail> callOutDetails = callOutDetailService.findByCallPlanId(callPlanId, orgId);
 
         List<DetailsVO> detailsVOList = new ArrayList<>();
         for (CallOutDetail callDetail : callOutDetails) {

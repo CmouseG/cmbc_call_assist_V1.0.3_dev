@@ -3,8 +3,11 @@ package com.guiji.ccmanager.service.impl;
 import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
+import com.guiji.callcenter.dao.entityext.MyCallOutPlanQueryEntity;
+import com.guiji.ccmanager.constant.AuthLevelEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.CallOutPlanQueryEntity;
+import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
@@ -56,6 +59,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     CallPlanExportMapper callPlanExportMapper;
     @Autowired
     LineNameService lineNameService;
+    @Autowired
+    MyCallOutPlanMapper myCallOutPlanMapper;
 
     @Override
     public void updateIsRead(String callId) {
@@ -71,10 +76,11 @@ public class CallDetailServiceImpl implements CallDetailService {
         getCriteria(criteria, callOutPlanQueryEntity, queryUser, false);
 
         long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
-        if(callOutPlanQueryEntity.getAuthLevel() ==1 && authService.isSeat(userId)){//具有人工坐席权限
+        if(authService.isSeat(userId)){//具有人工坐席权限
             try{
+                String userName = authService.getUserName(userId);
                 AgentExample agentExample = new AgentExample();
-                agentExample.createCriteria().andCustomerIdEqualTo(Long.valueOf(callOutPlanQueryEntity.getCustomerId()));
+                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
                 List<Agent> listAgent = agentMapper.selectByExample(agentExample);
                 Long agentId = listAgent.get(0).getUserId();
                 CallOutPlanExample.Criteria criteria2 = example.or();
@@ -169,22 +175,29 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public List<Map> getCallRecordList(CallRecordReq callRecordReq) {
 
-        Map map = new HashMap();
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = new MyCallOutPlanQueryEntity();
         if (callRecordReq.getUserId() != null)
-            map.put("customerId", callRecordReq.getUserId());
-        if (callRecordReq.getIsDesensitization() != null)
-            map.put("isDesensitization", callRecordReq.getIsDesensitization());
-        if (callRecordReq.getOrgCode() != null)
-            map.put("orgCode", callRecordReq.getOrgCode());
-        map.put("limitStart", (callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
-        map.put("limitEnd", callRecordReq.getPageSize());
-        if (callRecordReq.getTime() != null)
-            map.put("time", callRecordReq.getTime() - 1);
-        if (callRecordReq.getAccurateIntent() != null)
-            map.put("accurateIntent", callRecordReq.getAccurateIntent());
-        if (callRecordReq.getAuthLevel() != null)
-            map.put("authLevel", callRecordReq.getAuthLevel());
-        List<BigInteger> ids = callOutPlanMapper.selectCallPlanRecordIds4Encrypt(map);
+            myCallOutPlanQueryEntity.setCustomerId(callRecordReq.getUserId().intValue());
+
+        myCallOutPlanQueryEntity.setLimitStart((callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
+        myCallOutPlanQueryEntity.setLimitEnd(callRecordReq.getPageSize());
+
+        if (callRecordReq.getTime() != null){
+            myCallOutPlanQueryEntity.setTime(callRecordReq.getTime() - 1);
+        }
+        if (callRecordReq.getAccurateIntent() != null){
+            myCallOutPlanQueryEntity.setAccurateIntent(callRecordReq.getAccurateIntent());
+        }
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(callRecordReq.getAuthLevel(),callRecordReq.getOrgId());
+        if(orgIdList!=null){
+            if(orgIdList.size()==1){
+                myCallOutPlanQueryEntity.setOrgId(orgIdList.get(0));
+            }else{
+                myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
+            }
+        }
+
+        List<BigInteger> ids = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
         if(ids!=null && ids.size()>0){
             List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
             return list;
@@ -210,36 +223,75 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
-                                                   int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization) {
+    public int callrecordCount(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
+                               CallRecordListReq callRecordListReq, Integer orgId) {
 
-        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
-        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
-        callOutPlanQueryEntity.setStartDate(startDate);
-        callOutPlanQueryEntity.setEndDate(endDate);
-        callOutPlanQueryEntity.setCustomerId(customerId);
-        callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setAuthLevel(authLevel);
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
-        int limitStart = (pageNo - 1) * pageSize;
-        example.setLimitStart(limitStart);
-        example.setLimitEnd(pageSize);
-        example.setOrderByClause("create_time desc");
-        example.setIsDesensitization(isDesensitization);
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = prepareQuery(startDate, endDate,authLevel,customerId,callRecordListReq,orgId);
+        int result = myCallOutPlanMapper.countCallOutPlan(myCallOutPlanQueryEntity);
+        return result;
+    }
 
-        List<CallOutPlan> list = null;
-        if(pageNo<10){
-            list = callOutPlanMapper.selectByExample4Encrypt(example);
-        }else{
-            List<BigInteger> listIds= callOutPlanMapper.selectCallIds4Encrypt(example);
-            if(listIds!=null && listIds.size()>0){
-                CallOutPlanExample exampleIds = new CallOutPlanExample();
-                exampleIds.createCriteria().andCallIdIn(listIds);
-                exampleIds.setOrderByClause("create_time desc");
+    @Override
+    public MyCallOutPlanQueryEntity prepareQuery(Date startDate, Date endDate, Integer authLevel, String customerId,
+                                                 CallRecordListReq callRecordListReq, Integer orgId){
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = getMyCallOutPlanQueryEntity(callRecordListReq);
+        myCallOutPlanQueryEntity.setStartDate(startDate);
+        myCallOutPlanQueryEntity.setEndDate(endDate);
 
-                list = callOutPlanMapper.selectByExample4Encrypt(exampleIds);
+        //权限过滤
+        if(authLevel == AuthLevelEnum.USER.getLevel()){
+            myCallOutPlanQueryEntity.setOrgId(orgId);
+            myCallOutPlanQueryEntity.setCustomerId(Integer.valueOf(customerId));
+            long longCustomerId = Long.valueOf(customerId);
+            if(authService.isSeat(longCustomerId)) {//具有人工坐席权限  //todo  方案二:不判断是否具有坐席权限，直接放在一个sql里面关联agent表查询算了
+                AgentExample agentExample = new AgentExample();
+                agentExample.createCriteria().andCustomerIdEqualTo(longCustomerId);
+                List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+                if(listAgent!=null && listAgent.size()>0){
+                    myCallOutPlanQueryEntity.setAgentId(String.valueOf(listAgent.get(0).getUserId()));
+                }
+            }
+        }else if(authLevel == AuthLevelEnum.ORG.getLevel()){
+            myCallOutPlanQueryEntity.setOrgId(orgId);
+        }else if(authLevel == AuthLevelEnum.ORG_EXT.getLevel()){
+            myCallOutPlanQueryEntity.setOrgIdList(authService.getAllOrgIds(orgId));
+        }
+
+        if(callRecordListReq.getCheckAll()!=null &&callRecordListReq.getCheckAll() &&
+                callRecordListReq.getExcludeList()!=null && callRecordListReq.getExcludeList().size()>0){
+            List<String> list = callRecordListReq.getExcludeList();
+            List<BigInteger> notInList = new ArrayList<>();
+            for(String callId :list){
+                notInList.add(new BigInteger(callId));
+            }
+            myCallOutPlanQueryEntity.setNotInList(notInList);
+        }
+
+        if(callRecordListReq.getCheckAll()==null || !callRecordListReq.getCheckAll()){
+            List<String> list = callRecordListReq.getIncludeList();
+            if(list!=null && list.size()>0){
+                List<BigInteger> inList = new ArrayList<>();
+                for(String callId :list){
+                    inList.add(new BigInteger(callId));
+                }
+                myCallOutPlanQueryEntity.setCallIdList(inList);
             }
         }
+
+        return myCallOutPlanQueryEntity;
+
+    }
+
+    @Override
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
+                                                   int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization, Integer orgId) {
+
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = prepareQuery(startDate, endDate,authLevel,customerId,callRecordListReq,orgId);
+        int limitStart = (pageNo - 1) * pageSize;
+        myCallOutPlanQueryEntity.setLimitStart(limitStart);
+        myCallOutPlanQueryEntity.setLimitEnd(pageSize);
+
+        List<CallOutPlan> list = myCallOutPlanMapper.selectCallOutPlanList(myCallOutPlanQueryEntity);
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 
@@ -269,96 +321,158 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public int callrecordCount(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode, CallRecordListReq callRecordListReq) {
+    public MyCallOutPlanQueryEntity getMyCallOutPlanQueryEntity(CallRecordListReq callRecordListReq){
 
-        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
-        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
-        callOutPlanQueryEntity.setStartDate(startDate);
-        callOutPlanQueryEntity.setEndDate(endDate);
-        callOutPlanQueryEntity.setCustomerId(customerId);
-        callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setAuthLevel(authLevel);
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = new MyCallOutPlanQueryEntity();
+//        BeanUtil.copyProperties(callRecordListReq, myCallOutPlanQueryEntity);
+        if(StringUtils.isNotBlank(callRecordListReq.getPhoneNum())){
+            myCallOutPlanQueryEntity.setPhoneNum(callRecordListReq.getPhoneNum());
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getTempId())){
+            myCallOutPlanQueryEntity.setTempId(callRecordListReq.getTempId());
+        }
+        if(callRecordListReq.getBatchId()!=null){
+            myCallOutPlanQueryEntity.setBatchId(callRecordListReq.getBatchId());
+        }
 
-        return callOutPlanMapper.countByExample(example);
+        if(StringUtils.isNotBlank(callRecordListReq.getDurationMin())){
+            myCallOutPlanQueryEntity.setDurationMin(Integer.valueOf(callRecordListReq.getDurationMin()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getDurationMax())){
+            myCallOutPlanQueryEntity.setDurationMax(Integer.valueOf(callRecordListReq.getDurationMax()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getBillSecMin())){
+            myCallOutPlanQueryEntity.setBillSecMin(Integer.valueOf(callRecordListReq.getBillSecMin()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getBillSecMax())){
+            myCallOutPlanQueryEntity.setBillSecMax(Integer.valueOf(callRecordListReq.getBillSecMax()));
+        }
+
+        String accurateIntent =callRecordListReq.getAccurateIntent();
+        if (StringUtils.isNotBlank(accurateIntent)) {
+            if (accurateIntent.contains(",")) {
+                String[] arr = accurateIntent.split(",");
+                myCallOutPlanQueryEntity.setAccurateIntentList(Arrays.asList(arr));
+            } else {
+                myCallOutPlanQueryEntity.setAccurateIntent(accurateIntent);
+            }
+        }
+        String freason =callRecordListReq.getFreason();
+        if (StringUtils.isNotBlank(freason)) {
+            if (freason.contains(",")) {
+                String[] arr = freason.split(",");
+                myCallOutPlanQueryEntity.setReasonList(Arrays.asList(arr));
+            } else {
+                myCallOutPlanQueryEntity.setReason(freason);
+            }
+        }
+
+        if(StringUtils.isNotBlank(callRecordListReq.getCallId())){
+            myCallOutPlanQueryEntity.setCallId(new BigInteger(callRecordListReq.getCallId()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getIsRead())){
+            myCallOutPlanQueryEntity.setIsRead(Integer.valueOf(callRecordListReq.getIsRead()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getCustomerId())){
+            myCallOutPlanQueryEntity.setQueryUser(Integer.valueOf(callRecordListReq.getCustomerId()));
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getIntervened())){
+            myCallOutPlanQueryEntity.setIntervened(Integer.valueOf(callRecordListReq.getIntervened()));
+        }
+
+        myCallOutPlanQueryEntity.setIsdel(0);
+        myCallOutPlanQueryEntity.setCallStateMin(Constant.CALLSTATE_HANGUP_OK);
+
+        return myCallOutPlanQueryEntity;
     }
 
+
     @Override
-    public CallPlanDetailRecordVO getCallDetail(BigInteger callId) {
+    public CallPlanDetailRecordVO getCallDetail(BigInteger callId,List<Integer> orgIdList) {
 
-        CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
-        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
-        callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
-        if (callOutPlan != null) {
+        CallOutPlanExample examplePlan = new CallOutPlanExample();
+        CallOutPlanExample.Criteria criteriaPlan = examplePlan.createCriteria();
+        criteriaPlan.andCallIdEqualTo(callId)
+                .andOrgIdIn(orgIdList);
+        List<CallOutPlan> callOutPlanList = callOutPlanMapper.selectByExample(examplePlan);
+        if(callOutPlanList!=null && callOutPlanList.size()>0){
+            CallOutPlan callOutPlan = callOutPlanList.get(0);
+            CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
+            callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
+            if (callOutPlan != null) {
 
-            CallOutDetailExample example = new CallOutDetailExample();
-            CallOutDetailExample.Criteria criteria = example.createCriteria();
-            criteria.andCallIdEqualTo(callId);
-            example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
-            List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
+                CallOutDetailExample example = new CallOutDetailExample();
+                CallOutDetailExample.Criteria criteria = example.createCriteria();
+                criteria.andCallIdEqualTo(callId);
+                example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
+                List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
 
-            CallOutDetailRecordExample exampleRecord = new CallOutDetailRecordExample();
-            CallOutDetailRecordExample.Criteria criteriaRecord = exampleRecord.createCriteria();
-            criteriaRecord.andCallIdEqualTo(callId);
-            List<CallOutDetailRecord> records = callOutDetailRecordMapper.selectByExample(exampleRecord);
+                CallOutDetailRecordExample exampleRecord = new CallOutDetailRecordExample();
+                CallOutDetailRecordExample.Criteria criteriaRecord = exampleRecord.createCriteria();
+                criteriaRecord.andCallIdEqualTo(callId);
+                List<CallOutDetailRecord> records = callOutDetailRecordMapper.selectByExample(exampleRecord);
 
-            List<CallOutDetailVO> resList = new ArrayList<CallOutDetailVO>();
-//            for (CallOutDetail callOutDetail : details) {
-            for (int i=0; i<details.size(); i++) { //加上无声音的判断
-                CallOutDetail callOutDetail = details.get(i);
-                CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
-                BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
-                callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
-                for (CallOutDetailRecord callOutDetailRecord : records) {
-                    if (callOutDetailRecord.getCallDetailId().equals(callOutDetail.getCallDetailId())) {
-                        BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
+                List<CallOutDetailVO> resList = new ArrayList<CallOutDetailVO>();
+    //            for (CallOutDetail callOutDetail : details) {
+                for (int i=0; i<details.size(); i++) { //加上无声音的判断
+                    CallOutDetail callOutDetail = details.get(i);
+                    CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
+                    BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
+                    callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
+                    for (CallOutDetailRecord callOutDetailRecord : records) {
+                        if (callOutDetailRecord.getCallDetailId().equals(callOutDetail.getCallDetailId())) {
+                            BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
+                        }
                     }
+
+                    if(callOutDetail.getBotAnswerTime()!=null && i>0){
+                        CallOutDetail callOutDetailBefore = details.get(i-1);
+                        if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
+                            CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                            callOutDetailVOInsert.setCustomerSayText("无声音");
+                            callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
+                            callOutDetailVOInsert.setCallId(callId);
+                            resList.add(callOutDetailVOInsert);
+                        }
+                    }
+
+                    if(callOutDetail.getAgentAnswerTime()!=null && i>0){
+                        CallOutDetail callOutDetailBefore = details.get(i-1);
+                        if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
+                            CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                            callOutDetailVOInsert.setCustomerSayText("无声音");
+                            callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
+                            callOutDetailVOInsert.setCallId(callId);
+                            resList.add(callOutDetailVOInsert);
+                        }
+                    }
+
+                    resList.add(callOutDetailVO);
                 }
 
-                if(callOutDetail.getBotAnswerTime()!=null && i>0){
-                    CallOutDetail callOutDetailBefore = details.get(i-1);
-                    if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
-                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
-                        callOutDetailVOInsert.setCustomerSayText("无声音");
-                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
-                        callOutDetailVOInsert.setCallId(callId);
-                        resList.add(callOutDetailVOInsert);
-                    }
+                CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
+                BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
+                callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
+                callPlanDetailRecordVO.setDetailList(resList);
+                if(callOutRecord!=null && callOutRecord.getRecordUrl()!=null){
+                    callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                 }
 
-                if(callOutDetail.getAgentAnswerTime()!=null && i>0){
-                    CallOutDetail callOutDetailBefore = details.get(i-1);
-                    if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
-                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
-                        callOutDetailVOInsert.setCustomerSayText("无声音");
-                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
-                        callOutDetailVOInsert.setCallId(callId);
-                        resList.add(callOutDetailVOInsert);
-                    }
-                }
-
-                resList.add(callOutDetailVO);
+                return callPlanDetailRecordVO;
             }
-
-            CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
-            BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
-            callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
-            callPlanDetailRecordVO.setDetailList(resList);
-            if(callOutRecord!=null && callOutRecord.getRecordUrl()!=null){
-                callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
-            }
-
-            return callPlanDetailRecordVO;
         }
 
         return null;
     }
 
     @Override
-    public List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> uuids) {
+    public List<CallPlanDetailRecordVO> getCallPlanDetailRecord(CallPlanUuidQuery callPlanUuidQuery) {
+
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(callPlanUuidQuery.getAuthLevel(),callPlanUuidQuery.getOrgId());
 
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andPlanUuidIn(uuids);
+        example.createCriteria().andPlanUuidIn(callPlanUuidQuery.getCallIds())
+                .andOrgIdIn(orgIdList);
         List<CallOutPlan> listPlan = callOutPlanMapper.selectByExample(example);
 
         List<BigInteger> callIds = new ArrayList<>();
@@ -377,7 +491,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
             //获取CallOutDetail列表
             CallOutDetailExample exampleDetail = new CallOutDetailExample();
-            exampleDetail.createCriteria().andCallIdIn(callIds);
+            exampleDetail.createCriteria().andCallIdIn(callIds).andOrgIdIn(orgIdList);
             exampleDetail.setOrderByClause("call_id,bot_answer_time asc");
             List<CallOutDetail> details = callOutDetailMapper.selectByExample(exampleDetail);
 
@@ -442,10 +556,10 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public String getDialogue(String callId) {
+    public String getDialogue(String callId,List<Integer> orgIdList) {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(new BigInteger(callId));
+        criteria.andCallIdEqualTo(new BigInteger(callId)).andOrgIdIn(orgIdList);
         example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
@@ -461,9 +575,11 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> idList, Integer isDesensitization) {
+    public List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> idList, Integer isDesensitization,
+                                                         MyCallOutPlanQueryEntity myCallOutPlanQueryEntity) {
 
-        List<CallOutPlanRegistration> list = callPlanExportMapper.selectExportCallPlanDetail(idList,isDesensitization);
+        List<CallOutPlanRegistration> list = callPlanExportMapper.selectExportCallPlanDetail(idList,isDesensitization,
+                myCallOutPlanQueryEntity.getOrgId(),myCallOutPlanQueryEntity.getOrgIdList());
 
         Map<String,String> tempmap = new HashMap();
         Map<Integer,String> usernameMap = new HashMap();
@@ -494,15 +610,21 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public Map<String, String> getDialogues(List<BigInteger> idList) {
-        CallOutDetailExample example = new CallOutDetailExample();
+    public Map<String, String> getDialogues(List<BigInteger> idList,MyCallOutPlanQueryEntity myCallOutPlanQueryEntity) {
 
-        example.createCriteria().andCallIdIn(idList);
+        CallOutDetailExample example = new CallOutDetailExample();
+        CallOutDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andCallIdIn(idList);
+        if(myCallOutPlanQueryEntity.getOrgId()!=null){
+            criteria.andOrgIdEqualTo(myCallOutPlanQueryEntity.getOrgId());
+        };
+        if(myCallOutPlanQueryEntity.getOrgIdList()!=null){
+            criteria.andOrgIdIn(myCallOutPlanQueryEntity.getOrgIdList());
+        };
+
         example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
 
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
-
-
 
         Map<String, String> map = new HashMap<String, String>();
         if (list != null && list.size() > 0) {
@@ -563,7 +685,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public void delRecord(String callIds) {
+    public void delRecord(String callIds, List<Integer> orgIdList) {
         String[] callidArr = callIds.split(",");
         List<BigInteger> idList = new ArrayList();
         for(String callId: callidArr){
@@ -572,7 +694,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutPlan callOutPlan = new CallOutPlan();
         callOutPlan.setIsdel(1);
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andCallIdIn(idList);
+        example.createCriteria().andCallIdIn(idList).andOrgIdIn(orgIdList);
         callOutPlanMapper.updateByExampleSelective(callOutPlan, example);
     }
 
@@ -583,34 +705,49 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Override
     @Transactional
-    public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq,Long userId) {
+    public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq,Long userId,List<Integer> orgIdList) {
         BigInteger detailId = new BigInteger(callDetailUpdateReq.getCallDetailId());
 
-        CallOutDetail callOutDetail =  callOutDetailMapper.selectByPrimaryKey(detailId);
-        String customerSayText = callOutDetail.getCustomerSayText();
+        CallOutDetailExample example = new CallOutDetailExample();
+        example.createCriteria().andCallDetailIdEqualTo(detailId).andOrgIdIn(orgIdList);
+        List<CallOutDetail> callOutDetailList =  callOutDetailMapper.selectByExample(example);
+        if(callOutDetailList!=null && callOutDetailList.size()>0){
 
-        CallOutDetail record = new CallOutDetail();
-        String customerSayTextNew = callDetailUpdateReq.getCustomerSayText();
-        record.setCustomerSayText(customerSayTextNew);
-        record.setCallDetailId(detailId);
-        record.setIsupdate(1);
-        callOutDetailMapper.updateByPrimaryKeySelective(record);
+            CallOutDetail callOutDetail = callOutDetailList.get(0);
+            String customerSayText = callOutDetail.getCustomerSayText();
 
-        CallOutDetailLog detailLog = new CallOutDetailLog();
-        detailLog.setCallDetailId(detailId);
-        detailLog.setUpdateBy(userId.intValue());
-        detailLog.setUpdateTime(new Date());
-        detailLog.setCustomerSayTextNew(customerSayTextNew);
-        if(customerSayText!=null){
-            detailLog.setCustomerSayText(customerSayText);
+            CallOutDetail record = new CallOutDetail();
+            String customerSayTextNew = callDetailUpdateReq.getCustomerSayText();
+            record.setCustomerSayText(customerSayTextNew);
+            record.setCallDetailId(detailId);
+            record.setIsupdate(1);
+            callOutDetailMapper.updateByPrimaryKeySelective(record);
+
+            CallOutDetailLog detailLog = new CallOutDetailLog();
+            detailLog.setCallDetailId(detailId);
+            detailLog.setUpdateBy(userId.intValue());
+            detailLog.setUpdateTime(new Date());
+            detailLog.setCustomerSayTextNew(customerSayTextNew);
+            if(customerSayText!=null){
+                detailLog.setCustomerSayText(customerSayText);
+            }
+            callOutDetailLogMapper.insertSelective(detailLog);
         }
-        callOutDetailLogMapper.insertSelective(detailLog);
     }
 
     @Override
-    public List<CallOutPlan> getCallRecordListByPhone(String phone) {
+    public List<CallOutPlan> getCallRecordListByPhone(String phone,List<Integer> orgIdList) {
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andPhoneNumEqualTo(phone);
+        CallOutPlanExample.Criteria criteria = example.createCriteria();
+        criteria.andPhoneNumEqualTo(phone);
+        if(orgIdList!=null){
+            if(orgIdList.size()==1){
+                criteria.andOrgIdEqualTo(orgIdList.get(0));
+            }else if(orgIdList.size()>1){
+                criteria.andOrgIdIn(orgIdList);
+            }
+        }
+
         return callOutPlanMapper.selectByExample(example);
     }
 }

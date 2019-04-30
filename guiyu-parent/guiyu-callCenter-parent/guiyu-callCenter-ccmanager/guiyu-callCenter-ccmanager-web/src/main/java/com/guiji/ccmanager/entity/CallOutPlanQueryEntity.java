@@ -32,6 +32,8 @@ public class CallOutPlanQueryEntity {
     String intervened;
     Integer authLevel;
     Integer batchId;
+    Integer callState;
+    Integer callStateMin;
 
     List<BigInteger> notInList;
     List<BigInteger> inList;

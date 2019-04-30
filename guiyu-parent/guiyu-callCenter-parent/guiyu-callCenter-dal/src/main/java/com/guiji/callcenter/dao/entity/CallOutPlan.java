@@ -67,6 +67,8 @@ public class CallOutPlan implements Serializable {
 
     private String orgCode;
 
+    private Integer orgId;
+
     private Integer batchId;
 
     private Integer talkNum;
@@ -331,6 +333,14 @@ public class CallOutPlan implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     public Integer getBatchId() {
         return batchId;
     }
@@ -424,6 +434,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", isdel=").append(isdel);
         sb.append(", isread=").append(isread);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgId=").append(orgId);
         sb.append(", batchId=").append(batchId);
         sb.append(", talkNum=").append(talkNum);
         sb.append(", isCancel=").append(isCancel);

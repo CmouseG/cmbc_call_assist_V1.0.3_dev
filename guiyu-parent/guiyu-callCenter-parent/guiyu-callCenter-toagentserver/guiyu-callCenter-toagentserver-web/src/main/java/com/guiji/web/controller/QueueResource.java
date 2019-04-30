@@ -101,13 +101,13 @@ public class QueueResource {
     @Jurisdiction("callCenter_agentGroupManage_defquery")
     @RequestMapping(path = "/queues", method = RequestMethod.GET)
     public Result.ReturnData<Paging> queryQueues(
-                                                 @RequestParam(value = "systemUserId", defaultValue = "") String systemUserId,
-                                                 @RequestParam(value = "queueName", defaultValue = "") String queueName,
-                                                 @RequestParam(value = "pageNo", defaultValue = "0") Integer page,
-                                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
-                                                 @RequestHeader int authLevel,
-                                                 @RequestHeader Long userId,
-                                                 @RequestHeader String orgCode) {
+            @RequestParam(value = "systemUserId", defaultValue = "") String systemUserId,
+            @RequestParam(value = "queueName", defaultValue = "") String queueName,
+            @RequestParam(value = "pageNo", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
+            @RequestHeader int authLevel,
+            @RequestHeader Long userId,
+            @RequestHeader String orgCode) {
         log.info("收到查询坐席组列表请求queueName:[{}],pageNo:[{}],pageSize:[{}],authLevel:[{}],userId:[{}],orgCode[{}]",queueName,page,size,authLevel,userId,orgCode);
         Paging paging = null;
         try {

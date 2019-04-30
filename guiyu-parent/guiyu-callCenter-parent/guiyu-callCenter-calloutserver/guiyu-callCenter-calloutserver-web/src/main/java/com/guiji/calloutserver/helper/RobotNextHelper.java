@@ -3,6 +3,7 @@ package com.guiji.calloutserver.helper;
 import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.CallOutDetail;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.EAIResponseType;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.entity.AIResponse;
@@ -67,22 +68,22 @@ public class RobotNextHelper {
         scheduleConcurrentHashMap = new ConcurrentHashMap<>();
     }
 
-    public void startAiCallNextTimer(AiCallNextReq aiCallNextReq, String agentGroupId) {
+    public void startAiCallNextTimer(AiCallNextReq aiCallNextReq, String agentGroupId, String callId, Integer orgId) {
         log.info("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
-        String callId = aiCallNextReq.getSeqId();
-        Channel channelInit = channelService.findByUuid(callId);
+        String uuid = aiCallNextReq.getSeqId();
+        Channel channelInit = channelService.findByUuid(uuid);
         if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return
-            log.info("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
+            log.info("startAiCallNextTimer findByUuid channelInit is null uuid[{}]",uuid);
             return;
         }
 
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
-                        log.debug("根据callId[{}]获取channel", callId);
-                        Channel channel = channelService.findByUuid(callId);
+                        log.debug("根据callId[{}]获取channel", uuid);
+                        Channel channel = channelService.findByUuid(uuid);
                         if(channel == null){
-                            log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);
-                            stopAiCallNextTimer(callId);
+                            log.info("startAiCallNextTimer findByUuid is null callId[{}]",uuid);
+                            stopAiCallNextTimer(uuid);
                             return;
                         }
                         Long startTime = channel.getStartPlayTime().getTime();
@@ -104,15 +105,15 @@ public class RobotNextHelper {
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
                         if(result.getCode().equals("00060006")){ //机器人不存在
-                            log.info("机器人不存在，停止定时任务aiCallNext, callId[{}]",callId);
-                            stopAiCallNextTimer(callId);
+                            log.info("机器人不存在，停止定时任务aiCallNext, uuid[{}]",uuid);
+                            stopAiCallNextTimer(uuid);
                             return;
                         }else {
                             if (aiCallNext != null && aiCallNext.getHelloStatus() != null && aiCallNext.getHelloStatus().equals("play")) {
                                 log.info("-------------end  robotRemote aiCallNext result[{}]", result);
                                 //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
-                                if (channelHelper.isChannelLock(callId)) {
-                                    log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", callId);
+                                if (channelHelper.isChannelLock(uuid)) {
+                                    log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", uuid);
                                     return;
                                 }
 
@@ -143,7 +144,7 @@ public class RobotNextHelper {
                                 double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
 //                                Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
                                 aiResponse.setWavDuration(wavDruation);
-                                dealWithResponse(aiResponse, agentGroupId);
+                                dealWithResponse(aiResponse, agentGroupId, orgId);
                             }
                         }
                     } catch (Exception e) {
@@ -152,16 +153,17 @@ public class RobotNextHelper {
                 },
                 0, 500, TimeUnit.MILLISECONDS);
 
-        scheduleConcurrentHashMap.put(callId, schedule);
+        scheduleConcurrentHashMap.put(uuid, schedule);
 
     }
 
 
-    public void dealWithResponse(AIResponse aiResponse,String agentGroupId) {
+    public void dealWithResponse(AIResponse aiResponse,String agentGroupId, Integer orgId) {
         String callId = aiResponse.getCallId();
         CallOutDetail callDetail = new CallOutDetail();
         callDetail.setCallId(new BigInteger(callId));
-        setDetailValues(aiResponse, callDetail, callId, agentGroupId);
+        callDetail.setOrgId(orgId);
+        setDetailValues(aiResponse, callDetail, agentGroupId, orgId);
         callOutDetailService.save(callDetail);
 
         CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
@@ -171,20 +173,21 @@ public class RobotNextHelper {
     }
 
 
-    public void setDetailValues(AIResponse aiResponse, CallOutDetail callDetail, String callId, String agentGroupId) {
+    public void setDetailValues(AIResponse aiResponse, CallOutDetail callDetail, String agentGroupId, Integer orgId) {
         log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
         if (aiResponse.getAiResponseType() == EAIResponseType.NORMAL) {       //机器人正常放音
             log.info("sellbot结果为正常放音");
             callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
-            fsBotHandler.playNormal(callId, aiResponse, callDetail);
+            fsBotHandler.playNormal(aiResponse.getCallId()+Constant.UUID_SEPARATE+orgId, aiResponse, callDetail);
         } else if (aiResponse.getAiResponseType() == EAIResponseType.TO_AGENT) {      //转人工
             log.info("sellbot的结果为转人工");
             callDetail.setCallDetailType(ECallDetailType.TOAGENT_INIT.ordinal());
-            fsBotHandler.playToAgent(aiResponse,agentGroupId);
+            fsBotHandler.playToAgent(aiResponse,agentGroupId,orgId);
         } else if (aiResponse.getAiResponseType() == EAIResponseType.END) {           //sellbot提示结束，则在播放完毕后挂机
             log.info("sellbot的结果为通话结束");
             callDetail.setCallDetailType(ECallDetailType.END.ordinal());
-            channelHelper.playFileToChannelAndHangup(callId, aiResponse.getWavFile(), aiResponse.getWavDuration());
+            channelHelper.playFileToChannelAndHangup(aiResponse.getCallId()+Constant.UUID_SEPARATE+orgId,
+                    aiResponse.getWavFile(), aiResponse.getWavDuration());
         } else {
             callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY.ordinal());
             log.warn("未知的sellbot返回类型[{}], 跳过处理", aiResponse.getAiResponseType());
@@ -202,7 +205,7 @@ public class RobotNextHelper {
     /**
      * 停止计时器
      *
-     * @param uuid
+     * @param uuid 带orgId
      */
     public void stopAiCallNextTimer(String uuid) {
         if (scheduleConcurrentHashMap.containsKey(uuid)) {

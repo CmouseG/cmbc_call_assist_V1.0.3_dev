@@ -30,17 +30,19 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     @Override
     public CallOutDetail insert(CallOutDetail detail){
         log.info("准备更新callDetail[{}]", detail);
-        Random random = new Random();
-        detail.setShardingValue(random.nextInt(100));
+//        Random random = new Random();
+//        detail.setShardingValue(random.nextInt(100));
         callOutDetailMapper.insert(detail);
         return detail;
     }
 
     @Override
-    public List<CallOutDetail> findByCallPlanId(String callPlanId){
+    public List<CallOutDetail> findByCallPlanId(String callPlanId,Integer orgId){
         Preconditions.checkArgument(!Strings.isNullOrEmpty(callPlanId), "null callPlanId");
         CallOutDetailExample callOutDetailExample = new CallOutDetailExample();
-        callOutDetailExample.createCriteria().andCallIdEqualTo(new BigInteger(callPlanId));
+        callOutDetailExample.createCriteria()
+                .andCallIdEqualTo(new BigInteger(callPlanId))
+                .andOrgIdEqualTo(orgId);
         callOutDetailExample.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
 
         return callOutDetailMapper.selectByExample(callOutDetailExample);

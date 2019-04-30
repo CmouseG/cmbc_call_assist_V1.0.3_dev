@@ -9,7 +9,7 @@ spring:
     name: guiyu-callCenter-calloutserver
   redis:
     database: 0 # Redis数据库索引（默认为0）
-    host: 192.168.1.81 # Redis服务器地址
+    host: 192.168.1.57 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: 123456 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
@@ -19,7 +19,7 @@ spring:
       max-idle: 300 # 连接池中的最大空闲连接
       min-idle: 100 # 连接池中的最小空闲连接
   rabbitmq:
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 5672
     virtual-host: /
     username: guiyu
@@ -39,7 +39,7 @@ management:
   security:
     enabled: false
 jdbc_driver0: com.mysql.jdbc.Driver
-jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+jdbc_url0: jdbc:mysql://192.168.1.57:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: callcenter
 jdbc_password0: callcenter@1234
 validationQuery: SELECT 1
@@ -48,15 +48,15 @@ mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:
   type: mysql
-  
-#注册中心配置      
+
+#注册中心配置
 eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
       service-url:
-#        defaultZone: http://192.168.1.78:18001/eureka/
+#        defaultZone: http://192.168.1.57:18001/eureka/
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 properties:
   error: error.properties
@@ -84,14 +84,18 @@ ribbon:
   ConnectTimeout: 60000
 #支持的最大拨打数量
 callCount.max: 400
+#是否开启挂机频率检测
+callInspect.open: true
+#录音补偿机制，检查多少天内的数据
+callFileCheck.day.ago: 3
 #xxl-job admin中心配置
 xxl:
   job:
     admin:
       ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
+      addresses: http://192.168.1.57:18016/xxl-job-admin
     executor:
-      ip: 192.168.1.78
+      ip: 192.168.1.57
       port: 9024
       logpath: /home/logs/guiyu-callCenter-calloutserver-web
       logretentiondays: -1

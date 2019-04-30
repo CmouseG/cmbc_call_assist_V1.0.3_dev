@@ -13,6 +13,7 @@ public class CallRecordReq  implements Serializable {
     private Boolean isSuperAdmin;
     private String orgCode;
     private Integer authLevel;
+    private Integer orgId;
 
     private static final long serialVersionUID = 1L;
 
@@ -89,6 +90,14 @@ public class CallRecordReq  implements Serializable {
         this.authLevel = authLevel;
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     @Override
     public String toString() {
         return "CallRecordReq{" +
@@ -100,6 +109,7 @@ public class CallRecordReq  implements Serializable {
                 ", secretId=" + isDesensitization +
                 ", isSuperAdmin=" + isSuperAdmin +
                 ", authLevel=" + authLevel +
+                ", orgId=" + orgId +
                 ", orgCode='" + orgCode + '\'' +
                 '}';
     }

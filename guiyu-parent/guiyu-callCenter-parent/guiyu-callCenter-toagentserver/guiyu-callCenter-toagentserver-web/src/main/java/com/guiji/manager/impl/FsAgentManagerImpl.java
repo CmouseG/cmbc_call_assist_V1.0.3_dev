@@ -6,6 +6,7 @@ import com.google.common.cache.CacheBuilder;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.entity.RecordReqVO;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.helper.RequestHelper;
@@ -41,14 +42,16 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId){
-        log.info("开始上传录音文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
+    public Result.ReturnData uploadRecord(String recordId, String busiId, String fileName, String busiType, Long userId, RecordType recordType){
+        log.info("开始上传文件，recordId[{}], fileName[{}], busiType[{}]", recordId, fileName, busiType);
         RecordReqVO request = new RecordReqVO();
-        request.setBusiId(callId);
-        request.setFileName(fileName);
         request.setSysCode(eurekaManager.getAppName());
+        request.setBusiId(busiId);
         request.setBusiType(busiType);
+        request.setFileName(fileName);
         request.setUserId(userId);
+        request.setRecordId(recordId);
+        request.setRecordType(recordType);
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -66,13 +69,13 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 public boolean trueBreakOnCode(String code) {
                     return false;
                 }
-            }, 10, 1, 30, 600);
+            }, 3, 60, 60, 600);
         }catch (Exception ex){
             log.warn("上传文件出现异常", ex);
             //TODO: 报警，上传文件异常
         }
 
-        Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
-        return (RecordVO) returnData.getBody();
+//        Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
+        return returnData;
     }
 }

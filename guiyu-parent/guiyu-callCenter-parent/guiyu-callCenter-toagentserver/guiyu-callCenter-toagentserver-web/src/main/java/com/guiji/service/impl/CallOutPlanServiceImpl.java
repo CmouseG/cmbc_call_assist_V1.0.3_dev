@@ -10,7 +10,7 @@ import com.guiji.config.FsBotConfig;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.CallState;
 import com.guiji.fs.FsManager;
-import com.guiji.service.AgentService;
+import com.guiji.service.AuthService;
 import com.guiji.service.CallOutPlanService;
 import com.guiji.service.PhoneService;
 import com.guiji.util.DateUtil;
@@ -44,7 +44,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
     @Autowired
-    AgentService agentService;
+    AuthService authService;
 
     @Override
     public void insert(CallOutPlan callOutPlan){
@@ -53,47 +53,58 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
 
     @Override
     public void update(CallOutPlan callPlan){
-        callOutPlanMapper.updateByPrimaryKeySelective(callPlan);
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andOrgIdEqualTo(callPlan.getOrgId())
+                .andCallIdEqualTo(callPlan.getCallId());
+        callOutPlanMapper.updateByExampleSelective(callPlan,example);
     }
 
     @Override
-    public CallOutPlan findByCallId(String callId) {
+    public CallOutPlan findByCallId(String callId,Integer orgId) {
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
-        callOutPlanExample.createCriteria().andCallIdEqualTo(new BigInteger(callId));
+        callOutPlanExample.createCriteria()
+                .andCallIdEqualTo(new BigInteger(callId))
+                .andOrgIdEqualTo(orgId);
         List<CallOutPlan> list =callOutPlanMapper.selectByExample(callOutPlanExample);
         return list.get(0);
     }
 
     @Override
-    public QueryQueueCalls queueCalls(String queueId,Long customerId) {
+    public QueryQueueCalls queueCalls(String queueId,Agent agent,Integer orgId,Integer authLevel) {
+
+        List<Integer> orgIds = authService.getOrgIdsByAuthlevel(authLevel,orgId);
         Date date = DateUtil.initDateByDay();
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
-        callOutPlanExample.createCriteria().andAgentGroupIdEqualTo(queueId).andAgentAnswerTimeGreaterThan(date);
-        List<CallOutPlan> list =callOutPlanMapper.selectByExample(callOutPlanExample);
+        callOutPlanExample.createCriteria().andAgentGroupIdEqualTo(queueId)
+                .andAgentAnswerTimeGreaterThan(date)
+                .andOrgIdIn(orgIds);
+        Integer answeredCount=callOutPlanMapper.countByExample(callOutPlanExample);
         QueryQueueCalls queryQueueCalls = new QueryQueueCalls();
-        if(list.size()>0){
-            queryQueueCalls.setAnsweredCount(list.size());
+        if(answeredCount>0){
+            queryQueueCalls.setAnsweredCount(answeredCount);
             queryQueueCalls.setWaitCount(fsManager.getWaitCount(queueId));
             queryQueueCalls.setQueueId(queueId);
         }
-        Agent agent = agentService.getAgentByCustomerId(customerId);
         if(agent!=null){
             CallOutPlanExample callOutPlanExample1 = new CallOutPlanExample();
-            callOutPlanExample1.createCriteria().andAgentIdEqualTo(agent.getUserId()+"").andAgentAnswerTimeGreaterThan(date);
-            List<CallOutPlan> listAgent = callOutPlanMapper.selectByExample(callOutPlanExample1);
-            queryQueueCalls.setAgentAnsweredCount(listAgent.size());
+            callOutPlanExample1.createCriteria().andAgentIdEqualTo(agent.getUserId()+"")
+                    .andAgentAnswerTimeGreaterThan(date)
+                    .andOrgIdIn(orgIds);
+            Integer agentAnsweredCount = callOutPlanMapper.countByExample(callOutPlanExample1);
+            queryQueueCalls.setAgentAnsweredCount(agentAnsweredCount);
         }
         return queryQueueCalls;
     }
 
     @Override
-    public void updateLabel(UpdateLabelRequest request) {
+    public void updateLabel(UpdateLabelRequest request,Integer orgId,Integer authLevel) {
+        List<Integer> orgIds = authService.getOrgIdsByAuthlevel(authLevel,orgId);
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
-        callOutPlanExample.createCriteria().andPlanUuidEqualTo(request.getCallRecordId());
-        List<CallOutPlan> list =callOutPlanMapper.selectByExample(callOutPlanExample);
-        CallOutPlan callOutPlan =list.get(0);
+        callOutPlanExample.createCriteria().andPlanUuidEqualTo(request.getCallRecordId())
+                        .andOrgIdIn(orgIds);
+        CallOutPlan callOutPlan = new CallOutPlan();
         callOutPlan.setAccurateIntent(request.getLabel());
-        callOutPlanMapper.updateByPrimaryKey(callOutPlan);
+        callOutPlanMapper.updateByExampleSelective(callOutPlan,callOutPlanExample);
         try {
             log.info("前端修改意向標簽的時候將標簽同步到Dispatch");
             //同步修改的意向标签到Dispatch
@@ -119,10 +130,13 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public QueryRecordInDetail getRealCallInfo(String mobile) {
+    public QueryRecordInDetail getRealCallInfo(String mobile,Integer authLevel,Integer orgId) {
         log.info("获取号码[{}]的实时呼叫信息", mobile);
+        List<Integer> orgIds = authService.getOrgIdsByAuthlevel(authLevel,orgId);
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
-        callOutPlanExample.createCriteria().andPhoneNumEqualTo(mobile).andCallStateBetween(CallState.answer.ordinal(), CallState.agent_answer.ordinal());
+        callOutPlanExample.createCriteria().andPhoneNumEqualTo(mobile).
+                andCallStateBetween(CallState.answer.ordinal(), CallState.agent_answer.ordinal()).
+                andOrgIdIn(orgIds);
         List<CallOutPlan> list =callOutPlanMapper.selectByExample(callOutPlanExample);
         CallOutPlan callOutPlan =list.get(0);
         Preconditions.checkNotNull(callOutPlan, "用户没有实时通话信息,号码:" + mobile);

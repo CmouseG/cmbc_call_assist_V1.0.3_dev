@@ -10,6 +10,7 @@ import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.EurekaManager;
+import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.TempReadyService;
 import com.guiji.component.result.Result;
@@ -45,7 +46,7 @@ public class CallPlanController implements ICallPlan {
     @Override
     public Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan) {
 
-        log.info("------start startMakeCall dispatchPlan[{}]",dispatchPlan);//注释掉
+        log.info("------start startMakeCall dispatchPlan[{}]",dispatchPlan);//注释掉  todo 加上字段校验
 
         if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
             if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
@@ -66,15 +67,15 @@ public class CallPlanController implements ICallPlan {
     }
 
     @Override
-    public Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid) {
-
-        // 不存在的uuid存入到缓存中，防止被攻击
+    public Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid,
+                                                      @RequestParam(value = "orgId", required = true) Integer orgId) {
+        // 不存在的planUuid存入到缓存中，防止被攻击
         if(redisUtil.get("planNotFound_"+planUuid)!=null){
             return Result.error(Constant.ERROR_UUID_NOTFIND);
         }
 
         //需要在planUuid字段上加索引
-        CallOutPlan callOutPlan = callOutPlanService.findByPlanUuid(planUuid);
+        CallOutPlan callOutPlan = callOutPlanService.findByPlanUuid(planUuid,orgId);
         if(callOutPlan!=null){
             CallEndIntent callEndIntent = new CallEndIntent();
             if(callOutPlan.getCallState() > ECallState.agent_answer.ordinal()){
@@ -94,7 +95,6 @@ public class CallPlanController implements ICallPlan {
         return Result.error(Constant.ERROR_UUID_NOTFIND);
 
     }
-
     /**
      * 将调度中心推过来的数据，转为CalloutPlan
      */
@@ -112,6 +112,7 @@ public class CallPlanController implements ICallPlan {
         callOutPlan.setHasTts(dispatchPlan.isTts());
         callOutPlan.setTempId(dispatchPlan.getTempId());
         callOutPlan.setOrgCode(dispatchPlan.getOrgCode());
+        callOutPlan.setOrgId(dispatchPlan.getOrgId());
         callOutPlan.setBatchId(dispatchPlan.getBatchId());
         callOutPlan.setAgentGroupId(dispatchPlan.getAgentGroupId());
         callOutPlan.setRemarks(dispatchPlan.getRemarks());

@@ -3,11 +3,13 @@ package com.guiji.eventbus.handler;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+import com.guiji.component.result.Result;
 import com.guiji.entity.CallDetail;
 import com.guiji.entity.CallPlan;
 import com.guiji.entity.ECallDirection;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.UploadRecordEvent;
+import com.guiji.fsagent.entity.RecordType;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsAgentManager;
@@ -56,7 +58,7 @@ public class CallRecordHandler {
         CallDetail callDetail = uploadRecordEvent.getCallDetail();
         log.info("开始处理录音文件，callDetail[{}]", callDetail);
 
-        CallPlan callPlan = callPlanService.findByCallId(callDetail.getCallId().toString(), uploadRecordEvent.getCallDirection());
+        CallPlan callPlan = callPlanService.findByCallId(callDetail.getCallId().toString(), uploadRecordEvent.getCallDirection(), callDetail.getOrgId());
         uploadDetailsRecord(callDetail, uploadRecordEvent.getCallDirection(), Long.valueOf(callPlan.getCustomerId()));
     }
 
@@ -66,31 +68,34 @@ public class CallRecordHandler {
      * @param userId
      */
     public void uploadDetailsRecord(CallDetail callDetail, ECallDirection callDirection, Long userId) {
+
+        if(callDirection == ECallDirection.OUTBOUND){
+            callOutDetailRecordService.save(callDetail.toCallOutDetailRecord());
+        }else{
+            callInDetailRecordService.save(callDetail.toCallInDetailRecord());
+        }
+
         String busiType = "detailrecord";
         log.info("开始上传客户录音,callId[{}][{}]", callDetail.getCallId(), callDetail.getCallDetailId());
         //上传客户说话录音
-        if (!Strings.isNullOrEmpty(callDetail.getCustomerRecordFile())) {
-            String fileId = "customer_" + callDetail.getCallId() + "_" + callDetail.getCallDetailId();
-            RecordVO recordVO = fsAgentManager.uploadRecord(fileId, callDetail.getCustomerRecordFile(), busiType, userId);
-            log.info("上传1客户说话录音[{}][{}]，返回结果为[{}]", fileId, callDetail.getCustomerRecordFile(), recordVO);
-            callDetail.setCustomerRecordUrl(recordVO.getFileUrl());
+        if (!Strings.isNullOrEmpty(callDetail.getCustomerRecordFile()) && Strings.isNullOrEmpty(callDetail.getCustomerRecordUrl())) {
+            String busiId = "customer_" + callDetail.getCallId() + "_" + callDetail.getCallDetailId();
+            Result.ReturnData returnData = fsAgentManager.uploadRecord(callDetail.getCallDetailId().toString(),
+                    busiId, callDetail.getCustomerRecordFile(), busiType, userId, RecordType.CUSTOMER_RECORD);
+            log.info("上传1客户说话录音[{}][{}]，返回结果为[{}]", busiId, callDetail.getCustomerRecordFile(), returnData);
+//            callDetail.setCustomerRecordUrl(recordVO.getFileUrl());
         }else{
             log.info("忽略1客户说话录音，因文件为空");
         }
 
         log.info("开始上传座席录音， callId[{}][{}]", callDetail.getCallId(), callDetail.getCallDetailId());
         //上传座席说话录音
-        if (!Strings.isNullOrEmpty(callDetail.getAgentRecordFile())) {
-            String fileId = "agent_" + callDetail.getCallId() + "_" + callDetail.getCallDetailId();
-            RecordVO recordVO = fsAgentManager.uploadRecord(fileId, callDetail.getAgentRecordFile(), busiType, userId);
-            log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", fileId, callDetail.getAgentRecordFile(), recordVO);
-            callDetail.setAgentRecordUrl(recordVO.getFileUrl());
-        }
-
-        if(callDirection == ECallDirection.OUTBOUND){
-            callOutDetailRecordService.save(callDetail.toCallOutDetailRecord());
-        }else{
-            callInDetailRecordService.save(callDetail.toCallInDetailRecord());
+        if (!Strings.isNullOrEmpty(callDetail.getAgentRecordFile()) && Strings.isNullOrEmpty(callDetail.getAgentRecordUrl())) {
+            String busiId = "agent_" + callDetail.getCallId() + "_" + callDetail.getCallDetailId();
+            Result.ReturnData returnData = fsAgentManager.uploadRecord(callDetail.getCallDetailId().toString(),
+                    busiId, callDetail.getAgentRecordFile(), busiType, userId, RecordType.AGENT_RECORD);
+            log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", busiId, callDetail.getAgentRecordFile(), returnData);
+//            callDetail.setAgentRecordUrl(recordVO.getFileUrl());
         }
     }
 }

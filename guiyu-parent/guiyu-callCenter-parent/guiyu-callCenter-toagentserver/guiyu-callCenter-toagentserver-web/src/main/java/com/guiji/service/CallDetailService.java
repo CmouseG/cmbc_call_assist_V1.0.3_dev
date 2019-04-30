@@ -15,7 +15,7 @@ import java.util.List;
 public interface CallDetailService {
     void insert(CallDetail callDetail, ECallDirection callDirection);
 
-    List<CallDetail> findByCallPlanId(String callPlanId, ECallDirection callDirection);
+    List<CallDetail> findByCallPlanId(String callPlanId, ECallDirection callDirection, Integer orgId);
 
-   void getExportCalldetails(String callPlanId,HttpServletResponse response);
+   void getExportCalldetails(String callPlanId,HttpServletResponse response,Integer orgId);
 }

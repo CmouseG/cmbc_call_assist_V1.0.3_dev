@@ -31,7 +31,7 @@ public class AssistCallController {
     @Autowired
     AssistCallService assistCallService;
 
-    @ApiOperation(value = "协呼，转人工")
+   /* @ApiOperation(value = "协呼，转人工")
     @GetMapping("/assistToAgent")
     public Result.ReturnData assistToAgent(@NotEmpty(message = "callId不能为空") String callId, @NotEmpty(message = "agentGroupId不能为空") String agentGroupId){
 
@@ -76,14 +76,26 @@ public class AssistCallController {
             return Result.error(Constant.ERROR_ASSIT_PLANNOTEXITST);
         }
 
-    }
+    }*/
 
     @ApiOperation(value = "协呼，转人工并且关闭机器人")
     @Jurisdiction("callCenter_workPlatform_helpCallHandUp")
     @GetMapping("/assistToAgentAndCloseRobot")
     public Result.ReturnData assistToAgentAndCloseRobot(@NotEmpty(message = "callId不能为空") String callId,@NotEmpty(message = "agentGroupId不能为空") String agentGroupId){
         log.info("协呼get assistToAgentAndCloseRobot request callId[{}],agentGroupId[{}]",callId,agentGroupId);
-        CallOutPlan callOutplan = assistCallService.getCallOutplan(new BigInteger(callId));
+
+        //名为callId，实为uuid
+        BigInteger bigIntegerId = null;
+        Integer orgId = null;
+        try {
+            String[] arr = callId.split(Constant.UUID_SEPARATE);
+            bigIntegerId = new BigInteger(arr[0]);
+            orgId = new Integer(arr[1]);
+        }catch (Exception e){
+            return Result.error(Constant.ERROR_ASSIT_PLANNOTEXITST);
+        }
+
+        CallOutPlan callOutplan = assistCallService.getCallOutplan(bigIntegerId,orgId);
 
         if(callOutplan!=null){
 

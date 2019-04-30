@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ToAgentEvent {
-    private CallOutPlan callPlan;
+    private String uuid;
 }

@@ -6,10 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.callcenter.dao.entity.ReportCallToday;
-import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
 import com.guiji.calloutserver.eventbus.event.StatisticReportEvent;
-import com.guiji.calloutserver.service.CallLineResultService;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.SendNoticeService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -52,8 +46,8 @@ public class StatisticReportHandler {
     @AllowConcurrentEvents
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
         // todo 可优化，对数据库操作太多
-        BigInteger callId = statisticReportEvent.getCallPlan().getCallId();
-        CallOutPlan callOutPlan = callOutPlanService.findByCallId(callId);
+        CallOutPlan callOutPlan = callOutPlanService.findByCallId(statisticReportEvent.getCallPlan().getCallId(),
+                statisticReportEvent.getCallPlan().getOrgId());
         //计费
         chargeHandler.handleAfterCall(callOutPlan);
         String intent = callOutPlan.getAccurateIntent();

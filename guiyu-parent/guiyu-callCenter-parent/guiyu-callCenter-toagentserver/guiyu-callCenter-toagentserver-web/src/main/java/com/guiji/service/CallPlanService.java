@@ -15,7 +15,7 @@ import com.guiji.web.response.QueryRecordInDetail;
 public interface CallPlanService {
     void update(CallPlan callPlan);
 
-    CallPlan findByCallId(String recordId, ECallDirection callDirection);
+    CallPlan findByCallId(String recordId, ECallDirection callDirection, Integer orgId);
 
     QueryQueueCalls queueCalls(String queueId, ECallDirection callDirection);
 

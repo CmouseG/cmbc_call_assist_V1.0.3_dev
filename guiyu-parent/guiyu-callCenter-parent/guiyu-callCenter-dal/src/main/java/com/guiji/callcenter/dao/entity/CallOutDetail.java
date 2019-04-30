@@ -33,13 +33,13 @@ public class CallOutDetail implements Serializable {
 
     private Integer totalDuration;
 
-    private Integer shardingValue;
-
     private Integer isupdate;
 
     private String wordSegmentResult;
 
     private String keywords;
+
+    private Integer orgId;
 
     private static final long serialVersionUID = 1L;
 
@@ -155,14 +155,6 @@ public class CallOutDetail implements Serializable {
         this.totalDuration = totalDuration;
     }
 
-    public Integer getShardingValue() {
-        return shardingValue;
-    }
-
-    public void setShardingValue(Integer shardingValue) {
-        this.shardingValue = shardingValue;
-    }
-
     public Integer getIsupdate() {
         return isupdate;
     }
@@ -187,6 +179,14 @@ public class CallOutDetail implements Serializable {
         this.keywords = keywords == null ? null : keywords.trim();
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -207,10 +207,10 @@ public class CallOutDetail implements Serializable {
         sb.append(", customerSayTime=").append(customerSayTime);
         sb.append(", reason=").append(reason);
         sb.append(", totalDuration=").append(totalDuration);
-        sb.append(", shardingValue=").append(shardingValue);
         sb.append(", isupdate=").append(isupdate);
         sb.append(", wordSegmentResult=").append(wordSegmentResult);
         sb.append(", keywords=").append(keywords);
+        sb.append(", orgId=").append(orgId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

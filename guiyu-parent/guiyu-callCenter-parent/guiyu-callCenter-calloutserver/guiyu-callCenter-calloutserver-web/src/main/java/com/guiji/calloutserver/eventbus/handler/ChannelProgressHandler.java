@@ -4,6 +4,7 @@ import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.ChannelProgressEvent;
 import com.guiji.calloutserver.manager.AIManager;
@@ -47,14 +48,19 @@ public class ChannelProgressHandler {
     @AllowConcurrentEvents
     public void handleAfterCall(ChannelProgressEvent channelProgressEvent) {
 
-        String callId = channelProgressEvent.getUuid();
+        String uuid = channelProgressEvent.getUuid();
+        String callId;
+        Integer orgId;
         BigInteger bigIntegerId = null;
         try {
+            String[] arr = uuid.split(Constant.UUID_SEPARATE);
+            callId = arr[0];
+            orgId = Integer.valueOf(arr[1]);
             bigIntegerId = new BigInteger(callId);
         }catch (Exception e){
             return;
         }
-        CallOutPlan callOutPlan = callOutPlanService.findByCallId(bigIntegerId);
+        CallOutPlan callOutPlan = callOutPlanService.findByCallId(bigIntegerId,orgId);
         if(callOutPlan!=null){
 
             //已经振铃，操作redis，将状态改为线路已通
@@ -68,17 +74,19 @@ public class ChannelProgressHandler {
                 CallOutPlan callOutPlanNew = new CallOutPlan();
                 callOutPlanNew.setCallState(ECallState.progress.ordinal());
                 callOutPlanNew.setCallId(callOutPlan.getCallId());
+                callOutPlanNew.setOrgId(orgId);
                 callOutPlanService.update(callOutPlanNew);
                 log.info("启动定时器，2分钟后检查callId[{}]",callOutPlan.getCallId());
                 progressScheduledExecutor.schedule(() -> {
 
                     log.info("2分钟已到，去检查callOutPlan的状态callId[{}]",callOutPlan.getCallId());
-                    CallOutPlan callOutPlan2Minutes = callOutPlanService.findByCallId(new BigInteger(callId));
+                    CallOutPlan callOutPlan2Minutes = callOutPlanService.findByCallId(new BigInteger(callId), orgId);
 
                     if(callOutPlan2Minutes.getCallState()==ECallState.progress.ordinal()){
 
                         CallOutPlan callOutPlanUpdate = new CallOutPlan();
                         callOutPlanUpdate.setCallId(callOutPlan2Minutes.getCallId());
+                        callOutPlanUpdate.setOrgId(orgId);
                         callOutPlanUpdate.setCallState(ECallState.hangup_fail.ordinal());
                         callOutPlanUpdate.setReason("604");
                         callOutPlanUpdate.setAccurateIntent("W");

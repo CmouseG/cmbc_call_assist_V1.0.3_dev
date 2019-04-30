@@ -15,7 +15,7 @@ public interface CallOutDetailService {
     void update(CallOutDetail callOutDetail);
     void save(CallOutDetail calloutdetail, String recordFile);
 
-    CallOutDetail getLastDetail(String callId);
+    CallOutDetail getLastDetail(String callId,Integer orgId);
 
-    Integer getTalkNum(BigInteger bigInteger);
+    Integer getTalkNum(BigInteger bigInteger, Integer orgId);
 }

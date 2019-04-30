@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
@@ -28,16 +29,23 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public CallOutPlan findByCallId(BigInteger callId) {
-        CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
-        return callOutPlan;
+    public CallOutPlan findByCallId(BigInteger callId, Integer orgId) {
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria()
+                .andCallIdEqualTo(callId)
+                .andOrgIdEqualTo(orgId);
+        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
+        if(list!=null && list.size()>0){
+            return list.get(0);
+        }
+        return null;
     }
 
     @Override
-    public CallOutPlan findByPlanUuid(String planUuid) {
+    public CallOutPlan findByPlanUuid(String planUuid, Integer orgId) {
         CallOutPlanExample example = new CallOutPlanExample();
         example.createCriteria()
-                .andPlanUuidEqualTo(planUuid);
+                .andPlanUuidEqualTo(planUuid).andOrgIdEqualTo(orgId);
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
         if(list!=null && list.size()>0){
             return list.get(0);
@@ -47,7 +55,12 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
 
     @Override
     public void update(CallOutPlan callplan) {
-        callOutPlanMapper.updateByPrimaryKeySelective(callplan);
+
+        Preconditions.checkNotNull(callplan.getOrgId(), "orgId不能为空");
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andOrgIdEqualTo(callplan.getOrgId())
+                .andCallIdEqualTo(callplan.getCallId());
+        callOutPlanMapper.updateByExample(callplan,example);
     }
 
 

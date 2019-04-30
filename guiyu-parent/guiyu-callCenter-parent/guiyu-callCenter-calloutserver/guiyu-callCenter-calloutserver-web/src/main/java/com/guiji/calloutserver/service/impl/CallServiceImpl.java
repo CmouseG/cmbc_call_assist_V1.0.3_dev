@@ -2,6 +2,7 @@ package com.guiji.calloutserver.service.impl;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.manager.FsLineManager;
@@ -14,6 +15,7 @@ import com.guiji.fsline.entity.FsLineVO;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +45,8 @@ public class CallServiceImpl implements CallService {
     CallLineAvailableManager callLineAvailableManager;
     @Autowired
     ISysDict iSysDict;
+    @Value("${callInspect.open}")
+    Boolean callInspectOpen;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -59,12 +63,14 @@ public class CallServiceImpl implements CallService {
             ip = ip.split(":")[0];
         }
         String callid = callplan.getCallId().toString();
+        Integer orgId = callplan.getOrgId();
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                        ", record_session:/usr/local/freeswitch/recordings/%s" +
-                        ", park' inline",
-                callid,
+                        (callInspectOpen ?
+                                ", tone_detect:busy 450 r 0 hangup normal_clearing 3, record_session:/usr/local/freeswitch/recordings/%s, park' inline":
+                                ", record_session:/usr/local/freeswitch/recordings/%s, park' inline"),
+                callid+Constant.UUID_SEPARATE+orgId,
                 callplan.getLineId(),
                 callplan.getPhoneNum(),
                 ip,
@@ -90,7 +96,7 @@ public class CallServiceImpl implements CallService {
             log.info("时间已到，去检查电话是否已经接听,callId[{}]",callid);
             if(!callLineAvailableManager.isChannelAnswer(callid)){
                 log.info("时间已到，电话没有接听，手动挂断,callId[{}]",callid);
-                fsManager.hangup(callplan.getCallId().toString());
+                fsManager.hangup(callid+Constant.UUID_SEPARATE+orgId);
             }
 
         }, Integer.valueOf(value), TimeUnit.SECONDS);

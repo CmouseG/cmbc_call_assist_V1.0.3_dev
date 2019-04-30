@@ -7,6 +7,11 @@ public enum EslEventType {
     EV_ALIASR,
 
     /**
+     * ASR错误事件
+     */
+    EV_ALIASR_E,
+
+    /**
      * 通道应答事件
      */
     CHANNEL_ANSWER,

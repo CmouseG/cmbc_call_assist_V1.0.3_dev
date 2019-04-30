@@ -21,6 +21,12 @@
         WHERE
         create_time > CURRENT_DATE()
         AND bill_sec &gt;=30
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY org_code,accurate_intent,reasonShow,temp_id,customer_id
     </select>
     <select id="countReportCallToday10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -35,6 +41,12 @@
         WHERE
         create_time > CURRENT_DATE()
         AND bill_sec &lt;30 and bill_sec &gt;= 10
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY org_code,accurate_intent,reasonShow,temp_id,customer_id
     </select>
     <select id="countReportCallToday5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -49,6 +61,12 @@
         WHERE
         create_time > CURRENT_DATE()
         AND bill_sec &lt;10 and bill_sec &gt;= 5
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY org_code,accurate_intent,reasonShow,temp_id,customer_id
     </select>
     <select id="countReportCallToday0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -63,6 +81,12 @@
         WHERE
         create_time > CURRENT_DATE()
         AND bill_sec &lt; 5
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY org_code,accurate_intent,reasonShow,temp_id,customer_id
     </select>
     <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -76,6 +100,12 @@
         create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
         AND create_time &lt; CURRENT_DATE()
         AND bill_sec &gt;=30
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY customer_id,org_code,accurate_intent,reason,temp_id
     </select>
     <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -89,6 +119,12 @@
         create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
         AND create_time &lt; CURRENT_DATE()
         AND bill_sec &lt;30 and bill_sec &gt;= 10
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY customer_id,org_code,accurate_intent,reason,temp_id
     </select>
     <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -102,6 +138,12 @@
         create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
         AND create_time &lt; CURRENT_DATE()
         AND bill_sec &lt;10 and bill_sec &gt;= 5
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY customer_id,org_code,accurate_intent,reason,temp_id
     </select>
     <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
@@ -115,6 +157,12 @@
         create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
         AND create_time &lt; CURRENT_DATE()
         AND bill_sec &lt; 5
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         GROUP BY customer_id,org_code,accurate_intent,reason,temp_id
     </select>
 
@@ -157,6 +205,12 @@
         and create_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
         and
         accurate_intent != 'F' and accurate_intent != 'W'
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         group by org_code,temp_id,customer_id
     </select>
     <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
@@ -167,6 +221,12 @@
         WHERE
         create_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
         and create_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         group by org_code,temp_id,customer_id
     </select>
 

@@ -1,8 +1,10 @@
 package com.guiji.web.controller;
 
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
+import com.guiji.entity.CustomSessionVar;
 import com.guiji.service.CallOutPlanService;
 import com.guiji.service.CallOutRecordService;
 import com.guiji.web.request.UpdateLabelRequest;
@@ -12,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.math.BigInteger;
 
 @Slf4j
 @RestController
@@ -27,7 +31,8 @@ public class CallRecordResource {
      * @param recordId
      * @return
      */
-/*    @RequestMapping(path = "/callrecords/{recordId}", method = RequestMethod.GET)
+/*
+    @RequestMapping(path = "/callrecords/{recordId}", method = RequestMethod.GET)
     public Result.ReturnData<CallOutRecord> getCallRecord(@PathVariable String recordId) {
         log.info("收到获取指定通话记录请求[{}]", recordId);
         CallOutRecord callOutRecord =callOutRecordService.findByRecordId(recordId);
@@ -35,7 +40,8 @@ public class CallRecordResource {
             return Result.ok(callOutRecord);
         }
        return Result.error(ErrorConstant.ERROR_NO_RECORD_BY_RECORDID);
-    }*/
+    }
+*/
 
     /**
      * 获取座席组通话信息
@@ -43,9 +49,11 @@ public class CallRecordResource {
      * @return
      */
     @RequestMapping(path = "/queuecalls/{queueId}", method = RequestMethod.GET)
-    public Result.ReturnData<QueryQueueCalls> queueCalls(@PathVariable String queueId,@RequestHeader Long userId) {
-        log.info("收到获取座席组通话信息的请求queueId[{}],userId:[{}]",queueId,userId);
-        QueryQueueCalls queryQueueCalls = callOutPlanService.queueCalls(queueId,userId);
+    public Result.ReturnData<QueryQueueCalls> queueCalls(@PathVariable String queueId, HttpSession session,
+                                                         @RequestHeader Integer orgId, @RequestHeader Integer authLevel) {
+        log.info("收到获取座席组通话信息的请求queueId[{}]",queueId);
+        Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
+        QueryQueueCalls queryQueueCalls = callOutPlanService.queueCalls(queueId,agent,orgId,authLevel);
         return Result.ok(queryQueueCalls);
     }
 
@@ -58,9 +66,10 @@ public class CallRecordResource {
      * @return
      */
     @RequestMapping(path = "/updatelabel", method = RequestMethod.PUT)
-    public Result.ReturnData updateLabel(@RequestBody UpdateLabelRequest request) {
+    public Result.ReturnData updateLabel(@RequestBody UpdateLabelRequest request,
+                                         @RequestHeader Integer orgId, @RequestHeader Integer authLevel) {
         log.info("收到修改通话记录的意向标签请求UpdateLabelRequest:[{}]", request.toString());
-        callOutPlanService.updateLabel(request);
+        callOutPlanService.updateLabel(request,orgId,authLevel);
         return Result.ok();
     }
 
@@ -71,10 +80,12 @@ public class CallRecordResource {
      * @return
      */
     @RequestMapping(path = "/phoneinfo/{mobile}", method = RequestMethod.GET)
-    public  Result.ReturnData<QueryRecordInDetail> getCallrecord(@PathVariable String mobile) {
+    public  Result.ReturnData<QueryRecordInDetail> getCallrecord(@PathVariable String mobile,
+                                     @RequestHeader Integer orgId, @RequestHeader Integer authLevel) {
         log.info("开始号码的实时通话信息[{}]",mobile);
-        QueryRecordInDetail queryQueueCalls = callOutPlanService.getRealCallInfo(mobile);
+        QueryRecordInDetail queryQueueCalls = callOutPlanService.getRealCallInfo(mobile,authLevel,orgId);
         return Result.ok(queryQueueCalls);
     }
+
 
 }

@@ -242,6 +242,12 @@
         <if test="callId != null" >
             and a.call_id > #{callId}
         </if>
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         order by a.call_id
         limit 0,3000
     </select>
@@ -254,6 +260,12 @@
         where (b.customer_record_url is not null or b.bot_record_url is not null)
         <if test="callDetailId != null" >
             and a.call_detail_id > #{callDetailId}
+        </if>
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
         order by a.call_detail_id
         limit 0,3000
@@ -312,9 +324,12 @@
         <if test="orgCode != null">
             and org_code like CONCAT(#{orgCode},'%')
         </if>
-        <!--        <if test="customerId != null" >
-                    and customer_id = #{customerId}
-                </if>-->
+        <if test="orgIdList != null and orgIdList.size()>0">
+            and a.org_id in
+            <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
 
     </select>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger">

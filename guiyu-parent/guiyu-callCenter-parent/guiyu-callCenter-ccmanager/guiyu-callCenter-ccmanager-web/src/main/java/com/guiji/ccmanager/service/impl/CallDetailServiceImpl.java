@@ -210,10 +210,13 @@ public class CallDetailServiceImpl implements CallDetailService {
     public int countCallRecordList(CallRecordReq callRecordReq) {
 
         Map map = new HashMap();
+
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(callRecordReq.getAuthLevel(),callRecordReq.getOrgId());
+        map.put("orgIdList",orgIdList);
         if (callRecordReq.getUserId() != null)
             map.put("customerId", callRecordReq.getUserId());
-        if (callRecordReq.getOrgCode() != null)
-            map.put("orgCode", callRecordReq.getOrgCode());
+//        if (callRecordReq.getOrgCode() != null)
+//            map.put("orgCode", callRecordReq.getOrgCode());
         if (callRecordReq.getTime() != null)
             map.put("time", callRecordReq.getTime()-1);
         if (callRecordReq.getAccurateIntent() != null)

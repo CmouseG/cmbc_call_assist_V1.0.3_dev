@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.UpdateRecordUrlMapper;
 import com.guiji.callcenter.dao.entity.UpdateRecordUrl;
 import com.guiji.callcenter.dao.entity.UpdateRecordUrlExample;
 import com.guiji.callcenter.dao.entityext.CallIdRecordUrl;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallOutRecordUrlUpdateService;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.nas.vo.AliyunReqVO;
@@ -33,6 +34,8 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
     UpdateRecordUrlMapper updateRecordUrlMapper;
     @Autowired
     QueueSender queueSender;
+    @Autowired
+    AuthService authService;
 
     @Override
     public void updateCallOutRecordUrl() {
@@ -48,9 +51,10 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
             minId = updateRecordUrlStartList.get(0).getId();
         }
 
+        List<Integer> orgIdList = authService.getAllOrgIds();
         log.info("循环已经开始，通话记录，不断查询老的recordUrl推送到mq, minId[{}]", minId);
         //3000一个批次进行操作
-        List<CallIdRecordUrl> list = callOutPlanMapper.selectCallIdRecordUrl(minId);
+        List<CallIdRecordUrl> list = callOutPlanMapper.selectCallIdRecordUrl(minId,orgIdList);
         if (list != null) {
             int size = list.size();
             if (size > 0) {
@@ -106,9 +110,10 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
             minId = updateRecordUrlStartList.get(0).getId();
         }
 
+        List<Integer> orgIdList = authService.getAllOrgIds();
         log.info("循环已经开始，call_out_detail，不断查询老的detail录音推送到mq, minId[{}]", minId);
         //3000一个批次进行操作
-        List<CallIdRecordUrl> list = callOutPlanMapper.selectDetailIdRecordUrl(minId);
+        List<CallIdRecordUrl> list = callOutPlanMapper.selectDetailIdRecordUrl(minId, orgIdList);
         if (list != null) {
             int size = list.size();
             if (size > 0) {

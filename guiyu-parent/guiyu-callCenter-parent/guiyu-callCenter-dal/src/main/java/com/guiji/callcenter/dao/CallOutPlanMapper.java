@@ -43,8 +43,8 @@ public interface CallOutPlanMapper {
 
     void updateNotOverWriteIntent(CallOutPlan callPlan);
 
-    List<CallIdRecordUrl> selectCallIdRecordUrl(@Param("callId") BigInteger callId);
-    List<CallIdRecordUrl> selectDetailIdRecordUrl(@Param("callDetailId") BigInteger callDetailId);
+    List<CallIdRecordUrl> selectCallIdRecordUrl(@Param("callId") BigInteger callId, @Param("orgIdList") List<Integer> orgIdList);
+    List<CallIdRecordUrl> selectDetailIdRecordUrl(@Param("callDetailId") BigInteger callDetailId, @Param("orgIdList") List<Integer> orgIdList);
     List<CallOutRecord> getUnuploadCall(@Param("startTime") String startTime, @Param("endTime") String endTime,
                                         @Param("serverId") String serverId, @Param("orgIdList") List<Integer> orgIdList);
     List<CallOutDetailRecord> getUnuploadDetailByCallId(@Param("startTime") String startTime, @Param("endTime") String endTime,

@@ -734,6 +734,7 @@ public class SipLineManager {
                     || !this.objEquals(sipLineBaseInfo.getMaxConcurrentCalls(), existSipLineBaseInfo.getMaxConcurrentCalls())
                     || !this.objEquals(sipLineBaseInfo.getSipAccount(), existSipLineBaseInfo.getSipAccount())
                     || !this.objEquals(sipLineBaseInfo.getSipPsd(), existSipLineBaseInfo.getSipPsd())
+                    || !this.objEquals(sipLineBaseInfo.getRegFlag(), existSipLineBaseInfo.getRegFlag())
             ) {
                 OutLineInfoUpdateReq lineInfo = new OutLineInfoUpdateReq();
                 lineInfo.setLineId(existSipLineBaseInfo.getLineId());

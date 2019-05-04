@@ -151,9 +151,9 @@ public class AssistCallController implements IAssistCall {
         //如果已经进入挂断操作，则停止挂断
         channelHelper.stopKillChannel(callId);
 
-        log.info("协呼之后，释放ai资源");
+//        log.info("协呼之后，释放ai资源");
 
-        aiManager.releaseAi(realCallPlan);
+//        aiManager.releaseAi(realCallPlan);
 
         //停止定时任务
         robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());

@@ -61,7 +61,8 @@ public class TradeServiceImpl implements ITradeService {
             return industryIdToFullNameMap;
         }
 
-        Map<String, BotSentenceTrade> industryIdToTradeMap = tradeList.stream().collect(Collectors.toMap(BotSentenceTrade::getIndustryId, Function.identity()));
+        Map<String, BotSentenceTrade> industryIdToTradeMap = Maps.newHashMap();
+        tradeList.forEach(trade -> industryIdToTradeMap.put(trade.getIndustryId(), trade));
 
         industryIds.forEach(industryId -> {
             BotSentenceTrade currentTrade = industryIdToTradeMap.get(industryId);

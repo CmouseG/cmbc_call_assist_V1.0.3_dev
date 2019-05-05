@@ -1,19 +1,11 @@
 package com.guiji.botsentence.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.google.common.collect.Sets;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import com.guiji.botsentence.service.IBotSentenceProcessService;
 import com.guiji.botsentence.service.IBotSentenceTemplateService;
-import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.service.ITradeService;
 import com.guiji.botsentence.vo.BotSentenceIndustryVO;
 import com.guiji.botsentence.vo.BotSentenceProcessVO;
 import com.guiji.component.client.config.JsonParam;
@@ -21,6 +13,18 @@ import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -39,6 +43,9 @@ public class BotSentenceTemplateController {
 	
 	@Autowired
 	private IBotSentenceProcessService botSentenceProcessService;
+
+	@Resource
+	private ITradeService iTradeService;
 	
 	@RequestMapping(value="queryIndustryTemplate")
 	public ServerResult<List<BotSentenceIndustryVO>> queryIndustryTemplate(@RequestHeader String userId){
@@ -72,13 +79,24 @@ public class BotSentenceTemplateController {
 		List<BotSentenceTemplate> list = botSentenceTemplateService.queryMyTemplate(pageSize, pageNo);
 		List<BotSentenceProcessVO> results = new ArrayList<>();
 		
-		if(null != list && list.size() > 0) {
+		if(!CollectionUtils.isEmpty(list)) {
+
+			Set<String> industryIds = Sets.newHashSet();
+			list.forEach(template -> industryIds.add(template.getIndustryId()));
+			Map<String,String> industryIdToFullNameMap = iTradeService.getIndustryIdToFullNameMap(industryIds);
+
 			for(BotSentenceTemplate temp : list) {
 				BotSentenceProcessVO vo = new BotSentenceProcessVO();
 				BeanUtil.copyProperties(temp, vo);
+				String fullName = industryIdToFullNameMap.get(temp.getIndustryId());
+				if(StringUtils.isBlank(fullName)){
+					vo.setIndustry(temp.getIndustryName());
+				}else {
+					vo.setIndustry(fullName);
+				}
+
 				if(null != temp.getCrtTime()) {
 					vo.setCrtTimeStr(DateUtil.dateToString(temp.getCrtTime(), DateUtil.ymdhms));
-					vo.setIndustry(temp.getIndustryName());
 				}
 				results.add(vo);
 			}

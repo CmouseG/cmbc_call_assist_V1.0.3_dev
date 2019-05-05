@@ -15,6 +15,7 @@ import com.guiji.sms.platform.factory.QiYeXinShi;
 import com.guiji.sms.platform.factory.Welink;
 import com.guiji.sms.platform.factory.XiaoYa;
 import com.guiji.sms.platform.factory.XuanWu;
+import com.guiji.sms.platform.factory.YunTongXun;
 import com.guiji.sms.platform.factory.YunXun;
 import com.guiji.sms.platform.factory.ZhuanXinYun;
 
@@ -82,6 +83,11 @@ public class SendMsgHandler
 		{
 			log.info("通过<小丫短信平台>发送短信...");
 			new XiaoYa().sendMessage(params, phoneList);
+		}
+		else if("yuntongxun".equals(identification))
+		{
+			log.info("通过<云通讯>发送短信...");
+			new YunTongXun().sendMessage(params, phoneList);
 		}
 	}
 }

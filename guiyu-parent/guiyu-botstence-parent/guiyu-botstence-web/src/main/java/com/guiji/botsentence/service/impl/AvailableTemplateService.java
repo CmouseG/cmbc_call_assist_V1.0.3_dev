@@ -40,9 +40,10 @@ public class AvailableTemplateService {
 		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
 		//example.createCriteria().andOrgCodeLike(orgCode+"%");
 		
-		if(1 == authLevel) {//查询本人
-			example.createCriteria().andUserIdEqualTo(userId);
-		}else if(2 == authLevel) {//查询本组织
+//		if(1 == authLevel) {//查询本人
+//			example.createCriteria().andUserIdEqualTo(userId);
+//		}else
+		if(2 == authLevel || 1 == authLevel) {//查询本组织
 			example.createCriteria().andOrgCodeEqualTo(orgCode);
 		}else if(3 == authLevel) {//查询本组织及以下
 			example.createCriteria().andOrgCodeLike(orgCode+"%");

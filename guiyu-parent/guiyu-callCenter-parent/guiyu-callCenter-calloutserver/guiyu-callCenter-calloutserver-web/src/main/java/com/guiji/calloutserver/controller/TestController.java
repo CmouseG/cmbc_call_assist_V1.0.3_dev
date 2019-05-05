@@ -1,28 +1,26 @@
 package com.guiji.calloutserver.controller;
 
 import com.google.common.eventbus.AsyncEventBus;
+import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
-import com.guiji.calloutserver.enm.EslEventType;
 import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.eventbus.handler.CallResourceChecker;
 import com.guiji.calloutserver.fs.FsEventHandler;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,39 +49,36 @@ public class TestController {
     FsEventHandler fsEventHandler;
     @Autowired
     CallResourceChecker callResourceChecker;
+    @Autowired
+    CallOutPlanMapper callOutPlanMapper;
 
 
     @GetMapping("/testcall")
-    public CallOutPlan testcall(@RequestParam String number, @RequestParam String temp, @RequestParam Integer lineId){
-        log.debug("收到测试呼叫请求, 号码[{}], 模板[{}],线路id[{}]", number, temp, lineId);
-        CallOutPlan callOutPlan = new CallOutPlan();
-        callOutPlan.setPhoneNum(number);
-        callOutPlan.setTempId(temp);
-        callOutPlan.setLineId(lineId);
-        callOutPlan.setPlanUuid(UUID.randomUUID().toString().replace("-",""));
-        callOutPlan.setHasTts(false);
-        callOutPlan.setServerid(eurekaManager.getInstanceId());
-        callOutPlan.setCallState(ECallState.init.ordinal());
-        callOutPlan.setCreateTime(new Date());
-        callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
-        callOutPlan.setCustomerId(1);
-        callOutPlan.setIsdel(0);
-        callOutPlan.setIsread(0);
+    public CallOutPlan testcall(){
 
+        CallOutPlanExample example = new CallOutPlanExample();
+        CallOutPlanExample.Criteria criteria = example.createCriteria();
+        //转人工对话可能会比较长，不包括转人工的状态
+        criteria.andCallStateLessThanOrEqualTo(ECallState.to_agent.ordinal());
 
-        callOutPlanService.add(callOutPlan);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, -7);
+        Date endTime  = c.getTime();
 
-        asyncEventBus.post(new CallResourceReadyEvent(callOutPlan));
-        log.info("---------------------CallResourceReadyEvent post " + callOutPlan.getPhoneNum());
+        criteria.andCreateTimeLessThan(endTime);
+        log.info("------>>>endTime[{}]", endTime);
 
+        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
 
-        return callOutPlan;
+        System.out.println(list.size());
+
+        return null;
     }
 
     @GetMapping("/testAsr")
     public void testAsr() {
 
-        CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger("287619318777118720"));
+        CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger("287619318777118720"), 1);
         if (callPlan != null) {
 
             log.info("构建好ALI_ASR事件[{}]，等待后续处理");

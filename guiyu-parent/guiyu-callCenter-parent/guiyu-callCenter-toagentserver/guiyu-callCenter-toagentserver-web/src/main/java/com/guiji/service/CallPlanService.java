@@ -17,11 +17,11 @@ public interface CallPlanService {
 
     CallPlan findByCallId(String recordId, ECallDirection callDirection, Integer orgId);
 
-    QueryQueueCalls queueCalls(String queueId, ECallDirection callDirection);
+//    QueryQueueCalls queueCalls(String queueId, ECallDirection callDirection);
 
-    void updateLabel(UpdateLabelRequest request, ECallDirection callDirection);
+//    void updateLabel(UpdateLabelRequest request, ECallDirection callDirection);
 
-    QueryRecordInDetail getRealCallInfo(String mobile, ECallDirection callDirection);
+//    QueryRecordInDetail getRealCallInfo(String mobile, ECallDirection callDirection);
 
     CallPlan findByUuidOrAgentChannelUuid(String uuid, ECallDirection callDirection);
 

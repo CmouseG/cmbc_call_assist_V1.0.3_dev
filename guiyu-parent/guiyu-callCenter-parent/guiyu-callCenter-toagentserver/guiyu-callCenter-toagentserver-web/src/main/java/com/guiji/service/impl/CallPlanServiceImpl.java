@@ -68,7 +68,7 @@ public class CallPlanServiceImpl implements CallPlanService {
         return callplan;
     }
 
-    @Override
+/*    @Override
     public QueryQueueCalls queueCalls(String queueId, ECallDirection callDirection) {
         log.debug("开始queueCalls，queueId[{}], callDirection[{}]", queueId, callDirection);
         if(callDirection == ECallDirection.OUTBOUND){
@@ -79,9 +79,9 @@ public class CallPlanServiceImpl implements CallPlanService {
             log.warn("开始queueCalls[{}]失败，因非法的callDirection[{}]", queueId, callDirection);
             return null;
         }
-    }
+    }*/
 
-    @Override
+/*    @Override
     public void updateLabel(UpdateLabelRequest request, ECallDirection callDirection) {
         log.debug("开始updateLabel，request[{}], callDirection[{}]", request, callDirection);
         if(callDirection == ECallDirection.OUTBOUND){
@@ -91,9 +91,9 @@ public class CallPlanServiceImpl implements CallPlanService {
         }else{
             log.warn("updateLabel失败，因非法的callDirection[{}]", callDirection);
         }
-    }
+    }*/
 
-    @Override
+/*    @Override
     public QueryRecordInDetail getRealCallInfo(String mobile, ECallDirection callDirection) {
         log.debug("开始getRealCallInfo，mobile[{}], callDirection[{}]", mobile, callDirection);
         if(callDirection == ECallDirection.OUTBOUND){
@@ -104,7 +104,7 @@ public class CallPlanServiceImpl implements CallPlanService {
             log.warn("getRealCallInfo失败，因非法的callDirection[{}]", callDirection);
             return null;
         }
-    }
+    }*/
 
     @Override
     public CallPlan findByUuidOrAgentChannelUuid(String uuid, ECallDirection callDirection) {

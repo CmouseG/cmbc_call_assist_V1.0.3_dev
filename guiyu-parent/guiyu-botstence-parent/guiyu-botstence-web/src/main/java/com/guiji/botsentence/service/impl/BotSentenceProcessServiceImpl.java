@@ -881,19 +881,18 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		//判断挽回话术池是否上传录音
 		VoliceInfoExample refuseExample = new VoliceInfoExample();
-		refuseExample.createCriteria().andProcessIdEqualTo(processId).andTypeEqualTo(Constant.VOLICE_TYPE_REFUSE);
+		refuseExample.createCriteria()
+				.andProcessIdEqualTo(processId)
+				.andTypeEqualTo(Constant.VOLICE_TYPE_REFUSE);
 		List<VoliceInfo> refuseVoliceList = voliceInfoMapper.selectByExample(refuseExample);
-		if(null != refuseVoliceList && refuseVoliceList.size() > 0) {
-			for(VoliceInfo volice : refuseVoliceList) {
-				if(StringUtils.isBlank(volice.getVoliceUrl())) {
+		if(!CollectionUtils.isEmpty(refuseVoliceList)){
+			refuseVoliceList.forEach(voliceInfo -> {
+				if(!voliceInfo.getNeedTts() && StringUtils.isBlank(voliceInfo.getVoliceUrl())){
 					throw new CommonException("存在未上传录音的挽回话术文案!");
 				}
-			}
+			});
 		}
-		
-		
-		
-		
+
 		//校验TTS录音是否已上传
 		BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
 		ttsExample.createCriteria().andProcessIdEqualTo(processId).andIsParamEqualTo(Constant.IS_PARAM_FALSE);

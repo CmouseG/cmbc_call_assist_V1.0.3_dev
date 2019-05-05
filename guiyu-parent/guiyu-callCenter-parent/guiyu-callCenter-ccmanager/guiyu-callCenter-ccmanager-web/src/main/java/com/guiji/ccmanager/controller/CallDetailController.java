@@ -89,6 +89,7 @@ public class CallDetailController implements ICallPlanDetail {
             for (CallOutPlan callOutPlan : list) {
                 Map map = new HashMap();
                 map.put("id", callOutPlan.getCallId().toString());
+                map.put("orgId", callOutPlan.getOrgId());
                 map.put("phone", callOutPlan.getPhoneNum());
                 map.put("label", callOutPlan.getAccurateIntent() != null ? callOutPlan.getAccurateIntent() : "");
 

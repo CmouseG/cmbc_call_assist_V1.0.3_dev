@@ -55,6 +55,16 @@ public class FeeService {
         }
     }
 
+    public void setFeeZero(FeeOptEnum feeOptEnum, SipLineExclusive sipLineExclusive) {
+        FeeItem feeItem = this.sip2Fee(sipLineExclusive);
+
+        feeItem.setStatus(0);
+        feeItem.setPrice("0");
+        //调用MQ消息通知计费中心
+        log.info("SIP费用数据变更,准备调用计费中心做信息变更...{}", feeItem);
+        queueSender.send(BILLING_MQ_QUEUE, JsonUtils.bean2Json(feeItem));
+    }
+
     /**
      * 语音网关线路计费
      *

@@ -762,7 +762,7 @@ public class SipLineManager {
 						if((sipLineBaseInfo.getUnivalent()==null||BigDecimal.ZERO==sipLineBaseInfo.getUnivalent())
 							&& (exclusive.getUnivalent()!=null&&exclusive.getUnivalent().compareTo(BigDecimal.ZERO)>0)) {
 							//如果新的单价改为了0,原来不为0,那么要删除原计费项
-							feeService.sipFee(FeeOptEnum.DEL, exclusive);
+							feeService.setFeeZero(FeeOptEnum.DEL, exclusive);
 						}else if(exclusive.getUnivalent()!=null&&exclusive.getUnivalent().compareTo(BigDecimal.ZERO)>0){
 							//更新费用的前提是原来单价不为0，有费用
 							if(

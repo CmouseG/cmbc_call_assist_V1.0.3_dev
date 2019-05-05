@@ -15,9 +15,6 @@ spring:
     url: jdbc:mysql://192.168.1.57:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: root
     password: 123456
-#    url: jdbc:mysql://192.168.1.81:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-#    username: botstence
-#    password: botstence@1234
     driver-class-name: com.mysql.jdbc.Driver
     minIdle: 5
     maxActive: 200
@@ -120,11 +117,6 @@ sellbot.mechine:
       path: /home/sellbot/dist/app
 
 selftest.sellbot:
-#  serverUrl: 47.96.106.248
-#  serverStartPort: 15005
-#  serverPortCount: 5
-#  innerUrl: 172.16.167.187
-#  port: 18032
   serverUrl: 192.168.1.81
   innerUrl: 192.168.1.81
   serverStartPort: 15000
@@ -133,9 +125,6 @@ selftest.sellbot:
   password: 123456
   path: /home/sellbot/dist/app
   port: 22
-#  serverUrl: 192.168.1.209
-#  serverStartPort: 15001
-#  serverPortCount: 10
 
 
 

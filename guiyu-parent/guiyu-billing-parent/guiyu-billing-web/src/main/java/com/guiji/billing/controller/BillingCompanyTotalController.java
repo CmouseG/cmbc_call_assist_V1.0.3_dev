@@ -35,7 +35,7 @@ public class BillingCompanyTotalController {
         if(null == queryTotalChargingItemDto){
             queryTotalChargingItemDto = new QueryTotalChargingItemDto();
         }
-        queryTotalChargingItemDto.setUserId(userId);
+        queryTotalChargingItemDto.setOperUserId(userId);
         queryTotalChargingItemDto.setOrgCode(orgCode);
         queryTotalChargingItemDto.setAuthLevel(authLevel);
         logger.info("/billing/companyTotal/totalCompanyChargingItem:{}", JsonUtils.bean2Json(queryTotalChargingItemDto));

@@ -37,7 +37,7 @@ public class BillingTotalAnalysisController {
         if(null == queryAcctChargingTotalDto){
             queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
         }
-        queryAcctChargingTotalDto.setUserId(userId);
+        queryAcctChargingTotalDto.setOperUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
         logger.info("/billing/totalAnalysis/totalChargingByDate:{}", JsonUtils.bean2Json(queryAcctChargingTotalDto));
@@ -57,7 +57,7 @@ public class BillingTotalAnalysisController {
         if(null == queryAcctChargingTotalDto){
             queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
         }
-        queryAcctChargingTotalDto.setUserId(userId);
+        queryAcctChargingTotalDto.setOperUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
         logger.info("/billing/totalAnalysis/totalChargingByMonth:{}", JsonUtils.bean2Json(queryAcctChargingTotalDto));

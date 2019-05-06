@@ -31,6 +31,9 @@
             AND r.oper_user_id = #{operUserId}
           </if>
         </if>
+        <if test="userId != null">
+          AND r.oper_user_id = #{userId}
+        </if>
         <if test="beginMonth != null and endMonth != null">
           AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
         </if>
@@ -73,6 +76,9 @@
               AND r.oper_user_id = #{operUserId}
             </if>
           </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
+          </if>
           <if test="beginMonth != null and endMonth != null">
             AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
           </if>
@@ -111,6 +117,9 @@
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}
             </if>
+          </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
           </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}
@@ -153,6 +162,9 @@
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}
             </if>
+          </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
           </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}

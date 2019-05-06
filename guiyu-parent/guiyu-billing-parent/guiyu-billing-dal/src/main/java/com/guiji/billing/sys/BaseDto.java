@@ -13,7 +13,7 @@ public class BaseDto implements Serializable {
     /**
      * 企业用户ID
      */
-    private String userId;
+    private String operUserId;
 
     /**
      * 数据查询权限（1-本人;2-本组织;3-本组织及下级组织）
@@ -28,12 +28,12 @@ public class BaseDto implements Serializable {
         this.orgCode = orgCode;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getOperUserId() {
+        return operUserId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setOperUserId(String operUserId) {
+        this.operUserId = operUserId;
     }
 
     public Integer getAuthLevel() {

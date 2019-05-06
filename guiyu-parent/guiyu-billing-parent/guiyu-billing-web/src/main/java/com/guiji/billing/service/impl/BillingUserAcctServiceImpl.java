@@ -466,7 +466,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         String accountId = queryRechargeDto.getAccountId();
         Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
-        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getOperUserId());//获取用户ID
         String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
@@ -488,7 +488,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         String accountId = queryRechargeDto.getAccountId();
         Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
-        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getOperUserId());//获取用户ID
         String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();

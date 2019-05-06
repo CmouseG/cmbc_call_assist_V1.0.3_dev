@@ -41,21 +41,24 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     @Override
     public List<TotalChargingItemVo> totalCompanyChargingItem(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
         Integer authLevel = queryTotalChargingItemDto.getAuthLevel();//操作用户权限等级
-        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryTotalChargingItemDto.getUserId());//获取用户ID
-        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryTotalChargingItemDto.getOrgCode());//获取企业组织编码
-
+        String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryTotalChargingItemDto.getOperUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, operUserId, queryTotalChargingItemDto.getOrgCode());//获取企业组织编码
+        //用户过滤条件
+        String userId = queryTotalChargingItemDto.getUserId();
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
-                return billingCompanyTotalMapper.totalCompanyChargingByDate(userId,
+                return billingCompanyTotalMapper.totalCompanyChargingByDate(operUserId,
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         queryTotalChargingItemDto.getAuthLevel(),
+                        userId,
                         page);
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
-                return billingCompanyTotalMapper.totalCompanyChargingByMonth(userId,
+                return billingCompanyTotalMapper.totalCompanyChargingByMonth(operUserId,
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         authLevel,
+                        userId,
                         page);
             }
         }
@@ -64,6 +67,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                 orgCode,
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE,
                 queryTotalChargingItemDto.getAuthLevel(),
+                userId,
                 page);
     }
 
@@ -75,27 +79,31 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     @Override
     public int totalCompanyChargingCount(QueryTotalChargingItemDto queryTotalChargingItemDto) {
         Integer authLevel = queryTotalChargingItemDto.getAuthLevel();//操作用户权限等级
-        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryTotalChargingItemDto.getUserId());//获取用户ID
-        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryTotalChargingItemDto.getOrgCode());//获取企业组织编码
-
+        String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryTotalChargingItemDto.getOperUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, operUserId, queryTotalChargingItemDto.getOrgCode());//获取企业组织编码
+        //用户过滤条件
+        String userId = queryTotalChargingItemDto.getUserId();
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
-                return billingCompanyTotalMapper.totalChargingCountByDate(userId,
+                return billingCompanyTotalMapper.totalChargingCountByDate(operUserId,
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
-                        authLevel);
+                        authLevel,
+                        userId);
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
-                return billingCompanyTotalMapper.totalChargingCountByMonth(queryTotalChargingItemDto.getOperUserId(),
+                return billingCompanyTotalMapper.totalChargingCountByMonth(operUserId,
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
-                        authLevel);
+                        authLevel,
+                        userId);
             }
         }
         //默认
-        return billingCompanyTotalMapper.totalChargingCountByDate(userId,
+        return billingCompanyTotalMapper.totalChargingCountByDate(operUserId,
                 orgCode,
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE,
-                authLevel);
+                authLevel,
+                userId);
     }
 
     @Override

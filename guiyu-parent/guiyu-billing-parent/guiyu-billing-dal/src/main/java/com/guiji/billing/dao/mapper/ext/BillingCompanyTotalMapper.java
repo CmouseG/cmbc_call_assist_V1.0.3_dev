@@ -16,24 +16,28 @@ public interface BillingCompanyTotalMapper {
                                                           @Param("orgCode") String orgCode,
                                                           @Param("beginMonth") String beginMonth, @Param("endMonth") String endMonth,
                                                           @Param("authLevel") Integer authLevel,
+                                                          @Param("userId") String userId,
                                                           @Param("page")   ResultPage<TotalChargingItemVo> page);
 
     int totalChargingCountByMonth(@Param("operUserId") String operUserId,
                                   @Param("orgCode") String orgCode,
                                   @Param("beginMonth") String beginMonth, @Param("endMonth") String endMonth,
-                                  @Param("authLevel") Integer authLevel);
+                                  @Param("authLevel") Integer authLevel,
+                                  @Param("userId") String userId);
 
     List<TotalChargingItemVo> totalCompanyChargingByDate(@Param("operUserId") String operUserId,
                                                           @Param("orgCode") String orgCode,
                                                           @Param("beginDate") String beginDate, @Param("endDate") String endDate,
                                                           @Param("authLevel") Integer authLevel,
+                                                          @Param("userId") String userId,
                                                           @Param("page")   ResultPage<TotalChargingItemVo> page);
 
 
     int totalChargingCountByDate(@Param("operUserId") String operUserId,
                                  @Param("orgCode") String orgCode,
                                  @Param("beginDate") String beginDate, @Param("endDate") String endDate,
-                                 @Param("authLevel") Integer authLevel);
+                                 @Param("authLevel") Integer authLevel,
+                                 @Param("userId") String userId);
 
     /******************************/
 

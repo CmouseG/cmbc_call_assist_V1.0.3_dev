@@ -3,10 +3,7 @@ package com.guiji.dispatch.api;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.model.Page;
@@ -39,9 +36,11 @@ public interface IThirdApiOut {
 			@ApiImplicitParam(name = "pagenum", value = "分页字段", dataType = "int", paramType = "query"),
 			@ApiImplicitParam(name = "pagesize", value = "分页字段", dataType = "int", paramType = "query") })
 	@GetMapping(value = "out/getCalldetail")
-	ReturnData<Page<CallPlanDetailRecordVO>> getCalldetail(@RequestParam("userId") long userId,@RequestParam("phone") String phone,
-			@RequestParam("batchNumber") String batchNumber, @RequestParam("pagenum") int pagenum,
-			@RequestParam("pagesize") int pagesize);
+	ReturnData<Page<CallPlanDetailRecordVO>> getCalldetail(@RequestParam("userId") long userId,@RequestParam("authLevel") Integer authLevel,
+														   @RequestParam("orgCode") String orgCode, @RequestParam("orgId") Integer orgId,
+														   @RequestParam("phone") String phone,
+														   @RequestParam("batchNumber") String batchNumber, @RequestParam("pagenum") int pagenum,
+														   @RequestParam("pagesize") int pagesize);
 
 
 	@ApiOperation(value = "通过批次号查询该批次的拨打情况")

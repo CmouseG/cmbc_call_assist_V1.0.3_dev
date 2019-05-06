@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.ccmanager.api.ICallPlanDetail;
+import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
@@ -111,6 +112,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private GetAuthUtil getAuthUtil;
+
+	@Autowired
+	private GetApiService getApiService;
 
 	/**
 	 * 单个任务导入
@@ -595,8 +599,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(Long userId, String phone, String batchName, int pagenum,
-			int pagesize) {
+	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(Long userId, Integer authLevel, String orgCode, Integer orgId,
+																  String phone, String batchName, int pagenum, int pagesize) {
 
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
@@ -622,7 +626,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(dis.getPlanUuidLong() + "");
 		}
 		if (ids.size() > 0) {
-			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
+			SysOrganization org = getApiService.getOrgByUserId(userId + "");
+			CallPlanUuidQuery callPlanParam = new CallPlanUuidQuery();
+			callPlanParam.setOrgId(orgId);
+			callPlanParam.setAuthLevel(authLevel);
+			callPlanParam.setCallIds(ids);
+			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(callPlanParam);
 			return callPlanDetailRecord.getBody();
 		} else {
 			return new ArrayList<>();

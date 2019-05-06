@@ -85,11 +85,12 @@ public class ThirdApiController implements IThirdApiOut {
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
-	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(long userId, String phone,
-			String batchNumber, int pagenum, int pagesize) {
+	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(long userId, Integer authLevel,
+		String orgCode, Integer orgId,
+		String phone, String batchNumber, int pagenum, int pagesize) {
 		Page<com.guiji.dispatch.model.CallPlanDetailRecordVO> page = new Page<>();
-		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(userId, phone,
-				batchNumber, pagenum, pagesize);
+		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(userId, authLevel, orgCode, orgId,
+				phone, batchNumber, pagenum, pagesize);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPhoneEqualTo(phone).andBatchNameEqualTo(batchNumber);
 		int countByExample = dispatchPlanMapper.countByExample(ex);

@@ -40,6 +40,7 @@ public class HttpClientUtil
 			}
 		} 
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new GuiyuException("请求三方接口失败");
 		} finally {
 			IOUtils.close(response);

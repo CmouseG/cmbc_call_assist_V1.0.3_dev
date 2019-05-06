@@ -1,88 +1,80 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`%` PROCEDURE `insertData`()
+BEGIN
+    
+	DECLARE org_id INT;				--	组织ID	
+	DECLARE tab_num INT;
+	DECLARE tab_name_plan VARCHAR(32);
+	DECLARE tab_name_detail VARCHAR(32);
+	
+	-- 定义遍历标志，默认false
+	DECLARE done INT DEFAULT FALSE;
+	
+	-- 定义游标	查询组织ID
+	DECLARE cur_org_id CURSOR FOR
+		SELECT o.id FROM guiyu_base.sys_organization o	;
+	
+	-- 将结束标志绑定到游标
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+	
+	SET tab_num = 0;
+		
+	-- 打开游标
+	OPEN cur_org_id;
+		
+	-- 遍历
+	read_loop : LOOP
+		-- 取值 取多个字段
+		FETCH  NEXT FROM cur_org_id INTO org_id;
+		IF done THEN
+			LEAVE read_loop;
+		END IF;
+		
+		-- 累加数
+		SET tab_num = tab_num + 1;
+		
+		-- 插入数据call_out_plan
+		SET tab_name_plan = CONCAT('call_out_plan_',org_id);
+		SELECT tab_name_plan FROM DUAL;
+		
+		-- 插入数据
+		SET @insert_plan_sql_0 = CONCAT(
+		'insert into ', tab_name_plan,
+		" select * from call_out_plan_0_tmp where org_id = ", org_id, ";");
+		
+		PREPARE insert_plan_sql_0 FROM @insert_plan_sql_0;   
+		EXECUTE insert_plan_sql_0; 
 
--- ----------------------------
--- 1、更新数据库表名并添加ORG_ID
--- ----------------------------
+		SET @insert_plan_sql_1 = CONCAT(
+		'insert into ', tab_name_plan,
+		" select * from call_out_plan_1_tmp where org_id = ", org_id, ";");
+		
+		PREPARE insert_plan_sql_1 FROM @insert_plan_sql_1;   
+		EXECUTE insert_plan_sql_1; 
+		
+		-- 插入数据call_out_detail
+		SET tab_name_detail = CONCAT('call_out_detail_',org_id);
+		SELECT tab_name_detail FROM DUAL;
+		
+		-- 插入数据
+		SET @insert_detail_sql_0 = CONCAT(
+		'insert into ', tab_name_detail,
+		" select * from call_out_detail_0_tmp where org_id = ", org_id, ";");
+		
+		PREPARE insert_detail_sql_0 FROM @insert_detail_sql_0;   
+		EXECUTE insert_detail_sql_0; 
 
-alter table `call_out_plan_0` rename `call_out_plan_0_tmp`;
-alter table `call_out_plan_1` rename `call_out_plan_1_tmp`;
+		SET @insert_detail_sql_1 = CONCAT(
+		'insert into ', tab_name_detail,
+		" select * from call_out_detail_1_tmp where org_id = ", org_id, ";");
+		
+		PREPARE insert_detail_sql_1 FROM @insert_detail_sql_1;   
+		EXECUTE insert_detail_sql_1;
+		
+	END LOOP;	-- 遍历结束
+	-- 关闭游标
+	CLOSE cur_org_id;	
+	
+	SELECT tab_num FROM DUAL;
 
-
-ALTER TABLE `call_out_plan_0_tmp`
-ADD COLUMN `org_id`  int NULL AFTER `org_code`;
-
-ALTER TABLE `call_out_plan_1_tmp`
-ADD COLUMN `org_id`  int NULL AFTER `org_code`;
-
-alter table `call_out_detail_0` rename `call_out_detail_0_tmp`;
-alter table `call_out_detail_1` rename `call_out_detail_1_tmp`;
-
-
-ALTER TABLE `call_out_detail_0_tmp`
-ADD COLUMN `org_id`  int NULL AFTER `keywords`;
-
-ALTER TABLE `call_out_detail_1_tmp`
-ADD COLUMN `org_id`  int NULL AFTER `keywords`;
-
-ALTER TABLE `call_out_detail_0_tmp`
-drop COLUMN `sharding_value`;
-
-ALTER TABLE `call_out_detail_1_tmp`
-drop COLUMN `sharding_value`;
-
--- ----------------------------
--- 2.1、设置call_out_plan的org_id
--- ----------------------------
-
-UPDATE call_out_plan_0_tmp x, guiyu_base.sys_organization y, guiyu_base.sys_user z
-SET x.ORG_ID = y.id
-WHERE x.customer_id = z.id and z.org_code = y.code;
-
-UPDATE call_out_plan_1_tmp x, guiyu_base.sys_organization y, guiyu_base.sys_user z
-SET x.ORG_ID = y.id
-WHERE x.customer_id = z.id and z.org_code = y.code;
-
--- ----------------------------
--- 2.1、设置call_out_detail的org_id
--- ----------------------------
-
-UPDATE call_out_detail_0_tmp x, call_out_plan_0_tmp y
-SET x.ORG_ID = y.ORG_ID
-WHERE x.call_id = y.call_id;
-
-UPDATE call_out_detail_0_tmp x, call_out_plan_1_tmp y
-SET x.ORG_ID = y.ORG_ID
-WHERE x.call_id = y.call_id;
-
-UPDATE call_out_detail_1_tmp x, call_out_plan_0_tmp y
-SET x.ORG_ID = y.ORG_ID
-WHERE x.call_id = y.call_id;
-
-UPDATE call_out_detail_1_tmp x, call_out_plan_1_tmp y
-SET x.ORG_ID = y.ORG_ID
-WHERE x.call_id = y.call_id;
-
-
--- ----------------------------
--- 3、执行存储过程
--- ----------------------------
-
-call createTable();
-call insertData();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    END$$

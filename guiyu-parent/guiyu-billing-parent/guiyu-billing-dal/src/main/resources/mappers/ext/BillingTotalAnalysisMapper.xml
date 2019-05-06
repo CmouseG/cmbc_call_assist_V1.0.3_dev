@@ -203,7 +203,7 @@
           AND t.total_date BETWEEN #{beginDate} AND #{endDate}
         </if>
         GROUP BY t.total_date
-        ORDER BY t.total_date ASC
+        ORDER BY t.total_date DESC
         <if test="page != null and page.isPage ">
           <if test="page.indexStart != null " >
             limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
@@ -244,7 +244,7 @@
         AND t.total_month BETWEEN #{beginMonth} AND #{endMonth}
       </if>
       GROUP BY t.total_month
-      ORDER BY t.total_month ASC
+      ORDER BY t.total_month DESC
       <if test="page != null and page.isPage ">
         <if test="page.indexStart != null " >
           limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}

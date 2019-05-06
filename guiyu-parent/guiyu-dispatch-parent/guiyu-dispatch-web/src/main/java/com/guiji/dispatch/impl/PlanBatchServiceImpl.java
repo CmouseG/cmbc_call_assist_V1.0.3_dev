@@ -348,18 +348,13 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         return bool;
     }
 
+    @Async("asyncBatchImportExecutor")
     protected void batchJoin(JoinPlanDto joinPlanDto, Integer batchId){
         Long operUserId = Long.valueOf(joinPlanDto.getOperUserId());    //操作用户ID
         Integer operOrgId = joinPlanDto.getOperOrgId();     //企业组织ID
         String operOrgCode = joinPlanDto.getOperOrgCode();  //企业编码
         OptPlanDto optPlanDto = joinPlanDto.getOptPlan();
         DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
-        /*// 查询用户名称
-        SysUser user = getApiService.getUserById(operUserId+"");
-        if (user == null) {
-            throw new GuiyuException("用户不存在");
-        }
-        submitPlan.setUserName(user.getUsername());*/
         //获取权限
         Integer authLevel = joinPlanDto.getAuthLevel();//操作用户权限等级
         optPlanDto.setAuthLevel(authLevel);

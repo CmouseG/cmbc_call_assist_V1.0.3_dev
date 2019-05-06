@@ -6,11 +6,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.cloud.api.ILogin;
@@ -43,10 +39,14 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCalldetail")
-	public Result.ReturnData getCalldetail(@RequestParam(required = false, name = "batch_number") long userId,@RequestParam(required = false, name = "phone") String phone,
-			@RequestParam(required = false, name = "batch_number") String batchNumber,
-			@RequestParam(required = false, name = "pagenum") String pagenum,
-			@RequestParam(required = false, name = "pagesize") String pagesize) {
+	public Result.ReturnData getCalldetail(@RequestParam(required = false, name = "batch_number") long userId,
+										   @RequestParam(required = false, name = "org_code") String orgCode,
+										   @RequestParam(required = false, name = "org_id")  Integer orgId,
+										   @RequestParam(required = false, name = "auth_level")  Integer authLevel,
+										   @RequestParam(required = false, name = "phone") String phone,
+										   @RequestParam(required = false, name = "batch_number") String batchNumber,
+										   @RequestParam(required = false, name = "pagenum") String pagenum,
+										   @RequestParam(required = false, name = "pagesize") String pagesize) {
 		JSONObject jsonObject = new JSONObject();
 		
 		if(phone ==null || phone == ""){
@@ -88,7 +88,8 @@ public class ThirdApiController {
 		if(phone.length()!=11){
 			return Result.error("0303028");
 		}
-		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(userId, phone, batchNumber, Integer.valueOf(pagenum),
+		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(userId, authLevel, orgCode, orgId,
+				phone, batchNumber, Integer.valueOf(pagenum),
 				Integer.valueOf(pagesize));
 		jsonObject.put("data", calldetail.getBody());
 		return Result.ok(jsonObject);

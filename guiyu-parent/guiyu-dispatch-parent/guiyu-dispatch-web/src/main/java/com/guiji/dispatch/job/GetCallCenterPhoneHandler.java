@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.exception.ExternalCodeExceptionEnum;
+import com.guiji.dispatch.service.GetApiService;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 	@Autowired
 	private RedisUtil redisUtil;
 
+	@Autowired
+	private GetApiService getApiService;
+
 	@Override
 	public ReturnT<String> execute(String arg0) throws Exception {
 		XxlJobLogger.log("XXL-JOB, GetCallCenterPhoneHandler start.");
@@ -54,8 +58,9 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 		// 调用呼叫中心去询问如果正在通话就不修改当前
 		for (PushRecords records : result) {
 			String planuuid = records.getPlanuuid();
+			Integer orgId = getApiService.getOrgIdByUser(records.getUserId()+"");
 			// 如果一通电话已挂断,那么放到回调成功的队列中，把当前状态设置成已经回调
-			ReturnData<CallEndIntent> callEnd = callplan.isCallEnd(planuuid);
+			ReturnData<CallEndIntent> callEnd = callplan.isCallEnd(planuuid, orgId);
 			if (callEnd.success) {
 				if (callEnd.body.isEnd()) {
 					// 如果已经挂断

@@ -3,6 +3,7 @@ package com.guiji.dispatch.thirdinterface;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallPlanDetail;
+import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
@@ -49,8 +50,11 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 				JSONObject jsonObject = new JSONObject();
 				List<String> ids = new ArrayList<>();
 				ids.add(dis.getPlanUuidLong() + "");
+				CallPlanUuidQuery callPlanParam = new CallPlanUuidQuery();
+				callPlanParam.setCallIds(ids);
+				callPlanParam.setOrgId(dis.getOrgId());
 				ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail
-						.getCallPlanDetailRecord(ids);
+						.getCallPlanDetailRecord(callPlanParam);
 				jsonObject.put("data", callPlanDetailRecord.getBody());
 				try {
 					String doPostJson = HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());

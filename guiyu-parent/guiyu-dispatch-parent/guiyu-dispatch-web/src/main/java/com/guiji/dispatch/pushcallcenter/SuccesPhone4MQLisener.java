@@ -9,7 +9,7 @@ import com.guiji.dispatch.enums.IsNotifyMsgEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.guiyu.message.component.QueueSender;
-import com.guiji.sms.api.bean.SendMsgReq;
+import com.guiji.sms.api.bean.SendMReqVO;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +115,7 @@ public class SuccesPhone4MQLisener {
 	 */
 	private void sendSms(DispatchPlan dispatchPlan){
 		try{
-			SendMsgReq vo = new SendMsgReq();
+			SendMReqVO vo = new SendMReqVO();
 			vo.setOrgCode(dispatchPlan.getOrgCode());
 			vo.setPhone(dispatchPlan.getPhone());
 			vo.setUserId(Long.valueOf(dispatchPlan.getUserId()));

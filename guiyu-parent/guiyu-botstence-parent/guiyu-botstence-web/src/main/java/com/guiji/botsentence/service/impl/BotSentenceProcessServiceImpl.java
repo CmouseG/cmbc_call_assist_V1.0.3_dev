@@ -2505,6 +2505,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				if(BranchTypeEnum.NOT_REJECT == originType){
 					botSentenceBranch.setBranchName(getNewBranchName(processId));
 				}
+				botSentenceBranch.setEnd(botSentenceBranch.getNext());
 			}else {
 				throw new CommonException("不合法的分支类型");
 			}
@@ -3367,19 +3368,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				}
 			}
 		}
-
-
-		//4.非开场白节点，其它节点都应该有其它节点指向它
-		/*if(null != flow.getNodes() && flow.getNodes().size() > 0) {
-			//处理卡片信息
-			for(FlowNode node : flow.getNodes()) {
-				if(!targets.contains(node.getId()) && !Constant.DOMAIN_TYPE_START.equals(node.getType())) {
-					throw new CommonException("节点[" + node.getLabel() + "]连线不完整!");
-				}
-			}
-		}*/
-
-
 
 		if(null != flow.getNodes() && flow.getNodes().size() > 0) {
 			//处理卡片信息

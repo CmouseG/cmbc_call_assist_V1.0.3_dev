@@ -70,7 +70,7 @@ public class PrivilegeService {
 	public List<SysPrivilege> queryPrivilegeListByAuth(String authId,Integer authType,Integer resourceType) {
 		if(StrUtils.isNotEmpty(authId) && authType!=null && resourceType!=null) {
 			SysPrivilegeExample example = new SysPrivilegeExample();
-			example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
+			example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType).andUpdateFlagIsNull();
 			return sysPrivilegeMapper.selectByExample(example);
 		}
 		return null;
@@ -106,17 +106,29 @@ public class PrivilegeService {
 	public void savePrivlege(Integer userId,String orgCode,Integer authType,String authId,Integer resourceType,List<String> resourceIdList) {
 		if(userId!=null && StrUtils.isNotEmpty(orgCode) && authType!=null && StrUtils.isNotEmpty(authId) && resourceType!=null) {
 			for(String resourceId:resourceIdList) {
+				SysPrivilegeExample example = new SysPrivilegeExample();
+				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType)
+					.andResourceIdEqualTo(resourceId).andOrgCodeEqualTo(orgCode).andUpdateFlagEqualTo(1);
+				List<SysPrivilege> privileges = sysPrivilegeMapper.selectByExample(example);
+				Map<String,String> resourceIds = getAllResourceIdsWithIds(privileges);
 				SysPrivilege sysPrivilege = new SysPrivilege();
 				sysPrivilege.setAuthId(authId);
 				sysPrivilege.setAuthType(authType);
 				sysPrivilege.setOrgCode(orgCode);
 				sysPrivilege.setResourceType(resourceType);
 				sysPrivilege.setResourceId(resourceId);
+				sysPrivilege.setUpdateFlag(null);
 				sysPrivilege.setCrtUser(userId);
 				sysPrivilege.setCrtTime(DateUtil.getCurrent4Time());
 				sysPrivilege.setUpdateUser(userId);
 				sysPrivilege.setUpdateTime(DateUtil.getCurrent4Time());
-				sysPrivilegeMapper.insert(sysPrivilege);
+				if(resourceIds.containsKey(resourceId)){
+					sysPrivilege.setId(Integer.valueOf(resourceIds.get(resourceId)));
+					sysPrivilegeMapper.updateByExample(sysPrivilege, example);
+				}else{
+					sysPrivilegeMapper.insert(sysPrivilege);
+				}
+				
 			}
 			//校验是否满足条件，满足调用转人工服务绑定人工坐席
 			agentGroupChangeService.bindAgentMembers(authType, authId, resourceType, resourceIdList);
@@ -300,6 +312,22 @@ public class PrivilegeService {
 				resourceIds.add(sysPrivilege.getResourceId());
 			}
 			return resourceIds;
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取资源id
+	 * @param privilegeList
+	 * @return
+	 */
+	private Map<String,String> getAllResourceIdsWithIds(List<SysPrivilege> privilegeList){
+		if(privilegeList!=null &&!privilegeList.isEmpty()) {
+			Map<String,String> map = new HashMap<>();
+			for(SysPrivilege sysPrivilege : privilegeList) {
+				map.put(sysPrivilege.getResourceId(),sysPrivilege.getId().toString());
+			}
+			return map;
 		}
 		return null;
 	}

@@ -96,7 +96,7 @@ public interface IDispatchPlanService {
   int getcall4BatchName(Long userId, String batchName, Integer status);
 
     List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(
-            Long userId, String phone, String batchName, int pagenum, int pagesize);
+            Long userId, Integer authLevel, String orgCode, Integer orgId, String phone, String batchName, int pagenum, int pagesize);
 
   JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, Integer authLevel, String orgCode, Integer orgId);
 

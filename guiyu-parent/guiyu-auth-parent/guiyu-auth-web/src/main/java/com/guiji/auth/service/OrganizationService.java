@@ -21,6 +21,7 @@ import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.model.OrgRoleInfo;
 import com.guiji.auth.model.OrganizationVO;
+import com.guiji.auth.model.SaveOrgReq;
 import com.guiji.auth.model.UpdateOrgReq;
 import com.guiji.auth.util.DataLocalCacheUtil;
 import com.guiji.auth.util.HttpClientUtil;
@@ -97,12 +98,7 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
-//		String postUrl = "http://localhost:18080/org/remote/save";
-//		String restult = HttpClientUtil.post(postUrl,new SaveOrgReq(record.getId(),record.getType(),record.getName(),record.getCode(),record.getSubCode(),userId,record.getCreateTime()));
-//		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
-//		if(!"000000".equals(rspCode)){
-//			throw new GuiyuException("请求三方接口失败!");
-//		}
+//		requestThirdApi_add(record,userId);
 		fanoutSender.send("AddOrgNotice.fanoutExchange.Auth", record.getId().toString());
 		if(record.getProduct()!=null && !record.getProduct().isEmpty()) {
 			//如果参数产品不为空，那么以选择的产品为准
@@ -160,7 +156,7 @@ public class OrganizationService {
 	public void update(SysOrganization record,Long updateUser){
 		
 		isRobotNumRight(record); // 判断配置机器人数量
-//		requestThirdApi(record,updateUser); // 请求三方接口（进销存）
+//		requestThirdApi_update(record,updateUser);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if(!AuthConstants.ROOT_ORG_CODE.equals(record.getCode())) {
 			if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
@@ -182,10 +178,37 @@ public class OrganizationService {
 		redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 
-	private void requestThirdApi(SysOrganization record, Long updateUser)
+	private String requestThirdApi_login()
+	{
+		String loginUrl = "http://192.168.1.60:18080/cloud-auth/userLogin";
+		Map<String,Object> userLoginReqVO = new HashMap<>();
+		Map<String,Object> userLoginPsdReqVo = new HashMap<>();
+		Map<String,String> loginMapChild = new HashMap<>();
+		loginMapChild.put("loginid", "java");
+		loginMapChild.put("password", "123456");
+		userLoginPsdReqVo.put("userLoginPsdReqVo", loginMapChild);
+		userLoginReqVO.put("userLoginReqVO", userLoginPsdReqVo);
+		String loginRestult = HttpClientUtil.post(loginUrl,userLoginReqVO);
+		String access_token = JSONObject.parseObject(loginRestult).getJSONObject("data").getJSONObject("gjToken").getString("access_token");
+		return access_token;
+	}
+	
+	private void requestThirdApi_add(SysOrganization record, Long userId)
+	{
+		String access_token = requestThirdApi_login();
+		String postUrl = "http://192.168.1.60:18080/kf-workorder/org/remote/save?access_token="+access_token;
+		String restult = HttpClientUtil.post(postUrl,new SaveOrgReq(record.getId(),record.getType(),record.getName(),record.getCode(),record.getSubCode(),userId,record.getCreateTime()));
+		String rspCode = JSONObject.parseObject(restult).getString("rspCode");
+		if(!"000000".equals(rspCode)){
+			throw new GuiyuException("请求三方接口失败!");
+		}
+	}
+
+	private void requestThirdApi_update(SysOrganization record, Long updateUser)
 	{
 		if(record.getRobot()==null && record.getStartDate()==null && record.getEndDate()==null){return;}
-		String url = "http://localhost:18080/org/remote/updateResource";
+		String access_token = requestThirdApi_login();
+		String url = "http://192.168.1.60:18080/kf-workorder/org/remote/updateResource?access_token="+access_token;
 		SysOrganization organization = sysOrganizationMapper.selectByPrimaryKey(record.getId().longValue());
 		UpdateOrgReq req = new UpdateOrgReq(organization.getId(),null,organization.getType(),organization.getCode(), 
 				organization.getRobot(), organization.getStartDate(), organization.getEndDate(), record.getRobot(), record.getStartDate(), 

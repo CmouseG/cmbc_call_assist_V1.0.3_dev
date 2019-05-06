@@ -119,7 +119,7 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 	}
 
 	@Override
-	public void getLineRule() {
+	public void getLineRule() {/*
 		DispatchPlan param = new DispatchPlan();
 		param.setCallData(Integer.valueOf(new SimpleDateFormat("yyyyMMdd").format(new Date())));
 		// 查询用户
@@ -136,7 +136,7 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 				logger.info("查询用户sip线路路由规则为null>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			}
 		}
-	}
+	*/}
 
 	@Override
 	public void getLineRate() {

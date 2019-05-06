@@ -52,18 +52,24 @@ public class RobotServiceImpl implements RobotService {
     private RedisUtil redisUtil;
 
     @Override
-    public  ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(ResultPage<DispatchRobotOpVo> page) {
+    public  ResultPage<DispatchRobotOpVo> queryDispatchRobotOp(DispatchRobotOpDto dispatchRobotOpDto, ResultPage<DispatchRobotOpVo> page) {
         List<DispatchRobotOpVo> pageList = new LinkedList<DispatchRobotOpVo>();
         int len = 0;
         //获取到用户机器人资源
         Map<Object,Object> map = redisUtil.hmget(RedisConstant.RedisConstantKey.ROBOT_USER_RESOURCE);
         if(null != map){
+            String userNameReq = null != dispatchRobotOpDto.getUserName()?dispatchRobotOpDto.getUserName():"";
             //有序treemap
             Map<Object, Object> treeMap = new TreeMap<>(map);
             List<DispatchRobotOpVo> list = new ArrayList<DispatchRobotOpVo>();
             for(Map.Entry<Object, Object> entry: treeMap.entrySet()){
                 String userId = (String)entry.getKey();
                 SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
+                String userName = user.getUsername();
+                if(!userName.contains(userNameReq)){
+                    continue;
+                }
+
                 UserResourceCache res = (UserResourceCache)entry.getValue();
                 if(null != res){
                     Integer maxRobotNum = res.getAiNum();
@@ -77,7 +83,7 @@ public class RobotServiceImpl implements RobotService {
                                     robot.setUserId(userId);
                                     robot.setUserName(null != user?user.getUsername():null);
                                     robot.setBotstenceName(this.getBotstenceName(botstenceId));
-                                //    Integer robotNum = aiNum.getValue();
+                                    //    Integer robotNum = aiNum.getValue();
                                     robot.setBotstenceId(botstenceId);
                                     robot.setMaxRobotNum(aiNum.getValue());
                                     robot.setRobotNum(this.getActualRobotCount(Integer.valueOf(userId), botstenceId));
@@ -94,27 +100,25 @@ public class RobotServiceImpl implements RobotService {
 
             int pageNo = page.getPageNo();
             int pageSize = page.getPageSize();
-            //获取分页列表
-            int startIdx = (pageNo - 1) * pageSize + 1;
-            int endIdx = pageNo * pageSize;
-            endIdx = endIdx<len?endIdx:(startIdx<len?len:-1);
-            startIdx = startIdx<len?startIdx:-1;
-            if(startIdx>0) {
+            if(len >= (pageNo * pageSize)
+                    || (len > ((pageNo-1) * pageSize)) && len <= (pageNo * pageSize)){
+                //获取分页列表
+                int startIdx = (pageNo - 1) * pageSize + 1;
+                int endIdx = pageNo * pageSize;
                 for (int idx = startIdx; idx <= endIdx; idx++) {
-                    pageList.add(list.get(idx-1));
+                    pageList.add(list.get(idx - 1));
                 }
             }
-
         }
 
         //匹配人工补充机器人数
         List<DispatchRobotOp> opList = robotMapper.queryDisRobotOpList(null, null);
         if(null != pageList && pageList.size()>0
-            && null != opList && opList.size()>0){
+                && null != opList && opList.size()>0){
             loopA : for(DispatchRobotOpVo robot: pageList){
                 loopB : for(DispatchRobotOp opRobot: opList){
                     if(robot.getUserId().equals(opRobot.getUserId())
-                        && robot.getBotstenceId().equals(opRobot.getBotstenceId())){
+                            && robot.getBotstenceId().equals(opRobot.getBotstenceId())){
                         robot.setSupplNum(opRobot.getSupplNum());
                         continue  loopA;
                     }

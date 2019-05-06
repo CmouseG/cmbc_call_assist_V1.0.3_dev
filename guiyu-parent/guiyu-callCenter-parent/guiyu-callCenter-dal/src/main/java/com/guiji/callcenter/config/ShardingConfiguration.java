@@ -24,8 +24,8 @@ public class ShardingConfiguration {
 		shardingRuleConfig.setTableRuleConfigs(tableRuleConfigurations);
 		shardingRuleConfig.setMasterSlaveRuleConfigs(masterSlaveRuleConfigurations);
 		Properties properties = new Properties();
-//		properties.setProperty("sql.show", (sqlShow == null ? false : sqlShow) + "");
-		properties.setProperty("sql.show",  true+"" );
+		properties.setProperty("sql.show", (sqlShow == null ? false : sqlShow) + "");
+//		properties.setProperty("sql.show",  true+"" );
 		DataSource dataSource = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfig,
 				new HashMap<>(), properties);
 		return dataSource;

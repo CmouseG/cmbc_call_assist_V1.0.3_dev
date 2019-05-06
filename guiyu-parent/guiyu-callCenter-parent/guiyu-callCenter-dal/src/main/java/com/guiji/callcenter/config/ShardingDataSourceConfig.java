@@ -90,23 +90,23 @@ public class ShardingDataSourceConfig {
 		String shardingColumn = "org_id";
 		list.add(createTblConfig("call_out_plan",shardingColumn,
 						new OrgIdPreciseSharding("call_out_plan_"),
-						new OrgIdRangeSharding("call_out_plan_")));
+						new OrgIdRangeSharding("call_out_plan_"),"call_id"));
 		list.add(createTblConfig("call_out_detail",shardingColumn,
 						new OrgIdPreciseSharding("call_out_detail_"),
-						new OrgIdRangeSharding("call_out_detail_")));
+						new OrgIdRangeSharding("call_out_detail_"),"call_detail_id"));
 		return list;
 	}
 
 	private TableRuleConfiguration createTblConfig(String logicTable,String shardingColumn,
 												   PreciseShardingAlgorithm preciseSharding,
-												   RangeShardingAlgorithm rangeSharding) {
+												   RangeShardingAlgorithm rangeSharding,String keyColumn) {
 
 		TableRuleConfiguration tblConfig = new TableRuleConfiguration();
 		tblConfig.setLogicTable(logicTable);
 
 		tblConfig.setTableShardingStrategyConfig(
 				new StandardShardingStrategyConfiguration(shardingColumn, preciseSharding, rangeSharding));
-
+		tblConfig.setKeyGeneratorColumnName(keyColumn);
 		return tblConfig;
 	}
 

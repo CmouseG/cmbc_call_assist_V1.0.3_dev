@@ -50,7 +50,7 @@ public class RoleService {
 		//角色绑定菜单
 		if(menuIds!=null && menuIds.length>0) {
 			List<String> menuIdList = Arrays.asList(menuIds);
-			privilegeService.savePrivlegeTree(role.getCreateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
+			privilegeService.savePrivlegeTree(null,role.getCreateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 		}
 	}
 	
@@ -61,13 +61,16 @@ public class RoleService {
 	}
 	
 	@Transactional
-	public void update(SysRole role,String orgCode,String[] menuIds){
+	public void update(Long userId, SysRole role,String orgCode,String[] menuIds){
+		Integer updateFlag = null;
+		int role_id = getRoleByUserId(userId).getId();
+		if(role_id == role.getId()){updateFlag=1;}
 		role.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(role);
 //		mapperExt.addMenus(role.getId(),menuIds);
 		//角色绑定菜单
 		List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
-		privilegeService.savePrivlegeTree(role.getUpdateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
+		privilegeService.savePrivlegeTree(updateFlag,role.getUpdateId().intValue(), role.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 	}
 	
 	public SysRole getRoleId(Long id){

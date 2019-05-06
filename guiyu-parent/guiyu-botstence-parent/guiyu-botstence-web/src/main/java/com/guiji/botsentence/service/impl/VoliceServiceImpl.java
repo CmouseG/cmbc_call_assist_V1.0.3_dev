@@ -627,13 +627,6 @@ public class VoliceServiceImpl implements IVoliceService {
 		List<String> notmatchFileList = new ArrayList<>();
 		List<String> successFileList = new ArrayList<>();
 
-		/*
-		 * String formatFile = "文件:{format_file_name}格式不正确"; String sizeFile =
-		 * "文件:{size_file_name}大小超过1M"; String notmatchFile =
-		 * "文件:{notmatch_file_name}无匹配语音"; String successFile =
-		 * "文件:{success_file_name}语音已上传成功";
-		 */
-
 		try {
 			File dir = new File(tempPath);
 			File file = File.createTempFile(String.valueOf(System.currentTimeMillis()), "zip", dir);
@@ -652,17 +645,16 @@ public class VoliceServiceImpl implements IVoliceService {
 				for (int i = 0; i < listFile.size(); i++) {
 					File temp = listFile.get(i);
 					if (!temp.isDirectory()) {
-						//InputStream entryInStream = new FileInputStream(temp);
 						String name = temp.getName();
 
 						boolean needTts = false;
-						String seq = "";
 
 						String[] arrays = name.split("\\.");
 						String voliceId = arrays[0];
+						String voiceIdWithIndex = null;
 						Integer index = null;
 						if (voliceId.indexOf("_") > 0) {// 表示是需要TTS合成的话术
-							seq = voliceId;
+							voiceIdWithIndex = voliceId;
 							voliceId = voliceId.split("_")[0];
 							index = new Integer(arrays[0].split("_")[1]);
 							needTts = true;
@@ -687,7 +679,6 @@ public class VoliceServiceImpl implements IVoliceService {
 						//获取音频时长
 						int times=0;
 						try {
-							//times = BotSentenceUtil.getMediaDuration(temp);
 							times = BotSentenceUtil.getVideoTime(temp.getPath());
 							logger.info("录音时长: " + times);
 						} catch (Exception e) {
@@ -695,15 +686,16 @@ public class VoliceServiceImpl implements IVoliceService {
 						}
 						if (voliceIds.contains(voliceId)) {
 							String url = BotSentenceUtil.updloadNas(processId, userId, temp);
-							//String url = qiuniuUploadUtil.upload(entryInStream, null);
-							
+
 							if (needTts) {
 								if (index > 0) {
 									logger.info("当前话术是TTS合成录音 ...");
 									// 更新tts任务表的url
 									BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
-									ttsTaskExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(voliceId)
-											.andSeqEqualTo(voliceId);
+									ttsTaskExample.createCriteria()
+											.andProcessIdEqualTo(processId)
+											.andBusiIdEqualTo(voliceId)
+											.andSeqEqualTo(voiceIdWithIndex);
 									List<BotSentenceTtsTask> list = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
 									if (null != list && list.size() > 0) {
 										BotSentenceTtsTask task = list.get(0);

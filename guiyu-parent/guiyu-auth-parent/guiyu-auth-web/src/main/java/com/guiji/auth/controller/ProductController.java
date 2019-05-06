@@ -80,11 +80,11 @@ public class ProductController implements IProduct{
 		productService.save(product);
 		if (product.getIndustryIds() != null && !product.getIndustryIds().isEmpty()) {
 			//给企业绑定行业资源
-			privilegeService.savePrivlegeTree(userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.TRADE.getCode(), product.getIndustryIds());
+			privilegeService.savePrivlegeTree(null,userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.TRADE.getCode(), product.getIndustryIds());
 		}
 		if (product.getMenuIds() != null && !product.getMenuIds().isEmpty()) {
 			//给企业绑定菜单资源
-			privilegeService.savePrivlegeTree(userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.MENU.getCode(), product.getMenuIds());
+			privilegeService.savePrivlegeTree(null,userId, orgCode, AuthObjTypeEnum.PRODUCT.getCode(), product.getId().toString(), ResourceTypeEnum.MENU.getCode(), product.getMenuIds());
 		}
 		return Result.ok();
 	}

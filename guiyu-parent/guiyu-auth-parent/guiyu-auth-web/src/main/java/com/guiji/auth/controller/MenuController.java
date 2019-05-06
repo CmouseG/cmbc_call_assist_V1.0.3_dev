@@ -91,7 +91,7 @@ public class MenuController {
 				//如果是按钮，那么删除资源
 				buttonList.add(id.toString());
 				//删除关系
-				privilegeService.delPrivilegeTree(AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
+				privilegeService.delPrivilegeTree(null,AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
 			}else if(MenuTypeEnum.MENU.getCode()==sysMenu.getType()) {
 				//查询下级按钮
 				SysMenuExample example = new SysMenuExample();
@@ -103,7 +103,7 @@ public class MenuController {
 						buttonList.add(button.getId().toString());
 					}
 					//删除关系
-					privilegeService.delPrivilegeTree(AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
+					privilegeService.delPrivilegeTree(null,AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
 				}
 			}
 		}

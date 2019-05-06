@@ -62,7 +62,7 @@ public class RoleController {
 	public void update(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		role.setUpdateId(userId);
 		role.setUpdateTime(new Date());
-		roleService.update(role,orgCode,menuIds);
+		roleService.update(userId,role,orgCode,menuIds);
 		redisUtil.del("Key_Jurisdiction_" + role.getId());
 	}
 	

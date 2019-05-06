@@ -515,6 +515,66 @@ public class SysPrivilegeExample {
             return (Criteria) this;
         }
 
+        public Criteria andUpdateFlagIsNull() {
+            addCriterion("update_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagIsNotNull() {
+            addCriterion("update_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagEqualTo(Integer value) {
+            addCriterion("update_flag =", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotEqualTo(Integer value) {
+            addCriterion("update_flag <>", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagGreaterThan(Integer value) {
+            addCriterion("update_flag >", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagGreaterThanOrEqualTo(Integer value) {
+            addCriterion("update_flag >=", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagLessThan(Integer value) {
+            addCriterion("update_flag <", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagLessThanOrEqualTo(Integer value) {
+            addCriterion("update_flag <=", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagIn(List<Integer> values) {
+            addCriterion("update_flag in", values, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotIn(List<Integer> values) {
+            addCriterion("update_flag not in", values, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagBetween(Integer value1, Integer value2) {
+            addCriterion("update_flag between", value1, value2, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotBetween(Integer value1, Integer value2) {
+            addCriterion("update_flag not between", value1, value2, "updateFlag");
+            return (Criteria) this;
+        }
+
         public Criteria andCrtUserIsNull() {
             addCriterion("crt_user is null");
             return (Criteria) this;

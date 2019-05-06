@@ -16,6 +16,8 @@ public class SysPrivilege implements Serializable {
 
     private String orgCode;
 
+    private Integer updateFlag;
+
     private Integer crtUser;
 
     private Date crtTime;
@@ -74,6 +76,14 @@ public class SysPrivilege implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public Integer getUpdateFlag() {
+        return updateFlag;
+    }
+
+    public void setUpdateFlag(Integer updateFlag) {
+        this.updateFlag = updateFlag;
+    }
+
     public Integer getCrtUser() {
         return crtUser;
     }
@@ -118,6 +128,7 @@ public class SysPrivilege implements Serializable {
         sb.append(", resourceId=").append(resourceId);
         sb.append(", resourceType=").append(resourceType);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", updateFlag=").append(updateFlag);
         sb.append(", crtUser=").append(crtUser);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", updateTime=").append(updateTime);

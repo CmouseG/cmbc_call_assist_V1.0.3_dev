@@ -119,7 +119,9 @@ public class MenuService {
 			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
-					selected.add(Long.valueOf(privilege.getResourceId()));
+					if(privilege.getUpdateFlag() == null){
+						selected.add(Long.valueOf(privilege.getResourceId()));
+					}
 				}
 			}
 		}

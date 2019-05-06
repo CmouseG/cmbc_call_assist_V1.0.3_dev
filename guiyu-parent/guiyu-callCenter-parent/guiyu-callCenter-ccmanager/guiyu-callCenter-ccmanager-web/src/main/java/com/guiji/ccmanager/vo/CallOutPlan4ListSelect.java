@@ -83,6 +83,8 @@ public class CallOutPlan4ListSelect {
 
     private String orgCode;
 
+    private Integer orgId;
+
     private Integer batchId;
 
     private Boolean intervened;
@@ -379,6 +381,14 @@ public class CallOutPlan4ListSelect {
 
     public void setParams(String params) {
         this.params = params;
+    }
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
     }
 
     @Override

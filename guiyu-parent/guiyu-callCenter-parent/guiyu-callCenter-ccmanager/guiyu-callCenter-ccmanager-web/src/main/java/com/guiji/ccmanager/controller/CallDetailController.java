@@ -179,17 +179,18 @@ public class CallDetailController implements ICallPlanDetail {
     })
     @Jurisdiction("callCenter_callHistory_detail")
     @GetMapping(value="getCallDetail")
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId,@RequestHeader Integer isDesensitization,
-                                                                   @RequestHeader Integer authLevel, @RequestHeader Integer orgId,
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId,@RequestParam(value="orgId") Integer orgId,
+                                                                   @RequestHeader Integer isDesensitization,
+                                                                   @RequestHeader Integer authLevel,
                                                                    @RequestHeader Boolean isSuperAdmin){
 
-        log.info("get request getCallDetail，callId[{}]", callId);
+        log.info("get request getCallDetail，callId[{}],orgId[{}]", callId, orgId);
 
-        if(StringUtils.isBlank(callId)){
+        if(StringUtils.isBlank(callId) || null ==orgId){
             return Result.error(Constant.ERROR_PARAM);
         }
-        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,orgId);
-        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), orgIdList);
+
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), orgId);
         //修改状态为已读
         if(!isSuperAdmin){
             if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
@@ -221,10 +222,10 @@ public class CallDetailController implements ICallPlanDetail {
     public Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(@RequestParam(value="callId") String callId,@RequestParam(value="orgId") Integer orgId) {
         log.info("get request getCallDetailApi，callId[{}]", callId);
 
-        if(StringUtils.isBlank(callId)){
+        if(StringUtils.isBlank(callId) || orgId == null){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), Lists.newArrayList(orgId));
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), orgId);
         //修改状态为已读
         if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
             callDetailService.updateIsRead(callId);

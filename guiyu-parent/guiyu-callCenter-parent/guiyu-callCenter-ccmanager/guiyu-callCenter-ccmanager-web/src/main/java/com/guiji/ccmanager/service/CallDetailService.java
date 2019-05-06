@@ -24,7 +24,7 @@ public interface CallDetailService {
     List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
                                             int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization, Integer orgId);
 
-    CallPlanDetailRecordVO getCallDetail(BigInteger callId,List<Integer> orgIdList);
+    CallPlanDetailRecordVO getCallDetail(BigInteger callId,Integer orgId);
 
     MyCallOutPlanQueryEntity getMyCallOutPlanQueryEntity(CallRecordListReq callRecordListReq);
 

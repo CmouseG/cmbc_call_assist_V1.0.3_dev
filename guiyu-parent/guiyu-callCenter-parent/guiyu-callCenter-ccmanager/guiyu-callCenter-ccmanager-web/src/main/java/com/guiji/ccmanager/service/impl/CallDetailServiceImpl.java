@@ -391,12 +391,12 @@ public class CallDetailServiceImpl implements CallDetailService {
 
 
     @Override
-    public CallPlanDetailRecordVO getCallDetail(BigInteger callId,List<Integer> orgIdList) {
+    public CallPlanDetailRecordVO getCallDetail(BigInteger callId,Integer orgId) {
 
         CallOutPlanExample examplePlan = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteriaPlan = examplePlan.createCriteria();
         criteriaPlan.andCallIdEqualTo(callId)
-                .andOrgIdIn(orgIdList);
+                .andOrgIdEqualTo(orgId);
         List<CallOutPlan> callOutPlanList = callOutPlanMapper.selectByExample(examplePlan);
         if(callOutPlanList!=null && callOutPlanList.size()>0){
             CallOutPlan callOutPlan = callOutPlanList.get(0);
@@ -406,7 +406,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 CallOutDetailExample example = new CallOutDetailExample();
                 CallOutDetailExample.Criteria criteria = example.createCriteria();
-                criteria.andCallIdEqualTo(callId);
+                criteria.andCallIdEqualTo(callId).andOrgIdEqualTo(orgId);
                 example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time),call_detail_id");
                 List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
 

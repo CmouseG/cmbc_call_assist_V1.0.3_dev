@@ -848,7 +848,7 @@
                 is_answer = #{isAnswer,jdbcType=INTEGER},
             </if>
         </set>
-        where call_id = #{callId,jdbcType=BIGINT}  and org_id = #{orgId,jdbcType=INTEGER},
+        where call_id = #{callId,jdbcType=BIGINT}  and org_id = #{orgId,jdbcType=INTEGER}
 
     </update>
     <update id="updateCallStateIntentReason" parameterType="map">

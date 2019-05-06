@@ -118,11 +118,11 @@ public class OrganizationService {
 		}
 		if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
 			//给企业绑定行业资源
-			privilegeService.savePrivlegeTree(record.getCreateId().intValue(), subCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
+			privilegeService.savePrivlegeTree(null,record.getCreateId().intValue(), subCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
 		}
 		if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
 			//给企业绑定菜单资源
-			privilegeService.savePrivlegeTree(record.getCreateId().intValue(), subCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+			privilegeService.savePrivlegeTree(null,record.getCreateId().intValue(), subCode, AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 		}
 		//新增企业后，初始化一条企业管理员信息
 		SysRole role = new SysRole();
@@ -168,11 +168,11 @@ public class OrganizationService {
 			}
 			if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
 				//给企业绑定行业资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
+				privilegeService.savePrivlegeTree(null,updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.TRADE.getCode(), record.getIndustryIds());
 			}
 			if (record != null && record.getMenuIds() != null && !record.getMenuIds().isEmpty()) {
 				//给企业绑定菜单资源
-				privilegeService.savePrivlegeTree(updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
+				privilegeService.savePrivlegeTree(null,updateUser.intValue(), record.getCode(), AuthObjTypeEnum.ORG.getCode(), record.getId().toString(), ResourceTypeEnum.MENU.getCode(), record.getMenuIds());
 			}
 		}else {
 			//系统不需要通过前端绑定行业/菜单资源

@@ -134,12 +134,12 @@ public class PrivilegeService {
 	 * @param resourceIdList 资源分配列表
 	 */
 	@Transactional
-	public void savePrivlegeTree(Integer userId,String orgCode,Integer authType,String authId,Integer resourceType,List<String> resourceIdList) {
+	public void savePrivlegeTree(Integer updateFlag,Integer userId,String orgCode,Integer authType,String authId,Integer resourceType,List<String> resourceIdList) {
 		if(userId!=null && StrUtils.isNotEmpty(orgCode) && authType!=null && StrUtils.isNotEmpty(authId) && resourceType!=null) {
 			if(resourceIdList==null||resourceIdList.isEmpty()) {
 				//如果最新绑定关系为空，那么清空该类资源权限
 				log.info("清空权限，授权对象类型:{}，授权id:{}，资源类型：{}",authType,authId,resourceType);
-				this.delPrivilegeTree(orgCode,userId, authType, authId, resourceIdList, resourceType);
+				this.delPrivilegeTree(updateFlag,orgCode,userId, authType, authId, resourceIdList, resourceType);
 			}else {
 				//查询该授权对象已经绑定的资源列表
 				List<String> addResourceIdList = new ArrayList<String>();	//新增的资源列表
@@ -164,7 +164,7 @@ public class PrivilegeService {
 				}
 				if(delResourceIdList!=null && !delResourceIdList.isEmpty()) {
 					log.info("授权对象类型:{}，授权id:{}，资源类型：{},本次删除资源：{}",authType,authId,resourceType,delResourceIdList);
-					this.delPrivilegeTree(orgCode,userId, authType, authId, delResourceIdList, resourceType);
+					this.delPrivilegeTree(updateFlag, orgCode,userId, authType, authId, delResourceIdList, resourceType);
 				}
 			}
 		}else {
@@ -221,7 +221,7 @@ public class PrivilegeService {
 	 * @param resourceType
 	 */
 	@Transactional
-	public void delPrivilegeTree(String orgCode,Integer userId,Integer authType,String authId,List<String> resourceIdList,Integer resourceType) {
+	public void delPrivilegeTree(Integer updateFlag, String orgCode,Integer userId,Integer authType,String authId,List<String> resourceIdList,Integer resourceType) {
 		if(userId!=null && authType!=null && StrUtils.isNotEmpty(authId) && !resourceIdList.isEmpty() && resourceType!=null) {
 			SysPrivilegeExample example = new SysPrivilegeExample();
 			Criteria criteria = example.createCriteria();
@@ -250,12 +250,17 @@ public class PrivilegeService {
 				criteria.andAuthIdEqualTo(authId);
 			}
 			List<SysPrivilege> list = sysPrivilegeMapper.selectByExample(example);
-			int delCount = sysPrivilegeMapper.deleteByExample(example);
+			long delCount = sysPrivilegeMapper.countByExample(example);
 			log.info("删除权限,删除人:{},授权对象类型:{},授权对象编号：{},资源编号：{},资源类型：{},共计删除数据：{}条",userId,authType,authId,resourceIdList,resourceType,delCount);
 			if(list!=null && !list.isEmpty()) {
 				for(SysPrivilege sysPrivilege:list) {
 					//删除关系
-					sysPrivilegeMapper.deleteByPrimaryKey(sysPrivilege.getId());
+					if(updateFlag!=null){
+						sysPrivilege.setUpdateFlag(updateFlag);
+						sysPrivilegeMapper.updateByPrimaryKeySelective(sysPrivilege);
+					}else{
+						sysPrivilegeMapper.deleteByPrimaryKey(sysPrivilege.getId());
+					}
 					//记录删除历史
 					privilegeHisService.save(userId, sysPrivilege);
 				}

@@ -282,7 +282,7 @@ public class FsBotHandler {
                 Integer duration = event.getDuration();
                 Integer billSec = event.getBillSec();
                 //将calloutdetail里面的意向标签更新到calloutplan里面
-                CallOutDetail callOutDetail = callOutDetailService.getLastDetail(uuid,orgId);
+                CallOutDetail callOutDetail = callOutDetailService.getLastDetail(callId,orgId);
                 callPlan.setTalkNum(callOutDetailService.getTalkNum(bigIntegerId,orgId));
                 if (callOutDetail != null) {
                     log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
@@ -292,10 +292,10 @@ public class FsBotHandler {
                     if (callPlan.getAccurateIntent() == null) {
                         if (duration != null) {
                             if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
-                                log.info("挂断后，设置意向标签为F,callId[{}]", uuid);
+                                log.info("挂断后，设置意向标签为F,callId[{}]", callId);
                                 callPlan.setAccurateIntent("F");
                                 if (duration.intValue() >= 55) {
-                                    log.info("超过55秒，设置备注为无人接听,callId[{}]", uuid);
+                                    log.info("超过55秒，设置备注为无人接听,callId[{}]", callId);
                                     callPlan.setReason("无人接听");
                                 }
                             }

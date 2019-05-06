@@ -60,7 +60,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
         CallOutPlanExample example = new CallOutPlanExample();
         example.createCriteria().andOrgIdEqualTo(callplan.getOrgId())
                 .andCallIdEqualTo(callplan.getCallId());
-        callOutPlanMapper.updateByExample(callplan,example);
+        callOutPlanMapper.updateByExampleSelective(callplan,example);
     }
 
 

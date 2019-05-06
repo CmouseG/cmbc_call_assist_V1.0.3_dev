@@ -120,7 +120,7 @@
         customer_id as customerId, temp_id as tempId, line_id as lineId,
         call_start_time as callStartTime, hangup_time as hangupTime, answer_time as answerTime, duration,
         bill_sec as billSec, accurate_intent as accurateIntent, reason, hangup_code as hangupCode , remarks,
-        freason, talk_num as talkNum, is_cancel as isCancel, is_answer as isAnswer, intervened
+        freason, talk_num as talkNum, is_cancel as isCancel, is_answer as isAnswer, intervened ,org_id as orgId
         from call_out_plan
         <include refid="Select_Where_SQL" />
         order by create_time desc

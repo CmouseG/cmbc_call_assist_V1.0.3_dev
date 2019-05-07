@@ -122,7 +122,7 @@ public class PrivilegeService {
 				sysPrivilege.setCrtTime(DateUtil.getCurrent4Time());
 				sysPrivilege.setUpdateUser(userId);
 				sysPrivilege.setUpdateTime(DateUtil.getCurrent4Time());
-				if(resourceIds.containsKey(resourceId)){
+				if(resourceIds != null && resourceIds.containsKey(resourceId)){
 					sysPrivilege.setId(Integer.valueOf(resourceIds.get(resourceId)));
 					sysPrivilegeMapper.updateByExample(sysPrivilege, example);
 				}else{

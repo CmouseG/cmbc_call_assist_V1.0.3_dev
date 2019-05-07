@@ -40,6 +40,11 @@ public class UserRechargeTotalVo implements Serializable {
 
     private String operUserName;
 
+    /**
+     * 附件快照地址
+     */
+    private String attachmentSnapshotUrl;
+
     public String getAccountId() {
         return accountId;
     }
@@ -102,5 +107,13 @@ public class UserRechargeTotalVo implements Serializable {
 
     public void setFeeMode(Integer feeMode) {
         this.feeMode = feeMode;
+    }
+
+    public String getAttachmentSnapshotUrl() {
+        return attachmentSnapshotUrl;
+    }
+
+    public void setAttachmentSnapshotUrl(String attachmentSnapshotUrl) {
+        this.attachmentSnapshotUrl = attachmentSnapshotUrl;
     }
 }

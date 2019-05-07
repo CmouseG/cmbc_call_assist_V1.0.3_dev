@@ -11,12 +11,12 @@ public class TotalChargingItemVo implements Serializable {
     private String totalDate;
 
     /**
-     * 计费项ID
+     * 计费项ID(线路ID)
      */
     private String chargingItemId;
 
     /**
-     * 计费项名称
+     * 计费项名称(线路名称)
       */
     private String chargingItemName;
 

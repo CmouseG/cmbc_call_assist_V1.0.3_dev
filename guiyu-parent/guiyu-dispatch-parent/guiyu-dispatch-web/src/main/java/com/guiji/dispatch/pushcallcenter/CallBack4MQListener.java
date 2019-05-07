@@ -70,7 +70,7 @@ public class CallBack4MQListener {
 //				currentCount = currentCount - 1;
 //				redisUtil.set(queueCount, currentCount);
 					redisUtil.decr(queueCount, 1);
-					redisUtil.expire(queueCount, 300);
+					redisUtil.expire(queueCount, 900);
 				}else{
 					logger.error("呼叫回调，" + queueCount + "已不存在");
 				}

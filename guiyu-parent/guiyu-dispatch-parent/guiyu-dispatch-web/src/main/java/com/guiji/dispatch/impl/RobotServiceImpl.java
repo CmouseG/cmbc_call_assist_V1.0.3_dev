@@ -100,11 +100,11 @@ public class RobotServiceImpl implements RobotService {
 
             int pageNo = page.getPageNo();
             int pageSize = page.getPageSize();
-            if(len >= (pageNo * pageSize)
-                    || (len > ((pageNo-1) * pageSize)) && len <= (pageNo * pageSize)){
+            if(len > 0 && (len >= (pageNo * pageSize)
+                    || (len > ((pageNo-1) * pageSize)) && len <= (pageNo * pageSize))){
                 //获取分页列表
                 int startIdx = (pageNo - 1) * pageSize + 1;
-                int endIdx = pageNo * pageSize;
+                int endIdx = (len >= (pageNo * pageSize)?(pageNo * pageSize):len);
                 for (int idx = startIdx; idx <= endIdx; idx++) {
                     pageList.add(list.get(idx - 1));
                 }

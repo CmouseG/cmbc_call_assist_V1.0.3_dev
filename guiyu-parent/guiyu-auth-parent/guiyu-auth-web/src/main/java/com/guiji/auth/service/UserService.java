@@ -402,7 +402,7 @@ public class UserService {
 			if(roleList!=null && !roleList.isEmpty()) {
 				//现在用户只有1个角色
 				SysRole sysRole = roleList.get(0);
-				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
+				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(null,AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
 				List<SysMenu> buttonList = new ArrayList<SysMenu>();
 				Iterator<SysMenu> it = allMenus.iterator();
 				while(it.hasNext()){
@@ -436,7 +436,7 @@ public class UserService {
 			if(roleList!=null && !roleList.isEmpty()) {
 				//现在用户只有1个角色
 				SysRole sysRole = roleList.get(0);
-				List<SysPrivilege> privilegeList = privilegeService.queryPrivilegeListByAuth(sysRole.getId().toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+				List<SysPrivilege> privilegeList = privilegeService.queryPrivilegeListByAuth(null,sysRole.getId().toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 				if(privilegeList!=null && !privilegeList.isEmpty()) {
 					for(SysPrivilege sysPrivilege:privilegeList) {
 						if(AuthConstants.MENU_AGENT_MEMBER == Integer.valueOf(sysPrivilege.getResourceId())) {

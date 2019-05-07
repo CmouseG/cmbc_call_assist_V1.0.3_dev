@@ -65,6 +65,11 @@ public class SysRechargeTotalVo implements Serializable {
      */
     private String operUserName;
 
+    /**
+     * 附件快照地址
+     */
+    private String attachmentSnapshotUrl;
+
     public Integer getId() {
         return id;
     }
@@ -159,5 +164,13 @@ public class SysRechargeTotalVo implements Serializable {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    public String getAttachmentSnapshotUrl() {
+        return attachmentSnapshotUrl;
+    }
+
+    public void setAttachmentSnapshotUrl(String attachmentSnapshotUrl) {
+        this.attachmentSnapshotUrl = attachmentSnapshotUrl;
     }
 }

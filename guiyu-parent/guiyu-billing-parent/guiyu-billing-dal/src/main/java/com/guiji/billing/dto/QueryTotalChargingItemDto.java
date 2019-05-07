@@ -5,11 +5,6 @@ import com.guiji.billing.sys.PageDto;
 public class QueryTotalChargingItemDto extends PageDto {
 
     /**
-     * 操作员ID
-     */
-    private String operUserId;
-
-    /**
      * 1：按日   2：按月
      */
     private Integer type;
@@ -23,13 +18,10 @@ public class QueryTotalChargingItemDto extends PageDto {
      */
     private String chargingItemId;
 
-    public String getOperUserId() {
-        return operUserId;
-    }
-
-    public void setOperUserId(String operUserId) {
-        this.operUserId = operUserId;
-    }
+    /**
+     * 搜索用户过滤
+     */
+    private String userId;
 
     public Integer getType() {
         return type;
@@ -61,5 +53,13 @@ public class QueryTotalChargingItemDto extends PageDto {
 
     public void setChargingItemId(String chargingItemId) {
         this.chargingItemId = chargingItemId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

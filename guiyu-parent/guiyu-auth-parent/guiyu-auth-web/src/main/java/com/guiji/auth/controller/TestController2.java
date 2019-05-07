@@ -88,7 +88,7 @@ public class TestController2 {
 				continue;
 			}
 			List<String> addButtonsList = new ArrayList<String>();
-			List<SysPrivilege> buttonsIds = privilegeService.queryPrivilegeListByAuth(role.getId().toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+			List<SysPrivilege> buttonsIds = privilegeService.queryPrivilegeListByAuth(null,role.getId().toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 			for(SysPrivilege pv : buttonsIds) {
 				SysMenu menu = menuMap.get(pv.getResourceId());	//原来配置的按钮
 				Integer pid = menu.getPid();

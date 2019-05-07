@@ -67,10 +67,15 @@ public class PrivilegeService {
 	 * @param resourceType
 	 * @return
 	 */
-	public List<SysPrivilege> queryPrivilegeListByAuth(String authId,Integer authType,Integer resourceType) {
+	public List<SysPrivilege> queryPrivilegeListByAuth(Integer updateFlag,String authId,Integer authType,Integer resourceType) {
 		if(StrUtils.isNotEmpty(authId) && authType!=null && resourceType!=null) {
 			SysPrivilegeExample example = new SysPrivilegeExample();
-			example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType).andUpdateFlagIsNull();
+			if(updateFlag==null){
+				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType).andUpdateFlagIsNull();
+			}else{
+				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
+			}
+			
 			return sysPrivilegeMapper.selectByExample(example);
 		}
 		return null;
@@ -122,7 +127,7 @@ public class PrivilegeService {
 				sysPrivilege.setCrtTime(DateUtil.getCurrent4Time());
 				sysPrivilege.setUpdateUser(userId);
 				sysPrivilege.setUpdateTime(DateUtil.getCurrent4Time());
-				if(resourceIds.containsKey(resourceId)){
+				if(resourceIds != null && resourceIds.containsKey(resourceId)){
 					sysPrivilege.setId(Integer.valueOf(resourceIds.get(resourceId)));
 					sysPrivilegeMapper.updateByExample(sysPrivilege, example);
 				}else{
@@ -156,7 +161,7 @@ public class PrivilegeService {
 				//查询该授权对象已经绑定的资源列表
 				List<String> addResourceIdList = new ArrayList<String>();	//新增的资源列表
 				List<String> delResourceIdList = new ArrayList<String>();	//需要删除资源列表
-				List<SysPrivilege> existPrivilegeList = this.queryPrivilegeListByAuth(authId, authType, resourceType);
+				List<SysPrivilege> existPrivilegeList = this.queryPrivilegeListByAuth(null,authId, authType, resourceType);
 				if(existPrivilegeList==null || existPrivilegeList.isEmpty()) {
 					log.info("授权对象类型:{}，授权id:{}，资源类型：{},没有保存数据，本次全部新增：{}",authType, authId, resourceType,resourceIdList);
 					addResourceIdList = resourceIdList;
@@ -370,9 +375,9 @@ public class PrivilegeService {
 	 * @param authId
 	 * @return
 	 */
-	public List<SysMenu> queryMenuTreeByLowId(Integer authType,String authId){
+	public List<SysMenu> queryMenuTreeByLowId(Integer updateFlag, Integer authType,String authId){
 		//查询关联的底层菜单
-		List<SysPrivilege> menuPrivilegeList = this.queryPrivilegeListByAuth(authId.toString(), authType, ResourceTypeEnum.MENU.getCode());
+		List<SysPrivilege> menuPrivilegeList = this.queryPrivilegeListByAuth(updateFlag,authId.toString(), authType, ResourceTypeEnum.MENU.getCode());
 		if(menuPrivilegeList!=null&&!menuPrivilegeList.isEmpty()) {
 			//不为空的话，查询底层菜单的上级菜单
 			Set<SysMenu> setMenu = new HashSet<SysMenu>();

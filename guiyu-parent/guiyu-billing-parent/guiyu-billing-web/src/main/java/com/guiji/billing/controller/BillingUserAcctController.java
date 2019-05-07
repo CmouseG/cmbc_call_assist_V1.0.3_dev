@@ -89,7 +89,7 @@ public class BillingUserAcctController {
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
-        queryRechargeDto.setUserId(userId);
+        queryRechargeDto.setOperUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
         logger.info("/billing/userAcct/queryUserRechargeTotal:{}", JsonUtils.bean2Json(queryRechargeDto));

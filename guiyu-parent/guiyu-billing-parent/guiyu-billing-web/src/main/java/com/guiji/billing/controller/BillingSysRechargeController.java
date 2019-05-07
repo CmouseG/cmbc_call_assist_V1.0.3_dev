@@ -36,7 +36,7 @@ public class BillingSysRechargeController {
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
-        queryRechargeDto.setUserId(userId);
+        queryRechargeDto.setOperUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
         logger.info("/billing/sysRecharge/queryCompanyRechargeTotal:{}", JsonUtils.bean2Json(queryRechargeDto));

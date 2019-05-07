@@ -31,6 +31,12 @@
             AND r.oper_user_id = #{operUserId}
           </if>
         </if>
+        <if test="userId != null">
+          AND r.oper_user_id = #{userId}
+        </if>
+        <if test="chargingItemId != null">
+          AND t.charging_item_id = #{chargingItemId}
+        </if>
         <if test="beginMonth != null and endMonth != null">
           AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
         </if>
@@ -73,6 +79,12 @@
               AND r.oper_user_id = #{operUserId}
             </if>
           </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
+          </if>
+          <if test="chargingItemId != null">
+            AND t.charging_item_id = #{chargingItemId}
+          </if>
           <if test="beginMonth != null and endMonth != null">
             AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
           </if>
@@ -111,6 +123,12 @@
             <if test="authLevel == 1 and operUserId != null">
               AND r.oper_user_id = #{operUserId}
             </if>
+          </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
+          </if>
+          <if test="chargingItemId != null">
+            AND t.charging_item_id = #{chargingItemId}
           </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}
@@ -154,6 +172,12 @@
               AND r.oper_user_id = #{operUserId}
             </if>
           </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
+          </if>
+          <if test="chargingItemId != null">
+            AND t.charging_item_id = #{chargingItemId}
+          </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}
           </if>
@@ -163,6 +187,90 @@
     ) a
   </select>
 
+
+  <select id="totalCompanyChargingByDay" resultType="com.guiji.billing.vo.TotalChargingItemVo">
+    SELECT
+      CONCAT(#{beginDate}, '至', #{endDate}) AS total_date,
+      charging_item_id,
+      charging_item_name,
+      COUNT(id) AS call_count,
+      SUM(oper_duration_m) AS duration,
+      SUM(amount) AS total_amout,
+      SUM(charging_amount) as total_charging_amout
+    FROM
+    (
+      SELECT t.charging_item_id, t.charging_item_name,
+        r.id, r.oper_duration_m, r.amount , r.charging_amount
+      FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+      WHERE r.account_id = c.account_id
+        AND r.user_charging_id = t.user_charging_id
+        AND r.oper_duration <![CDATA[ > ]]> 0
+        <if test="authLevel != null">
+          <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG.getLevel() and orgCode != null">
+            AND c.org_code = #{orgCode}
+          </if>
+          <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG_EXT.getLevel() and orgCode != null">
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
+          </if>
+          <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@USER.getLevel() and operUserId != null">
+            AND r.oper_user_id = #{operUserId}
+          </if>
+        </if>
+        <if test="userId != null">
+          AND r.oper_user_id = #{userId}
+        </if>
+        <if test="chargingItemId != null">
+          AND t.charging_item_id = #{chargingItemId}
+        </if>
+        <if test="beginDate != null and endDate != null">
+          AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+        </if>
+    ) rt
+    WHERE 1 = 1
+      GROUP BY charging_item_id, charging_item_name
+      <if test="page != null and page.isPage ">
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+
+  <select id="totalChargingCountByDay" resultType="java.lang.Integer">
+    SELECT
+        COUNT(*)
+    FROM
+    (
+        SELECT t.charging_item_id
+        FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+        WHERE r.account_id = c.account_id
+          AND r.user_charging_id = t.user_charging_id
+          AND r.oper_duration <![CDATA[ > ]]> 0
+          <if test="authLevel != null">
+            <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG.getLevel() and orgCode != null">
+              AND c.org_code = #{orgCode}
+            </if>
+            <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG_EXT.getLevel() and orgCode != null">
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
+            </if>
+            <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@USER.getLevel() and operUserId != null">
+              AND r.oper_user_id = #{operUserId}
+            </if>
+          </if>
+          <if test="userId != null">
+            AND r.oper_user_id = #{userId}
+          </if>
+          <if test="chargingItemId != null">
+            AND t.charging_item_id = #{chargingItemId}
+          </if>
+          <if test="beginDate != null and endDate != null">
+            AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+          </if>
+          GROUP BY charging_item_id
+      ) rt
+  </select>
+
+  <!---->
 
   <select id="totalChargingItemList" resultType="com.guiji.billing.vo.TotalChargingItemDetailVo">
     SELECT

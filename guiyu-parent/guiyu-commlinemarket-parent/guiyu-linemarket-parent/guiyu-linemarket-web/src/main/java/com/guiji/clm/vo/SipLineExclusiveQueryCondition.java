@@ -30,4 +30,8 @@ public class SipLineExclusiveQueryCondition {
 	private String userId;
 	//归属企业
 	private String orgCode;
+	//权限级别
+	private Integer authLevel;
+	//查询的用户
+	private String qUserId;
 }

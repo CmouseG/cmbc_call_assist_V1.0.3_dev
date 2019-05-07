@@ -71,9 +71,9 @@ public class PrivilegeService {
 		if(StrUtils.isNotEmpty(authId) && authType!=null && resourceType!=null) {
 			SysPrivilegeExample example = new SysPrivilegeExample();
 			if(updateFlag==null){
-				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
-			}else{
 				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType).andUpdateFlagIsNull();
+			}else{
+				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
 			}
 			
 			return sysPrivilegeMapper.selectByExample(example);

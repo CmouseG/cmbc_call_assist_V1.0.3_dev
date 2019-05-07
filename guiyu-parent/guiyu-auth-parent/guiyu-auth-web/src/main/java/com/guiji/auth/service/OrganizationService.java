@@ -527,7 +527,7 @@ public class OrganizationService {
 			List<String> tradeList = new ArrayList<String>();
 			SysOrganization org = this.getOrgByCode(orgCode);
 			if(org!=null) {
-				List<SysPrivilege> list = privilegeService.queryPrivilegeListByAuth(org.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+				List<SysPrivilege> list = privilegeService.queryPrivilegeListByAuth(null,org.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 				if(list!=null && !list.isEmpty()) {
 					for(SysPrivilege privilege:list) {
 						tradeList.add(privilege.getResourceId());
@@ -685,7 +685,7 @@ public class OrganizationService {
 	public Map<String,Object> getTemplateTradeByTopOrg(Integer productId){
 		Map<String,Object> map=new HashMap<String,Object>();
 		//获取顶层企业的模板
-		List<SysPrivilege> topOrgTradeList = privilegeService.queryPrivilegeListByAuth(AuthConstants.ROOT_ORG_CODE, AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+		List<SysPrivilege> topOrgTradeList = privilegeService.queryPrivilegeListByAuth(null,AuthConstants.ROOT_ORG_CODE, AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 		if(topOrgTradeList!=null && !topOrgTradeList.isEmpty()) {
 			List<String> topOrgTempList = this.getTemplateList(topOrgTradeList);
 			//产品关联的行业-话术模板树形
@@ -693,7 +693,7 @@ public class OrganizationService {
 			if(topOrgTempTradeTreeData!=null && topOrgTempTradeTreeData.getData()!=null) {
 				map.put("trades", topOrgTempTradeTreeData.getData());
 				if(productId!=null) {
-					List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
+					List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(null,productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
 					if(productTradeList!=null && !productTradeList.isEmpty()) {
 						map.put("selected", this.getTemplateList(productTradeList));
 					}
@@ -714,7 +714,7 @@ public class OrganizationService {
 		Map<String,Object> map=new HashMap<String,Object>();
 		if(productId!=null) {
 			//获取产品关联的行业模板
-			List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
+			List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(null,productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
 			if(productTradeList!=null && !productTradeList.isEmpty()) {
 				List<String> productTempList = this.getTemplateList(productTradeList);
 				//产品关联的行业-话术模板树形
@@ -724,7 +724,7 @@ public class OrganizationService {
 					if(StrUtils.isNotEmpty(orgCode)) {
 						SysOrganization organization = this.getOrgByCode(orgCode);
 						if(organization!=null) {
-							List<SysPrivilege> orgTradeList = privilegeService.queryPrivilegeListByAuth(organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+							List<SysPrivilege> orgTradeList = privilegeService.queryPrivilegeListByAuth(null,organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 							if(orgTradeList!=null && !orgTradeList.isEmpty()) {
 								map.put("selected", this.getTemplateList(orgTradeList));
 							}
@@ -750,7 +750,7 @@ public class OrganizationService {
 			//获取产品关联的行业模板
 			SysOrganization pOrganization = this.getOrgByCode(pOrgCode);
 			if(pOrganization!=null) {
-				List<SysPrivilege> pOrgTradeList = privilegeService.queryPrivilegeListByAuth(pOrganization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+				List<SysPrivilege> pOrgTradeList = privilegeService.queryPrivilegeListByAuth(null,pOrganization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 				if(pOrgTradeList!=null && !pOrgTradeList.isEmpty()) {
 					List<String> pOrgTempList = this.getTemplateList(pOrgTradeList);
 					//上级组织关联的行业-话术模板树形
@@ -760,7 +760,7 @@ public class OrganizationService {
 						if(StrUtils.isNotEmpty(orgCode)) {
 							SysOrganization organization = this.getOrgByCode(orgCode);
 							if(organization!=null) {
-								List<SysPrivilege> orgTradeList = privilegeService.queryPrivilegeListByAuth(organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+								List<SysPrivilege> orgTradeList = privilegeService.queryPrivilegeListByAuth(null,organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 								if(orgTradeList!=null && !orgTradeList.isEmpty()) {
 									map.put("selected", this.getTemplateList(orgTradeList));
 								}

@@ -78,7 +78,7 @@ public class AgentGroupChangeService {
 	 */
 	public void bindAgentMembers(SysUser sysUser,Long roleId) {
 		if(sysUser!=null && roleId!=null) {
-			List<SysPrivilege> privilegeList = privilegeService.queryPrivilegeListByAuth(roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+			List<SysPrivilege> privilegeList = privilegeService.queryPrivilegeListByAuth(null,roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(privilegeList!=null && !privilegeList.isEmpty()) {
 				for(SysPrivilege privilege : privilegeList) {
 					if((AuthConstants.MENU_AGENT_MEMBER+"").equals(privilege.getResourceId())) {
@@ -128,8 +128,8 @@ public class AgentGroupChangeService {
 	public void updateBindAgentMembers(SysUser user, Long oldRoleId, Long newRoleId)
 	{
 		if(user==null || oldRoleId ==null || newRoleId==null) {return;}
-		List<SysPrivilege> oldPrivilegeList = privilegeService.queryPrivilegeListByAuth(oldRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
-		List<SysPrivilege> newPrivilegeList = privilegeService.queryPrivilegeListByAuth(newRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+		List<SysPrivilege> oldPrivilegeList = privilegeService.queryPrivilegeListByAuth(null,oldRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+		List<SysPrivilege> newPrivilegeList = privilegeService.queryPrivilegeListByAuth(null,newRoleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 		List<String> oldResourceList = oldPrivilegeList.stream().map(privilege -> privilege.getResourceId()).collect(Collectors.toList());
 		List<String> newResourceList = newPrivilegeList.stream().map(privilege -> privilege.getResourceId()).collect(Collectors.toList());
 		if(oldResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"") && !newResourceList.contains(AuthConstants.MENU_AGENT_MEMBER+"")) //解绑

@@ -40,6 +40,8 @@ public class MenuService {
 	@Autowired
 	UserService userService;
 	@Autowired
+	RoleService roleService;
+	@Autowired
 	DataLocalCacheUtil dataLocalCacheUtil;
 
 	public void insert(SysMenu menu){
@@ -81,12 +83,15 @@ public class MenuService {
 	 * @return
 	 */
 	public Map<String,Object> getOrgRoleAuthMenus(Long roleId,Integer userId,String orgCode,String targetOrgCode){
+		Integer updateFlag = null;
+		int role_id = roleService.getRoleByUserId(userId.longValue()).getId();
+		if(role_id == roleId){updateFlag=1;}
 		Map<String,Object> map=new HashMap<String,Object>();
 		//获取当前用户的权限范围
 		PrivlegeAuth privlegeAuth = privilegeService.getUserAuthLevel(userId, orgCode, targetOrgCode);
 		if(privlegeAuth!=null) {
 			//查询当前用户菜单范围列表
-			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(privlegeAuth.getAuthType(), privlegeAuth.getAuthId());
+			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(updateFlag,privlegeAuth.getAuthType(), privlegeAuth.getAuthId());
 			if(!targetOrgCode.equals("1")){  // 非系统下角色
 				Iterator<SysMenu> iterator = allMenus.iterator();
 				while(iterator.hasNext()){
@@ -116,7 +121,7 @@ public class MenuService {
 		List<Long> selected= new ArrayList<Long>();
 		if(roleId!=null) {
 			//查询该角色的菜单权限
-			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(null,roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
 					if(privilege.getUpdateFlag() == null){
@@ -145,7 +150,7 @@ public class MenuService {
 		List<Long> selected= new ArrayList<Long>();
 		if(productId!=null) {
 			//查询该产品的菜单权限
-			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.MENU.getCode());
+			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(null,productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
 					selected.add(Long.valueOf(privilege.getResourceId()));
@@ -167,7 +172,7 @@ public class MenuService {
 		//获取当前用户的权限范围
 		if(productId!=null) {
 			//查询产品范围列表
-			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.PRODUCT.getCode(), productId.toString());
+			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(null,AuthObjTypeEnum.PRODUCT.getCode(), productId.toString());
 			//拼装树形结构
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));
@@ -175,7 +180,7 @@ public class MenuService {
 		}else if(StrUtils.isNotEmpty(parentOrgCode)) {
 			//查询上级企业菜单范围列表
 			SysOrganization parentOrganization = organizationService.getOrgByCode(parentOrgCode);
-			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ORG.getCode(), parentOrganization.getId().toString());
+			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(null,AuthObjTypeEnum.ORG.getCode(), parentOrganization.getId().toString());
 			//拼装树形结构
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));
@@ -187,7 +192,7 @@ public class MenuService {
 		if(StrUtils.isNotEmpty(targetOrgCode)) {
 			//查询本组织的菜单权限
 			SysOrganization organization = organizationService.getOrgByCode(targetOrgCode);
-			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.MENU.getCode());
+			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(null,organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
 					selected.add(Long.valueOf(privilege.getResourceId()));
@@ -210,7 +215,7 @@ public class MenuService {
 			if(roleList!=null && !roleList.isEmpty()) {
 				//现在用户只有1个角色
 				SysRole sysRole = roleList.get(0);
-				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
+				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(null,AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
 				Map<String,SysMenu> buttonMap = new HashMap<String,SysMenu>();
 				if(allMenus!=null) {
 					Iterator<SysMenu> it = allMenus.iterator();

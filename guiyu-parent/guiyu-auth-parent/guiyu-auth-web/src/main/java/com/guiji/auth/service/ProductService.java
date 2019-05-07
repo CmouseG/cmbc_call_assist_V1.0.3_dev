@@ -145,7 +145,7 @@ public class ProductService {
 			//获取当前用户所属企业的权限
 			SysOrganization organization = organizationService.getOrgByCode(orgCode);
 			if(organization!=null) {
-				List<SysPrivilege> pOrgTradeList = privilegeService.queryPrivilegeListByAuth(organization.getCode(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
+				List<SysPrivilege> pOrgTradeList = privilegeService.queryPrivilegeListByAuth(null,organization.getCode(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.TRADE.getCode());
 				if(pOrgTradeList!=null && !pOrgTradeList.isEmpty()) {
 					List<String> pOrgTempList = this.getTemplateList(pOrgTradeList);
 					//上级组织关联的行业-话术模板树形
@@ -153,7 +153,7 @@ public class ProductService {
 					if(pOrgTempTradeTreeData!=null && pOrgTempTradeTreeData.getData()!=null) {
 						map.put("trades", pOrgTempTradeTreeData.getData());
 						if(StrUtils.isNotEmpty(productId)) {
-							List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
+							List<SysPrivilege> productTradeList = privilegeService.queryPrivilegeListByAuth(null,productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.TRADE.getCode());
 							if(productTradeList!=null) {
 								List<String> productTempList = this.getTemplateList(productTradeList);
 								ServerResult<List<BotSentenceTemplateTradeVO>> productTempTradeTreeData = botSentenceTradeService.queryTradeListByTemplateIdList(productTempList);

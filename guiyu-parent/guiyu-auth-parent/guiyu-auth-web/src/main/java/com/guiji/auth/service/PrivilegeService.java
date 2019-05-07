@@ -70,7 +70,7 @@ public class PrivilegeService {
 	public List<SysPrivilege> queryPrivilegeListByAuth(String authId,Integer authType,Integer resourceType) {
 		if(StrUtils.isNotEmpty(authId) && authType!=null && resourceType!=null) {
 			SysPrivilegeExample example = new SysPrivilegeExample();
-			example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType).andUpdateFlagIsNull();
+			example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
 			return sysPrivilegeMapper.selectByExample(example);
 		}
 		return null;

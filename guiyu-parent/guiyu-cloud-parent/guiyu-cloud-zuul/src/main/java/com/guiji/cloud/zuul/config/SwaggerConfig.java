@@ -2,6 +2,9 @@ package com.guiji.cloud.zuul.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.guiji.utils.SystemUtil;
+
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -27,7 +30,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("第一代硅语机器人")
                 .description("接口文档说明")
-                .termsOfServiceUrl("http://localhost:18000")
+                .termsOfServiceUrl("http://"+SystemUtil.getHostIp()+":18000")
                 .version("1.0")
                 .build();
     }

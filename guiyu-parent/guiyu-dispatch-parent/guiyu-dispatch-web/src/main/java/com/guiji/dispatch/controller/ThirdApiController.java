@@ -198,7 +198,7 @@ public class ThirdApiController implements IThirdApiOut {
 
 		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(parseObject.getUserId()));
 		String username = user.getBody().getUsername();
-		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(parseObject.getLine())).getBody();
+		String lineName = "";
 		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(parseObject.getRobot());
 
 		DispatchPlanBatch batch = new DispatchPlanBatch();

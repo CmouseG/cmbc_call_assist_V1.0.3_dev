@@ -22,6 +22,7 @@ import com.guiji.robot.model.AiCallNextReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -66,6 +67,8 @@ public class FsBotHandler {
     LineListManager lineListManager;
     @Autowired
     CallLineResultService callLineResultService;
+    @Value("${callInspect.open}")
+    Boolean callInspectOpen;
 
     //注册这个监听器
     @PostConstruct
@@ -92,6 +95,11 @@ public class FsBotHandler {
             }catch (Exception e){
                 return;
             }
+
+            if(callInspectOpen){
+                localFsServer.executeAsync(String.format("tone_detect %s %s_busy 450 r +9999999 hangup normal_clearing 3",uuid,uuid));
+            }
+
             CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
             if (callPlan == null) {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", uuid);
@@ -291,11 +299,16 @@ public class FsBotHandler {
                 }else {//电话没打出去
                     if (callPlan.getAccurateIntent() == null) {
                         if (duration != null) {
-                            if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
-                                log.info("挂断后，设置意向标签为F,callId[{}]", callId);
+                            if(duration.intValue() <= 10 && StringUtils.isNotBlank(hangUp) && StringUtils.isNumeric(hangUp) && Integer.valueOf(hangUp)>=400 ){
+                                callPlan.setAccurateIntent("W");
+                                if (callPlan.getReason() == null) {
+                                    callPlan.setReason(hangUp);
+                                }
+                            }else if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
+                                log.info("挂断后，设置意向标签为F,callId[{}]", uuid);
                                 callPlan.setAccurateIntent("F");
                                 if (duration.intValue() >= 55) {
-                                    log.info("超过55秒，设置备注为无人接听,callId[{}]", callId);
+                                    log.info("超过55秒，设置备注为无人接听,callId[{}]", uuid);
                                     callPlan.setReason("无人接听");
                                 }
                             }
@@ -333,7 +346,7 @@ public class FsBotHandler {
                     }
                 }
 
-               if (!Strings.isNullOrEmpty(hangUp)) {
+                if (!Strings.isNullOrEmpty(hangUp)) {
                     callPlan.setHangupCode(hangUp);
                 }
 

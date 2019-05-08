@@ -1,6 +1,7 @@
 package com.guiji.fsagent.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.config.FsagentExceptionEnum;
 import com.guiji.fsagent.entity.FreeSWITCH;
 import com.guiji.fsagent.entity.FsInfoVO;
@@ -23,7 +24,8 @@ public class FsStateServiceImpl implements FsStateService {
     ApplicationInit aplicationInit;
     @Autowired
     Registration registration;
-
+    @Autowired
+    FsConfig fsConfig;
     @Override
     public String ishealthy() {
         //1、查FreeSWITCH的esl端口是否处于开启状态
@@ -34,8 +36,7 @@ public class FsStateServiceImpl implements FsStateService {
             // TODO-- 报警
             throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_FSMANAGER_LINEXMLINFOS);
         }
-        GlobalVar globalVar = fs.getGlobalVar();
-        return globalVar.getFs_role();
+        return fsConfig.getRole();
     }
 
     @Override

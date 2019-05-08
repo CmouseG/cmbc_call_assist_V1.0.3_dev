@@ -51,6 +51,13 @@
             <artifactId>commons-codec</artifactId>
             <version>1.9</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -80,6 +87,24 @@
                 <configuration>
                     <executable>true</executable>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.danielflower.mavenplugins</groupId>
+                <artifactId>gitlog-maven-plugin</artifactId>
+                <version>1.13.3</version>
+                <configuration>
+                    <outputDirectory>target/classes</outputDirectory>
+                    <generateSimpleHTMLChangeLog>false</generateSimpleHTMLChangeLog>
+                    <generateJSONChangeLog>false</generateJSONChangeLog>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

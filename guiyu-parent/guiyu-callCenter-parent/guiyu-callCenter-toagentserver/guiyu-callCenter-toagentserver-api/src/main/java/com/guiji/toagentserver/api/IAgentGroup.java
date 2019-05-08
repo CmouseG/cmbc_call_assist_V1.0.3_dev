@@ -38,6 +38,12 @@ public interface IAgentGroup {
     @RequestMapping(value = "/untying/{lineId}", method = RequestMethod.DELETE)
     Result.ReturnData  untyingLineinfos(@PathVariable(value = "lineId") String lineId);
 
+    @ApiOperation(value = "切换线路模式之后，通知toagent修改绑定坐席的content")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
+    })
+    @RequestMapping(value = "/switch/{lineId}", method = RequestMethod.GET)
+    Result.ReturnData  switchLineinfos(@PathVariable(value = "lineId") String lineId);
 
     @ApiOperation(value = "同步坐席用户")
     @ApiImplicitParams({
@@ -56,4 +62,7 @@ public interface IAgentGroup {
     @RequestMapping(value = "/delAgentMembers", method = RequestMethod.POST)
     Result.ReturnData  delAgentMembers(@RequestBody List<Long> customerIds);
 
+    @ApiOperation(value = "fstoagent角色的fsagent启动的时候，调用init接口")
+    @RequestMapping(value = "/initCallcenter", method = RequestMethod.GET)
+    Result.ReturnData  initCallcenter();
 }

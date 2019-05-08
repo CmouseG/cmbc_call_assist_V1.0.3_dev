@@ -42,7 +42,7 @@ public class ExternalController implements IAgentGroup{
     FsManager fsManager;
 
     @Override
-    public Result.ReturnData<List<AgentGroupInfo>> getGroups(String orgCode) {
+    public Result.ReturnData<List<AgentGroupInfo>> getGroups(@RequestParam(value = "orgCode")String orgCode) {
         log.info("收到获取队列列表请求，org[{}]", orgCode);
         List<Queue> queueList = queueService.findByOrgCode(orgCode);
         List<AgentGroupInfo> groups = new ArrayList<>(queueList.size());
@@ -73,10 +73,27 @@ public class ExternalController implements IAgentGroup{
     }
 
     @Override
-    public Result.ReturnData untyingLineinfos(String lineId) {
+    public Result.ReturnData untyingLineinfos(@PathVariable(value = "lineId") String lineId) {
+        if(StringUtils.isBlank(lineId)){
+            log.info("收到解绑队列线路的请求lineId为空");
+            return Result.ok();
+        }
         log.info("收到解绑队列线路的请求lineId：[{}]",lineId);
         if(!StringUtils.isBlank(lineId)){
             queueService.untyingLineinfos(lineId);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result.ReturnData switchLineinfos(@PathVariable(value = "lineId") String lineId) {
+        if(StringUtils.isBlank(lineId)){
+            log.info("收到切换线路模式之后，修改绑定坐席的content的请求lineId为空");
+            return Result.ok();
+        }
+        log.info("收到切换线路模式之后，修改绑定坐席的content的请求lineId：[{}]",lineId);
+        if(!StringUtils.isBlank(lineId)){
+            queueService.switchLineinfos(lineId);
         }
         return Result.ok();
     }
@@ -96,6 +113,13 @@ public class ExternalController implements IAgentGroup{
         if(customerIds!=null&&customerIds.size()>0) {
             agentService.delAgentMembers(customerIds);
         }
+        return Result.ok();
+    }
+
+    @Override
+    public Result.ReturnData initCallcenter() {
+        log.info("收到initCallcenter的接口");
+        agentService.initCallcenter();
         return Result.ok();
     }
 

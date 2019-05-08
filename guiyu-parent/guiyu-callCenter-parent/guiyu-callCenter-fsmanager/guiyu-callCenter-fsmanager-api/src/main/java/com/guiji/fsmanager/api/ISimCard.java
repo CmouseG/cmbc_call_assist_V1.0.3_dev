@@ -8,10 +8,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @FeignClient("guiyu-callcenter-fsmanager")
 public interface ISimCard {
@@ -34,4 +33,11 @@ public interface ISimCard {
     })
     @RequestMapping(value = "/simgateway/{gatewayId}", method = RequestMethod.DELETE)
      Result.ReturnData<Boolean>  deleteGateway(@PathVariable(value = "gatewayId") String gatewayId);
+
+    @ApiOperation(value = "根据serviceId获取网关账号配置信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "serviceId", value = "line_sim角色的fsagent_id", dataType = "String", paramType = "query")
+    })
+    @RequestMapping(value = "/getAccount", method = RequestMethod.GET)
+    Result.ReturnData<List<SimCardVO>> getGatewayAccount(@RequestParam(value = "serviceId") String  serviceId);
 }

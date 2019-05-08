@@ -7,6 +7,7 @@ import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.helper.RequestHelper;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsAgentManager;
+import com.guiji.service.AgentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -34,6 +35,9 @@ public class ApplicationInit {
     @Autowired
     FsAgentManager fsAgentManager;
 
+    @Autowired
+    AgentService agentService;
+
     /**
      * 在系统启动完成，需要进行初始化，包括以下内容：
      * 1、申请freeswitch资源
@@ -46,6 +50,8 @@ public class ApplicationInit {
             log.info("ApplicationInit init fsBindVO [{}]", fsBindVO );
             fsManager.init(fsBindVO);
             fsAgentManager.init(fsBindVO);
+            log.info("连接完freeswitch后加载全局callcenter.xml文件");
+            agentService.initCallcenter();
         } catch (Exception e) {
             log.warn("初始化toagentserver出现异常", e);
             //TODO: 报警

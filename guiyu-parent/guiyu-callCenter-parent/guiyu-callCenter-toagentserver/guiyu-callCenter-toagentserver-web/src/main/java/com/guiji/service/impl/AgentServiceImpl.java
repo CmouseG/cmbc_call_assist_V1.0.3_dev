@@ -16,7 +16,7 @@ import com.guiji.fs.FreeSWITCH;
 import com.guiji.fs.FsManager;
 import com.guiji.fs.pojo.AgentStatus;
 import com.guiji.fs.pojo.GlobalVar;
-import com.guiji.fsline.entity.FsLineVO;
+import com.guiji.fsmanager.entity.FsLineInfoVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
 import com.guiji.service.AgentService;
@@ -137,38 +137,51 @@ public class AgentServiceImpl implements AgentService {
                     //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_NO_LINE);
                     throw new Exception("0307011");
                 }
-                FsLineVO fsLineVO = fsLineManager.getFsLine();
+                FsLineInfoVO fsLineVO = fsLineManager.getFsLine(queue.getLineId());
                 String[] ip = fsLineVO.getFsIp().split(":");
                 String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", queue.getLineId(), request.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
                 agentInfo.setContact(contact);
             }
         }
         fsManager.updateAgent(agentInfo);
-        //第三步绑定,如果queueId不为空，则代表要修改绑定关系：判断两次队列Id是否一样，一样的话就不动，不一样的话就先删除原来的绑定关系，再创建新的绑定关系
+        //第三步绑定,如果queueId不为空，则代表要切换绑定关系
         if (request.getQueueId() != null) {
-            TierExample tierExample = new TierExample();
-            tierExample.createCriteria().andUserIdEqualTo(agent.getUserId());
-            List<Tier> tierRes = tierMapper.selectByExample(tierExample);
-            if (tierRes != null) {
-                Tier tier = tierRes.get(0);
-                if (request.getQueueId() != tier.getQueueId()) {   //两次的队列id不一样
-                    //删除原来的绑定关系
-                    TierInfo tierInfo = new TierInfo(tier.getQueueId() + "", agent.getUserId() + "");
-                    fsManager.deleteTier(tierInfo);
-                    //创建新的绑定关系
-                    TierInfo tierInfoNew = new TierInfo();
-                    tierInfoNew.setAgentId(agent.getUserId() + "");
-                    tierInfoNew.setQueueId(request.getQueueId() + "");
-                    fsManager.addTier(tierInfoNew);
-                    //将绑定关系更新到数据库
-                    tier.setQueueId(request.getQueueId());
-                    tier.setUpdateTime(date);
-                    tier.setUpdateUser(create.getUserId());
-                    tierMapper.updateByPrimaryKey(tier);
-                }
-            }
+            //调用切换绑定关系的方法
+            switchTier(request.getQueueId(),agent.getUserId(),create.getUserId(),date);
         }
         return true;
+    }
+
+    /**
+     * 切换绑定关系
+     * 判断两次队列Id是否一样，一样的话就不动，不一样的话就先删除原来的绑定关系，再创建新的绑定关系
+     * @param queueId
+     * @param agentId
+     * @param createAgentId
+     * @param date
+     */
+    public void switchTier(Long queueId,Long agentId,Long createAgentId,Date date){
+        TierExample tierExample = new TierExample();
+        tierExample.createCriteria().andUserIdEqualTo(agentId);
+        List<Tier> tierRes = tierMapper.selectByExample(tierExample);
+        if (tierRes != null&&tierRes.size()>0) {
+            Tier tier = tierRes.get(0);
+            if (queueId != tier.getQueueId()) {   //两次的队列id不一样
+                //删除原来的绑定关系
+                TierInfo tierInfo = new TierInfo(tier.getQueueId() + "", agentId + "");
+                fsManager.deleteTier(tierInfo);
+                //创建新的绑定关系
+                TierInfo tierInfoNew = new TierInfo();
+                tierInfoNew.setAgentId(agentId + "");
+                tierInfoNew.setQueueId(queueId + "");
+                fsManager.addTier(tierInfoNew);
+                //将绑定关系更新到数据库
+                tier.setQueueId(queueId);
+                tier.setUpdateTime(date);
+                tier.setUpdateUser(createAgentId);
+                tierMapper.updateByPrimaryKey(tier);
+            }
+        }
     }
 
     @Override
@@ -512,9 +525,14 @@ public class AgentServiceImpl implements AgentService {
                 if (queueId != null) {
                     Integer lineId = queue_line.get(queueId);
                     if (lineId != null) {
-                        FsLineVO fsLineVO = fsLineManager.getFsLine();
-                        String[] ip = fsLineVO.getFsIp().split(":");
-                        String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", lineId, agent.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
+                        String contact ="${verto_contact("+ +agent.getUserId() + ")}";
+                        try {
+                            FsLineInfoVO fsLineVO = fsLineManager.getFsLine(lineId);
+                            String[] ip = fsLineVO.getFsIp().split(":");
+                            contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", lineId, agent.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
+                        }catch (Exception e){
+                        log.warn("调用fsmanager服务根据lineid查询fs信息的接口出错，lineId:[{}],错误:[{}]",lineId,e.toString());
+                        }
                         agentInfo.setContact(contact);
                     } else {
                         agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");

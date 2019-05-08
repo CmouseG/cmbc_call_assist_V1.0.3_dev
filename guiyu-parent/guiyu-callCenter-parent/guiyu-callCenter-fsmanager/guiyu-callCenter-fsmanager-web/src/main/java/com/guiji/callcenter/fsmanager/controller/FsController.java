@@ -5,6 +5,7 @@ import com.guiji.callcenter.fsmanager.service.FsService;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.entity.FsBindVO;
+import com.guiji.fsmanager.entity.FsConfigVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class FsController implements IFsResource {
@@ -46,5 +49,16 @@ public class FsController implements IFsResource {
         }
         fsService.releasefs(serviceId);
         return Result.ok(true);
+    }
+
+    @Override
+    public Result.ReturnData<List<FsConfigVO>> getFsConfig(@RequestParam("role") String role) {
+        logger.info("收到根据role获取FsConfig接口请求，role[{}]", role);
+        if(StringUtils.isBlank(role)){
+            logger.info("根据role获取FsConfig请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
+        }
+        List<FsConfigVO> list = fsService.getFsConfig(role);
+        return Result.ok(list);
     }
 }

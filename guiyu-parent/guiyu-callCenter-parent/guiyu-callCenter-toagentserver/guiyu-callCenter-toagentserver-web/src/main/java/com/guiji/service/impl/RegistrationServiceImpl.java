@@ -84,10 +84,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         } else {
             registrationExample.createCriteria().andCreatorIn(queryRegistrationsSubToGetAgents(authLevel,orgCode));
         }
+        registrationExample.setOrderByClause("update_time DESC");
         testPage.setPageNum(page);
         testPage.setPageSize(size);
         testPage.enablePaging();
-        registrationExample.setOrderByClause("update_time DESC");
         List<Registration> registrationList = registrationMapper.selectByExample(registrationExample);
         return registrationList;
     }
@@ -173,6 +173,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             }
             RegistrationExample registrationExample = new RegistrationExample();
             registrationExample.createCriteria().andRegIdIn(ids);
+            registrationExample.setOrderByClause("update_time DESC");
             list = registrationMapper.selectByExample(registrationExample);
             for (Registration registration : list) {
                 QueryRegistration queryRegistration = new QueryRegistration();
@@ -195,6 +196,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         pageExample.setPageSize(30000);
                         pageExample.enablePaging();
                         registrationExample.createCriteria().andCreatorEqualTo(agentId);
+                        registrationExample.setOrderByClause("update_time DESC");
                         list = registrationMapper.selectByExample(registrationExample);//todo 30000条
                         agentsList.add(agent);
                     } else {
@@ -215,6 +217,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         pageExample.setPageSize(30000);
                         pageExample.enablePaging();
                         registrationExample.createCriteria().andCreatorIn(listUser);
+                        registrationExample.setOrderByClause("update_time DESC");
                         list = registrationMapper.selectByExample(registrationExample);//todo 30000条
                     }
                     //得到本次查询到的所有相关坐席

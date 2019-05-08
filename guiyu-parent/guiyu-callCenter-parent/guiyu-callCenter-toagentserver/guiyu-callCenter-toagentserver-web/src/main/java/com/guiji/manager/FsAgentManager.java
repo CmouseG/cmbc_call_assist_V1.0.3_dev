@@ -18,11 +18,11 @@ public interface FsAgentManager {
      */
     void init(FsBindVO fsBindVO);
 
-    /**
-     * 上传录音文件
-     * @param fileName  文件名称
-     * @param busiType  业务类型
-     * @return
-     */
-    Result.ReturnData uploadRecord(String recordId, String busiId, String fileName, String busiType, Long userId, RecordType recordType);;
+     /**
+      * 上传录音文件
+      * @param fileName  文件名称
+      * @param busiType  业务类型
+      * @return
+      */
+     Result.ReturnData uploadRecord(String recordId, String busiId, String fileName, String busiType, Long userId, RecordType recordType);;
 }

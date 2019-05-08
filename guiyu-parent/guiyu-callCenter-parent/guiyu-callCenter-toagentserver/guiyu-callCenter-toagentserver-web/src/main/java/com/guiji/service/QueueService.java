@@ -26,4 +26,6 @@ public interface QueueService {
     List<Queue> findByOrgCode(String orgCode);
 
     void untyingLineinfos(String lineId);
+
+   void  switchLineinfos( String lineId);
 }

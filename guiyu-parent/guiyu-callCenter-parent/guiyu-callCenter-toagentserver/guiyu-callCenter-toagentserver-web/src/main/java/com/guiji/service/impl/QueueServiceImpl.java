@@ -16,7 +16,7 @@ import com.guiji.entity.EAnswerType;
 import com.guiji.entity.EUserState;
 import com.guiji.fs.FsManager;
 import com.guiji.fs.pojo.AgentStatus;
-import com.guiji.fsline.entity.FsLineVO;
+import com.guiji.fsmanager.entity.FsLineInfoVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
 import com.guiji.service.AgentService;
@@ -168,7 +168,7 @@ public class QueueServiceImpl implements QueueService {
         }
 
         if (queue.getLineId() == null || queue.getLineId() != queueInfo.getLineId()) {
-            FsLineVO fsLineVO = fsLineManager.getFsLine();
+            FsLineInfoVO fsLineVO = fsLineManager.getFsLine(queueInfo.getLineId());
             queue.setLineId(queueInfo.getLineId());
             TierExample tierExample = new TierExample();
             tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -215,7 +215,7 @@ public class QueueServiceImpl implements QueueService {
             }
             queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
             if (queryQueue.getLineId() != null) {
-                queryQueue.setLineName(getLineName(queryQueue.getLineId(),systemUserId));
+                queryQueue.setLineName(getLineName(queryQueue.getLineId(), systemUserId));
             }
             TierExample tierExample1 = new TierExample();
             tierExample1.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -227,6 +227,7 @@ public class QueueServiceImpl implements QueueService {
             paging.setTotalRecord(1L);
             paging.setRecords((List<Object>) (Object) list);
         } else {// authLevel大于1的
+            //调用根据坐席组名，角色，orgcode查询坐席组的方法
             List<Queue> queueListDb = queryQueuesSub(page, size, queueName, orgCode, authLevel);
             PageInfo<Queue> pageInfo = new PageInfo<>(queueListDb);
             List<Queue> queueList = pageInfo.getList();
@@ -243,7 +244,7 @@ public class QueueServiceImpl implements QueueService {
                 }
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
-                    queryQueue.setLineName(getLineName(queryQueue.getLineId(),systemUserId));
+                    queryQueue.setLineName(getLineName(queryQueue.getLineId(), systemUserId));
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -324,26 +325,66 @@ public class QueueServiceImpl implements QueueService {
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andLineIdEqualTo(Integer.parseInt(lineId));
         List<Queue> queues = queueMapper.selectByExample(queueExample);
-        for (Queue queue : queues) {
-            //遍历队列，解绑线路
-            queue.setLineId(null);
-            queueMapper.updateByPrimaryKey(queue);
-            //遍历队列，查询绑定关系
-            TierExample tierExample = new TierExample();
-            tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
-            List<Tier> tierList = tierMapper.selectByExample(tierExample);
-            //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听改为网页接听并置成离线
-            for (Tier tier : tierList) {
-                Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
-                if (agent.getAnswerType() == 1) {
-                    AgentInfo agentInfo = new AgentInfo();
-                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
-                    agentInfo.setStatus(AgentStatus.Logged_Out);
-                    agentInfo.setAgentId(agent.getUserId() + "");
-                    fsManager.addAgent(agentInfo);
-                    agent.setAnswerType(EAnswerType.WEB.ordinal());
-                    agent.setUserState(EUserState.OFFLINE.ordinal());
-                    agentMapper.updateByPrimaryKey(agent);
+        if (queues != null && queues.size() > 0) {
+            for (Queue queue : queues) {
+                //遍历队列，解绑线路
+                queue.setLineId(null);
+                queueMapper.updateByPrimaryKey(queue);
+                //遍历队列，查询绑定关系
+                TierExample tierExample = new TierExample();
+                tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+                List<Tier> tierList = tierMapper.selectByExample(tierExample);
+                //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听改为网页接听并置成离线
+                if (tierList != null && tierList.size() > 0) {
+                    for (Tier tier : tierList) {
+                        Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
+                        if (agent.getAnswerType() == 1) {
+                            AgentInfo agentInfo = new AgentInfo();
+                            agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
+                            agentInfo.setStatus(AgentStatus.Logged_Out);
+                            agentInfo.setAgentId(agent.getUserId() + "");
+                            fsManager.updateAgent(agentInfo);
+                            agent.setAnswerType(EAnswerType.WEB.ordinal());
+                            agent.setUserState(EUserState.OFFLINE.ordinal());
+                            agentMapper.updateByPrimaryKey(agent);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void switchLineinfos(String lineId) {
+        //1、根据lineId查询所有的坐席组
+        QueueExample queueExample = new QueueExample();
+        queueExample.createCriteria().andLineIdEqualTo(Integer.parseInt(lineId));
+        List<Queue> queues = queueMapper.selectByExample(queueExample);
+        if (queues != null && queues.size() > 0) {
+            FsLineInfoVO fsLineVO = fsLineManager.getFsLine(Integer.parseInt(lineId));//根据lineId获取fsline消息
+            for (Queue queue : queues) {
+                //遍历队列，查询绑定关系
+                TierExample tierExample = new TierExample();
+                tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+                List<Tier> tierList = tierMapper.selectByExample(tierExample);
+                //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听则修改contact
+                if (tierList != null && tierList.size() > 0) {
+                    for (Tier tier : tierList) {
+                        Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
+                        if (agent.getAnswerType() == 1) {
+                            AgentInfo agentInfo = new AgentInfo();
+                            String[] ip = fsLineVO.getFsIp().split(":");
+                            String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", lineId, agent.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
+                            agentInfo.setContact(contact);
+                            if (agent.getUserState() == EUserState.OFFLINE.ordinal()) {
+                                agentInfo.setStatus(AgentStatus.Logged_Out);
+                            } else if (agent.getUserState() == EUserState.ONLINE.ordinal()) {
+                                agentInfo.setStatus(AgentStatus.Available);
+                            }
+                            agentInfo.setAgentId(agent.getUserId() + "");
+                            fsManager.updateAgent(agentInfo);
+                        }
+                    }
                 }
             }
         }
@@ -351,6 +392,7 @@ public class QueueServiceImpl implements QueueService {
 
     /**
      * 查询得到线路的名称
+     *
      * @param lineId
      * @param systemUserId
      * @return
@@ -359,8 +401,8 @@ public class QueueServiceImpl implements QueueService {
         Result.ReturnData<SipLineVO> result;
         try {
             result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, lineId);
-            if (result.getCode().equals("0")&&result.getBody()!=null) {
-                log.info("根据userid:[{}]和lineId:[{}]从线路市场获取线路名称结果：[{}]",systemUserId,lineId,result.getBody().getLineName());
+            if (result.getCode().equals("0") && result.getBody() != null) {
+                log.info("根据userid:[{}]和lineId:[{}]从线路市场获取线路名称结果：[{}]", systemUserId, lineId, result.getBody().getLineName());
                 return result.getBody().getLineName();
             } else {
                 LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);
@@ -380,17 +422,18 @@ public class QueueServiceImpl implements QueueService {
 
     /**
      * 根据orgCode查询orgName
+     *
      * @param orgCode
      * @return
      */
-    public String orgName(String orgCode){
+    public String orgName(String orgCode) {
         try {
             Result.ReturnData<SysOrganization> result = iOrg.getOrgByCode(orgCode);
             if (result.getCode().equals("0") && result.getBody() != null) {
-               return result.getBody().getName();
+                return result.getBody().getName();
             }
         } catch (Exception e) {
-            log.error("调用auth接口获取企业名接口失败[{}]",e.toString());
+            log.error("调用auth接口获取企业名接口失败[{}]", e.toString());
             return "";
         }
         return "";

@@ -1,7 +1,7 @@
 package com.guiji.clm.service.voip;
 
-import com.guiji.ccmanager.api.ILineOperation;
-import com.guiji.ccmanager.entity.OutLineInfoAddReq;
+import com.guiji.fsmanager.api.ILineOperation;
+import com.guiji.fsmanager.entity.OutLineInfoAddReq;
 import com.guiji.clm.cfg.BrandConfig;
 import com.guiji.clm.constant.ClmConstants;
 import com.guiji.clm.dao.VoipGwInfoMapper;
@@ -157,6 +157,7 @@ public class VoipGwManager {
 						lineInfo.setCallerNum(port.getSipAccount().toString()); //主叫号码送网关端口账号
 						lineInfo.setMaxConcurrentCalls(1);	//端口并发数默认1
 						lineInfo.setOrgCode(voipGwInfo.getOrgCode()); //企业编号
+						lineInfo.setLineType(2);
 						lineInfo.setRemark("语音网关");
 						outLineInfoAddReqList.add(lineInfo);
 					}
@@ -569,8 +570,8 @@ public class VoipGwManager {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * 填充网关部分集中管理设备信息
 	 * 如：公司ID、设备ID等信息

@@ -1,7 +1,6 @@
 package com.guiji.dispatch.impl;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
@@ -20,12 +19,10 @@ import com.guiji.dispatch.util.AllotUserLineBotenceUtil;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TemplateInfo;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
-import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.model.UserResourceCacheWithVersion;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
-import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -55,8 +52,6 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     @Autowired
     private IAuth auth;
     @Autowired
-    private ICallManagerOut callManagerOut;
-    @Autowired
     private DistributedLockHandler distributedLockHandler;
     @Autowired
     private IGetPhonesInterface getPhonesInterface;
@@ -74,7 +69,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         logger.info("初始化系统资源池#start");
         //调用机器人中心接口获取当前系统最大机器人数量
         int systemMaxRobot = getSystemMaxRobot();
-        redisUtil.set(REDIS_SYSTEM_MAX_ROBOT,systemMaxRobot);
+        redisUtil.set(REDIS_SYSTEM_MAX_ROBOT, systemMaxRobot);
         //调用用户中心接口获取当前系统所有企业管理员和企业操作员作为用户集合
 //        List<SysUser> sysUserList = getAllCompanyUsers();
         //调用呼叫中心获取系统线路总并发数
@@ -95,8 +90,8 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     }
 
     @Override
-    public boolean distributeByUser() throws Exception{
-        Lock lock = new Lock("planDistributeJobHandler.Joblock","planDistributeJobHandler.Joblock");
+    public boolean distributeByUser() throws Exception {
+        Lock lock = new Lock("planDistributeJobHandler.Joblock", "planDistributeJobHandler.Joblock");
         if (distributedLockHandler.tryLock(lock, 1000L)) {
             try {
                 logger.info("根据用户模板线路分配拨打号码比例#start");
@@ -109,7 +104,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 List<PlanUserIdLineRobotDto> userLineRobotList = getPhonesInterface.selectPlanGroupByUserIdRobot(hour);//this.getTestUserLineRobot();//
                 List<UserLineBotenceVO> userLineBotenceVOList = new ArrayList<UserLineBotenceVO>();
                 if (userLineRobotList != null) {
-                    for (PlanUserIdLineRobotDto dto:userLineRobotList) {
+                    for (PlanUserIdLineRobotDto dto : userLineRobotList) {
                         UserLineBotenceVO userLineBotenceVO = new UserLineBotenceVO();
                         userLineBotenceVO.setUserId(dto.getUserId());
 //                        userLineBotenceVO.setLineId(dto.getLineId());
@@ -140,39 +135,38 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 /*******分别封装补充机器人数据，未做补充机器人数据    end**********************************/
 
                 /**************计算机器人总数减去用户分配机器人数 和 补充机器人数   begin*********/
-                logger.info("最大机器人总数减去手动分配机器人之前数量:{}",systemMaxPlan);
+                logger.info("最大机器人总数减去手动分配机器人之前数量:{}", systemMaxPlan);
                 //    systemMaxPlan = subSupplRobotNum(opDisRobotList, userBotstenceRobotList, systemMaxPlan);
                 int artificialRobotNum = this.subSupplRobotNum(opDisRobotList, userBotstenceRobotList);
                 systemMaxPlan -= artificialRobotNum;
-                logger.info("最大机器人总数减去手动分配机器人之后数量:{}",systemMaxPlan);
+                logger.info("最大机器人总数减去手动分配机器人之后数量:{}", systemMaxPlan);
                 /**************计算机器人总数减去用户分配机器人数 和 补充机器人数   end*********/
 
                 /************飞龙模板   先过滤不计入分配    begin******************************************/
                 List<UserLineBotenceVO> flList = new ArrayList<UserLineBotenceVO>();
                 int flRobotNum = this.filterFlBotstence(excludeDisList, ubList, flList, filterUserLineBotenceVOList);
                 logger.info("飞龙模板数据:{}", JsonUtils.bean2Json(flList));
-                systemMaxPlan -=  flRobotNum;
+                systemMaxPlan -= flRobotNum;
                 /************飞龙模板   先过滤不计入分配    end********************************************/
 
                 //计算分配机器人数
                 //    List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
-                List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(filterUserLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
+                List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(filterUserLineBotenceVOList, userBotstenceRobotList, systemMaxPlan);
                 //将补充操作的机器人分配数据重新加入到用户机器人分配列表中去
                 List<UserLineBotenceVO> opList = filterOpUserBotstence(opDisRobotList);
-                if(null != opList && opList.size()>0){
+                if (null != opList && opList.size() > 0) {
                     userLineBotenceVOS.addAll(opList);
                 }
                 //将飞龙模板机器人分配数据重新加入到用户机器人分配列表中
-                if(null != flList && flList.size()>0){
+                if (null != flList && flList.size() > 0) {
                     userLineBotenceVOS.addAll(flList);
                 }
 
                 //从redis获取用户机器人分配数据
-                List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>)redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
+                List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
 
-                if(!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis))
-                {
-                    Lock lockChange = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
+                if (!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis)) {
+                    Lock lockChange = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
                     if (distributedLockHandler.tryLock(lockChange, 1000L)) {
                         try {
                             redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER, IdGenUtil.uuid());
@@ -194,29 +188,25 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     }
 
 
-    private void cleanQueueOfDeleted(List<UserLineBotenceVO> newList, List<UserLineBotenceVO> oldList)
-    {
+    private void cleanQueueOfDeleted(List<UserLineBotenceVO> newList, List<UserLineBotenceVO> oldList) {
         List<String> oldIdList = getUserBotenceList(oldList);
         List<String> newIdList = getUserBotenceList(newList);
 
-        for (String str:oldIdList) {
-            if(!newIdList.contains(str))
-            {
-                String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+str;
+        for (String str : oldIdList) {
+            if (!newIdList.contains(str)) {
+                String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + str;
                 phonePlanQueueService.cleanQueueByQueueName(queue);
             }
         }
     }
 
-    private List<String> getUserBotenceList(List<UserLineBotenceVO> list)
-    {
+    private List<String> getUserBotenceList(List<UserLineBotenceVO> list) {
         List<String> tmpList = new ArrayList<>();
-        if(list == null || list.isEmpty())
-        {
+        if (list == null || list.isEmpty()) {
             return tmpList;
         }
-        for (UserLineBotenceVO dto:list) {
-            tmpList.add(dto.getUserId() +"_"+ dto.getBotenceName());
+        for (UserLineBotenceVO dto : list) {
+            tmpList.add(dto.getUserId() + "_" + dto.getBotenceName());
         }
 
         return tmpList;
@@ -224,61 +214,62 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
     /**
      * 封装人工配置机器人、排除
+     *
      * @param allDisRobotList
      * @param opDisRobotList
      * @param userLineBotenceVOList
      * @return
      */
     private List<UserLineBotenceVO> filterArtificialBotstence(List<DispatchRobotOp> allDisRobotList, List<DispatchRobotOp> opDisRobotList,
-                                                              List<UserLineBotenceVO> userLineBotenceVOList){
+                                                              List<UserLineBotenceVO> userLineBotenceVOList) {
         List<UserLineBotenceVO> excludeDisList = new ArrayList<UserLineBotenceVO>();
-        if(null != allDisRobotList){
-            for(UserLineBotenceVO userBotence : userLineBotenceVOList){
+        if (null != allDisRobotList) {
+            for (UserLineBotenceVO userBotence : userLineBotenceVOList) {
                 int i = 0;
-                for(DispatchRobotOp robotOp: allDisRobotList){
+                for (DispatchRobotOp robotOp : allDisRobotList) {
                     //判断用户ID，话术模板ID是否相同，相同则表示记录已经进行了补充机器人操作
-                    if(robotOp.getUserId().equals(userBotence.getUserId()+"")
-                            && robotOp.getBotstenceId().equals(userBotence.getBotenceName())){
+                    if (robotOp.getUserId().equals(userBotence.getUserId() + "")
+                            && robotOp.getBotstenceId().equals(userBotence.getBotenceName())) {
                         opDisRobotList.add(robotOp);//封装加入人工补充操作机器人数据
                         i++;
                     }
                 }
-                if(i == 0){//匹配未做补充机器人操作，加入列表
+                if (i == 0) {//匹配未做补充机器人操作，加入列表
                     excludeDisList.add(userBotence);
                 }
             }
-        }else{
+        } else {
             excludeDisList = userLineBotenceVOList;
         }
 
         return excludeDisList;
     }
 
-    private List<PlanUserIdLineRobotDto> getTestUserLineRobot(){
+    private List<PlanUserIdLineRobotDto> getTestUserLineRobot() {
         List<PlanUserIdLineRobotDto> list = new ArrayList<PlanUserIdLineRobotDto>();
-        for(int i=1 ;i<=10; i++){
+        for (int i = 1; i <= 10; i++) {
             PlanUserIdLineRobotDto r = new PlanUserIdLineRobotDto();
             r.setUserId(i);
-            r.setRobot(i+"");
+            r.setRobot(i + "");
             list.add(r);
         }
         return list;
     }
 
 
-    private List<UserResourceCacheWithVersion> getTestUserResource(){
+    private List<UserResourceCacheWithVersion> getTestUserResource() {
         List<UserResourceCacheWithVersion> list = new ArrayList<UserResourceCacheWithVersion>();
-        for(int i = 1; i<= 10; i++){
+        for (int i = 1; i <= 10; i++) {
             UserResourceCacheWithVersion ur = new UserResourceCacheWithVersion();
-            ur.setUserId(i+"");
+            ur.setUserId(i + "");
             ur.setAiNum(10);
             ur.setChgStatus("A");
             TemplateInfo t = new TemplateInfo();
-            t.setTemplateId(i+"");
+            t.setTemplateId(i + "");
             t.setNum(i);
-            t.setVersion(i%2==0?1:2);
+            t.setVersion(i % 2 == 0 ? 1 : 2);
             Map<String, TemplateInfo> map = new HashMap<String, TemplateInfo>();
-            map.put(i+"", t);
+            map.put(i + "", t);
             ur.setTempInfoMap(map);
             list.add(ur);
         }
@@ -287,22 +278,25 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
     /**
      * 封装飞龙模板数据
+     *
      * @param excludeDisList
      * @param ubList
      * @param filterUserLineBotenceVOList
      * @return
      */
-    private int filterFlBotstence( List<UserLineBotenceVO> excludeDisList, List<UserBotenceRes> ubList, List<UserLineBotenceVO> flList,
-                                   List<UserLineBotenceVO> filterUserLineBotenceVOList){
+    private int filterFlBotstence(List<UserLineBotenceVO> excludeDisList, List<UserBotenceRes> ubList, List<UserLineBotenceVO> flList,
+                                  List<UserLineBotenceVO> filterUserLineBotenceVOList) {
         //    List<UserLineBotenceVO> flList = new ArrayList<UserLineBotenceVO>();
         int flRobotNum = 0;
-        if(excludeDisList.size()>0){
-            loopA:for(UserLineBotenceVO filterE : excludeDisList){
+        if (excludeDisList.size() > 0) {
+            loopA:
+            for (UserLineBotenceVO filterE : excludeDisList) {
                 int i = 0;
-                loopB:for(UserBotenceRes ub: ubList){
-                    if(null != ub && String.valueOf(filterE.getUserId()).equals(ub.getUserId())
+                loopB:
+                for (UserBotenceRes ub : ubList) {
+                    if (null != ub && String.valueOf(filterE.getUserId()).equals(ub.getUserId())
                             && filterE.getBotenceName().equals(ub.getBotstenceId())
-                            && BotstenceTypeEnum.FL.getType() == ub.getType()){//飞龙模板
+                            && BotstenceTypeEnum.FL.getType() == ub.getType()) {//飞龙模板
                         i++;
                         UserLineBotenceVO fl = new UserLineBotenceVO();
                         fl.setUserId(Integer.valueOf(ub.getUserId()));
@@ -315,7 +309,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                         continue loopA;
                     }
                 }
-                if(i == 0){//不属于飞龙
+                if (i == 0) {//不属于飞龙
                     filterUserLineBotenceVOList.add(filterE);
                 }
             }
@@ -325,17 +319,18 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
     /**
      * 封装ROBOT分配的用户+话术模板及机器人数量
+     *
      * @param userBotstenceRobotList
      * @return
      */
-    private List<UserBotenceRes> filterUserBotstence(List<UserResourceCacheWithVersion> userBotstenceRobotList){
+    private List<UserBotenceRes> filterUserBotstence(List<UserResourceCacheWithVersion> userBotstenceRobotList) {
         List<UserBotenceRes> ubList = new ArrayList<UserBotenceRes>();
-        if(null != userBotstenceRobotList && userBotstenceRobotList.size()>0){
-            for(UserResourceCacheWithVersion urc: userBotstenceRobotList){
+        if (null != userBotstenceRobotList && userBotstenceRobotList.size() > 0) {
+            for (UserResourceCacheWithVersion urc : userBotstenceRobotList) {
                 String userId = urc.getUserId();
-                urc.getTempInfoMap().forEach((k, v)->{
+                urc.getTempInfoMap().forEach((k, v) -> {
                     String botstenceId = k;
-                    TemplateInfo templ = null != v?(TemplateInfo)v:null;
+                    TemplateInfo templ = null != v ? (TemplateInfo) v : null;
 
                     UserBotenceRes ub = new UserBotenceRes();
                     ub.setUserId(userId);
@@ -352,14 +347,15 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
     /**
      * 封装人工操作的用户分配机器人数据
+     *
      * @param opDisRobotList
      * @return
      */
-    private List<UserLineBotenceVO> filterOpUserBotstence(List<DispatchRobotOp> opDisRobotList){
+    private List<UserLineBotenceVO> filterOpUserBotstence(List<DispatchRobotOp> opDisRobotList) {
         List<UserLineBotenceVO> opList = null;
-        if(null != opDisRobotList && opDisRobotList.size()>0){
+        if (null != opDisRobotList && opDisRobotList.size() > 0) {
             opList = new ArrayList<UserLineBotenceVO>();
-            for(DispatchRobotOp opRobot: opDisRobotList){
+            for (DispatchRobotOp opRobot : opDisRobotList) {
                 UserLineBotenceVO userLineBotence = new UserLineBotenceVO();
                 userLineBotence.setUserId(Integer.valueOf(opRobot.getUserId()));
                 userLineBotence.setBotenceName(opRobot.getBotstenceId());
@@ -367,40 +363,41 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 opList.add(userLineBotence);
             }
         }
-        logger.info("封装人工操作的用户分配机器人数据:{}", null != opList?JsonUtils.bean2Json(opList):"空");
+        logger.info("封装人工操作的用户分配机器人数据:{}", null != opList ? JsonUtils.bean2Json(opList) : "空");
         return opList;
     }
 
 
     /**
      * 计算机器人总数减去用户分配机器人数 和 补充机器人数
+     *
      * @param opDisRobotList
      * @param userBotstenceRobotList
      * @return
      */
-    private int subSupplRobotNum(List<DispatchRobotOp> opDisRobotList, List<UserResourceCacheWithVersion> userBotstenceRobotList){
+    private int subSupplRobotNum(List<DispatchRobotOp> opDisRobotList, List<UserResourceCacheWithVersion> userBotstenceRobotList) {
         int opDisRobotNum = 0;
         //用户各个模板配置的机器人数量，拼接key:userId+templateId
         Map<String, Integer> allUserBotenceCfg = AllotUserLineBotenceUtil.convertUserRes2Map(userBotstenceRobotList);
-        if(null != allUserBotenceCfg && (null != opDisRobotList && opDisRobotList.size()>0)){
-            for(DispatchRobotOp opRobot : opDisRobotList){
-                String userBotstenceKey = opRobot.getUserId()+"-" +opRobot.getBotstenceId();
-                if(allUserBotenceCfg.containsKey(userBotstenceKey)){//用户模板机器人数包涵用户机器人
+        if (null != allUserBotenceCfg && (null != opDisRobotList && opDisRobotList.size() > 0)) {
+            for (DispatchRobotOp opRobot : opDisRobotList) {
+                String userBotstenceKey = opRobot.getUserId() + "-" + opRobot.getBotstenceId();
+                if (allUserBotenceCfg.containsKey(userBotstenceKey)) {//用户模板机器人数包涵用户机器人
                     Integer robotNum = allUserBotenceCfg.get(userBotstenceKey);//robot分配模板机器人数量
                     Integer supplNum = opRobot.getSupplNum();//人工操作机器人数量
                     Integer supplType = opRobot.getSupplType();//操作标识   1-增加补充  2-扣减
                     opRobot.setRobotNum(robotNum);
                     //   systemMaxPlan -= robotNum;  //减除robot分配机器人数量
                     opDisRobotNum += robotNum;
-                    if(1 == supplType){//手动添加补充机器人
+                    if (1 == supplType) {//手动添加补充机器人
                         //        systemMaxPlan -= supplNum;//减除人工手动补充机器人数量
-                        opRobot.setCurrentNum(robotNum+supplNum);
+                        opRobot.setCurrentNum(robotNum + supplNum);
                         opDisRobotNum += supplNum;
-                    }else if(2 == supplNum){//手动减配机器人
+                    } else if (2 == supplNum) {//手动减配机器人
                         //        systemMaxPlan += supplNum;
-                        opRobot.setCurrentNum(robotNum-supplNum);
+                        opRobot.setCurrentNum(robotNum - supplNum);
                         opDisRobotNum -= supplNum;
-                    }else{
+                    } else {
                         opRobot.setCurrentNum(robotNum);
                     }
                 }
@@ -411,33 +408,28 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     }
 
 
-    private boolean isEquals(List<UserLineBotenceVO> userLineBotenceVOS, List<UserLineBotenceVO> userLineBotenceVOSFromRedis)
-    {
-        if(userLineBotenceVOS == userLineBotenceVOSFromRedis)
-        {
+    private boolean isEquals(List<UserLineBotenceVO> userLineBotenceVOS, List<UserLineBotenceVO> userLineBotenceVOSFromRedis) {
+        if (userLineBotenceVOS == userLineBotenceVOSFromRedis) {
             return true;
         }
 
-        if(userLineBotenceVOS == null || userLineBotenceVOSFromRedis == null)
-        {
+        if (userLineBotenceVOS == null || userLineBotenceVOSFromRedis == null) {
             return false;
         }
 
-        if(userLineBotenceVOS.size() != userLineBotenceVOSFromRedis.size())
-        {
+        if (userLineBotenceVOS.size() != userLineBotenceVOSFromRedis.size()) {
             return false;
         }
 
         List<String> tmpList = new ArrayList<>();
-        for (UserLineBotenceVO dto:userLineBotenceVOS) {
+        for (UserLineBotenceVO dto : userLineBotenceVOS) {
 //            tmpList.add(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
-            tmpList.add(dto.getUserId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
+            tmpList.add(dto.getUserId() + "-" + dto.getBotenceName() + "-" + dto.getMaxRobotCount());
         }
 
-        for (UserLineBotenceVO dto:userLineBotenceVOSFromRedis) {
+        for (UserLineBotenceVO dto : userLineBotenceVOSFromRedis) {
 //            if(!tmpList.contains(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
-            if(!tmpList.contains(dto.getUserId()  +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
-            {
+            if (!tmpList.contains(dto.getUserId() + "-" + dto.getBotenceName() + "-" + dto.getMaxRobotCount())) {
                 return false;
             }
         }
@@ -527,7 +519,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         logger.info("查询每个用户机器人最大并发数#start");
         List<UserResourceDto> userRobotList = new ArrayList<UserResourceDto>();
         if (sysUserList != null && sysUserList.size() > 0) {
-            for (SysUser sysUser:sysUserList) {
+            for (SysUser sysUser : sysUserList) {
                 //根据用户获取各个用户配置机器人数量，调用机器人中心接口
                 String userId = String.valueOf(sysUser.getId());
                 UserAiCfgBaseInfoVO userAiCfgBaseInfoVO = null;
@@ -540,10 +532,10 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                             maxRobotConcurrency = userAiCfgBaseInfoVO.getAiTotalNum();
                         }
                     }
-                }else {
-                    logger.info("调用机器人中心获取用户机器人数量失败，用户id:" + sysUser.getId()+"|错误信息:" + robotResult.getMsg());
+                } else {
+                    logger.info("调用机器人中心获取用户机器人数量失败，用户id:" + sysUser.getId() + "|错误信息:" + robotResult.getMsg());
                 }
-                userRobotList.add(new UserResourceDto(userId,maxRobotConcurrency));
+                userRobotList.add(new UserResourceDto(userId, maxRobotConcurrency));
             }
         }
         logger.info("查询每个用户机器人最大并发数#end");
@@ -554,7 +546,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         logger.info("查询每个用户各个模板配置的机器人最大并发数#start");
         List<UserResourceCacheWithVersion> userBotstenceRobotList = new ArrayList<UserResourceCacheWithVersion>();
         if (sysUserList != null && sysUserList.size() > 0) {
-            for (SysUser sysUser:sysUserList) {
+            for (SysUser sysUser : sysUserList) {
                 //根据用户获取各个用户配置机器人数量，调用机器人中心接口
                 String userId = String.valueOf(sysUser.getId());
                 UserResourceCacheWithVersion userResourceCache = null;
@@ -565,8 +557,8 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                         userResourceCache = robotResult.getBody();
                         userBotstenceRobotList.add(userResourceCache);
                     }
-                }else {
-                    logger.info("调用机器人中心获取每个用户各个模板配置的机器人最大并发数失败，用户id:" + sysUser.getId()+"|错误信息:" + robotResult.getMsg());
+                } else {
+                    logger.info("调用机器人中心获取每个用户各个模板配置的机器人最大并发数失败，用户id:" + sysUser.getId() + "|错误信息:" + robotResult.getMsg());
                 }
             }
         }

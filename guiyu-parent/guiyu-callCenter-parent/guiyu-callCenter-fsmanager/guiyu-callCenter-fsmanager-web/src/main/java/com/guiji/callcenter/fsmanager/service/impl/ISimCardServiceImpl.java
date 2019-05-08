@@ -9,19 +9,21 @@ import com.guiji.callcenter.fsmanager.manager.EurekaManager;
 import com.guiji.callcenter.fsmanager.service.ISimCardService;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
+import com.guiji.fsagent.api.ISimCardOperate;
+import com.guiji.fsagent.entity.FsSipOprVO;
+import com.guiji.fsagent.entity.SimCardOprVO;
 import com.guiji.fsmanager.entity.FsSipVO;
 import com.guiji.fsmanager.entity.SimCardVO;
-import com.guiji.simagent.api.ISimCardOperate;
-import com.guiji.simagent.entity.FsSipOprVO;
-import com.guiji.simagent.entity.SimCardOprVO;
+
 import com.guiji.utils.FeignBuildUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 @Slf4j
 @Service
 public class ISimCardServiceImpl implements ISimCardService {
@@ -38,13 +40,10 @@ public class ISimCardServiceImpl implements ISimCardService {
         int pwdStep = simCardVO.getPwdStep();
         int countNum = simCardVO.getCountNum();
         String gatewayId = simCardVO.getGatewayId();
-        //从注册中心随机找到一个simagent
-        List<String> serverList = eurekaManager.getInstances(Constant.SERVER_NAME_SIMAGENT);
-        Random random = new Random();
-        int n = random.nextInt(serverList.size());
-        String simAgentServer =  serverList.get(n);
-        //-- todo 判断simagent是否正常
-
+        String simAgentServer =eurekaManager.getAgentService(Constant.LINE_TYPE_SIMCARD);//随机得到一个sim卡角色的fsagent
+        if(simAgentServer==null){
+            throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_NO_LINESIMAGENT);
+        }
         //数据库留痕
         SimGateway simGateway = new SimGateway();
         simGateway.setStartCount(startCount);
@@ -98,5 +97,25 @@ public class ISimCardServiceImpl implements ISimCardService {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<SimCardVO> getGatewayAccount(String serviceId) {
+        List<SimCardVO>  simCardVOList = new ArrayList();
+        SimGatewayExample simGatewayExample = new SimGatewayExample();
+        simGatewayExample.createCriteria().andSimAgentIdEqualTo(serviceId);
+        List<SimGateway> simGatewayList = simGatewayMapper.selectByExample(simGatewayExample);
+        if(simGatewayList.size()>0){
+            for (SimGateway simGateway:simGatewayList) {
+                SimCardVO simCardVO = new SimCardVO();
+                simCardVO.setStartCount(simGateway.getStartCount());
+                simCardVO.setCountsStep(simGateway.getCountsStep());
+                simCardVO.setStartPwd(simGateway.getStartPwd());
+                simCardVO.setPwdStep(simGateway.getPwdStep());
+                simCardVO.setCountNum(simGateway.getCountNum());
+                simCardVOList.add(simCardVO);
+            }
+        }
+        return simCardVOList;
     }
 }

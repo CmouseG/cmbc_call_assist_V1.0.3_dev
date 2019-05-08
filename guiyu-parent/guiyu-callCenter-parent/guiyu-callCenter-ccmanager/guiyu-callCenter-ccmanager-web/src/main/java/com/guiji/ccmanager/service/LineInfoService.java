@@ -15,15 +15,9 @@ import java.util.List;
  */
 public interface LineInfoService {
 
-    List<LineInfo4Page> getLineInfoByCustom(Integer authLevel,String customerId,String orgCode, String lineName, int pageSizeInt, int pageNoInt);
+    List<LineInfo4Page> getLineInfoByCustom(Boolean isSuperAdmin,String customerId,String orgCode, String lineName, int pageSizeInt, int pageNoInt);
 
-    void addLineInfo(LineInfoAddVO lineInfoVO);
-
-    void updateLineInfo(LineInfoUpdateVO lineInfoVO, Long userId);
-
-    void delLineInfo(String id);
-
-    int getLineInfoByCustomCount(Integer authLevel,String customerId,String orgCode, String lineName);
+    int getLineInfoByCustomCount(Boolean isSuperAdmin,String customerId,String orgCode, String lineName);
 
     List<LineInfo> outLineinfos(String customerId);
 

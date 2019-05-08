@@ -5,8 +5,6 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4AllotRes;
 import com.guiji.ccmanager.vo.LineInfo4Page;
-import com.guiji.ccmanager.vo.LineInfoAddVO;
-import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
@@ -39,77 +37,38 @@ public class LineInfoController {
     @Autowired
     private LineInfoService lineInfoService;
 
-
-    @ApiOperation(value = "查看客户所有线路接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "lineName", value = "线路名称", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
-    })
-    @Jurisdiction("callCenter_lineInfoList_defquery")
-    @GetMapping(value = "getLineInfos")
-    public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader String orgCode,
-                                                                      @RequestHeader Long userId, @RequestHeader Integer authLevel) {
-
-        log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
-
-        if (StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)) {
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        int pageSizeInt = Integer.parseInt(pageSize);
-        int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(authLevel, String.valueOf(userId),orgCode, lineName, pageSizeInt, pageNoInt);
-        int count = lineInfoService.getLineInfoByCustomCount(authLevel,String.valueOf(userId),orgCode, lineName);
-
-        Page<LineInfo4Page> page = new Page<LineInfo4Page>();
-        page.setPageNo(pageNoInt);
-        page.setPageSize(pageSizeInt);
-        page.setTotal(count);
-        page.setRecords(list);
-
-        log.info("response success getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
-        return Result.ok(page);
-    }
-
-    @ApiOperation(value = "增加线路接口")
-    @PostMapping(value = "addLineInfo")
-    public Result.ReturnData<Boolean> addLineInfo(@RequestBody @Validated LineInfoAddVO lineInfoVO, @RequestHeader Long userId) {
-
-        log.info("get request addLineInfo，LineInfoAddVO[{}]", lineInfoVO);
-
-        if (StringUtils.isBlank(lineInfoVO.getOrgCode())) {
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        lineInfoVO.setCustomerId(String.valueOf(userId));
-        lineInfoService.addLineInfo(lineInfoVO);
-        return Result.ok(true);
-    }
-
-    @ApiOperation(value = "修改线路接口")
-    @Jurisdiction("callCenter_lineInfoList_edit")
-    @PostMapping(value = "updateLineInfo")
-    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId) {
-        if (lineInfoVO.getLineId() == 0) {
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        log.info("get request updateLineInfo，lineInfoVO[{}]", lineInfoVO);
-//        lineInfoVO.setCustomerId(null);
-        lineInfoService.updateLineInfo(lineInfoVO, userId);
-        return Result.ok(true);
-    }
-
-    @ApiOperation(value = "删除线路接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "线路id", dataType = "String", paramType = "query", required = true)
-    })
-    @Jurisdiction("callCenter_lineInfoList_delete")
-    @PostMapping(value = "deleteLineInfo/{id}")
-    public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id) {
-        log.info("get request deleteLineInfo，id[{}]", id);
-        lineInfoService.delLineInfo(id);
-        return Result.ok(true);
-    }
+//
+//    @ApiOperation(value = "查看客户所有线路接口")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
+//            @ApiImplicitParam(name = "lineName", value = "线路名称", dataType = "String", paramType = "query"),
+//            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
+//            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
+//    })
+//    @Jurisdiction("callCenter_lineInfoList_defquery")
+//    @GetMapping(value = "getLineInfos")
+//    public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader String orgCode,
+//                                                                      @RequestHeader Long userId, @RequestHeader Integer authLevel) {
+//
+//        log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
+//
+//        if (StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)) {
+//            return Result.error(Constant.ERROR_PARAM);
+//        }
+//        int pageSizeInt = Integer.parseInt(pageSize);
+//        int pageNoInt = Integer.parseInt(pageNo);
+//        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(authLevel, String.valueOf(userId),orgCode, lineName, pageSizeInt, pageNoInt);
+//        int count = lineInfoService.getLineInfoByCustomCount(authLevel,String.valueOf(userId),orgCode, lineName);
+//
+//        Page<LineInfo4Page> page = new Page<LineInfo4Page>();
+//        page.setPageNo(pageNoInt);
+//        page.setPageSize(pageSizeInt);
+//        page.setTotal(count);
+//        page.setRecords(list);
+//
+//        log.info("response success getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
+//        return Result.ok(page);
+//    }
 
     @ApiOperation(value = "查询线路，用于分配查询")
     @ApiImplicitParams({

@@ -1,25 +1,22 @@
 package com.guiji.calloutserver.service.impl;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.calloutserver.config.AliAsrConfig;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.manager.FsLineManager;
-import com.guiji.calloutserver.config.AliAsrConfig;
 import com.guiji.calloutserver.service.CallService;
 import com.guiji.component.result.Result;
 import com.guiji.dict.api.ISysDict;
 import com.guiji.dict.vo.SysDictVO;
-import com.guiji.fsline.entity.FsLineVO;
-import lombok.Synchronized;
+import com.guiji.fsmanager.entity.FsLineInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,8 +42,6 @@ public class CallServiceImpl implements CallService {
     CallLineAvailableManager callLineAvailableManager;
     @Autowired
     ISysDict iSysDict;
-    @Value("${callInspect.open}")
-    Boolean callInspectOpen;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -56,7 +51,7 @@ public class CallServiceImpl implements CallService {
     @Override
     public void makeCall(CallOutPlan callplan, String recordFile) {
         //获取线路服务器
-        FsLineVO fsLine = fsLineManager.getFsLine();
+        FsLineInfoVO fsLine = fsLineManager.getFsLine(callplan.getLineId());
 
         String ip = fsLine.getFsIp();
         if(ip.contains(":")){
@@ -67,10 +62,8 @@ public class CallServiceImpl implements CallService {
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                        (callInspectOpen ?
-                                ", tone_detect:busy 450 r 0 hangup normal_clearing 3, record_session:/usr/local/freeswitch/recordings/%s, park' inline":
-                                ", record_session:/usr/local/freeswitch/recordings/%s, park' inline"),
-                callid+Constant.UUID_SEPARATE+orgId,
+                        ", record_session:/usr/local/freeswitch/recordings/%s, park' inline",
+                callid,
                 callplan.getLineId(),
                 callplan.getPhoneNum(),
                 ip,

@@ -13,13 +13,11 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-callCenter-dal</module>
-        <module>guiyu-callCenter-fsline</module>
         <module>guiyu-callCenter-fsagent</module>
         <module>guiyu-callCenter-fsmanager</module>
         <module>guiyu-callCenter-ccmanager</module>
         <module>guiyu-callCenter-calloutserver</module>
         <module>guiyu-callCenter-toagentserver</module>
-        <module>guiyu-callCenter-simagent</module>
     </modules>
 
     <dependencies>

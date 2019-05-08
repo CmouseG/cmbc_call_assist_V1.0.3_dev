@@ -124,8 +124,8 @@ public class CallDetailController implements ICallPlanDetail {
 
     @ApiOperation(value = "获取客户指定时间内的通话记录列表")
     @Jurisdiction("callCenter_callHistory_defquery")
-    @GetMapping(value = "getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId,
+    @PostMapping(value = "getCallRecord")
+    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(@RequestBody CallRecordListReq callRecordListReq, @RequestHeader Long userId,
                                                                          @RequestHeader String orgCode,@RequestHeader Integer orgId,
                                                                          @RequestHeader Integer isDesensitization,
                                                                          @RequestHeader Integer authLevel) {

@@ -234,9 +234,6 @@ public class ProductController implements IProduct{
 	@PostMapping("saveProductTemplates")
 	public void saveProductTemplates(@RequestBody ProductTemplatesVO productTemplates)
 	{
-		List<SysProduct> productList = productService.queryOkProductList();
-		for(SysProduct product : productList){
-			privilegeService.savePrivlege(1, "1", 1, product.getId().toString(), 2, productTemplates.getTemplateIds());
-		}
+		privilegeService.savePrivlege(1, "1", 2, "1", 2, productTemplates.getTemplateIds());
 	}
 }

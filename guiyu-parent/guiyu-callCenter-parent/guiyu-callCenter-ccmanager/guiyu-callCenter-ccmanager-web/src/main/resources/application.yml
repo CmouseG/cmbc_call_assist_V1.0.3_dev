@@ -6,7 +6,7 @@ spring:
     name: guiyu-callCenter-ccmanager
   redis:
     database: 0 # Redis数据库索引（默认为0）
-    host: 192.168.1.81 # Redis服务器地址
+    host: 192.168.1.57 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: 123456 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
@@ -16,7 +16,7 @@ spring:
       max-idle: 300 # 连接池中的最大空闲连接
       min-idle: 100 # 连接池中的最小空闲连接
   rabbitmq:
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 5672
     virtual-host: /
     username: guiyu
@@ -36,7 +36,7 @@ management:
   security:
     enabled: false
 jdbc_driver0: com.mysql.jdbc.Driver
-jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+jdbc_url0: jdbc:mysql://192.168.1.57:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: callcenter
 jdbc_password0: callcenter@1234
 validationQuery: SELECT 1

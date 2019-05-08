@@ -15,6 +15,8 @@ public class LineInfoVO implements Serializable {
 
     private String calleePrefix;
 
+    private LineTypeEnum lineTypeEnum;
+
     private static final long serialVersionUID = 1L;
 
 
@@ -66,15 +68,24 @@ public class LineInfoVO implements Serializable {
         this.calleePrefix = calleePrefix;
     }
 
+    public LineTypeEnum getLineTypeEnum() {
+        return lineTypeEnum;
+    }
+
+    public void setLineTypeEnum(LineTypeEnum lineTypeEnum) {
+        this.lineTypeEnum = lineTypeEnum;
+    }
+
     @Override
     public String toString() {
-        return "LineInfo{" +
-                "lineId=" + lineId +
+        return "LineInfoVO{" +
+                "lineId='" + lineId + '\'' +
                 ", sipIp='" + sipIp + '\'' +
                 ", sipPort='" + sipPort + '\'' +
                 ", codec='" + codec + '\'' +
                 ", callerNum='" + callerNum + '\'' +
                 ", calleePrefix='" + calleePrefix + '\'' +
+                ", lineTypeEnum=" + lineTypeEnum +
                 '}';
     }
 }

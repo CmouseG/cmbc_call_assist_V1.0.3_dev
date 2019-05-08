@@ -12,8 +12,6 @@ public class ClearRecordManager {
     @Autowired
     PathConfig pathConfig;
     public void clearRecordJob(){
-        FileUtil.deleteFilesByDay(pathConfig.getRecordPath(),3);
-
         // 将tts合成的语音文件删掉
         deleteTtsFiles(new File(pathConfig.getTempPath()));
     }

@@ -3,8 +3,8 @@ package com.guiji.manager;
 import com.google.common.base.Preconditions;
 
 import com.guiji.component.result.Result;
-import com.guiji.fsline.api.IFsLine;
-import com.guiji.fsline.entity.FsLineVO;
+import com.guiji.fsmanager.api.ILineOperation;
+import com.guiji.fsmanager.entity.FsLineInfoVO;
 import com.guiji.helper.RequestHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,37 +20,36 @@ import org.springframework.stereotype.Service;
 @Service
 public class FsLineManager {
     @Autowired
-    IFsLine iFsLine;
+    ILineOperation lineOperation;
 
     /**
      * 获取线路信息
      * @return
      */
-    public FsLineVO getFsLine() {
+    public FsLineInfoVO getFsLine(int lineId) {
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    return iFsLine.getFsInfo();
+                    return lineOperation.getFsInfoByLineId(lineId);
                 }
 
                 @Override
                 public void onErrorResult(Result.ReturnData result) {
                     //TODO: 报警
-                    log.warn("请求fsline失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                    log.warn("根据lineId请求线路失败，lineId:[{}],错误码是:[{}][{}]", lineId,result.getCode(), result.getMsg());
                 }
                 @Override
                 public boolean trueBreakOnCode(String code) {
                     return false;
                 }
-            }, -1, 1, 1, 60, true);
+            }, 3, 1, 1, 60, true);
         }catch (Exception ex){
-            log.warn("获取fsline出现异常", ex);
-            //TODO: 报警，获取fsline异常
+            log.warn("根据lineId请求线路出现异常", ex);
         }
 
-        Preconditions.checkNotNull(returnData, "获取fsline失败，返回结果为空");
-        return (FsLineVO) returnData.getBody();
+        Preconditions.checkNotNull(returnData, "根据lineId请求线路失败，返回结果为空");
+        return (FsLineInfoVO) returnData.getBody();
     }
 }

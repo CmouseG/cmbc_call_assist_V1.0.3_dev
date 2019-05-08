@@ -1,14 +1,10 @@
 package com.guiji.ccmanager.controller;
 
-import com.google.common.collect.Lists;
-import com.guiji.callcenter.dao.entity.Agent;
-import com.guiji.callcenter.dao.entity.AgentExample;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
 import com.guiji.callcenter.dao.entityext.MyCallOutPlanQueryEntity;
 import com.guiji.ccmanager.api.ICallPlanDetail;
-import com.guiji.ccmanager.constant.AuthLevelEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.service.AuthService;
@@ -27,7 +23,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jxl.Workbook;
-import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.VerticalAlignment;
@@ -43,10 +38,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.Boolean;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,7 +55,7 @@ import java.util.*;
 @RestController
 public class CallDetailController implements ICallPlanDetail {
 
-    private final Logger log = LoggerFactory.getLogger(CallManagerOutApiController.class);
+    private final Logger log = LoggerFactory.getLogger(CallDetailController.class);
 
     @Value("${download.path}")
     private String downloadPath;
@@ -127,8 +124,8 @@ public class CallDetailController implements ICallPlanDetail {
 
     @ApiOperation(value = "获取客户指定时间内的通话记录列表")
     @Jurisdiction("callCenter_callHistory_defquery")
-    @GetMapping(value = "getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId,
+    @PostMapping(value = "getCallRecord")
+    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(@RequestBody CallRecordListReq callRecordListReq, @RequestHeader Long userId,
                                                                          @RequestHeader String orgCode,@RequestHeader Integer orgId,
                                                                          @RequestHeader Integer isDesensitization,
                                                                          @RequestHeader Integer authLevel) {

@@ -39,11 +39,6 @@ public class FsEventHandler {
     @Autowired
     CallCache callCache;
 
-    public void onConnect(){
-        log.info("连接freeswitch的时候加载全局callcenter.xml文件");
-        agentService.initCallcenter();
-    }
-
     public void handleEvent(EslEvent eslEvent) {
         String eventName = eslEvent.getEventName();
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();

@@ -1,16 +1,12 @@
 package com.guiji.fsagent.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
+
 @Slf4j
 public class FileUtil {
 
@@ -44,7 +40,6 @@ public class FileUtil {
         }
         return dirFile.delete();
     }
-
 
     /**
      * 判断文件是否存在

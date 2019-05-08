@@ -1,6 +1,5 @@
 package com.guiji.fsagent.entity;
 
-
 /**
  * FreeSWITCH全局变量
  */
@@ -11,7 +10,7 @@ public class GlobalVar {
     private String internal_sip_port1;
     private String external_sip_port;
     private String gc_docker_ip;
-    private String fs_role="norole";
+    private String ext_sip_ip;
 
     public String getDomain() {
         return domain;
@@ -53,12 +52,12 @@ public class GlobalVar {
         this.gc_docker_ip = gc_docker_ip;
     }
 
-    public String getFs_role() {
-        return fs_role;
+    public String getExt_sip_ip() {
+        return ext_sip_ip;
     }
 
-    public void setFs_role(String fs_role) {
-        this.fs_role = fs_role;
+    public void setExt_sip_ip(String ext_sip_ip) {
+        this.ext_sip_ip = ext_sip_ip;
     }
 
     @Override
@@ -69,7 +68,7 @@ public class GlobalVar {
                 ", internal_sip_port1='" + internal_sip_port1 + '\'' +
                 ", external_sip_port='" + external_sip_port + '\'' +
                 ", gc_docker_ip='" + gc_docker_ip + '\'' +
-                ", fs_role='" + fs_role + '\'' +
+                ", ext_sip_ip='" + ext_sip_ip + '\'' +
                 '}';
     }
 }

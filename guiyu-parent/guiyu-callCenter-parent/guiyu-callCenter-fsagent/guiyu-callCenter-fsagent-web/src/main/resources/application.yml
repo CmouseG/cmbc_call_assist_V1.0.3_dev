@@ -1,7 +1,6 @@
 server:
   port: 18006
-  threadCount: 20
-
+  threadCount: 30
 spring:
   application:
     name: guiyu-callcenter-fsagent
@@ -37,6 +36,8 @@ eureka:
 fs:
    #homeDir: /home/freeswitch/fs1
    homeDir: C:/Program Files/FreeSWITCH
+   role: line_sim
+   internalUse: true
 
 #job:
 #  clearRecord: 0 0 0 * * ?
@@ -64,6 +65,8 @@ properties:
 
 rabbit:
   general:
+    fanout:
+      exchange: fanoutLineNoticeBindExchange
     direct:
       queue: callCenter.record_update_mq
 

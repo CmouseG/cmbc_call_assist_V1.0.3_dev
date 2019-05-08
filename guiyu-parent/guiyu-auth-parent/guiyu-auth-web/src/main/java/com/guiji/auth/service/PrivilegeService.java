@@ -75,7 +75,6 @@ public class PrivilegeService {
 			}else{
 				example.createCriteria().andAuthIdEqualTo(authId).andAuthTypeEqualTo(authType).andResourceTypeEqualTo(resourceType);
 			}
-			
 			return sysPrivilegeMapper.selectByExample(example);
 		}
 		return null;

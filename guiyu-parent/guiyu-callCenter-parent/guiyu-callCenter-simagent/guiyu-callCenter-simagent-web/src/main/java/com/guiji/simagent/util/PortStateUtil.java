@@ -3,6 +3,8 @@ package com.guiji.simagent.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.guiji.utils.SystemUtil;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -15,7 +17,7 @@ public class PortStateUtil {
     public static boolean PortIsIn(String port){
         Socket socket =null;
         try {
-            socket = new Socket("localhost" , Integer.parseInt(port));
+            socket = new Socket(SystemUtil.getHostIp() , Integer.parseInt(port));
             if(!socket.isConnected()) {
                 return false;
             }

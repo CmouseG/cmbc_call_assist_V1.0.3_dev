@@ -84,8 +84,7 @@ public class MenuService {
 	 */
 	public Map<String,Object> getOrgRoleAuthMenus(Long roleId,Integer userId,String orgCode,String targetOrgCode){
 		Integer updateFlag = null;
-		int role_id = roleService.getRoleByUserId(userId.longValue()).getId();
-		if(role_id == roleId){updateFlag=1;}
+		if(orgCode.equals(targetOrgCode)){updateFlag=1;}
 		Map<String,Object> map=new HashMap<String,Object>();
 		//获取当前用户的权限范围
 		PrivlegeAuth privlegeAuth = privilegeService.getUserAuthLevel(userId, orgCode, targetOrgCode);

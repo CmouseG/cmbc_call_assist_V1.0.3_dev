@@ -5,7 +5,6 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.entity.BotSentenceProcess;
 import com.guiji.botsentence.api.entity.ServerResult;
-import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.common.model.Page;
@@ -64,8 +63,6 @@ public class ThirdApiController implements IThirdApiOut {
 	private IAuth auth;
 	@Autowired
 	private DispatchPlanBatchMapper batchMapper;
-	@Autowired
-	private ICallManagerOut callManagerOut;
 	@Autowired
 	private IBotSentenceProcess Process;
 	@Autowired
@@ -302,7 +299,6 @@ public class ThirdApiController implements IThirdApiOut {
 	 * 记录第三方的错误信息
 	 * 
 	 * @param vo
-	 * @param unknown
 	 * @param i
 	 */
 	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum, int i) {

@@ -51,6 +51,9 @@ public class CallRecordListReq {
     @ApiModelProperty(value = "批次号")
     Integer batchId;
 
+    @ApiModelProperty(value = "批次号")
+    private List<Integer> orgIdList;
+
     @ApiModelProperty(value = "全选导出,如果为true，将忽略startCount和endCount")
     Boolean checkAll;
     @ApiModelProperty(value = "取消勾选的id列表")

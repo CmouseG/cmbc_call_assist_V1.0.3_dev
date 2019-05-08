@@ -45,7 +45,7 @@ public class FreeSWITCH {
         globalVar.setVerto_wss_port(fsEslClient.execute("global_getvar verto_wss_port"));
         globalVar.setDefault_password(fsEslClient.execute("global_getvar default_password"));
 
-        logger.info("freeswitch[{}]全局变量为[{}]", globalVar.toString());
+        logger.info("freeswitch全局变量为[{}]", globalVar.toString());
     }
 
     /**

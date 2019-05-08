@@ -257,7 +257,11 @@ public class CallDetailServiceImpl implements CallDetailService {
         }else if(authLevel == AuthLevelEnum.ORG.getLevel()){
             myCallOutPlanQueryEntity.setOrgId(orgId);
         }else if(authLevel == AuthLevelEnum.ORG_EXT.getLevel()){
-            myCallOutPlanQueryEntity.setOrgIdList(authService.getAllOrgIds(orgId));
+            if(callRecordListReq.getOrgIdList()!=null && callRecordListReq.getOrgIdList().size()>0){
+                myCallOutPlanQueryEntity.setOrgIdList(callRecordListReq.getOrgIdList());
+            }else{ //不允许全部查询，那么就查询他本组织的
+                myCallOutPlanQueryEntity.setOrgId(orgId);
+            }
         }
 
         if(callRecordListReq.getCheckAll()!=null &&callRecordListReq.getCheckAll() &&

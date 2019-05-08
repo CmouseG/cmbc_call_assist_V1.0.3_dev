@@ -1,6 +1,6 @@
 package com.guiji.calloutserver.manager;
 
-import com.guiji.fsline.entity.FsLineVO;
+import com.guiji.fsmanager.entity.FsLineInfoVO;
 
 /**
  * @Auther: 魏驰
@@ -9,5 +9,5 @@ import com.guiji.fsline.entity.FsLineVO;
  * @Description:
  */
 public interface FsLineManager {
-    FsLineVO getFsLine();
+    FsLineInfoVO getFsLine(Integer lineId);
 }

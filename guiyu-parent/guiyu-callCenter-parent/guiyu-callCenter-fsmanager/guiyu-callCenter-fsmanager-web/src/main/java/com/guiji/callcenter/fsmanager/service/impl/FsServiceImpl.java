@@ -1,8 +1,12 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.guiji.callcenter.dao.FsBindMapper;
+import com.guiji.callcenter.dao.FsConfigMapper;
 import com.guiji.callcenter.dao.entity.FsBind;
 import com.guiji.callcenter.dao.entity.FsBindExample;
+import com.guiji.callcenter.dao.entity.FsConfig;
+import com.guiji.callcenter.dao.entity.FsConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
 import com.guiji.callcenter.fsmanager.manager.EurekaManager;
 import com.guiji.callcenter.fsmanager.service.FsService;
@@ -11,6 +15,8 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.IFsState;
 import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsmanager.entity.FsBindVO;
+import com.guiji.fsmanager.entity.FsConfigVO;
+import com.guiji.fsmanager.entity.ModuleVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.utils.FeignBuildUtil;
 import org.slf4j.Logger;
@@ -32,6 +38,8 @@ public class FsServiceImpl implements FsService {
     FsBindMapper fsBindMapper;
     @Autowired
     EurekaManager eurekaManager;
+    @Autowired
+    FsConfigMapper fsConfigMapper;
 
     public FsBindVO applyfs(String serviceId, ServiceTypeEnum serviceType) {
         String serviceName = "";
@@ -223,5 +231,30 @@ public class FsServiceImpl implements FsService {
         criteria.andServiceIdEqualTo(serviceId);
         fsBindMapper.deleteByExample(example);
         return true;
+    }
+
+    @Override
+    public List<FsConfigVO> getFsConfig(String role) {
+        List<FsConfigVO> fsConfigVOList = new ArrayList<>();
+        FsConfigExample example = new FsConfigExample();
+        example.createCriteria().andRoleIdEqualTo(role);
+        List<FsConfig> list =fsConfigMapper.selectByExample(example);
+        //存放数据库中查询出来的config值
+        ArrayListMultimap<String,ModuleVO> multimap = ArrayListMultimap.create();
+        if(list.size()>0){
+            for (FsConfig fsConfig:list) {
+               ModuleVO moduleVO = new ModuleVO();
+                moduleVO.setKey(fsConfig.getBusKey());
+                moduleVO.setValue(fsConfig.getValue());
+                multimap.put(fsConfig.getModule(),moduleVO);
+            }
+        }
+        for (String key : multimap.keySet()) {
+            FsConfigVO fsConfigVO = new FsConfigVO();
+            fsConfigVO.setModule(key);
+            fsConfigVO.setConfig(multimap.get(key));
+            fsConfigVOList.add(fsConfigVO);
+        }
+        return fsConfigVOList;
     }
 }

@@ -31,7 +31,7 @@ public class SendMsgHandler
 	{
 		if("ytx".equals(identification))
 		{
-			log.info("通过<云讯>发送短信...");
+			log.info("通过<云讯科技>发送短信...");
 			new YunXun().sendMessage(params, phoneList);
 		}
 		else if("wl".equals(identification))

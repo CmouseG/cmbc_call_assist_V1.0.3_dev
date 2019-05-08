@@ -52,6 +52,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         queryTotalChargingItemDto.getAuthLevel(),
                         userId,
+                        queryTotalChargingItemDto.getChargingItemId(),
                         page);
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalCompanyChargingByMonth(operUserId,
@@ -59,6 +60,15 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         authLevel,
                         userId,
+                        queryTotalChargingItemDto.getChargingItemId(),
+                        page);
+            }else if(3 == queryTotalChargingItemDto.getType()){//按时间段查询
+                return billingCompanyTotalMapper.totalCompanyChargingByDay(operUserId,
+                        orgCode,
+                        queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
+                        authLevel,
+                        userId,
+                        queryTotalChargingItemDto.getChargingItemId(),
                         page);
             }
         }
@@ -68,6 +78,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE,
                 queryTotalChargingItemDto.getAuthLevel(),
                 userId,
+                queryTotalChargingItemDto.getChargingItemId(),
                 page);
     }
 
@@ -89,13 +100,22 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         authLevel,
-                        userId);
+                        userId,
+                        queryTotalChargingItemDto.getChargingItemId());
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalChargingCountByMonth(operUserId,
                         orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
                         authLevel,
-                        userId);
+                        userId,
+                        queryTotalChargingItemDto.getChargingItemId());
+            }else if(3 == queryTotalChargingItemDto.getType()){//按时间段查询
+                return billingCompanyTotalMapper.totalChargingCountByDay(operUserId,
+                        orgCode,
+                        queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(),
+                        authLevel,
+                        userId,
+                        queryTotalChargingItemDto.getChargingItemId());
             }
         }
         //默认
@@ -103,7 +123,8 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
                 orgCode,
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE,
                 authLevel,
-                userId);
+                userId,
+                queryTotalChargingItemDto.getChargingItemId());
     }
 
     @Override

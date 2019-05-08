@@ -48,7 +48,7 @@ public class CallPlanController implements ICallPlan {
 
         log.info("------start startMakeCall dispatchPlan[{}]",dispatchPlan);//注释掉  todo 加上字段校验
 
-        if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
+//        if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
             if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
                 CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
 
@@ -60,10 +60,10 @@ public class CallPlanController implements ICallPlan {
                 log.info(">>>>>>>end startMakeCall,temp not ok dispatchPlan[{}]",dispatchPlan);
                 return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
             }
-        }else{
-            log.info(">>>>>>>end startMakeCall,call count too big[{}]",dispatchPlan);
-            return Result.error(Constant.ERROR_CALLCOUNT_OUTLIMIT);
-        }
+//        }else{
+//            log.info(">>>>>>>end startMakeCall,call count too big[{}]",dispatchPlan);
+//            return Result.error(Constant.ERROR_CALLCOUNT_OUTLIMIT);
+//        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -310,6 +311,44 @@ public class LineMarketController {
         }
         condition.setOrgCode(orgCode);
         List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
+        return Result.ok(this.exclusiveLine2VO(list));
+    }
+
+    /**
+     * 话费分析中查询线路信息
+     * qUserId为空时，则根据当前用户权限查询当前用户所能看到的线路
+     * qUserId不为空时，则查询当前用户组织下，该用户组织下的该用户线路
+     * @param qUserId
+     * @return
+     */
+    @RequestMapping(value = "/queryUserExclusiveSipLine", method = RequestMethod.POST)
+    public Result.ReturnData<List<SipLineExclusiveVO>> queryUserExclusiveSipLine(
+            @RequestParam Long qUserId,
+            @RequestHeader Long userId,
+            @RequestHeader String orgCode,
+            @RequestHeader Integer authLevel,
+            @RequestHeader Boolean isSuperAdmin) {
+
+        SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
+
+        if (!isSuperAdmin) {
+            //如果数据查询权限是本人，那么查询本人线路数据，其他查询企业线路
+            condition.setUserId(userId.toString());
+        } else {
+            if(qUserId == null) {
+                condition.setAuthLevel(authLevel);
+                condition.setOrgCode(orgCode);
+                condition.setUserId(userId.toString());
+            } else {
+                condition.setOrgCode(orgCode);
+                condition.setUserId(userId.toString());
+                condition.setQUserId(qUserId.toString());
+            }
+        }
+        condition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
+
+        condition.setOrgCode(orgCode);
+        List<SipLineExclusive> list = sipLineExclusiveService.queryUserExclusiveSipLine(condition);
         return Result.ok(this.exclusiveLine2VO(list));
     }
 

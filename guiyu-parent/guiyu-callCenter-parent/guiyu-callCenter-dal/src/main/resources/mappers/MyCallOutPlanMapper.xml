@@ -234,7 +234,7 @@
                 and a.call_id > #{minCallId}
             </if>
             <if test="time != null">
-                and a.call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+                and a.create_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
             </if>
         </where>
         order by a.create_time desc

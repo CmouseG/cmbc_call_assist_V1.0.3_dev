@@ -28,10 +28,14 @@ import com.guiji.sms.queue.SendDetailQueue;
 import com.guiji.sms.utils.SetDetailParamsUtil;
 import com.guiji.sms.utils.XmlUtil;
 
-public class QiYeXinShi implements ISendMessage
+/**
+ * 短信平台-玄都科技
+ */
+public class XuanDuKeji implements ISendMessage
 {
-	private static final Logger log = LoggerFactory.getLogger(QiYeXinShi.class);
-
+	private static final Logger log = LoggerFactory.getLogger(XuanDuKeji.class);
+	private String url = "http://api.xuanall.com:6666/sms.aspx";
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void sendMessage(JSONObject params, List<String> phoneList)
@@ -46,7 +50,7 @@ public class QiYeXinShi implements ISendMessage
 					})).toArray(CompletableFuture[]::new);
 			CompletableFuture.allOf(cfs).join(); // 等待所有子线程执行完毕
 		} catch (Exception e){
-			log.error(e.getMessage());
+			log.error(e.getMessage(),e);
 			throw new SmsException(ExceptionEnum.ERROR_REQUEST_SMS);
 		}
 	}
@@ -54,52 +58,48 @@ public class QiYeXinShi implements ISendMessage
 	private SmsSendDetail send(JSONObject params, String phone)
 	{
 		SmsSendDetail record = null;
-		String sms_ip = params.getString("sms_ip");
-		String sms_port = params.getString("sms_port");
-		String url = "http://"+sms_ip+":"+sms_port+"/sms.aspx";
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 		paramsList.add(new BasicNameValuePair("userid", params.getString("userid")));
 		paramsList.add(new BasicNameValuePair("account", params.getString("account")));
 		paramsList.add(new BasicNameValuePair("password", params.getString("password")));
 		paramsList.add(new BasicNameValuePair("mobile", phone));
 		paramsList.add(new BasicNameValuePair("content", params.getString("smsContent")));
+		paramsList.add(new BasicNameValuePair("sendTime", ""));
 		paramsList.add(new BasicNameValuePair("action", "send"));
-		String result = doPost(paramsList,url); // 发送请求
+		paramsList.add(new BasicNameValuePair("extno", ""));
+		String result = doPost(paramsList); // 发送请求
 		record = handleResult(result, params); // 处理结果
 		record.setPhone(phone);
 		return record;
 	}
-	
+
 	// 发送请求
-	private String doPost(List<NameValuePair> paramsList, String url)
+	private String doPost(List<NameValuePair> paramsList)
 	{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;
 		String result = "";
-		try
-		{
+		try{
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setEntity(new UrlEncodedFormEntity(paramsList, "UTF-8"));
 			response = httpClient.execute(httpPost); // 执行请求
 			HttpEntity responseEntity = response.getEntity();
 			result = EntityUtils.toString(responseEntity, "utf-8");
 			EntityUtils.consume(responseEntity);
-		} 
-		catch (Exception e){
+		}catch (Exception e){
 			log.error("调用短信平台商服务异常", e);
 			result = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>"
-					+ "<returnsms>"
-						+ "<returnstatus>404</returnstatus>"
-						+ "<message>调用短信平台商服务异常</message>"
-					+ "</returnsms>";
-		}
-		finally {
+				+ "<returnsms>"
+					+ "<returnstatus>404</returnstatus>"
+					+ "<message>调用短信平台商服务异常</message>"
+				+ "</returnsms>";
+		}finally{
 			IOUtils.close(response);
 			IOUtils.close(httpClient);
 		}
 		return result;
 	}
-	
+
 	// 处理结果
 	private SmsSendDetail handleResult(String result, JSONObject params)
 	{
@@ -110,14 +110,14 @@ public class QiYeXinShi implements ISendMessage
 		String returnstatus = returnsms.getString("returnstatus");
 		String message = returnsms.getString("message");
 		if("Success".equals(returnstatus) && "ok".equals(message)){
-			log.info("发送成功:returnstatus:{},message:{}", returnstatus,message);
+			log.info("发送成功:returnstatus:{},message:{}", returnstatus, message);
 			record.setSendStatus(1);
 		}else{
-			log.info("发送失败:returnstatus:{},message:{}", returnstatus,message);
+			log.info("发送失败:returnstatus:{},message:{}", returnstatus, message);
 			record.setSendStatus(0);
 			record.setFailReason(message);
 		}
-		SetDetailParamsUtil.setParams(record,params); // 设置结果（发送详情）参数
+		SetDetailParamsUtil.setParams(record, params); // 设置结果（发送详情）参数
 		return record;
 	}
 

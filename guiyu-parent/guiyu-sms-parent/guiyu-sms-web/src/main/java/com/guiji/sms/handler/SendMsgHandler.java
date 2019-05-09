@@ -13,7 +13,9 @@ import com.guiji.sms.platform.factory.JunLong;
 import com.guiji.sms.platform.factory.QiYeBao;
 import com.guiji.sms.platform.factory.QiYeXinShi;
 import com.guiji.sms.platform.factory.Welink;
+import com.guiji.sms.platform.factory.XiangYunZhiTong;
 import com.guiji.sms.platform.factory.XiaoYa;
+import com.guiji.sms.platform.factory.XuanDuKeji;
 import com.guiji.sms.platform.factory.XuanWu;
 import com.guiji.sms.platform.factory.YunTongXun;
 import com.guiji.sms.platform.factory.YunXun;
@@ -31,7 +33,7 @@ public class SendMsgHandler
 	{
 		if("ytx".equals(identification))
 		{
-			log.info("通过<云讯>发送短信...");
+			log.info("通过<云讯科技>发送短信...");
 			new YunXun().sendMessage(params, phoneList);
 		}
 		else if("wl".equals(identification))
@@ -88,6 +90,16 @@ public class SendMsgHandler
 		{
 			log.info("通过<云通讯>发送短信...");
 			new YunTongXun().sendMessage(params, phoneList);
+		}
+		else if("xyzt".equals(identification))
+		{
+			log.info("通过<祥云智通>发送短信...");
+			new XiangYunZhiTong().sendMessage(params, phoneList);
+		}
+		else if("xdkj".equals(identification))
+		{
+			log.info("通过<玄都科技>发送短信...");
+			new XuanDuKeji().sendMessage(params, phoneList);
 		}
 	}
 }

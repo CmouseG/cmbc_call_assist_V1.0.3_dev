@@ -197,13 +197,16 @@ public class CallDetailServiceImpl implements CallDetailService {
             }
         }
 
-        List<BigInteger> ids = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
+        List<Map> list = myCallOutPlanMapper.selectCallPlanRecord4Encrypt(myCallOutPlanQueryEntity);
+        return list;
+
+      /*  List<BigInteger> ids = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
         if(ids!=null && ids.size()>0){
             List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
             return list;
         }else{
             return null;
-        }
+        }*/
     }
 
     @Override

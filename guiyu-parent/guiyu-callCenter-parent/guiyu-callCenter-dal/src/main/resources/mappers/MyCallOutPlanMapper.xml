@@ -129,6 +129,7 @@
         </if>
     </select>
 
+
     <select id="countCallOutPlan" resultType="java.lang.Integer">
         select count(*)
         from call_out_plan
@@ -146,6 +147,101 @@
         </if>
     </select>
 
+
+    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map">
+        select
+        CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num,
+        SUBSTR(a.phone_num,4,4), '****')) AS phone ,
+        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,
+        a.isread as isbrowse,a.talk_num, a.org_id as orgId
+        from call_out_plan a
+        left join call_out_record b on a.call_id = b.call_id
+        <where>
+            <if test="startDate != null">
+                and a.create_time > #{startDate}
+            </if>
+            <if test="endDate != null">
+                and a.create_time &lt; #{endDate}
+            </if>
+            <if test="phoneNum != null">
+                and a.phone_num like CONCAT('%',#{phoneNum},'%')
+            </if>
+            <if test="durationMin != null">
+                and a.duration > #{durationMin}
+            </if>
+            <if test="durationMax != null">
+                and a.duration &lt;= #{durationMax}
+            </if>
+
+            <if test="billSecMin != null">
+                and a.bill_sec > #{billSecMin}
+            </if>
+            <if test="billSecMax != null">
+                and a.bill_sec &lt;= #{billSecMax}
+            </if>
+            <if test="accurateIntent != null">
+                and a.accurate_intent = #{accurateIntent}
+            </if>
+            <if test="accurateIntentList != null and accurateIntentList.size()>0">
+                and a.accurate_intent in
+                <foreach collection="accurateIntentList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="reason != null">
+                and a.reason = #{reason}
+            </if>
+            <if test="reasonList != null and reasonList.size()>0">
+                and a.reason in
+                <foreach collection="reasonList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="tempId != null">
+                and a.temp_id = #{tempId}
+            </if>
+            <if test="isRead != null">
+                and a.isread = #{isRead}
+            </if>
+            <if test="customerId != null">
+                and a.customer_id = #{customerId}
+            </if>
+            <if test="queryUser != null">
+                and a.customer_id = #{queryUser}
+            </if>
+            <if test="intervened != null">
+                and a.intervened = #{intervened}
+            </if>
+            <if test="batchId != null">
+                and a.batch_id = #{batchId}
+            </if>
+            <if test="orgId != null">
+                and a.org_id = #{orgId}
+            </if>
+            <if test="orgIdList != null and orgIdList.size()>0">
+                and a.org_id in
+                <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="isdel != null">
+                and a.isdel = #{isdel}
+            </if>
+            <if test="callStateMin != null">
+                and a.call_state >= #{callStateMin}
+            </if>
+            <if test="minCallId != null">
+                and a.call_id > #{minCallId}
+            </if>
+            <if test="time != null">
+                and a.call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+            </if>
+        </where>
+        order by a.create_time desc
+        <if test="limitStart != null">
+            limit  #{limitStart},#{limitEnd}
+        </if>
+    </select>
 
     <update id="createCallOutPlan">
         CREATE TABLE call_out_plan_${orgId}

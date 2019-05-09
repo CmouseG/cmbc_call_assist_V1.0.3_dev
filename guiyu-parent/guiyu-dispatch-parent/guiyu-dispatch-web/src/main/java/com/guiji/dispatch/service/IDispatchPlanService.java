@@ -69,7 +69,7 @@ public interface IDispatchPlanService {
    * @return
    */
   List<DispatchPlanBatch> queryDispatchPlanBatch(
-      Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel);
+      String org_code, Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel);
 
   /**
    * 根据当前时间刷新日期

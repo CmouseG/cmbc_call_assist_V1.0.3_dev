@@ -68,6 +68,6 @@ properties:
 rabbit:
   general:
     direct:
-      queues: SendMessageMQ.Sms|SendMessageTaskMQ.direct.Sms
+      queues: SendMessageMQ.direct.Sms|SendMessageTaskMQ.direct.Sms
 
 

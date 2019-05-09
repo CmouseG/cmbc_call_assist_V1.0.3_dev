@@ -462,13 +462,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel) {
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(String org_code, Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId, Integer authLevel) {
+		
 		// 批量信息
 		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
 		//权限过滤
 		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
-		String operOrgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, orgCode);//获取企业组织编码
+		String operOrgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, org_code==null?orgCode:org_code);//获取企业组织编码
 		if(AuthLevelEnum.ORG.getLevel() == authLevel){
 			createCriteria.andOrgCodeEqualTo(operOrgCode);
 		}else if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){

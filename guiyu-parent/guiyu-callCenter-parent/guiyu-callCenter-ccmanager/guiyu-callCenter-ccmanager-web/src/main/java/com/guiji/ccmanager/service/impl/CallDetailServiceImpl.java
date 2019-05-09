@@ -248,15 +248,15 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(authLevel == AuthLevelEnum.USER.getLevel()){
             myCallOutPlanQueryEntity.setOrgId(orgId);
             myCallOutPlanQueryEntity.setCustomerId(Integer.valueOf(customerId));
-            long longCustomerId = Long.valueOf(customerId);
-            if(authService.isSeat(longCustomerId)) {//具有人工坐席权限  //todo  方案二:不判断是否具有坐席权限，直接放在一个sql里面关联agent表查询算了
+           /* long longCustomerId = Long.valueOf(customerId);
+            if(authService.isSeat(longCustomerId)) {//具有人工坐席权限
                 AgentExample agentExample = new AgentExample();
                 agentExample.createCriteria().andCustomerIdEqualTo(longCustomerId);
                 List<Agent> listAgent = agentMapper.selectByExample(agentExample);
                 if(listAgent!=null && listAgent.size()>0){
                     myCallOutPlanQueryEntity.setAgentId(String.valueOf(listAgent.get(0).getUserId()));
                 }
-            }
+            }*/
         }else if(authLevel == AuthLevelEnum.ORG.getLevel()){
             myCallOutPlanQueryEntity.setOrgId(orgId);
         }else if(authLevel == AuthLevelEnum.ORG_EXT.getLevel()){

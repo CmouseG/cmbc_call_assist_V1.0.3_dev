@@ -6,6 +6,7 @@ import com.guiji.dispatch.enums.GateWayLineStatusEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.GateWayLineOccupyVo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -97,8 +98,7 @@ public class CallBack4MQListener {
 					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
 			//		logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
 					if (null != gateWayLine) {
-						if (gateWayLine.getUserId().equals(userId)
-								&& gateWayLine.getBotstenceId().equals(botstenceId)) {
+						if (StringUtils.equals(gateWayLine.getUserId(), userId) && StringUtils.equals(gateWayLine.getBotstenceId(), botstenceId)) {
 							//释放网关路线
 							this.releaseGateWay(gateWayLine, gateWayLineKey);
 						}
@@ -131,8 +131,7 @@ public class CallBack4MQListener {
 							//获取网关线路
 							String gateWayLineKey = iter.next();
 							GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo)redisUtil.get(gateWayLineKey);
-							if (null != gateWayLine
-								&& gateWayLine.getUserId().equals(userId) && gateWayLine.getBotstenceId().equals(botstenceId)) {
+							if (null != gateWayLine && StringUtils.equals(gateWayLine.getUserId(), userId) && StringUtils.equals(gateWayLine.getBotstenceId(), botstenceId)) {
 								//释放网关路线
 								this.releaseGateWay(gateWayLine, gateWayLineKey);
 							}

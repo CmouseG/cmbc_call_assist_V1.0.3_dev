@@ -218,7 +218,7 @@
         order by a.create_time desc
         limit #{limitStart} , #{limitEnd}
     </select>
-    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map">
+<!--    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map">
         select
         CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num,
         SUBSTR(a.phone_num,4,4), '****')) AS phone ,
@@ -232,7 +232,7 @@
             #{idList[${index}]}
         </foreach>
         order by a.create_time desc
-    </select>
+    </select>-->
     <select id="selectCallIdRecordUrl" resultType="com.guiji.callcenter.dao.entityext.CallIdRecordUrl" >
         select
         a.call_id as callId, b.record_url as recordUrl
@@ -320,9 +320,6 @@
         </if>
         <if test="time != null">
             and call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
-        </if>
-        <if test="orgCode != null">
-            and org_code like CONCAT(#{orgCode},'%')
         </if>
         <if test="orgIdList != null and orgIdList.size()>0">
             and a.org_id in

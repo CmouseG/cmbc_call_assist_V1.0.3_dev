@@ -197,13 +197,16 @@ public class CallDetailServiceImpl implements CallDetailService {
             }
         }
 
-        List<BigInteger> ids = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
+        List<Map> list = myCallOutPlanMapper.selectCallPlanRecord4Encrypt(myCallOutPlanQueryEntity);
+        return list;
+
+      /*  List<BigInteger> ids = myCallOutPlanMapper.selectCallIdList(myCallOutPlanQueryEntity);
         if(ids!=null && ids.size()>0){
             List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
             return list;
         }else{
             return null;
-        }
+        }*/
     }
 
     @Override
@@ -246,7 +249,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             myCallOutPlanQueryEntity.setOrgId(orgId);
             myCallOutPlanQueryEntity.setCustomerId(Integer.valueOf(customerId));
             long longCustomerId = Long.valueOf(customerId);
-            if(authService.isSeat(longCustomerId)) {//具有人工坐席权限  //todo  方案二:不判断是否具有坐席权限，直接放在一个sql里面关联agent表查询算了
+            if(authService.isSeat(longCustomerId)) {//具有人工坐席权限
                 AgentExample agentExample = new AgentExample();
                 agentExample.createCriteria().andCustomerIdEqualTo(longCustomerId);
                 List<Agent> listAgent = agentMapper.selectByExample(agentExample);

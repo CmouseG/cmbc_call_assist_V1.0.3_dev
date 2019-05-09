@@ -27,7 +27,7 @@ public interface CallOutPlanMapper {
     List<CallOutPlan> selectByExample4Encrypt(CallOutPlanExample example);
     List<BigInteger> selectCallIds4Encrypt(CallOutPlanExample example);
     List<BigInteger> selectCallPlanRecordIds4Encrypt(Map map);
-    List<Map> selectCallPlanRecord4Encrypt(@Param(value = "idList") List<BigInteger> idList,@Param(value = "isDesensitization") Integer isDesensitization);
+//    List<Map> selectCallPlanRecord4Encrypt(@Param(value = "idList") List<BigInteger> idList,@Param(value = "isDesensitization") Integer isDesensitization);
     int countCallRecordList(Map map);
 
     CallOutPlan selectByPrimaryKey(BigInteger callId);

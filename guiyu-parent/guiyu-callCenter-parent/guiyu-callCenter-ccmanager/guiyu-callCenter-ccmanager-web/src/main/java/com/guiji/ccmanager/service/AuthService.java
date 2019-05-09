@@ -32,4 +32,6 @@ public interface AuthService {
      * @return
      */
     List<Integer> getOrgIdsByAuthlevel(Integer authLevel, Integer orgId);
+
+    String getAgentIdByCustomerId(String customerId);
 }

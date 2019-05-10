@@ -331,19 +331,14 @@ public class LineMarketController {
 
         SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
 
-        if (!isSuperAdmin) {
-            //如果数据查询权限是本人，那么查询本人线路数据，其他查询企业线路
+        if(qUserId == null) {
+            condition.setAuthLevel(authLevel);
+            condition.setOrgCode(orgCode);
             condition.setUserId(userId.toString());
         } else {
-            if(qUserId == null) {
-                condition.setAuthLevel(authLevel);
-                condition.setOrgCode(orgCode);
-                condition.setUserId(userId.toString());
-            } else {
-                condition.setOrgCode(orgCode);
-                condition.setUserId(userId.toString());
-                condition.setQUserId(qUserId.toString());
-            }
+            condition.setOrgCode(orgCode);
+            condition.setUserId(userId.toString());
+            condition.setQUserId(qUserId.toString());
         }
         condition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
 

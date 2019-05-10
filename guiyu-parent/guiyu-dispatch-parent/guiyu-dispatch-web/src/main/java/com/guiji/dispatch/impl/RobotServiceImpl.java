@@ -65,6 +65,9 @@ public class RobotServiceImpl implements RobotService {
             for(Map.Entry<Object, Object> entry: treeMap.entrySet()){
                 String userId = (String)entry.getKey();
                 SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
+                if (user == null) {
+                    continue;
+                }
                 String userName = user.getUsername();
                 if(!userName.contains(userNameReq)){
                     continue;

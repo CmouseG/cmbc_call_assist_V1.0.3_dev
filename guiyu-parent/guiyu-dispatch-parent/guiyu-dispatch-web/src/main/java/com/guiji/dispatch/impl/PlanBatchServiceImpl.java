@@ -310,12 +310,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             OptPlanDto optPlanDto = joinPlanDto.getOptPlan();
             DispatchPlan submitPlan = joinPlanDto.getDispatchPlan();
 
-            // 查询用户名称
-            /*SysUser sysUser = getApiService.getUserById(operUserId+"");
-            if (null == sysUser) {
-                throw new GuiyuException("用户不存在");
-            }*/
-
             //批次入库
             DispatchPlanBatch batchPlan = new DispatchPlanBatch();
             batchPlan.setUserId(operUserId.intValue());
@@ -341,14 +335,29 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 lineService.insert(lines);
             }
 
-            //批量加入MQ
-            this.batchJoin(joinPlanDto, batchId);
+            //查询并批量加入MQ
+            this.batchJoinThread(joinPlanDto, batchId);
             bool = true;
         }
         return bool;
     }
 
-    @Async("asyncBatchImportExecutor")
+    protected void batchJoinThread(JoinPlanDto joinPlanDto, Integer batchId) {
+        logger.info("start batchJoinThread");
+        try{
+            asyncServiceExecutor.execute(new Runnable(){
+                @Override
+                public void run(){
+                    batchJoin(joinPlanDto, batchId);
+                }
+            });
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        logger.info("end batchJoinThread");
+    }
+
+//    @Async("asyncBatchImportExecutor")
     protected void batchJoin(JoinPlanDto joinPlanDto, Integer batchId){
         Long operUserId = Long.valueOf(joinPlanDto.getOperUserId());    //操作用户ID
         Integer operOrgId = joinPlanDto.getOperOrgId();     //企业组织ID

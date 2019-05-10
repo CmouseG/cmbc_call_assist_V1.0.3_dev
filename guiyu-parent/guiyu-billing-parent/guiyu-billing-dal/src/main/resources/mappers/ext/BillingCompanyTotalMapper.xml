@@ -20,6 +20,7 @@
       WHERE r.account_id = c.account_id
         AND r.user_charging_id = t.user_charging_id
         AND r.oper_duration <![CDATA[ > ]]> 0
+        AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
         <if test="authLevel != null">
           <if test="authLevel == 2 and orgCode != null">
             AND c.org_code = #{orgCode}
@@ -68,6 +69,7 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
+          AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
           <if test="authLevel != null">
             <if test="authLevel == 2 and orgCode != null">
               AND c.org_code = #{orgCode}
@@ -113,6 +115,7 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
+          AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
           <if test="authLevel != null">
             <if test="authLevel == 2 and orgCode != null">
               AND c.org_code = #{orgCode}
@@ -161,6 +164,7 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
+          AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
           <if test="authLevel != null">
             <if test="authLevel == 2 and orgCode != null">
               AND c.org_code = #{orgCode}
@@ -205,6 +209,7 @@
       WHERE r.account_id = c.account_id
         AND r.user_charging_id = t.user_charging_id
         AND r.oper_duration <![CDATA[ > ]]> 0
+        AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
         <if test="authLevel != null">
           <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG.getLevel() and orgCode != null">
             AND c.org_code = #{orgCode}
@@ -246,6 +251,7 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
+          AND r.type = ${@com.guiji.billing.enums.ChargingTypeEnum@CONSUME.getType()}
           <if test="authLevel != null">
             <if test="authLevel == @com.guiji.billing.enums.AuthLevelEnum@ORG.getLevel() and orgCode != null">
               AND c.org_code = #{orgCode}

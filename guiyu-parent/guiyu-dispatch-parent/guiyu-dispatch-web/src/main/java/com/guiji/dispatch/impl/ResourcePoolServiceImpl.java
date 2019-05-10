@@ -166,12 +166,15 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
 
                 if (!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis)) {
+                    logger.info("机器人分配发生改变，重新分配开始，old:{},now:{}",userLineBotenceVOSFromRedis, userLineBotenceVOS);
                     Lock lockChange = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
                     if (distributedLockHandler.tryLock(lockChange, 1000L)) {
                         try {
                             redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN_VER, IdGenUtil.uuid());
                             redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN, userLineBotenceVOS);
                             cleanQueueOfDeleted(userLineBotenceVOS, userLineBotenceVOSFromRedis);
+
+                            logger.info("机器人分配发生改变，重新分配结束");
                         } finally {
                             distributedLockHandler.releaseLock(lockChange);
                         }

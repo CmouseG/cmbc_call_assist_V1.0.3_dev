@@ -1,0 +1,13 @@
+rabbit:
+  general:
+    direct:
+      queues: SendMessageMQ.Sms|SendMessageTaskMQ.direct.Sms 
+
+
+
+改为：
+
+rabbit:
+  general:
+    direct:
+      queues: SendMessageMQ.direct.Sms|SendMessageTaskMQ.direct.Sms

@@ -276,7 +276,7 @@
         `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
         `isdel` int(2) NOT NULL DEFAULT '0' COMMENT '是否删除',
         `isread` int(2) NOT NULL DEFAULT '0' COMMENT '是否已读',
-        `org_code` varchar(30) NOT NULL COMMENT '组织机构码',
+        `org_code` varchar(30) DEFAULT NULL COMMENT '组织机构码',
         `org_id` int(11) DEFAULT NULL,
         `batch_id` int(11) DEFAULT NULL COMMENT '批次id',
         `talk_num` int(4) DEFAULT '0' COMMENT '对话轮数',

@@ -448,9 +448,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                             callOutDetailVOInsert.setCallId(callId);
                             resList.add(callOutDetailVOInsert);
                         }
-                    }
-
-                    if(callOutDetail.getAgentAnswerTime()!=null && i>0){
+                    }else if(callOutDetail.getAgentAnswerTime()!=null && i>0){
                         CallOutDetail callOutDetailBefore = details.get(i-1);
                         if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
                             CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
@@ -458,6 +456,12 @@ public class CallDetailServiceImpl implements CallDetailService {
                             callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
                             callOutDetailVOInsert.setCallId(callId);
                             resList.add(callOutDetailVOInsert);
+                        }
+                    }else if(callOutDetail.getCustomerSayTime()!=null && i<details.size()-1){
+                        CallOutDetail callOutDetailAfter = details.get(i+1);
+                        if(callOutDetailAfter.getBotAnswerTime()!=null){//客户说话之后，下面一个是机器人说话，则取出分词
+                            callOutDetailVO.setWordSegmentResult(callOutDetailAfter.getWordSegmentResult());
+                            callOutDetailVO.setKeywords(callOutDetailAfter.getKeywords());
                         }
                     }
 

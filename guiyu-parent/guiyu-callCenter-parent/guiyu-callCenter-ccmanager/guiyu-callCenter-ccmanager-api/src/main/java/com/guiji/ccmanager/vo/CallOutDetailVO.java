@@ -48,5 +48,5 @@ public class CallOutDetailVO implements Serializable {
 
     private String wordSegmentResult;
     private String keywords;
-
+    private Integer isupdate;
 }

@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.botsentence.util.enums.BranchNameEnum;
+import com.guiji.botsentence.util.enums.CategoryEnum;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
@@ -68,6 +70,7 @@ import com.jcraft.jsch.Logger;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalService{
@@ -231,25 +234,22 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			domain.setLstUpdateUser(userId);
 			botSentenceDomainMapper.updateByPrimaryKey(domain);
 		}
-		
-		/*String templateId = botSentenceProcess.getTemplateId();
-		String dirName = DateUtil.getCurrentTime2() + "-" + templateId;
-	    File file = null;
-		try {
-			file = fileGenerateService.fileGenerate(processId, dirName, Constant.APPROVE_TYPE, userId);
-		} catch (IOException e) {
-			logger.error("生成模板文件异常", e);
-			throw new CommonException("话术部署失败，生成模板文件失败!");
+	}
+
+	@Override
+	@Transactional
+	public void passAudit(String processId, String userId) {
+		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+		if(null == process) {
+			throw new CommonException("未找到话术！");
 		}
-	    if(null == file) {
-	    	throw new CommonException("话术部署失败!");
-	    }
-	    boolean b = fileGenerateService.autoDeploy(file, dirName, processId, templateId, userId);
-	    if(!b) {
-	    	throw new CommonException("话术部署失败!");
-	    }
-	    botSentenceProcess.setState(Constant.DEPLOYING);//部署中
-	    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);*/
+
+		resetComDomain(processId, userId);
+
+		process.setProcessId(processId);
+		process.setState(Constant.APPROVE_PASS);
+		process.setLstUpdateTime(new Date());
+		process.setLstUpdateUser(userId);
 	}
 
 	@Override
@@ -261,6 +261,51 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		botSentenceProcess.setLstUpdateUser(userId);
 		botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 		
+	}
+
+	private void resetComDomain(String processId, String userId){
+		//把之前的com_domain全部设置为空
+		botSentenceDomainExtMapper.batchUpdateComDomain(processId);
+
+		BotSentenceDomainExample domainExample = new BotSentenceDomainExample();
+		domainExample.createCriteria()
+				.andProcessIdEqualTo(processId)
+				.andCategoryEqualTo(String.valueOf(CategoryEnum.MAIN_PROCESS.getKey()));
+
+		List<BotSentenceDomain> mainDomains = botSentenceDomainMapper.selectByExample(domainExample);
+
+		mainDomains.forEach(domain -> {
+
+			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+			branchExample.or()
+					.andProcessIdEqualTo(processId)
+					.andDomainEqualTo(domain.getDomainName())
+					.andBranchNameEqualTo(BranchNameEnum.positive.name());
+			branchExample.or()
+					.andProcessIdEqualTo(processId)
+					.andDomainEqualTo(domain.getDomainName())
+					.andBranchNameLike(BranchNameEnum.special.name() + "%");
+
+			List<BotSentenceBranch> branches = botSentenceBranchMapper.selectByExample(branchExample);
+
+			if(CollectionUtils.isEmpty(branches)){
+				return;
+			}
+			String comDomain = null;
+
+			for(BotSentenceBranch branch : branches){
+				comDomain = branch.getNext();
+				if(BranchNameEnum.positive.name().equals(branch.getBranchName())){
+					break;
+				}
+			}
+
+			domain.setComDomain(comDomain);
+			domain.setIsMainFlow("01");
+			domain.setLstUpdateTime(new Date());
+			domain.setLstUpdateUser(userId);
+			botSentenceDomainMapper.updateByPrimaryKey(domain);
+		});
 	}
 
 	/**
@@ -504,38 +549,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		
 		return results;
 	}
-	
-	
-	
-	private List<String> getNext(String processId, String domainName, List<List<String>> results, List<String> list){
-		list.add(domainName);
-		
-		
-		//获取next列表
-		BotSentenceBranchExample tempExample = new BotSentenceBranchExample();
-		tempExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(domainName);
-		List<BotSentenceBranch> tempList = botSentenceBranchMapper.selectByExample(tempExample);
-		List<String> nextList = new ArrayList<>();
-		for(BotSentenceBranch temp : tempList) {
-			if(StringUtils.isNotBlank(temp.getNext())) {
-				nextList.add(temp.getNext());
-			}
-		}
-		/*
-		if(nextList.size() > 0) {
-			for(String tempName : nextList) {
-				getNext(processId, tempName,results, list);
-			}
-		}else {
-			results.add(list);
-			System.out.println(results.toString());
-			list = new ArrayList<>();
-		}*/
-		
-		
-		return nextList;
-	}
-	
+
 	
 	private BotSentenceDomain getParentDomain(String processId, String domainName) {
 		BotSentenceDomainExample domainExample = new BotSentenceDomainExample();
@@ -562,40 +576,9 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		if(null == list || list.size() < 1) {
 			throw new CommonException("话术流程不完整，请确保开场白到结束结点之间连续连线!");
 		}
-		
-		
-		List<DomainVO> selectedList = new ArrayList<>();
-		
-		int finalNum = 0;
-		
-		for(int i = 0 ; i < list.size() ; i++) {
-			int num = 0;
-			List<DomainVO> tempList = list.get(i);
-			
-			for(DomainVO domain : tempList) {
-				if("未拒绝".equals(domain.getLineName())) {
-					num++;
-				}
-			}
-			
-			if(num > finalNum) {
-				finalNum = num;
-				selectedList = tempList;
-			}
-		}
-		
-		
-		for(int i = 0 ; i < selectedList.size() - 1 ; i++) {
-			DomainVO vo = selectedList.get(i);
-			BotSentenceDomain domain = botSentenceDomainMapper.selectByPrimaryKey(vo.getDomainId());
-			domain.setComDomain(selectedList.get(i+1).getName());
-			domain.setIsMainFlow("01");
-			domain.setLstUpdateTime(new Date());
-			domain.setLstUpdateUser(userId);
-			botSentenceDomainMapper.updateByPrimaryKey(domain);
-		}
-		
-		
+
+		resetComDomain(processId, userId);
+
 		//修改状态为审批通过
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
@@ -784,13 +767,6 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	@Override
 	public void deployTestSellbotByAgent(String processId) {
 		
-	}
-
-	
-	public static void main(String[] args) throws IOException {
-		File ver=File.createTempFile(String.valueOf(System.currentTimeMillis()), ".txt");
-		String suffix =  ver.getName().substring(0, ver.getName().indexOf("."));
-		System.out.println(suffix);
 	}
 	
 	

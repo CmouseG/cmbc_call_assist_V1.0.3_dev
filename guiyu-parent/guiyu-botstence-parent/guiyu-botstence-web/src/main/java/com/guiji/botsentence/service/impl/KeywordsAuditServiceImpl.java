@@ -144,19 +144,52 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
         page.setPageSize(keywordsAuditListReqVO.getPageSize());
         page.setPageNo(keywordsAuditListReqVO.getPageNum());
 
-        Map<String, BotSentenceProcess> processIdToProcessMap = Maps.newHashMap();
-
         BotSentenceKeywordAuditExample keywordAuditExample = new BotSentenceKeywordAuditExample();
         keywordAuditExample.setOffset(keywordsAuditListReqVO.getOffset());
         keywordAuditExample.setLimit(keywordsAuditListReqVO.getPageSize());
         keywordAuditExample.setOrderByClause("create_time desc");
-        BotSentenceKeywordAuditExample.Criteria keywordAuditCriteria = keywordAuditExample.createCriteria()
-                .andKeywordsCountGreaterThan(0);
+        BotSentenceKeywordAuditExample.Criteria keywordAuditCriteria = keywordAuditExample.createCriteria();
 
+        if(0 == keywordsAuditListReqVO.getKeywordAuditStatus()){
+            keywordAuditCriteria.andKeywordsCountGreaterThan(0);
+        }else if(1 == keywordsAuditListReqVO.getKeywordAuditStatus()){
+            keywordAuditCriteria.andKeywordsCountLessThanOrEqualTo(0);
+        }
+
+        Date startDate = keywordsAuditListReqVO.getStartDate();
+        if(null != startDate){
+            Calendar startCalendar = new GregorianCalendar();
+            startCalendar.setTime(startDate);
+            startCalendar.set(Calendar.HOUR, 0);
+            startCalendar.set(Calendar.MINUTE, 0);
+            startCalendar.set(Calendar.SECOND, 0);
+            keywordAuditCriteria.andCreateTimeGreaterThanOrEqualTo(startCalendar.getTime());
+        }
+
+        Date endDate = keywordsAuditListReqVO.getEndDate();
+        if(null != endDate){
+            Calendar endCalendar = new GregorianCalendar();
+            endCalendar.setTime(endDate);
+            endCalendar.set(Calendar.HOUR, 23);
+            endCalendar.set(Calendar.MINUTE, 59);
+            endCalendar.set(Calendar.SECOND, 59);
+            keywordAuditCriteria.andCreateTimeLessThanOrEqualTo(endCalendar.getTime());
+        }
+
+        Map<String, BotSentenceProcess> processIdToProcessMap = Maps.newHashMap();
         String speechName = keywordsAuditListReqVO.getSpeechName();
-        if(StringUtils.isNotBlank(speechName)){
+        String reqIndustryId = keywordsAuditListReqVO.getIndustryId();
+        if(StringUtils.isNotBlank(speechName) || StringUtils.isNotBlank(reqIndustryId)){
+
             BotSentenceProcessExample processExample = new BotSentenceProcessExample();
-            processExample.createCriteria().andTemplateNameLike("%"+speechName+"%");
+            BotSentenceProcessExample.Criteria processCriteria = processExample.createCriteria();
+
+            if(StringUtils.isNotBlank(speechName)){
+                processCriteria.andTemplateNameLike("%"+speechName+"%");
+            }
+            if(StringUtils.isNotBlank(reqIndustryId)){
+                processCriteria.andIndustryIdLike(reqIndustryId + "%");
+            }
 
             List<BotSentenceProcess> processes = botSentenceProcessMapper.selectByExample(processExample);
 
@@ -168,6 +201,7 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
 
             keywordAuditCriteria.andProcessIdIn(Lists.newArrayList(processIdToProcessMap.keySet()));
         }
+
         int totalRecord = (int) botSentenceKeywordAuditMapper.countByExample(keywordAuditExample);
         page.setTotalRecord(totalRecord);
         if(0 == totalRecord){

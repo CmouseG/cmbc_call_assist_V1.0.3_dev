@@ -150,7 +150,25 @@ public class BotSentenceApprovalController {
 		botSentenceApprovalService.notPassApproval(processId, userId);
 		return ServerResult.createBySuccess();
 	}
-	
+
+	@RequestMapping(value="passAudit")
+	public ServerResult passAudit(@JsonParam String processId, @RequestHeader String userId) {
+
+		if(StringUtils.isBlank(processId)) {
+			throw new CommonException("缺少参数！");
+		}
+
+		if(StringUtils.isBlank(userId)) {
+			throw new CommonException("未知用户！");
+		}
+
+		botSentenceApprovalService.passAudit(processId, userId);
+
+		botSentenceApprovalService.publishSentence(processId,userId);
+
+		return ServerResult.createBySuccess();
+	}
+
 	/**
 	 *  审批话术通过
 	 */
@@ -171,12 +189,8 @@ public class BotSentenceApprovalController {
 			DomainVO domain = JSONObject.toJavaObject(jsonObject, DomainVO.class);
 			list.add(domain);
 		}
-		if(offline) {
-			//botSentenceApprovalService.passApprovalOffline(processId, list, userId);
-		}else {
-			botSentenceApprovalService.passApproval(processId, list, userId);
-		}
-		
+		botSentenceApprovalService.passApproval(processId, list, userId);
+
 		botSentenceApprovalService.publishSentence(processId,userId);
 		
 		return ServerResult.createBySuccess();

@@ -66,6 +66,11 @@ public class KeywordsAuditRpsVO implements Serializable {
      */
     private Integer keywordsCount;
 
+    /**
+     * 审核状态
+     */
+    private String auditStatus;
+
 
     public Integer getKeywordAuditId() {
         return keywordAuditId;
@@ -153,6 +158,19 @@ public class KeywordsAuditRpsVO implements Serializable {
 
     public void setKeywordsCount(Integer keywordsCount) {
         this.keywordsCount = keywordsCount;
+        if(this.keywordsCount > 0){
+            setAuditStatus("待审核");
+        }else {
+            setAuditStatus("已审核");
+        }
+    }
+
+    public String getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(String auditStatus) {
+        this.auditStatus = auditStatus;
     }
 
     public String getKeywords(){

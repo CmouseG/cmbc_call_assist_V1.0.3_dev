@@ -1,22 +1,17 @@
 package com.guiji.botsentence.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.Removal;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.guiji.botsentence.constant.Constant;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
+import com.guiji.botsentence.dao.BotSentenceShareAuthMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
+import com.guiji.botsentence.dao.entity.BotSentenceProcessExample;
 import com.guiji.botsentence.dao.entity.BotSentenceShareAuth;
+import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample;
 import com.guiji.botsentence.service.IBotSentenceProcessCopyService;
-import com.guiji.botsentence.util.IndustryUtil;
+import com.guiji.botsentence.service.ITradeService;
 import com.guiji.botsentence.vo.AvaliableOrgVO;
 import com.guiji.botsentence.vo.BotSentenceProcessVO;
 import com.guiji.botsentence.vo.BotSentenceShareVO;
@@ -27,6 +22,16 @@ import com.guiji.component.client.util.DateUtil;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value="botSentenceProcessCopy")
@@ -37,6 +42,15 @@ public class BotSentenceProcessCopyController {
 	
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
+
+	@Resource
+	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
+
+	@Resource
+	private IAuth iAuth;
+
+	@Resource
+	private ITradeService iTradeService;
 	
 	@RequestMapping(value="copy")
 	@Jurisdiction("botsentence_maker_market_get")
@@ -57,56 +71,82 @@ public class BotSentenceProcessCopyController {
 	@RequestMapping(value="queryBotstenceMarket")
 	public ServerResult<Page<BotSentenceProcessVO>> queryBotstenceMarket(@RequestHeader String userId, @JsonParam int pageSize, @JsonParam int pageNo, 
 			@JsonParam String templateName, @JsonParam String nickName, @JsonParam String orderType) {
-		Page<BotSentenceProcessVO> page = new Page<BotSentenceProcessVO>();
+		Page<BotSentenceProcessVO> page = new Page<>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
-		
-		List<BotSentenceShareAuth> list = botSentenceProcessCopyService.queryBotstenceMarket(userId, pageSize, pageNo, templateName, nickName, orderType);
-		
 
-		int totalNum = botSentenceProcessCopyService.countBotstenceMarket(userId, templateName, nickName);
-		if(null != list) {
-			
-			List<BotSentenceProcessVO> results = new ArrayList<>();
-			
-			for(BotSentenceShareAuth temp : list) {
-				BotSentenceProcessVO vo = new BotSentenceProcessVO();
-				
-				BeanUtil.copyProperties(temp, vo);
-				
-				/*if(null != temp.getCrtTime()) {
-					vo.setCrtTimeStr(DateUtil.dateToString(temp.getCrtTime(), DateUtil.ymdhms));
-				}*/
-				
-				BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(vo.getProcessId());
-				
-				if(null != process.getLstUpdateTime()) {
-					vo.setCrtTimeStr(DateUtil.dateToString(process.getLstUpdateTime(), DateUtil.ymdhms));
-				}else {
-					vo.setCrtTimeStr(DateUtil.dateToString(process.getCrtTime(), DateUtil.ymdhms));
-				}
-				
-				
-				vo.setShareCount(temp.getShareCount());
-				//设置行业显示三级
-				String industryId = process.getIndustryId();
-				if(StringUtils.isNotBlank(industryId) && industryId.length() == 6) {
-					String level_1 = industryId.substring(0, 2);
-					String level_2 = industryId.substring(0, 4);
-					String level_3 = industryId;
-					Map<String, String> map = IndustryUtil.map;
-					vo.setIndustry(map.get(level_1) + "/" + map.get(level_2) + "/" + map.get(level_3));
-					//vo.setIndustryId(level_1 + "," + level_2 + "," + level_3);
-				}
-				
-				results.add(vo);
-			}
-			
-			page.setRecords(results);
-			page.setTotal(totalNum);
+		String orgCode = iAuth.getOrgByUserId(Long.valueOf(userId)).getBody().getCode();
+
+		BotSentenceShareAuthExample shareAuthExample = new BotSentenceShareAuthExample();
+		shareAuthExample.setLimitStart((pageNo-1)*pageSize);
+		shareAuthExample.setLimitEnd(pageSize);
+	 	if("1".equals(orderType)){
+			shareAuthExample.setOrderByClause("share_count desc");
+		}else {
+			shareAuthExample.setOrderByClause("crt_time desc");
 		}
+
+		BotSentenceShareAuthExample.Criteria commonCriteria = shareAuthExample.or();
+	 	commonCriteria.andTypeEqualTo("00").andSharedEqualTo(true);
+		BotSentenceShareAuthExample.Criteria authCriteria = shareAuthExample.or();
+		authCriteria.andTypeEqualTo("01").andSharedEqualTo(true)
+				.andAvailableOrgLike("%" + orgCode +",%");;
+		if(StringUtils.isNotBlank(templateName)) {
+			commonCriteria.andTemplateNameLike("%"+templateName+"%");
+			authCriteria.andTemplateNameLike("%"+templateName+"%");
+		}
+		if(StringUtils.isNotBlank(nickName)) {
+			commonCriteria.andNickNameLike("%"+nickName+"%");
+			authCriteria.andNickNameLike("%"+templateName+"%");
+		}
+
+		int totalNum = botSentenceShareAuthMapper.countByExample(shareAuthExample);
+		page.setTotal(totalNum);
+		if(totalNum == 0){
+			return ServerResult.createBySuccess(page);
+		}
+
+		List<BotSentenceShareAuth> shareAuthList = botSentenceShareAuthMapper.selectByExample(shareAuthExample);
+
+		Set<String> processIds = Sets.newHashSet();
+		shareAuthList.forEach(shareAuth -> processIds.add(shareAuth.getProcessId()));
+
+		BotSentenceProcessExample processExample = new BotSentenceProcessExample();
+		processExample.createCriteria().andProcessIdIn(Lists.newArrayList(processIds));
+		List<BotSentenceProcess> processes = botSentenceProcessMapper.selectByExample(processExample);
+
+		Set<String> industryIds = Sets.newHashSet();
+		Map<String, String> processIdToIndustryIdMap = Maps.newHashMap();
+		processes.forEach(process -> {
+			industryIds.add(process.getIndustryId());
+			processIdToIndustryIdMap.put(process.getProcessId(), process.getIndustryId());
+		});
+
+		Map<String,String> industryIdToFullNameMap = iTradeService.getIndustryIdToFullNameMap(industryIds);
+
+		List<BotSentenceProcessVO> processVOS = Lists.newArrayList();
+		shareAuthList.forEach(shareAuth -> {
+			BotSentenceProcessVO processVO = new BotSentenceProcessVO();
+
+			BeanUtil.copyProperties(shareAuth, processVO);
+			processVO.setShareCount(shareAuth.getShareCount());
+
+
+			if(null != shareAuth.getLstUpdateTime()) {
+				processVO.setCrtTimeStr(DateUtil.dateToString(shareAuth.getLstUpdateTime(), DateUtil.ymdhms));
+			}else {
+				processVO.setCrtTimeStr(DateUtil.dateToString(shareAuth.getCrtTime(), DateUtil.ymdhms));
+			}
+
+			String industryId = processIdToIndustryIdMap.get(shareAuth.getProcessId());
+			processVO.setIndustry(industryIdToFullNameMap.get(industryId));
+
+			processVOS.add(processVO);
+		});
+
+		page.setRecords(processVOS);
+
 		return ServerResult.createBySuccess(page);
-		
 	}
 	
 	@RequestMapping(value="queryAvaliableOrgList")

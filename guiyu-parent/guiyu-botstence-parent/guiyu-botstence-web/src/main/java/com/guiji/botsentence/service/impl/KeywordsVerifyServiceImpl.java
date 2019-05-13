@@ -9,6 +9,7 @@ import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
 import com.guiji.botsentence.util.KeywordsUtil;
+import com.guiji.botsentence.util.enums.KeywordsType;
 import com.guiji.botsentence.vo.BotSentenceIntentVO;
 import com.guiji.common.exception.CommonException;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -150,8 +152,11 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
             }
             List<String> keywords = KeywordsUtil.getAllKeywordsFromIntentVO(intentVO);
             keywords.forEach(originKeyword -> {
+
+                KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
+                originKeyword = sortCombinationKeyword(originKeyword, keyword.getType());
+
                 if(keywordToIntentNameMap.containsKey(originKeyword)){
-                    KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
                     errorSb.append(String.format(INTENT_ERROR_FORMAT, intentVO.getName(), keywordToIntentNameMap.get(originKeyword), keyword.getDisplayKeyword()));
                 }else {
                     keywordToIntentNameMap.put(originKeyword, intentVO.getName());
@@ -210,8 +215,11 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
                 }
                 List<String> keywords = JSON.parseArray(intent.getKeywords(), String.class);
                 keywords.forEach(originKeyword -> {
+
+                    KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
+                    originKeyword = sortCombinationKeyword(originKeyword, keyword.getType());
+
                     if(keywordToIntentNameMap.containsKey(originKeyword)){
-                        KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
                         errorSb.append(String.format(COMMON_DIALOG_ERROR_FORMAT, keywordToIntentNameMap.get(originKeyword), branch.getDomain(), intent.getName(), keyword.getDisplayKeyword()));
                     }
                 });
@@ -245,8 +253,11 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
             for (BotSentenceIntent intent: botSentenceIntents) {
                 List<String> keywords = JSON.parseArray(intent.getKeywords(), String.class);
                 for (String originKeyword: keywords) {
+
+                    KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
+                    originKeyword = sortCombinationKeyword(originKeyword, keyword.getType());
+
                     if(keywordToIntentNameMap.containsKey(originKeyword)){
-                        KeywordsUtil.Keyword keyword = KeywordsUtil.buildKeywordFromOrigin(originKeyword);
                         errorSb.append(String.format(BUSINESS_ANSWER_ERROR_FORMAT, keywordToIntentNameMap.get(originKeyword), String.valueOf(index), intent.getName(), keyword.getDisplayKeyword()));
                     }
                 }
@@ -264,5 +275,14 @@ public class KeywordsVerifyServiceImpl implements IKeywordsVerifyService {
         BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
         intentExample.createCriteria().andIdIn(intentIdList);
         return botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
+    }
+
+    private String sortCombinationKeyword(String keyword, KeywordsType keywordsType){
+        if(KeywordsType.COMBINATION == keywordsType){
+            List<String> combinationKeywords = JSON.parseArray(keyword, String.class);
+            Collections.sort(combinationKeywords);
+            keyword = JSON.toJSONString(combinationKeywords);
+        }
+        return keyword;
     }
 }

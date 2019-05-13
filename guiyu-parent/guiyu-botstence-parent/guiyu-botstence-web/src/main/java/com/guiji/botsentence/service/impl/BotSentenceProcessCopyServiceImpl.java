@@ -658,6 +658,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		ReturnData<SysOrganization> data = iAuth.getOrgByUserId(new Long(userId));
 		String orgCode=data.getBody().getCode();
+
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);
 		if(StringUtils.isNotBlank(templateName)) {

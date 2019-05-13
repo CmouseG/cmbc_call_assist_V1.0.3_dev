@@ -50,6 +50,8 @@ public class CallRecordListReq {
     String endCount;
     @ApiModelProperty(value = "批次号")
     Integer batchId;
+    @ApiModelProperty(value = "线路ID")
+    Integer lineId;
 
     @ApiModelProperty(value = "批次号")
     private List<Integer> orgIdList;

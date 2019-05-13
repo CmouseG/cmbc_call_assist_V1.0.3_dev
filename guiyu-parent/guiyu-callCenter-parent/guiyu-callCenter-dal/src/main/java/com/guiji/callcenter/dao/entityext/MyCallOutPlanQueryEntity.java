@@ -46,6 +46,7 @@ public class MyCallOutPlanQueryEntity {
 
     Integer intervened;
     Integer batchId;
+    Integer lineId;
 
     Integer orgId;
     List<Integer> orgIdList;

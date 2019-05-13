@@ -393,6 +393,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(StringUtils.isNotBlank(callRecordListReq.getIntervened())){
             myCallOutPlanQueryEntity.setIntervened(Integer.valueOf(callRecordListReq.getIntervened()));
         }
+        if(null != callRecordListReq.getLineId()){
+            myCallOutPlanQueryEntity.setLineId(callRecordListReq.getLineId());
+        }
 
         myCallOutPlanQueryEntity.setIsdel(0);
         myCallOutPlanQueryEntity.setCallStateMin(Constant.CALLSTATE_HANGUP_OK);

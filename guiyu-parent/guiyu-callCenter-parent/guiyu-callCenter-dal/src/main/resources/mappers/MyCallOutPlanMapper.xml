@@ -70,6 +70,9 @@
             <if test="batchId != null">
                 and batch_id = #{batchId}
             </if>
+            <if test="lineId != null">
+                and line_id = #{lineId}
+            </if>
             <if test="orgId != null">
                 and org_id = #{orgId}
             </if>

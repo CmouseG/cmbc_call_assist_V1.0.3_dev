@@ -25,6 +25,11 @@ public class KeywordAuditItemRpsVO implements Serializable {
      */
     private String keyword;
 
+    /**
+     * 审核状态:0-待审核;1-已加入模板;2-已删除
+     */
+    private Integer auditStatus;
+
     public Integer getId() {
         return id;
     }
@@ -47,5 +52,13 @@ public class KeywordAuditItemRpsVO implements Serializable {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public Integer getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(Integer auditStatus) {
+        this.auditStatus = auditStatus;
     }
 }

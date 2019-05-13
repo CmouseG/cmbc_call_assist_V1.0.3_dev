@@ -236,10 +236,15 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
         });
         Map<String, String> industryIdToFullNameMap = iTradeService.getIndustryIdToFullNameMap(industryIds);
 
+        KeywordAuditStatus auditStatus = KeywordAuditStatus.getStatusByKey(keywordsAuditListReqVO.getKeywordAuditStatus());
         BotSentenceKeywordAuditItemExample auditItemExample = new BotSentenceKeywordAuditItemExample();
-        auditItemExample.createCriteria()
-                .andAuditStatusEqualTo(keywordsAuditListReqVO.getKeywordAuditStatus())
-                .andKeywordAuditIdIn(Lists.newArrayList(auditIdToItemListMap.keySet()));
+        BotSentenceKeywordAuditItemExample.Criteria auditCriteria = auditItemExample.createCriteria();
+        auditCriteria.andKeywordAuditIdIn(Lists.newArrayList(auditIdToItemListMap.keySet()));
+        if(KeywordAuditStatus.WAIT_AUDIT == auditStatus){
+            auditCriteria.andAuditStatusEqualTo(KeywordAuditStatus.WAIT_AUDIT.getKey());
+        }else {
+            auditCriteria.andAuditStatusNotEqualTo(KeywordAuditStatus.WAIT_AUDIT.getKey());
+        }
 
         List<BotSentenceKeywordAuditItem> auditItems = botSentenceKeywordAuditItemMapper.selectByExample(auditItemExample);
 

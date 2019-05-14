@@ -2,12 +2,11 @@ package com.guiji.voipgateway.controller;
 
 import com.guiji.component.result.Result;
 import com.guiji.voipgateway.api.VoipGatewayRemote;
-import com.guiji.voipgateway.model.Company;
-import com.guiji.voipgateway.model.GwDevtbl;
-import com.guiji.voipgateway.model.SimPort;
+import com.guiji.voipgateway.model.*;
 import com.guiji.voipgateway.service.VoipgatewayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -89,5 +88,16 @@ public class VoipGatewayController implements VoipGatewayRemote {
             @RequestParam(value = "devId", required = true) Integer devId) {
         List<SimPort> list = voipgatewayService.querySimPortListByDevId(gwBrand, companyId, devId);
         return Result.ok(list);
+    }
+
+    @Override
+    public Result.ReturnData<PortStatusEnum> querySipPortStatus(PortRo portRo) {
+
+        if(portRo == null) {
+            return Result.ok();
+        } else {
+            return Result.ok(voipgatewayService.querySipPortStatus(portRo));
+        }
+
     }
 }

@@ -3,6 +3,8 @@ package com.guiji.clm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guiji.clm.model.SimLineStatus;
+import com.guiji.clm.service.voip.VoipGwManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -111,8 +113,19 @@ public class LineMarketRemoteController implements LineMarketRemote{
 		}
 		return Result.ok();
     }
-    
-    /**
+
+    @Autowired
+	VoipGwManager voipGwManager;
+
+
+	@Override
+	public Result.ReturnData<SimLineStatus> querySimLineStatus(Integer lineId) {
+
+		return Result.ok(voipGwManager.querySimLineStatus(lineId));
+
+	}
+
+	/**
      * 线路转其他系统需要的属性返回
      * @param list
      * @return

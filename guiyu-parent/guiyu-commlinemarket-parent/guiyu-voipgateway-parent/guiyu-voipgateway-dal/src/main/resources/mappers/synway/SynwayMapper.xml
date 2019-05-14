@@ -44,4 +44,10 @@
   <select id="querySimPortListByDevId" resultType="com.guiji.voipgateway.model.SimPort">
     select * from ${tabName} where ParentDevId=#{devId}
   </select>
+
+
+  <!-- 查询网关设备sim卡端口信息列表-->
+  <select id="querySimPortStatus" resultType="com.guiji.voipgateway.synway.dao.entity.PortStatus">
+    select PortId portId, RunStatus runStatus from ${tabName} where ParentDevId=#{devId}
+  </select>
 </mapper>

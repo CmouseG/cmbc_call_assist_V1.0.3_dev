@@ -4,6 +4,7 @@ import com.guiji.voipgateway.dingxin.dao.*;
 import com.guiji.voipgateway.dingxin.dao.entity.*;
 import com.guiji.voipgateway.model.Company;
 import com.guiji.voipgateway.model.GwDevtbl;
+import com.guiji.voipgateway.model.PortStatusEnum;
 import com.guiji.voipgateway.model.SimPort;
 import com.guiji.voipgateway.service.ThirdGateWayService;
 import groovy.util.logging.Slf4j;
@@ -99,8 +100,12 @@ public class DingxinServiceImpl implements ThirdGateWayService {
         int idle = 0;
         //IDLE-10 BUSY-11
         for (TblPort tblPort : tblPorts) {
-            if (tblPort.getRunStatus() == 10) idle++;
-            if (tblPort.getRunStatus() == 11) busy++;
+            if (tblPort.getRunStatus() == 10) {
+                idle++;
+            }
+            if (tblPort.getRunStatus() == 11) {
+                busy++;
+            }
         }
 
         gwDevtbl.setChUseNum(busy);
@@ -157,7 +162,9 @@ public class DingxinServiceImpl implements ThirdGateWayService {
         for (TblGwp tblGwp : tblGwps) {
 
             SimPort simPort = new SimPort();
-            if (tblGwp.getLocalSimUuid() == 0) continue;
+            if (tblGwp.getLocalSimUuid() == 0) {
+                continue;
+            }
             TblSim tblSim = tblSimMapper.selectByPrimaryKey(tblGwp.getLocalSimUuid());
 
             simPort.setRegStatusId(map.get(tblGwp.getPortUuid()).getOprStatus() == 1 ? 1:0 );
@@ -171,5 +178,71 @@ public class DingxinServiceImpl implements ThirdGateWayService {
         }
 
         return simPorts;
+    }
+
+    @Override
+    public PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo) {
+
+        TblPortExample tblPortExample = new TblPortExample();
+
+        tblPortExample.createCriteria().andNeUuidEqualTo(devId);
+
+        List<TblPort> tblPorts = tblPortMapper.selectByExample(tblPortExample);
+
+        TblPort port = null;
+
+        for (TblPort obj : tblPorts) {
+            if(obj.getPortNo().equals(portNo)){
+                port = obj;
+            }
+        }
+
+        TblGwpExample tblGwpExample = new TblGwpExample();
+
+        tblGwpExample.createCriteria().andPortUuidEqualTo(port.getUuid());
+
+        List<TblGwp> tblGwps = tblGwpMapper.selectByExample(tblGwpExample);
+
+        TblGwp tblGwp = tblGwps.get(0);
+
+        //	1 初始化
+        //	5 空的
+        //	6 通信失败（端口错误）
+        //	10 空闲
+        //	11 忙碌
+        //	23 关机
+        Integer runStatus = port.getRunStatus();
+
+        //	0 无卡
+        //	3 未注册
+        //	5 注册成功
+        //	9 关机+
+        Integer modStatus = tblGwp.getModStatus();
+
+        if(modStatus == 5) {
+            switch (runStatus){
+                case 10:
+                    return PortStatusEnum.IDLE;
+                case 11:
+                    return PortStatusEnum.BUSY;
+                case 5:
+                    return PortStatusEnum.EMPTY;
+                case 6:
+                    return PortStatusEnum.ERROR_CONN;
+                case 23:
+                    return PortStatusEnum.CLOSED;
+            }
+        } else if (modStatus == 0) {
+            return PortStatusEnum.NO_SIM;
+        } else if (modStatus == 3) {
+            return PortStatusEnum.NOT_REGIST;
+        } else if (modStatus == 9) {
+            return PortStatusEnum.CLOSED;
+        } else {
+            return PortStatusEnum.OTHER;
+        }
+
+
+        return null;
     }
 }

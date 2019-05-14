@@ -2,6 +2,7 @@ package com.guiji.voipgateway.service;
 
 import com.guiji.voipgateway.model.Company;
 import com.guiji.voipgateway.model.GwDevtbl;
+import com.guiji.voipgateway.model.PortStatusEnum;
 import com.guiji.voipgateway.model.SimPort;
 
 import java.util.List;
@@ -50,5 +51,12 @@ public interface ThirdGateWayService {
      * @return
      */
     List<SimPort> querySimPortListByDevId(Integer companyId, Integer devId);
-    
+
+    /**
+     * 根据设备id和端口，查询当前端口的状态
+     * @param devId
+     * @param portNo
+     * @return
+     */
+    PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo);
 }

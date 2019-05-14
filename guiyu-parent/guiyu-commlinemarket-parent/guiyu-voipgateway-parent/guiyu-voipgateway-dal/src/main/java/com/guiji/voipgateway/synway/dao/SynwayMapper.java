@@ -2,6 +2,7 @@ package com.guiji.voipgateway.synway.dao;
 
 import java.util.List;
 
+import com.guiji.voipgateway.synway.dao.entity.PortStatus;
 import org.apache.ibatis.annotations.Param;
 
 import com.guiji.voipgateway.synway.dao.entity.ShareTabQuery;
@@ -63,4 +64,12 @@ public interface SynwayMapper {
 	 * @return
 	 */
 	List<SimPort> querySimPortListByDevId(@Param("tabName")String tabName,@Param("devId")Integer devId);
+
+	/**
+	 * 查询网关设备sim卡端口信息列表
+	 * @param tabName
+	 * @param devId
+	 * @return
+	 */
+	List<PortStatus> querySimPortStatus(@Param("tabName")String tabName, @Param("devId")Integer devId, @Param("portId") Integer portId);
 }

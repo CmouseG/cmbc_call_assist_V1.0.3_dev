@@ -1,8 +1,11 @@
 package com.guiji.voipgateway.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 
+import com.guiji.voipgateway.model.PortStatusEnum;
 import com.guiji.voipgateway.service.ThirdGateWayService;
+import com.guiji.voipgateway.synway.dao.entity.PortStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,7 @@ import com.guiji.voipgateway.model.GwDevtbl;
 import com.guiji.voipgateway.model.SimPort;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 /** 
 * @Description: 三汇语音网关服务
@@ -112,5 +116,60 @@ public class SynwayServiceImpl implements ThirdGateWayService {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 1	可用
+	 * 2	不可用
+	 * 3	停用
+	 * 4	断线
+	 * 5	启用
+	 * 6	锁定
+	 * 7	正常
+	 * 8	不同步
+	 * 9	远端阻断
+	 * 10	闭塞
+	 * 11	其它
+	 * 12	在线
+	 * 13	离线
+	 * 14	异常
+	 * 15	不支持
+	 * @param companyId
+	 * @param devId
+	 * @param portNo
+	 * @return
+	 */
+	@Override
+	public PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo) {
+
+		if(companyId!=null && devId!=null) {
+			String tabName = companyId + "_simporttbl";	//表名：(公司ID)_porttbl
+			List<PortStatus> simPorts = synwayMapper.querySimPortStatus(tabName, devId, portNo);
+
+			if(CollectionUtils.isEmpty(simPorts)) {
+				return PortStatusEnum.OTHER;
+			} else {
+				PortStatus portStatus = simPorts.get(0);
+
+				switch (portStatus.getRunStatus()) {
+					case 0:
+						return PortStatusEnum.IDLE;
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+					case 6:
+					case 7:
+					case 9:
+						return PortStatusEnum.BUSY;
+					case 10:
+					case 11:
+						return PortStatusEnum.OTHER;
+				}
+			}
+		}
+
+		return PortStatusEnum.OTHER;
+	}
+
 }

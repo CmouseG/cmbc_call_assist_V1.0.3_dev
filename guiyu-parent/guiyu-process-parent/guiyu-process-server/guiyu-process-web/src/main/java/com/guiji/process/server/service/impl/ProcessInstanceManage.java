@@ -54,7 +54,7 @@ public class ProcessInstanceManage implements IProcessInstanceManageService {
 
         updateAgent("GY_PROCESS_" + process.getIp(), agentMap);
 
-        List<String> ipList = (List<String>)redisUtil.get("GY_PROCESS_" + process.getType());
+        /*List<String> ipList = (List<String>)redisUtil.get("GY_PROCESS_" + process.getType());
         if (ipList == null || ipList.size() <= 0) {
             ipList = new ArrayList<String>();
             ipList.add(process.getIp());
@@ -70,7 +70,7 @@ public class ProcessInstanceManage implements IProcessInstanceManageService {
                 ipList.add(process.getIp());
             }
         }
-        redisUtil.set("GY_PROCESS_" + process.getType(),ipList);
+        redisUtil.set("GY_PROCESS_" + process.getType(),ipList);*/
 
         // 存入数据库
         SysProcess sysProcess = new SysProcess();

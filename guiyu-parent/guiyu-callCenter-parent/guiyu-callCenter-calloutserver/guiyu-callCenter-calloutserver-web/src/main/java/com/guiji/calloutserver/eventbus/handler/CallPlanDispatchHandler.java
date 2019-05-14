@@ -14,6 +14,8 @@ import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.calloutserver.service.CallService;
 import com.guiji.calloutserver.service.LineCountWService;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SimLineStatus;
 import com.guiji.component.result.Result;
 import com.guiji.dict.api.ISysDict;
 import com.guiji.dict.vo.SysDictVO;
@@ -64,6 +66,8 @@ public class CallPlanDispatchHandler {
     SimCallManager simCallManager;
     @Autowired
     ISysDict iSysDict;
+    @Autowired
+    LineMarketRemote lineMarketRemote;
 
 
     //注册这个监听器
@@ -151,6 +155,25 @@ public class CallPlanDispatchHandler {
                 callPlan.setIsCancel(0);//是否超时
                 callPlan.setTalkNum(0);
                 callPlan.setIntervened(false);
+
+                if(simCall!=null && simCall){
+                    boolean simIsOk = false;
+                    try{
+                        Result.ReturnData<SimLineStatus> lineResult = lineMarketRemote.querySimLineStatus(callPlan.getLineId());
+                        if(lineResult!=null && lineResult.success && lineResult.getBody().getStatus()==1){  //sim卡处于空闲状态
+                            simIsOk = true;
+                        }
+                    }catch (Exception e){
+                        log.error("调用querySimLineStatus出现异常",e);
+                    }
+                    if(!simIsOk){
+                        dispatchService.successScheduleSim(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(),
+                                callPlan.getLineId(), callPlan.getTempId(), true, false);
+                        callingCountManager.removeOneCall();
+                        return;
+                    }
+                }
+
 
                 try {
                     callOutPlanService.add(callPlan);

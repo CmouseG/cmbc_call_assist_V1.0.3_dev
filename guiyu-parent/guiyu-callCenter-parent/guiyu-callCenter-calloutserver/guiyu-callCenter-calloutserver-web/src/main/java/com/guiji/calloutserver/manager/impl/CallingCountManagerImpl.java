@@ -20,33 +20,33 @@ public class CallingCountManagerImpl implements CallingCountManager {
     @Override
     @Async
     public void addOneCall(){
-        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
-        if(redisUtil.get(key)!=null){
-            redisUtil.incr(key,1);
-        }else{
-            redisUtil.set(key,0);
-        }
+//        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+//        if(redisUtil.get(key)!=null){
+//            redisUtil.incr(key,1);
+//        }else{
+//            redisUtil.set(key,0);
+//        }
     }
 
     @Override
     @Async
     public void removeOneCall(){
-        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
-        Object value = redisUtil.get(key);
-        if(value!=null && (int)value>0){
-            redisUtil.decr(key,1);
-        }else{
-            redisUtil.set(key,0);
-        }
+//        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+//        Object value = redisUtil.get(key);
+//        if(value!=null && (int)value>0){
+//            redisUtil.decr(key,1);
+//        }else{
+//            redisUtil.set(key,0);
+//        }
     }
 
     @Override
     public int getCallCount(){
-        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
-        Object object = redisUtil.get(key);
-        if(object!=null){
-            return (int) object;
-        }
+//        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+//        Object object = redisUtil.get(key);
+//        if(object!=null){
+//            return (int) object;
+//        }
         return 0;
     }
 

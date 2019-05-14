@@ -325,6 +325,7 @@ public class FsBotHandler {
                 }
                 callPlan.setHangupTime(event.getHangupStamp());
                 callPlan.setAnswerTime(event.getAnswerStamp());
+//                callPlan.setCallStartTime(event.getStartStamp());
                 if(event.getHangupDisposition()!=null){
                     if(event.getHangupDisposition().equals("send_bye")){//机器人挂断
                         callPlan.setHangupDirection(0);

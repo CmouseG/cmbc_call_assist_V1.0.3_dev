@@ -79,6 +79,11 @@ public class SipLineManager {
             //非空校验
             throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
         }
+
+        if(sipLineBaseInfo.getSupplierType() == 0 && sipLineBaseInfo.getFeeOrNot()) {
+            sipLineBaseInfo.setUnivalent(sipLineBaseInfo.getContractUnivalent());
+        }
+
         SipLineBaseInfo existSipLine = null;
         if (sipLineBaseInfo.getId() != null) {
             //更新

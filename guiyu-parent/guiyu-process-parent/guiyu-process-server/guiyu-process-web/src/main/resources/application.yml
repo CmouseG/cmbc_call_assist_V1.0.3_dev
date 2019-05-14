@@ -71,3 +71,9 @@ xxl:
       logpath: /home/logs/guiyu-process-web
       logretentiondays: -1
     accessToken:
+botstence:
+  share:
+    address:
+      sellbot:
+      freeswitch:
+      robot:

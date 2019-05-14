@@ -27,6 +27,8 @@ public interface IBotSentenceApprovalService {
 
 	void passAudit(String processId, String userId);
 
+	void resetComDomain(String processId, String userId);
+
 	public void notPassApproval(String processId, String userId);
 
 	public List queryComProcess(String processId);

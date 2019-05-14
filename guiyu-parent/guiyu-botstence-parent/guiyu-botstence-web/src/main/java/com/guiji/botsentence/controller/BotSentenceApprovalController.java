@@ -315,6 +315,73 @@ public class BotSentenceApprovalController {
 		}
 		file.delete();
 	}
+
+	/**
+	 * 导出模板文件
+	 */
+	@RequestMapping("exportSpeechFile")
+	@Transactional
+	@Jurisdiction("botsentence_approve_export")
+	public void exportSpeechFile(@JsonParam String processId, HttpServletResponse resp, @RequestHeader String userId) throws Exception{
+		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+
+		if(null == process){
+			throw new CommonException("话术不存在！");
+		}
+
+		botSentenceApprovalService.resetComDomain(processId, userId);
+
+		File file = null;
+		try {
+			file = fileGenerateService.fileGenerate(processId, process.getTemplateId(), null, userId);
+		}catch(CommonException e) {
+			OutputStream out = resp.getOutputStream();
+			resp.addHeader("Access-Control-Expose-Headers", "errorcode");
+			resp.setHeader("content-type", "text/html;charset=UTF-8");
+			resp.setHeader("errorcode", "downloand failed" );
+			resp.setCharacterEncoding("UTF-8");
+			return;
+		}
+		OutputStream out=null;
+		try {
+			out = resp.getOutputStream();
+			File zipFile;
+			String fileName = process.getTemplateId();
+			zipFile = File.createTempFile(fileName, ".zip");
+			voliceServiceImpl.zip(file, zipFile.getPath());
+			byte[] buffer = null;
+			FileInputStream fis = new FileInputStream(zipFile);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			byte[] b = new byte[1024];
+			int n;
+			while ((n = fis.read(b)) != -1)
+			{
+				bos.write(b, 0, n);
+			}
+			fis.close();
+			bos.close();
+			buffer = bos.toByteArray();
+
+			resp.reset();
+			resp.setHeader("Content-Disposition","attachment;fileName="+fileName+".zip");
+			resp.setContentType("application/octet-stream;charset=UTF-8");
+			resp.setHeader("Access-Control-Allow-Origin", "*");
+			IOUtils.write(buffer, out);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			if(out!=null){
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		file.delete();
+	}
 	
 	@RequestMapping(value="deployTestSellbot")
 	public ServerResult deployTestSellbot(@JsonParam String processId, @RequestHeader String userId) {

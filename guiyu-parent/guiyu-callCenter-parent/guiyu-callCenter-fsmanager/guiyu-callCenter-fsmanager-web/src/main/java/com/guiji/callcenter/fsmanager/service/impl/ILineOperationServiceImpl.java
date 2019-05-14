@@ -105,7 +105,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
         lineInfo.setFsagentId(agentService);
         lineInfoMapper.updateByPrimaryKey(lineInfo);
         //将线路lineId和fsagent信息存入到缓存中
-        putToRedis(lineInfo.getLineId()+"",agentService);
+        putToRedis(lineInfo.getLineId()+"",agentService,lineInfo.getCodec());
         //将加载线路的消息放入到队列中
         addQueue(lineInfo.getLineId()+"",agentService,Constant.LINE_NOTICE_TYPE_LOAD);
         return lineInfo.getLineId();
@@ -173,7 +173,8 @@ public class ILineOperationServiceImpl implements ILineOperationService {
                 lineInfo.setFsagentId(agentService);
               }
             //将新的线路lineId和fsagent信息存入到缓存中
-            putToRedis(lineInfo.getLineId()+"",agentService);
+            putToRedis(lineInfo.getLineId()+"",agentService,
+                    StringUtils.isNotEmpty(lineInfo.getCodec()) ? lineInfo.getCodec(): lineInfoDB.getCodec());
             lineInfoMapper.updateByPrimaryKeySelective(lineInfo);
             //将加载线路的消息放入到队列中
             addQueue(lineInfo.getLineId()+"",agentService,Constant.LINE_NOTICE_TYPE_LOAD);
@@ -192,6 +193,11 @@ public class ILineOperationServiceImpl implements ILineOperationService {
             lineInfoMapper.updateByPrimaryKeySelective(lineInfo);
             //将加载线路的消息放入到队列中
             addQueue(lineInfo.getLineId()+"",lineInfoDB.getFsagentId(),Constant.LINE_NOTICE_TYPE_LOAD);
+
+            //codec有修改，刷新s缓存
+            if(lineInfo.getCodec()!=null && !lineInfo.getCodec().equals(lineInfoDB.getCodec())){
+                putToRedis(lineInfo.getLineId()+"",lineInfo.getFsagentId(),lineInfo.getCodec());
+            }
         }
     }
 
@@ -274,6 +280,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
         }
         FsInfoVO fsInfoVO = resultInfo.getBody();
         BeanUtil.copyProperties(fsInfoVO,fsLineInfoVO);
+        fsLineInfoVO.setCodec(lineInfo.getCodec());
         //存入redis中
         redisUtil.set("sipLineId_"+LineId,fsLineInfoVO);
         return fsLineInfoVO;
@@ -338,7 +345,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
             //将加载线路的消息放入到队列中
             addQueue(lineInfoDB.getLineId()+"",lineInfoDB.getFsagentId(),Constant.LINE_NOTICE_TYPE_LOAD);
             //将线路lineId和fsagent信息存入到缓存中
-            putToRedis(lineInfoDB.getLineId()+"",lineInfoDB.getFsagentId());
+            putToRedis(lineInfoDB.getLineId()+"",lineInfoDB.getFsagentId(),lineInfoDB.getCodec());
         }
         return queryList;
     }
@@ -548,7 +555,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
      * @param lineId
      * @param serviceId
      */
-    public void putToRedis(String lineId, String serviceId) {
+    public void putToRedis(String lineId, String serviceId, String codec) {
         IFsState iFsStateApi = FeignBuildUtil.feignBuilderTarget(IFsState.class, Constant.PROTOCOL + serviceId);
         try{
             Result.ReturnData<FsInfoVO> resultInfo = iFsStateApi.fsinfo();
@@ -556,6 +563,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
                 FsLineInfoVO fsLineInfoVO = new FsLineInfoVO();
                 FsInfoVO fsInfoVO = resultInfo.getBody();
                 BeanUtil.copyProperties(fsInfoVO, fsLineInfoVO);
+                fsLineInfoVO.setCodec(codec);
                 redisUtil.set("sipLineId_"+lineId,fsLineInfoVO);
             }
         }catch (Exception e){
@@ -573,7 +581,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
         List<LineInfo> list = lineInfoMapper.selectByExample(example);
         if(list.size()>0){
             for (LineInfo lineInfo:list) {
-                putToRedis(lineInfo.getLineId()+"",lineInfo.getFsagentId());
+                putToRedis(lineInfo.getLineId()+"",lineInfo.getFsagentId(),lineInfo.getCodec());
             }
         }
     }

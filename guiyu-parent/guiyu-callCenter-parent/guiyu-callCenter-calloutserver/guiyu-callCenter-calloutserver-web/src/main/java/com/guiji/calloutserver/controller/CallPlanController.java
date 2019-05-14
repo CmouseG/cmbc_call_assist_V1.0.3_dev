@@ -90,7 +90,7 @@ public class CallPlanController implements ICallPlan {
 
         }
 
-        redisUtil.set("planNotFound_"+planUuid,true,20*60);
+        redisUtil.set("planNotFound_"+planUuid,true,30*60);
         log.info(">>>>>>>isCallEnd not found uuid[{}]",planUuid);
         return Result.error(Constant.ERROR_UUID_NOTFIND);
 

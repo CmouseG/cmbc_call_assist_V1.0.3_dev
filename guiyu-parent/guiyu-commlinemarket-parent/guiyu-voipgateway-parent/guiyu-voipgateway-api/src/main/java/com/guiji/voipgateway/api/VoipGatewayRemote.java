@@ -79,6 +79,6 @@ public interface VoipGatewayRemote {
 	 * @param portRos
 	 * @return
 	 */
-	@PostMapping(value = "/remote/querySimPortListByDevId")
+	@PostMapping(value = "/remote/querySipPortStatus")
 	Result.ReturnData<PortStatusEnum> querySipPortStatus(@RequestBody PortRo portRo);
 }

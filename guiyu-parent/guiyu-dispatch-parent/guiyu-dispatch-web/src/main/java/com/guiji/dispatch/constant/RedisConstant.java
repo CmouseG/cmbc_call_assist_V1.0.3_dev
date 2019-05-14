@@ -13,10 +13,16 @@ public class RedisConstant {
         //推入redis总列表 版本号
         public static final String REDIS_USER_ROBOT_LINE_MAX_PLAN_VER = "REDIS_USER_ROBOT_LINE_MAX_PLAN_VER";
 
-        //用户线路机器人分配数据
+        //用户线路机器人分配数据：userId + 话术模板ID
         public static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
 
-        //网关线路KEY
+        //计数器: userId + 话术模板ID
+        public static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
+
+        //计算器有效时间：15分钟
+        public final static long REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT = 900L;
+
+        //网关线路KEY  + 线路Id
         public final static String gatewayLineKey = "redis_gateway_line_key_";
 
         //分配用户、话术模板的机器人数据
@@ -40,5 +46,9 @@ public class RedisConstant {
         public final static String TMP_BOTSTENCENAME = "TMP_BOTSTENCENAME_";
         //临时话术模板名称数据有效时间 一小时
         public final static long TMP_BOTSTENCENAME_TIMEOUT = 3600L;
+
+        //遇到呼叫中心线路不可用的数据： LINE_DISABLED_ + plan_uuid
+        public final static String LINE_DISABLED = "LINE_DISABLED_";
+
     }
 }

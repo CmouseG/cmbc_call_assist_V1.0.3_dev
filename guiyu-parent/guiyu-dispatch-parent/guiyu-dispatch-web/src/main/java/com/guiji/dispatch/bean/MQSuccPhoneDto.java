@@ -6,6 +6,7 @@ public class MQSuccPhoneDto {
 	private Integer userId;
 	private Integer lineId;
 	private String tempId;
+	private Boolean simLineIsOk;
 	
 	public Integer getUserId() {
 		return userId;
@@ -40,5 +41,13 @@ public class MQSuccPhoneDto {
 
 	public void setTempId(String tempId) {
 		this.tempId = tempId;
+	}
+
+	public Boolean getSimLineIsOk() {
+		return simLineIsOk;
+	}
+
+	public void setSimLineIsOk(Boolean simLineIsOk) {
+		this.simLineIsOk = simLineIsOk;
 	}
 }

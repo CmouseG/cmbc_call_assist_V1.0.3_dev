@@ -70,7 +70,7 @@ wechat:
   appId: wx784ddfdab84ea823
   appSecret: cdb9aeffd05e98e3a40e48f1e06dae15
   authRedirectUrl: https://business.guiji.ai/wechat/custom/menu/auth
-  keFuUrl: https://business.guiji.ai/wx/index.html#/toChat
+  keFuUrl: https://tel.guiji.ai/wx/index.html#/toChat
   keFuBindUrl: https://talk.guiji.ai/oa/manager
   keFuBindAccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzaV9taWRkbGVfZ3JvdW5kIiwiaWF0IjoxNTUxOTMwMzc0LCJkYXRhIjp7Im9hIjoic2lfbWlkZGxlX2dyb3VuZF9vZmZpY2lhbF9hY2NvdW50In0sImV4cCI6MTg2NzI5MDM3NH0.kIFBLWkkiJtdtMWwbGSXVPSAJqnIIuQzDEXuCEzraCE
   userLoginUrl: https://business.guiji.ai/wx/index.html#/bindPageToChat

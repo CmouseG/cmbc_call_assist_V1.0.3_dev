@@ -171,7 +171,6 @@ public class AdminController {
         String openId = authAccessTokenDto.getOpenid();
         String userName = getUserNameByCheckUserBind(openId);
         if(StringUtils.isNotBlank(userName)){
-            keFuBind(openId, userName, STATIC_GUIJI_DOMAIN);
             return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, userName));
         }
 
@@ -209,7 +208,6 @@ public class AdminController {
             return Result.error("1000613");
         }
 
-        keFuBind(openId, userName, domain);
         sendUserBindWeChatMessage(openId, userId);
 
         return Result.ok(true);
@@ -218,9 +216,10 @@ public class AdminController {
 
     private String buildKeFuUrl(String domain, String userName){
 
+        logger.info("domain:{}, userName:{}", domain, userName);
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuUrl())
-                .queryParam("guiji_hostname", domain)
-                .queryParam("name", userName);
+                .queryParam("userName", userName);
 
         return builder.build().toUri().toString();
     }

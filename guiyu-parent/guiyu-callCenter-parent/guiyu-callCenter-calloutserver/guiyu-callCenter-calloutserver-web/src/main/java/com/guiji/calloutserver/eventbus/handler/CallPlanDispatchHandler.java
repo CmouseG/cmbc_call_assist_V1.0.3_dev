@@ -160,6 +160,7 @@ public class CallPlanDispatchHandler {
                     boolean simIsOk = false;
                     try{
                         Result.ReturnData<SimLineStatus> lineResult = lineMarketRemote.querySimLineStatus(callPlan.getLineId());
+                        log.info("调用querySimLineStatus,返回lineResult[{}]",lineResult);
                         if(lineResult!=null && lineResult.success && lineResult.getBody().getStatus()==1){  //sim卡处于空闲状态
                             simIsOk = true;
                         }

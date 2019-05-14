@@ -39,14 +39,14 @@ BEGIN
 		
 		-- 插入数据
 		SET @insert_plan_sql_0 = CONCAT(
-		'insert into ', tab_name_plan,
+		'replace into ', tab_name_plan,
 		" select * from call_out_plan_0_tmp where org_id = ", org_id, ";");
 		
 		PREPARE insert_plan_sql_0 FROM @insert_plan_sql_0;   
 		EXECUTE insert_plan_sql_0; 
 
 		SET @insert_plan_sql_1 = CONCAT(
-		'insert into ', tab_name_plan,
+		'replace into ', tab_name_plan,
 		" select * from call_out_plan_1_tmp where org_id = ", org_id, ";");
 		
 		PREPARE insert_plan_sql_1 FROM @insert_plan_sql_1;   
@@ -58,18 +58,19 @@ BEGIN
 		
 		-- 插入数据
 		SET @insert_detail_sql_0 = CONCAT(
-		'insert into ', tab_name_detail,
+		'replace into ', tab_name_detail,
 		" select * from call_out_detail_0_tmp where org_id = ", org_id, ";");
 		
 		PREPARE insert_detail_sql_0 FROM @insert_detail_sql_0;   
 		EXECUTE insert_detail_sql_0; 
 
 		SET @insert_detail_sql_1 = CONCAT(
-		'insert into ', tab_name_detail,
+		'replace into ', tab_name_detail,
 		" select * from call_out_detail_1_tmp where org_id = ", org_id, ";");
 		
 		PREPARE insert_detail_sql_1 FROM @insert_detail_sql_1;   
 		EXECUTE insert_detail_sql_1;
+		commit;
 		
 	END LOOP;	-- 遍历结束
 	-- 关闭游标

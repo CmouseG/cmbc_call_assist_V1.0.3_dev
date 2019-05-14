@@ -7,6 +7,8 @@ import com.guiji.voipgateway.service.VoipgatewayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -91,7 +93,8 @@ public class VoipGatewayController implements VoipGatewayRemote {
     }
 
     @Override
-    public Result.ReturnData<PortStatusEnum> querySipPortStatus(PortRo portRo) {
+    @PostMapping(value = "/remote/querySipPortStatus")
+    public Result.ReturnData<PortStatusEnum> querySipPortStatus(@RequestBody PortRo portRo) {
 
         if(portRo == null) {
             return Result.ok();

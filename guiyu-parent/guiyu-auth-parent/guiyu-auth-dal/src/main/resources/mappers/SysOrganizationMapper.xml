@@ -483,4 +483,11 @@
   <select id="queryChildrenOrg" resultType="com.guiji.user.dao.entity.SysOrganization">
   	SELECT t.* FROM sys_organization t WHERE t.`code` REGEXP CONCAT(#{orgCode},'[0-9]+\\.$');
   </select>
+
+	<select id="getOrgByUsername" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT a.username, b.`name`, b.id, b.`code` FROM sys_user a
+		LEFT JOIN sys_organization b ON a.org_code = b.`code`
+		WHERE a.username = #{username} 
+	</select>
+
 </mapper>

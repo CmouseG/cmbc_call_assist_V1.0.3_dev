@@ -329,6 +329,8 @@ public class BotSentenceApprovalController {
 			throw new CommonException("话术不存在！");
 		}
 
+		botSentenceApprovalService.resetComDomain(processId, userId);
+
 		File file = null;
 		try {
 			file = fileGenerateService.fileGenerate(processId, process.getTemplateId(), null, userId);

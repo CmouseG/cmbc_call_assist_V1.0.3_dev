@@ -1,0 +1,11 @@
+rabbit:
+  general:
+    direct:
+      queues: szj.queue|mh.queue
+	  
+改为：
+
+rabbit:
+  general:
+    direct:
+      queues: szj.queue|mh.queue|SaveResultMQ.direct.TTS|CallBackMQ.direct.TTS

@@ -12,7 +12,7 @@
                 and create_time &lt; #{endDate}
             </if>
             <if test="phoneNum != null">
-                and phone_num like CONCAT('%',#{phoneNum},'%')
+                and phone_num = #{phoneNum}
             </if>
             <if test="durationMin != null">
                 and duration > #{durationMin}
@@ -167,7 +167,7 @@
                 and a.create_time &lt; #{endDate}
             </if>
             <if test="phoneNum != null">
-                and a.phone_num like CONCAT('%',#{phoneNum},'%')
+                and a.phone_num = #{phoneNum}
             </if>
             <if test="durationMin != null">
                 and a.duration > #{durationMin}

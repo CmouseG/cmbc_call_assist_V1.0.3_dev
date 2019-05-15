@@ -88,7 +88,7 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 			logger.info("plan_uuid:" + planuuid + "五分钟没有回调，主动调用呼叫中心isCallEnd接口失败");
 		}else{
 			if(null != callEnd.getCode()
-					&& ExternalCodeExceptionEnum.CALL_CENTER_0305012.getErrorCode().equals(callEnd.code)) {
+					&& ExternalCodeExceptionEnum.CALL_CENTER_0305012.getErrorCode().equals(callEnd.getCode())) {
 				redisUtil.set(RedisConstant.RedisConstantKey.TEMPLATE_NO_READY + planuuid, 1,
 						RedisConstant.RedisConstantKey.TEMPLATE_NO_READY_TIMELONG);
 			}

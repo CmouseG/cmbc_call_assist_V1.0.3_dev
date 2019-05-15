@@ -1,0 +1,22 @@
+1.运维配置共享目录，分别是:
+  sellbot:/home/sellbot/dist/app/cfgs
+          /home/sellbot/dist/app/tts
+		  /home/sellbot/dist/app/wav
+  freeswitch:botstence_tmpl
+  robot:botstence_robot_tmpl
+2.process-web-application.yml 文件最后追加如下内容：
+botstence:
+  share:
+    address:
+      sellbot:127.0.0.1
+      freeswitch:127.0.0.1
+      robot:127.0.0.1
+
+其中sellbot地址改为sellbot共享目录机器，freeswitch地址改为freeswitch共享目录机器，robot地址改为robot共享目录机器
+
+3.redis 库1中删除以下key
+GY_PROCESS_FREESWITCH
+GY_PROCESS_ROBOT
+GY_PROCESS_SELLBOT
+
+4.重启process-web，以及所有process-agent

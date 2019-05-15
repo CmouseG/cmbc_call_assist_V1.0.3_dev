@@ -45,8 +45,6 @@ public class CallBack4MQListener {
 	@Autowired
 	private RedisUtil redisUtil;
 
-	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
-
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
@@ -54,7 +52,8 @@ public class CallBack4MQListener {
 		logger.info("呼叫中心回调数据:{},回调时间:{}", JsonUtils.bean2Json(mqSuccPhoneDto), DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
-		/********判断处理网关SIM卡线路占用释放	begin*************************************/
+		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/
+		this.checkSimLineDisabled(mqSuccPhoneDto);
 		PushRecordsExample ex = new PushRecordsExample();
 		ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
 				.andCallbackStatusEqualTo(Constant.NOCALLBACK);
@@ -64,7 +63,7 @@ public class CallBack4MQListener {
 		int result = recordMapper.updateByExampleSelective(re, ex);
 		if (result > 0) {
 			try {
-				String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
+				String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 				Object countObj = redisUtil.get(queueCount);
 				Integer currentCount = null != countObj?((Integer)countObj):null;
 				if (null != currentCount && currentCount > 0) {
@@ -78,6 +77,30 @@ public class CallBack4MQListener {
 			}catch(Exception e){
 				logger.error("计算器异常", e);
 			}
+		}
+	}
+
+	/**
+	 * 判断处理网关SIM卡线路是否可用,不可用则重新推入队列
+	 * @param mqSuccPhoneDto
+	 */
+	private void checkSimLineDisabled(MQSuccPhoneDto mqSuccPhoneDto){
+		try {
+			//判断SIM卡线路是否可用
+			if (null != mqSuccPhoneDto
+					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
+				//从redis中获取之前从队列获取的任务数据
+				String planUuid = mqSuccPhoneDto.getPlanuuid();
+				String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + planUuid;
+				Object obj = redisUtil.get(queue);
+				if (null != obj) {
+					DispatchPlan dispatchRedis = (DispatchPlan) obj;
+					//不可用，重新推入队列
+					redisUtil.leftPush(queue, dispatchRedis);
+				}
+			}
+		}catch(Exception e){
+			logger.error("判断SIM卡线路是否可用,重新推入推列异常", e);
 		}
 	}
 
@@ -102,25 +125,6 @@ public class CallBack4MQListener {
 							//释放网关路线
 							this.releaseGateWay(gateWayLine, gateWayLineKey);
 						}
-						/*
-						//获取用户线路机器人分配
-						String key = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-						Object obj = (Object)redisUtil.get(key);
-						if (null != obj) {
-							DispatchPlan dispatchRedis = (DispatchPlan) obj;
-							//判断是否是网关线路
-							if (null != dispatchRedis && PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()) {
-								//释放网关路线
-								this.releaseGateWay(gateWayLine, gateWayLineKey);
-							}
-						} else {
-							if (gateWayLine.getUserId().equals(userId)
-									&& gateWayLine.getBotstenceId().equals(botstenceId)) {
-								//释放网关路线
-								this.releaseGateWay(gateWayLine, gateWayLineKey);
-							}
-						}
-						*/
 					}
 				}else{
 					//如果返回lineId，则模糊匹配查询出所有网关路线

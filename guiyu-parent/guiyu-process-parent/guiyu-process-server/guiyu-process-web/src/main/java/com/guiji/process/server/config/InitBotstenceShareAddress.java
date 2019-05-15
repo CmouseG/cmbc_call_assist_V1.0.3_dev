@@ -27,7 +27,7 @@ public class InitBotstenceShareAddress {
     private static final String GY_PROCESS_SROBOT = "GY_PROCESS_ROBOT";
 
     @Bean
-    public void initBotstenceShareAddress() {
+    public void init() {
         List<String> sellbotAddressList = new ArrayList<String>();
         List<String> freeswitchAddressList = new ArrayList<String>();
         List<String> robotAddressList = new ArrayList<String>();

@@ -34,4 +34,10 @@ public interface GetApiService {
      * @return
      */
     Integer getOrgIdByUser(String userId);
+
+    /**
+     * 获取所有企业ID
+     * @return
+     */
+    List<Integer> getAllOrgId();
 }

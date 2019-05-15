@@ -677,7 +677,7 @@
     </if>
   </select>
 
-  <select id="selectByCallHour4UserId" resultMap="BaseResultMap">
+   <select id="selectByCallHour4UserId" resultType="java.lang.Integer">
     select
     user_id
     from dispatch_plan
@@ -713,6 +713,82 @@
       </foreach>
     </if>
     group by user_id
+  </select>
+
+
+  <select id="selectFutureUserByParam" resultType="java.lang.Integer">
+    SELECT
+      user_id
+    FROM dispatch_plan
+      WHERE 1 = 1
+      <if test="record.userId != null">
+        and user_id = #{record.userId}
+      </if>
+      <if test="record.callData != null">
+        and call_data <![CDATA[ >= ]]> #{record.callData}
+      </if>
+      <if test="record.isDel != null">
+        and is_del = #{record.isDel}
+      </if>
+      <if test="record.statusPlan != null">
+        and status_plan = #{record.statusPlan}
+      </if>
+      <if test="record.statusSync != null">
+        and status_sync = #{record.statusSync}
+      </if>
+      <if test="record.line != null">
+        and line = #{record.line}
+      </if>
+      <if test="record.flag != null">
+        and flag = #{record.flag}
+      </if>
+      <if test="orgIds != null">
+        and org_id in
+        <foreach item="item" index="index" collection="orgIds" open="("
+                 separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      GROUP BY user_id
+  </select>
+
+
+  <select id="selectFuturePlanByUserId" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    SELECT
+      <include refid="Base_Column_List" />
+    FROM dispatch_plan
+    WHERE 1 = 1
+      <if test="record.userId != null">
+        and user_id = #{record.userId}
+      </if>
+      <if test="record.robot != null">
+        and robot = #{record.robot}
+      </if>
+      <if test="record.callData != null">
+        and call_data <![CDATA[ >= ]]> #{record.callData}
+      </if>
+      <if test="record.isDel != null">
+        and is_del = #{record.isDel}
+      </if>
+      <if test="record.statusPlan != null">
+        and status_plan = #{record.statusPlan}
+      </if>
+      <if test="record.statusSync != null">
+        and status_sync = #{record.statusSync}
+      </if>
+      <if test="record.line != null">
+        and line = #{record.line}
+      </if>
+      <if test="record.flag != null">
+        and flag = #{record.flag}
+      </if>
+      <if test="orgId != null">
+        and org_id = #{orgId}
+      </if>
+      order by plan_uuid ASC
+      <if test="record.limitStart != null and record.limitStart>=0">
+        limit #{record.limitStart} , #{record.limitEnd}
+      </if>
   </select>
 
 
@@ -907,4 +983,5 @@
         limit #{limitStart} , #{limitEnd}
       </if>
   </select>
+
 </mapper>

@@ -51,7 +51,7 @@ public class CallServiceImpl implements CallService {
      */
     @Override
     public void makeCall(CallOutPlan callplan, String recordFile) {
-        //获取线路服务器
+        //获取线路服务器  //todo  增加对获取线路失败的异常处理
         FsLineInfoVO fsLine = fsLineManager.getFsLine(callplan.getLineId());
         String codec = fsLine.getCodec();
 
@@ -67,7 +67,7 @@ public class CallServiceImpl implements CallService {
                         "origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
                         ", record_session:/usr/local/freeswitch/recordings/%s, park' inline",
-                callid,
+                callid+Constant.UUID_SEPARATE+orgId,
                 callplan.getLineId(),
                 callplan.getPhoneNum(),
                 ip,

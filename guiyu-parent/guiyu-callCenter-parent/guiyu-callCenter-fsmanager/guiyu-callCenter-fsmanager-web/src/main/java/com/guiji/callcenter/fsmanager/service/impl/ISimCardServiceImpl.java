@@ -92,7 +92,7 @@ public class ISimCardServiceImpl implements ISimCardService {
                 //todo --告警某个simagent服务挂了
                 throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_SIMAGENT_DOWN);
             }
-            if (!result.body) {
+            if (!result.getBody()) {
               return false;
             }
         }

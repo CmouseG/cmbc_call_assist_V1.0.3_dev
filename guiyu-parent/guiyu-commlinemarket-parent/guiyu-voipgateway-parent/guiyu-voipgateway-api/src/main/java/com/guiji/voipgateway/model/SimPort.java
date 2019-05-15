@@ -7,6 +7,7 @@ package com.guiji.voipgateway.model;
 * @version V1.0  
 */
 public class SimPort {
+	private Integer PortId;
 	private Integer PortNumber;	//端口编号
 	private Integer CompanyId;	//公司编号
 	private Integer ParentDevId;	//设备编号

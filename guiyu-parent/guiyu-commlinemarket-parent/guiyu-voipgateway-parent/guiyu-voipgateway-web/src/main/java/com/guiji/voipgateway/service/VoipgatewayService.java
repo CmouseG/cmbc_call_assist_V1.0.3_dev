@@ -2,9 +2,7 @@ package com.guiji.voipgateway.service;
 
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.voipgateway.exception.VoipGateWayErrorEnum;
-import com.guiji.voipgateway.model.Company;
-import com.guiji.voipgateway.model.GwDevtbl;
-import com.guiji.voipgateway.model.SimPort;
+import com.guiji.voipgateway.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -104,6 +102,12 @@ public class VoipgatewayService {
     public List<SimPort> querySimPortListByDevId(String gwBrand, Integer companyId, Integer devId) {
 
         return getService(gwBrand).querySimPortListByDevId(companyId, devId);
+
+    }
+
+    public PortStatusEnum querySipPortStatus(PortRo portRo) {
+
+        return getService(portRo.getGwBrand()).querySimPortStatus(portRo.getCompanyId(), portRo.getDevId(), portRo.getPortNo());
 
     }
 }

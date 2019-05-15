@@ -15,4 +15,6 @@ public interface DispatchManager {
      * @param intent
      */
     void successSchedule(String callId, String phoneNo, String intent, Integer userId,Integer lineId, String tempId, Boolean isNeedPlan);
+
+    void successScheduleSim(String callId, String phoneNo, String intent, Integer userId,Integer lineId, String tempId, Boolean isNeedPlan, Boolean simLineIsOk);
 }

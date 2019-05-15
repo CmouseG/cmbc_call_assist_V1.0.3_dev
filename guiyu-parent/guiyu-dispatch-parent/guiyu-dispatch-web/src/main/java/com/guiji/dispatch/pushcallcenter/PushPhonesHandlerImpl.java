@@ -47,8 +47,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(PushPhonesHandlerImpl.class);
 
-	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
-
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -83,7 +81,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					// 根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					for (UserLineBotenceVO dto : userLineRobotList) {
 						String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getBotenceName();
-						String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
+						String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
 								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
 						if (distributedLockHandler.tryLock(queueLock, 100L)) {
@@ -153,10 +151,16 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                         }
 									}
 
-									//SIM网关路线，不推送呼叫中，重新入栈推送队列
-									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()
-										&& !isSimPush){
-										redisUtil.leftPush(queue, dispatchRedis);
+									//SIM网关路线
+									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()){
+										 if(!isSimPush) {
+										 	//不推送呼叫中，重新入栈推送队列
+											redisUtil.leftPush(queue, dispatchRedis);
+										 }else{
+											//预备可能遇到呼叫中心线路不可用的情况,有效时间15分钟
+										 	redisUtil.set(RedisConstant.RedisConstantKey.LINE_DISABLED + dispatchRedis.getPlanUuid(), dispatchRedis,
+													RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT);
+										 }
 									}
 
 									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板

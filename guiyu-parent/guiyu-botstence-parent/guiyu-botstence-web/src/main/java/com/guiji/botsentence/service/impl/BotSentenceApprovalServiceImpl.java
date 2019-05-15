@@ -1,128 +1,78 @@
 package com.guiji.botsentence.service.impl;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SCPClient;
+import ch.ethz.ssh2.Session;
+import com.guiji.auth.api.IAuth;
+import com.guiji.botsentence.constant.Constant;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
+import com.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
+import com.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper;
+import com.guiji.botsentence.service.IBotSentenceApprovalService;
+import com.guiji.botsentence.util.TarUtil;
 import com.guiji.botsentence.util.enums.BranchNameEnum;
 import com.guiji.botsentence.util.enums.CategoryEnum;
+import com.guiji.botsentence.vo.BotSentenceSellbotMachine;
+import com.guiji.botsentence.vo.DomainVO;
+import com.guiji.common.exception.CommonException;
+import com.guiji.component.client.util.DateUtil;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.guiji.auth.api.IAuth;
-import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.dao.BotPublishSentenceLogMapper;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceDeployMapper;
-import com.guiji.botsentence.dao.BotSentenceDomainMapper;
-import com.guiji.botsentence.dao.BotSentenceProcessMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.entity.BotPublishSentenceLog;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceDeploy;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceProcessExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
-import com.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper;
-import com.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
-import com.guiji.botsentence.service.IBotSentenceApprovalService;
-import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.util.HttpRequestUtils;
-import com.guiji.botsentence.util.TarUtil;
-import com.guiji.botsentence.vo.BotSentenceSellbotMachine;
-import com.guiji.botsentence.vo.DomainVO;
-import com.guiji.botsentence.vo.RequestCrmVO;
-import com.guiji.botsentence.vo.ResponseCrmVO;
-import com.guiji.component.client.config.SellbotMechine;
-import com.guiji.component.client.util.BeanUtil;
-import com.guiji.component.client.util.DateUtil;
-import com.guiji.component.client.util.FileUtil;
-import com.guiji.common.exception.CommonException;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.api.IDispatchPlanOut;
-import com.guiji.user.dao.entity.SysUser;
-import com.jcraft.jsch.Logger;
-
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.Session;
 import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalService{
 	
 	private org.slf4j.Logger logger = LoggerFactory.getLogger(BotSentenceApprovalServiceImpl.class);
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
-	@Autowired
+	@Resource
 	private FileGenerateServiceImpl fileGenerateService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
-	@Autowired
+	@Resource
 	private com.guiji.botsentence.dao.VoliceInfoMapper voliceInfoMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceDomainExtMapper botSentenceDomainExtMapper;
 	
-	@Autowired
-	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
-	
-	@Autowired
-	private SellbotMechine sellbotMechine;
-	
-	@Autowired
-	private VoliceInfoExtMapper voliceInfoExtMapper;
-	
-	@Autowired
-	private BotSentenceTtsServiceImpl botSentenceTtsService;
-	
-	@Autowired
+	@Resource
 	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
 	
-	@Autowired
+	@Resource
 	private IDispatchPlanOut iDispatchPlanOut;
 	
-	@Autowired
+	@Resource
 	private IAuth iAuth;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDeployMapper botSentenceDeployMapper;
-	
-	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
 	@Value("${template.dir}")
 	private String tempDir;
@@ -142,7 +92,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	@Value("${selftest.sellbot.port}")
 	private int port;
 
-	@Autowired
+	@Resource
 	private RedisUtil redisUtil;
 
 	private static final String BOTSTENCE_DEPLOY_JOB_ID = "BOTSTENCE_DEPLOY_JOB_ID_";
@@ -263,7 +213,8 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		
 	}
 
-	private void resetComDomain(String processId, String userId){
+	@Override
+	public void resetComDomain(String processId, String userId){
 		//把之前的com_domain全部设置为空
 		botSentenceDomainExtMapper.batchUpdateComDomain(processId);
 

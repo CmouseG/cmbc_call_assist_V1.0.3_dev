@@ -1,5 +1,6 @@
 package com.guiji.clm.service.voip;
 
+import com.guiji.clm.model.SimLineStatus;
 import com.guiji.fsmanager.api.ILineOperation;
 import com.guiji.fsmanager.entity.OutLineInfoAddReq;
 import com.guiji.clm.cfg.BrandConfig;
@@ -40,11 +41,14 @@ import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 import com.guiji.voipgateway.api.VoipGatewayRemote;
 import com.guiji.voipgateway.model.GwDevtbl;
+import com.guiji.voipgateway.model.PortRo;
+import com.guiji.voipgateway.model.PortStatusEnum;
 import com.guiji.voipgateway.model.SimPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -598,5 +602,78 @@ public class VoipGwManager {
 			}
 		}
 	}
-	
+
+	/**
+	 * 查询sim线路状态
+	 * @param lineId
+	 * @return
+	 */
+    public SimLineStatus querySimLineStatus(Integer lineId) {
+
+		SimLineStatus status = new SimLineStatus();
+
+		status.setLineId(lineId);
+
+		VoipGwPortExample example = new VoipGwPortExample();
+
+		example.createCriteria().andLineIdEqualTo(lineId);
+
+		List<VoipGwPort> voipGwPorts = voipGwPortMapper.selectByExample(example);
+
+		if(CollectionUtils.isEmpty(voipGwPorts)) {
+			throw new ClmException(ClmErrorEnum.CLM1809319.getErrorCode(), ClmErrorEnum.CLM1809319.getErrorMsg());
+		}
+
+		VoipGwPort voipGwPort = voipGwPorts.get(0);
+
+		VoipGwInfo voipGwInfo = voipGwInfoMapper.selectByPrimaryKey(voipGwPort.getGwId());
+
+		String brand = voipGwInfo.getGwBrand();
+
+		Integer companyId = voipGwPort.getCompanyId();
+
+		Integer port = voipGwPort.getPort();
+
+		Integer devId = voipGwPort.getDevId();
+
+		if (null == devId) {
+			status.setStatus(PortStatusEnum.NOT_REGIST.getStatus());
+			status.setStatusMsg(PortStatusEnum.NOT_REGIST.getStatusMsg());
+			return status;
+		}
+
+		PortRo ro = new PortRo();
+
+		ro.setCompanyId(companyId);
+		ro.setDevId(devId);
+		ro.setGwBrand(brand);
+		if(BrandConfig.DINGXIN.equals(brand)) {
+			ro.setPortNo(port-1);
+		} else {
+			ro.setPortNo(port);
+		}
+
+		ReturnData<PortStatusEnum> data = voipGatewayRemote.querySipPortStatus(ro);
+
+		if(data != null && data.success) {
+
+			status.setStatusMsg(data.getBody().getStatusMsg());
+			status.setStatus(data.getBody().getStatus());
+
+			return status;
+		} else {
+			throw new ClmException(ClmErrorEnum.CLM1809319.getErrorCode(), ClmErrorEnum.CLM1809319.getErrorMsg());
+		}
+	}
+
+	public List<VoipGwPort> queryByOrgCode(String code) {
+
+    	VoipGwPortExample example = new VoipGwPortExample();
+
+    	example.createCriteria().andOrgCodeEqualTo(code);
+
+		return voipGwPortMapper.selectByExample(example);
+
+	}
+
 }

@@ -22,14 +22,14 @@ public class DispatchManagerImpl implements DispatchManager {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    /**
-     *  回掉调度中心结果
-     */
     @Override
-    public void successSchedule(String planUuid, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId, Boolean isNeedPlan) {
-        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}]",planUuid,phoneNo,intent,lineId);
+    public void successScheduleSim(String planUuid, String phoneNo, String intent, Integer userId, Integer lineId,
+                                   String tempId, Boolean isNeedPlan, Boolean simLineIsOk) {
+        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}]",
+                planUuid,phoneNo,intent,lineId,simLineIsOk);
         if(StringUtils.isBlank(planUuid)){
-            log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}]",planUuid,phoneNo,intent,lineId);
+            log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}]",
+                    planUuid,phoneNo,intent,lineId,simLineIsOk);
             return;
         }
         MQSuccPhoneDto mqSuccPhoneDto = new MQSuccPhoneDto();
@@ -46,10 +46,21 @@ public class DispatchManagerImpl implements DispatchManager {
         if(tempId!=null){
             mqSuccPhoneDto.setTempId(tempId);
         }
+        if(simLineIsOk!=null){
+            mqSuccPhoneDto.setSimLineIsOk(simLineIsOk);
+        }
         rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto)); // 用于判断计划是否完成，可以重复调用
         if(isNeedPlan){
             rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));//这个队列用于控制是否会有下一个计划过来，机器人申请失败无需调用
         }
         log.info("========successSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+    }
+
+    /**
+     *  回掉调度中心结果
+     */
+    @Override
+    public void successSchedule(String planUuid, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId, Boolean isNeedPlan) {
+        successScheduleSim( planUuid,  phoneNo,  intent,  userId,  lineId, tempId,  isNeedPlan,  null);
     }
 }

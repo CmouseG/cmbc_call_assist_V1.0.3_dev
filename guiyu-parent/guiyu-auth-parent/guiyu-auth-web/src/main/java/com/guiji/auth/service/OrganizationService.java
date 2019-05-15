@@ -872,4 +872,9 @@ public class OrganizationService {
 		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
+
+	public Map getOrgByUsername(String username)
+	{
+		return sysOrganizationMapper.getOrgByUsername(username);
+	}
 }

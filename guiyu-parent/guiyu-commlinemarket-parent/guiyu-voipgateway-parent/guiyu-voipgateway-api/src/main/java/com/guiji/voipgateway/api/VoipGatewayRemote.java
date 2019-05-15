@@ -2,14 +2,13 @@ package com.guiji.voipgateway.api;
 
 import java.util.List;
 
+import com.guiji.voipgateway.model.*;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.component.result.Result;
-import com.guiji.voipgateway.model.Company;
-import com.guiji.voipgateway.model.GwDevtbl;
-import com.guiji.voipgateway.model.SimPort;
 
 import io.swagger.annotations.Api;
 
@@ -73,4 +72,13 @@ public interface VoipGatewayRemote {
 			@RequestParam(value = "brand", required = true)String gwBrand,
 			@RequestParam(value="companyId",required=true) Integer companyId,
 			@RequestParam(value="devId",required=true) Integer devId);
+
+
+	/**
+	 * 根据设备和端口，查询端口状态
+	 * @param portRos
+	 * @return
+	 */
+	@PostMapping(value = "/remote/querySipPortStatus")
+	Result.ReturnData<PortStatusEnum> querySipPortStatus(@RequestBody PortRo portRo);
 }

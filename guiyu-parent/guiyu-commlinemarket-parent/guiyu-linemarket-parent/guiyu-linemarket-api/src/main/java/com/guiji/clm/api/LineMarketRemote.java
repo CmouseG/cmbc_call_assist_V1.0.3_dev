@@ -2,6 +2,7 @@ package com.guiji.clm.api;
 
 import java.util.List;
 
+import com.guiji.clm.model.SimLineStatus;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,5 +49,14 @@ public interface LineMarketRemote {
 	public Result.ReturnData<SipLineVO> queryUserSipLineByLineId(
 			@RequestParam(value="userId",required=true) String userId,
 			@RequestParam(value="lineId",required=true) Integer lineId);
+
+	/**
+	 * 查询用户SIM卡线路对应端口状态
+	 * @param userId
+	 * @param lineId
+	 * @return
+	 */
+	@PostMapping(value = "/remote/querySimLineStatus")
+	public Result.ReturnData<SimLineStatus> querySimLineStatus(@RequestParam(value="lineId",required=true) Integer lineId);
     
 }

@@ -262,4 +262,10 @@ public class OrganizationController implements IOrg{
 		return Result.ok(organizationService.getAllOrgId());
 	}
 	
+	@RequestMapping("getOrgByUsername")
+	public ReturnData<Map> getOrgByUsername(String username)
+	{
+		return Result.ok(organizationService.getOrgByUsername(username));
+	}
+	
 }

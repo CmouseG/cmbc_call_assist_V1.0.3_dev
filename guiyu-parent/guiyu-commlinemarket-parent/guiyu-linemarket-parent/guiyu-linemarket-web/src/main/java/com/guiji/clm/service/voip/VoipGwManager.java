@@ -665,4 +665,15 @@ public class VoipGwManager {
 			throw new ClmException(ClmErrorEnum.CLM1809319.getErrorCode(), ClmErrorEnum.CLM1809319.getErrorMsg());
 		}
 	}
+
+	public List<VoipGwPort> queryByOrgCode(String code) {
+
+    	VoipGwPortExample example = new VoipGwPortExample();
+
+    	example.createCriteria().andOrgCodeEqualTo(code);
+
+		return voipGwPortMapper.selectByExample(example);
+
+	}
+
 }

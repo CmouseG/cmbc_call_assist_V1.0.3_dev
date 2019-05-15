@@ -91,12 +91,17 @@ public class CallBack4MQListener {
 					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
 				//从redis中获取之前从队列获取的任务数据
 				String planUuid = mqSuccPhoneDto.getPlanuuid();
-				String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + planUuid;
-				Object obj = redisUtil.get(queue);
+				String lineDisabledKey = RedisConstant.RedisConstantKey.LINE_DISABLED + planUuid;
+				//队列
+				Integer userId = mqSuccPhoneDto.getUserId();
+				String tempId = mqSuccPhoneDto.getTempId();
+				String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + userId + "_" + tempId;
+				Object obj = redisUtil.get(lineDisabledKey);
 				if (null != obj) {
 					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					//不可用，重新推入队列
-					redisUtil.leftPush(queue, dispatchRedis);
+					redisUtil.leftPush(planQueue, dispatchRedis);
+					redisUtil.del(lineDisabledKey);
 				}
 			}
 		}catch(Exception e){

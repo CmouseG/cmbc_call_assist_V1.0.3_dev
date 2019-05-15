@@ -28,7 +28,7 @@ public class TempServiceImpl implements TempService{
             ITemplate iTemplateApi = FeignBuildUtil.feignBuilderTarget(ITemplate.class,Constant.PROTOCOL +server);
             //调用fsagent模板是否存在接口
             Result.ReturnData<Boolean> result = iTemplateApi.istempexist(tempId);
-            if(!result.body){
+            if(!result.getBody()){
                 //TODO 报警
                 logger.info("fsagent==>[{}]的模板[{}]录音不存在",server,tempId);
                 throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_FSAGENT_NO_RECORD);

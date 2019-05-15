@@ -3,14 +3,14 @@ package com.guiji.clm.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.guiji.clm.constant.ClmConstants;
-import com.guiji.clm.dao.entity.SipLineApply;
-import com.guiji.clm.dao.entity.SipLineBaseInfo;
-import com.guiji.clm.dao.entity.SipLineExclusive;
-import com.guiji.clm.dao.entity.SipLineShare;
+import com.guiji.clm.dao.entity.*;
 import com.guiji.clm.dao.entity.ext.SipLineQuery;
 import com.guiji.clm.dao.ext.SipLineExclusiveMapperExt;
 import com.guiji.clm.enm.SipLineStatusEnum;
+import com.guiji.clm.exception.ClmErrorEnum;
+import com.guiji.clm.exception.ClmException;
 import com.guiji.clm.service.sip.*;
+import com.guiji.clm.service.voip.VoipGwManager;
 import com.guiji.clm.util.AreaDictUtil;
 import com.guiji.clm.util.DataLocalCacheUtil;
 import com.guiji.clm.vo.*;
@@ -345,6 +345,54 @@ public class LineMarketController {
         condition.setOrgCode(orgCode);
         List<SipLineExclusive> list = sipLineExclusiveService.queryUserExclusiveSipLine(condition);
         return Result.ok(this.exclusiveLine2VO(list));
+    }
+
+    @Autowired
+    VoipGwManager voipGwManager;
+
+    /**
+     * 通话记录中查询线路信息，返回sip和sim的合并结果集
+     * @param qOrgCode
+     * @return
+     */
+    @RequestMapping(value = "/queryExclusiveSipLineByOrg", method = RequestMethod.POST)
+    public Result.ReturnData<List<LineVo>> queryExclusiveSipLineByOrg(@RequestParam String qOrgCode, @RequestHeader Long userId) {
+
+        if(StringUtils.isEmpty(qOrgCode)) {
+            throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
+        }
+
+        SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
+
+        condition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
+        condition.setOrgCode(qOrgCode);
+
+        List<LineVo> list = new ArrayList<>();
+
+        List<SipLineExclusive> sipLineExclusives = sipLineExclusiveService.querySipLineExclusiveList(condition);
+
+        List<VoipGwPort> voipGwPorts = voipGwManager.queryByOrgCode(qOrgCode);
+
+        sipLineExclusives.forEach(obj -> {
+            LineVo vo = new LineVo();
+
+            vo.setLineId(obj.getLineId());
+            vo.setLineName(obj.getLineName());
+
+            list.add(vo);
+        });
+
+        voipGwPorts.forEach(obj -> {
+            LineVo vo = new LineVo();
+
+            vo.setLineId(obj.getLineId());
+            vo.setLineName(obj.getPhoneNo());
+
+            list.add(vo);
+        });
+
+        return Result.ok(list);
+
     }
 
     /**

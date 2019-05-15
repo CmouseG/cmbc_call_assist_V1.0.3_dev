@@ -62,11 +62,11 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 			// 如果一通电话已挂断,那么放到回调成功的队列中，把当前状态设置成已经回调
 			ReturnData<CallEndIntent> callEnd = callplan.isCallEnd(planuuid, orgId);
 			if (callEnd.success) {
-				if (callEnd.body.isEnd()) {
+				if (callEnd.getBody().isEnd()) {
 					// 如果已经挂断
 					MQSuccPhoneDto dto = new MQSuccPhoneDto();
 					dto.setPlanuuid(records.getPlanuuid());
-					dto.setLabel(callEnd.body.getIntent());
+					dto.setLabel(callEnd.getBody().getIntent());
 					//设置用户的id
 					dto.setUserId(records.getUserId());
 					dto.setLineId(records.getLine());
@@ -87,7 +87,7 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 		if(null != obj) {
 			logger.info("plan_uuid:" + planuuid + "五分钟没有回调，主动调用呼叫中心isCallEnd接口失败");
 		}else{
-			if(null != callEnd.code
+			if(null != callEnd.getCode()
 					&& ExternalCodeExceptionEnum.CALL_CENTER_0305012.getErrorCode().equals(callEnd.code)) {
 				redisUtil.set(RedisConstant.RedisConstantKey.TEMPLATE_NO_READY + planuuid, 1,
 						RedisConstant.RedisConstantKey.TEMPLATE_NO_READY_TIMELONG);

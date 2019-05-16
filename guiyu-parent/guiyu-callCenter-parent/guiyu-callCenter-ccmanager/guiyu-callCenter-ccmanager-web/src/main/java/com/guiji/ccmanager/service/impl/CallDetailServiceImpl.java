@@ -63,11 +63,14 @@ public class CallDetailServiceImpl implements CallDetailService {
     MyCallOutPlanMapper myCallOutPlanMapper;
 
     @Override
-    public void updateIsRead(String callId) {
+    public void updateIsRead(String callId, Integer orgId) {
         CallOutPlan callOutPlan = new CallOutPlan();
-        callOutPlan.setCallId(new BigInteger(callId));
         callOutPlan.setIsread(1);
-        callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
+
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andOrgIdEqualTo(orgId)
+                .andCallIdEqualTo(new BigInteger(callId));
+        callOutPlanMapper.updateByExampleSelective(callOutPlan,example);
     }
 
     public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity,String queryUser) {

@@ -189,7 +189,7 @@ public class CallDetailController implements ICallPlanDetail {
         //修改状态为已读
         if(!isSuperAdmin){
             if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
-                callDetailService.updateIsRead(callId);
+                callDetailService.updateIsRead(callId,orgId);
             }
         }
         if(isDesensitization==0){ // 需要脱敏显示
@@ -223,7 +223,7 @@ public class CallDetailController implements ICallPlanDetail {
         CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId), orgId);
         //修改状态为已读
         if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
-            callDetailService.updateIsRead(callId);
+            callDetailService.updateIsRead(callId, orgId);
         }
         //获取attach字段
         callOutPlanVO.setAttach(callOutPlanVO.getRemarks());

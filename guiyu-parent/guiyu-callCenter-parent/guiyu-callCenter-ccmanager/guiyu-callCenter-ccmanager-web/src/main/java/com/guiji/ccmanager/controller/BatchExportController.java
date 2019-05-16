@@ -52,6 +52,35 @@ public class BatchExportController {
     @Autowired
     AuthService authService;
 
+    @ApiOperation(value = "批量删除")
+    @PostMapping(value = "batchDeleteCallRecord")
+    public String batchDeleteCallRecord(@RequestBody CallRecordListReq callRecordListReq,
+                                        @RequestHeader Long userId, @RequestHeader Integer authLevel,
+                                        @RequestHeader Integer orgId) {
+
+        log.info("get request 批量删除 batchDeleteCallRecord，callRecordListReq[{}]",callRecordListReq);
+
+        Boolean checkAll = callRecordListReq.getCheckAll();
+
+        Date end = null;
+        Date start = null;
+        if(StringUtils.isNotBlank(callRecordListReq.getStartDate())){
+            start = DateUtil.stringToDate(callRecordListReq.getStartDate(),"yyyy-MM-dd HH:mm:ss");
+        }
+        if(StringUtils.isNotBlank(callRecordListReq.getEndDate())){
+            end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
+        }
+        if (checkAll == null || !checkAll) {//不是全选
+            List<String> callIds = callRecordListReq.getIncludeList();
+            if (callIds!=null && callIds.size()>0) {
+            }else{
+                return "缺少参数!";
+            }
+        }
+        batchExportService.batchDeleteCallRecord(start, end, authLevel, String.valueOf(userId), callRecordListReq, orgId);
+        return "删除成功";
+    }
+
 
     @ApiOperation(value = "批量导出通话记录，从第几条开始，到多少条")
     @Jurisdiction("callCenter_callHistory_batcnExportData")

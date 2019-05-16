@@ -34,10 +34,10 @@ public class ExceptionHandler implements HandlerExceptionResolver
 			{
 				AiException ex = (AiException) exception;
 				attributesMap.put("code", ex.getCode());
-				attributesMap.put("message", ex.getMessage());
+				attributesMap.put("msg", ex.getMessage());
 			} else {
 				attributesMap.put("code", "999999"); //未知异常码
-				attributesMap.put("message", exception.getMessage());
+				attributesMap.put("msg", exception.getMessage());
 			}
 			fastJsonJsonView.setAttributesMap(attributesMap);
 			modelAndView.setView(fastJsonJsonView);

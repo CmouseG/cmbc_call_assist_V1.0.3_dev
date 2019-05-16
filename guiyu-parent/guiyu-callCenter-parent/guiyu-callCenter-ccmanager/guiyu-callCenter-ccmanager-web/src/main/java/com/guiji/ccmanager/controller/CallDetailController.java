@@ -38,12 +38,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.Boolean;
 import java.math.BigInteger;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -491,6 +489,47 @@ public class CallDetailController implements ICallPlanDetail {
         }
         String url = callDetailService.getRecordFileUrl(callId);
         return Result.ok(url);
+    }
+
+    @ApiOperation(value = "下载全局录音")
+    @PostMapping(value = "downloadRecordWavFile")
+    public String downloadRecordWavFile(@RequestBody Map map, HttpServletResponse resp) {
+
+        String callId = String.valueOf(map.get("callId"));
+
+        if (StringUtils.isBlank(callId)) {
+            return "callId不能为空";
+        }
+        String sourceUrl = callDetailService.getRecordFileUrl(callId);
+
+        OutputStream out = null;
+        InputStream inputStream = null;
+        try {
+            if (StringUtils.isNotEmpty(sourceUrl)) {
+                out = resp.getOutputStream();
+                inputStream = new URL(sourceUrl).openStream();
+                // 将输入流is写入文件输出流fos中
+                int ch = 0;
+                while ((ch = inputStream.read()) != -1) {
+                    out.write(ch);
+                }
+            }else{
+                return "无录音文件";
+            }
+            out.flush();
+        } catch (IOException e) {
+            log.error("downloadRecordWavFile IOException :" + e);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.error("downloadRecordWavFile.close error:" + e);
+                }
+            }
+        }
+        return null;
     }
 
     @ApiOperation(value = "删除通话记录,callIds以逗号分隔")

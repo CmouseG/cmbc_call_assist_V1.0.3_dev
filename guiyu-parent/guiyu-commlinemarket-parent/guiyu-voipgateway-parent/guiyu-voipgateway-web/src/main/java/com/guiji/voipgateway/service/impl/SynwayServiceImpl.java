@@ -146,7 +146,7 @@ public class SynwayServiceImpl implements ThirdGateWayService {
 			List<SimPort> simPorts = synwayMapper.querySimPortListByDevId(tabName, devId);
 
 			for (SimPort obj : simPorts) {
-				if(obj.getPortNumber().equals(portNo)) {
+				if(obj.getPortNumber().equals(portNo-1)) {
 					Integer workStatusId = obj.getWorkStatusId();
 
 					if(workStatusId == 1) {

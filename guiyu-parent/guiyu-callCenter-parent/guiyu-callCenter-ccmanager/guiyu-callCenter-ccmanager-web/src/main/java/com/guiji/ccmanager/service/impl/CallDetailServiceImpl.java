@@ -179,8 +179,6 @@ public class CallDetailServiceImpl implements CallDetailService {
     public List<Map> getCallRecordList(CallRecordReq callRecordReq) {
 
         MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = new MyCallOutPlanQueryEntity();
-        if (callRecordReq.getUserId() != null)
-            myCallOutPlanQueryEntity.setCustomerId(callRecordReq.getUserId().intValue());
 
         myCallOutPlanQueryEntity.setLimitStart((callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
         myCallOutPlanQueryEntity.setLimitEnd(callRecordReq.getPageSize());
@@ -191,12 +189,19 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (callRecordReq.getAccurateIntent() != null){
             myCallOutPlanQueryEntity.setAccurateIntent(callRecordReq.getAccurateIntent());
         }
-        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(callRecordReq.getAuthLevel(),callRecordReq.getOrgId());
-        if(orgIdList!=null){
-            if(orgIdList.size()==1){
-                myCallOutPlanQueryEntity.setOrgId(orgIdList.get(0));
-            }else{
-                myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
+        Integer authLevel = callRecordReq.getAuthLevel();
+        if(authLevel==AuthLevelEnum.USER.getLevel()){
+            if (callRecordReq.getUserId() != null) {
+                myCallOutPlanQueryEntity.setCustomerId(callRecordReq.getUserId().intValue());
+            }
+        }else{
+            List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,callRecordReq.getOrgId());
+            if(orgIdList!=null){
+                if(orgIdList.size()==1){
+                    myCallOutPlanQueryEntity.setOrgId(orgIdList.get(0));
+                }else{
+                    myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
+                }
             }
         }
 

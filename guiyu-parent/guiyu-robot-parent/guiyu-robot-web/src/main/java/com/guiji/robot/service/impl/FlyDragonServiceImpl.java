@@ -1,5 +1,7 @@
 package com.guiji.robot.service.impl;
 
+import com.guiji.robot.model.HangupRes;
+import com.guiji.robot.service.vo.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,13 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.ISellbotService;
-import com.guiji.robot.service.vo.AiBaseInfo;
-import com.guiji.robot.service.vo.FlHelloReq;
-import com.guiji.robot.service.vo.FlHelloRsp;
-import com.guiji.robot.service.vo.FlMatchReq;
-import com.guiji.robot.service.vo.SellbotMatchReq;
-import com.guiji.robot.service.vo.SellbotRestoreReq;
-import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.util.HttpClientUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
@@ -136,10 +131,16 @@ public class FlyDragonServiceImpl implements ISellbotService{
 	 * @return
 	 */
 	@Override
-	public void clean(FlHelloReq flHelloReq) {
+	public HangupRes clean(AiInuseCache ai, EndReq endReq) {
 		String url = flydragonUrl+"/api/hello";
-		flHelloReq.setCur_dialog_status(2); //挂机
-		String json = JsonUtils.bean2Json(flHelloReq);
+
+		JSONObject obj = new JSONObject();
+
+		obj.put("cur_dialog_status", 2);
+		obj.put("cfg_name", endReq.getTemplateId());
+		obj.put("seqid", endReq.getSeqId());
+
+		String json = JsonUtils.bean2Json(obj);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
 			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
@@ -149,6 +150,16 @@ public class FlyDragonServiceImpl implements ISellbotService{
 				log.error("调用飞龙接口返回异常，url:{}，请求信息：{}，返回结果：{}!",url,json,result);
 				throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 			}
+
+			HangupRes hangupRes = new HangupRes();
+
+			hangupRes.setAccurate_intent(jsonObject.getString("accurate_intent"));
+			hangupRes.setReason(jsonObject.getString("reason"));
+			hangupRes.setIntent(jsonObject.getString("intent_name"));
+			hangupRes.setSeqid(jsonObject.getString("seqid"));
+
+			return hangupRes;
+
 		}else {
 			log.error("调用飞龙接口返回异常，请求信息：{},返回结果：{}!",json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());

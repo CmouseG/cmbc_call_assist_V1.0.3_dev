@@ -153,7 +153,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiHangupReq
 	 * @return
 	 */
-	public Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq){
+	public Result.ReturnData<HangupRes> aiHangup(@RequestBody AiHangupReq aiHangupReq){
 		iAiAbilityCenterService.aiHangup(aiHangupReq);
 		return Result.ok();
 	}

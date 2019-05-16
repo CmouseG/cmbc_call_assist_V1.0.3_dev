@@ -44,7 +44,7 @@ public interface CallDetailService {
 
     List<String> getFtypes();
 
-    void updateIsRead(String callId);
+    void updateIsRead(String callId, Integer orgId);
 
     void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq, Long userId,List<Integer> orgIdList);
 

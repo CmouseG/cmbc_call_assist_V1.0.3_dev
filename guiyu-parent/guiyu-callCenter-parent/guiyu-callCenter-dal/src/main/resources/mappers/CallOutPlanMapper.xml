@@ -322,7 +322,7 @@
             and call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
         </if>
         <if test="orgIdList != null and orgIdList.size()>0">
-            and a.org_id in
+            and org_id in
             <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>

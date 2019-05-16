@@ -142,32 +142,50 @@ public class SynwayServiceImpl implements ThirdGateWayService {
 	public PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo) {
 
 		if(companyId!=null && devId!=null) {
-			String tabName = companyId + "_simporttbl";	//表名：(公司ID)_porttbl
-			List<PortStatus> simPorts = synwayMapper.querySimPortStatus(tabName, devId, portNo);
+			String tabName = companyId + "_porttbl";	//表名：(公司ID)_porttbl
+			List<SimPort> simPorts = synwayMapper.querySimPortListByDevId(tabName, devId);
 
-			if(CollectionUtils.isEmpty(simPorts)) {
-				return PortStatusEnum.OTHER;
-			} else {
-				PortStatus portStatus = simPorts.get(0);
+			for (SimPort obj : simPorts) {
+				if(obj.getPortNumber().equals(portNo-1)) {
+					Integer workStatusId = obj.getWorkStatusId();
 
-				switch (portStatus.getRunStatus()) {
-					case 0:
+					if(workStatusId == 1) {
 						return PortStatusEnum.IDLE;
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-					case 9:
-						return PortStatusEnum.BUSY;
-					case 10:
-					case 11:
+					} else {
 						return PortStatusEnum.OTHER;
+					}
 				}
 			}
+
 		}
+
+//		if(companyId!=null && devId!=null) {
+//			String tabName = companyId + "_simporttbl";	//表名：(公司ID)_porttbl
+//			List<PortStatus> simPorts = synwayMapper.querySimPortStatus(tabName, devId, portNo);
+//
+//			if(CollectionUtils.isEmpty(simPorts)) {
+//				return PortStatusEnum.OTHER;
+//			} else {
+//				PortStatus portStatus = simPorts.get(0);
+//
+//				switch (portStatus.getRunStatus()) {
+//					case 0:
+//						return PortStatusEnum.IDLE;
+//					case 1:
+//					case 2:
+//					case 3:
+//					case 4:
+//					case 5:
+//					case 6:
+//					case 7:
+//					case 9:
+//						return PortStatusEnum.BUSY;
+//					case 10:
+//					case 11:
+//						return PortStatusEnum.OTHER;
+//				}
+//			}
+//		}
 
 		return PortStatusEnum.OTHER;
 	}

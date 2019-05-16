@@ -67,7 +67,7 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
                     AliyunReqVO aliyunReqVO = new AliyunReqVO();
                     aliyunReqVO.setBusiId(callId.toString());
                     aliyunReqVO.setSourceUrl(recordUrl);
-                    log.info("callOutPlan推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
+                    log.debug("callOutPlan推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
                     queueSender.send("aliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
 
                 }
@@ -128,12 +128,12 @@ public class CallOutRecordUrlUpdateServiceImpl implements CallOutRecordUrlUpdate
                     if (StringUtils.isNotEmpty(customerRecordUrl)) {
                         aliyunReqVO.setBusiId("customer_" + callIdRecordUrl.getCallId() + "_" + callDetailId);
                         aliyunReqVO.setSourceUrl(customerRecordUrl);
-                        log.info("客户说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
+                        log.debug("客户说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
                         queueSender.send("aliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
                     } else {
                         aliyunReqVO.setBusiId("agent_" + callIdRecordUrl.getCallId() + "_" + callDetailId);
                         aliyunReqVO.setSourceUrl(botRecordUrl);
-                        log.info("坐席说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
+                        log.debug("坐席说话明细录音推送到阿里云更新recordUrl队列 [{}]", aliyunReqVO);
                         queueSender.send("aliyunUploadQueue", JsonUtils.bean2Json(aliyunReqVO));
                     }
 

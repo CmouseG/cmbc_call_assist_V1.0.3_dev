@@ -108,7 +108,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "aiHangupReq", value = "挂断请求信息", required = true)
     })
     @PostMapping(value = "/remote/aiHangup")
-	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
+	Result.ReturnData<HangupRes> aiHangup(@RequestBody AiHangupReq aiHangupReq);
 	
 	
 	@ApiOperation(value = "查询用户机器人配置基本信息")

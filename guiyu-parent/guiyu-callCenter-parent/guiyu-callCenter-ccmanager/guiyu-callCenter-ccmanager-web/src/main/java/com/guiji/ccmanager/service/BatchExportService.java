@@ -21,6 +21,9 @@ public interface BatchExportService {
     void generateAudioFile(Date finalStart, Date finalEnd, Integer authLevel, String s, Integer orgId,
                            CallRecordListReq callRecordListReq, Integer isDesensitization, String recordId);
 
+    void batchDeleteCallRecord(Date startDate, Date endDate, Integer authLevel, String customerId,
+                               CallRecordListReq callRecordListReq, Integer orgId);
+
     int countTotalNum(Date start, Date end, Integer authLevel, String s, String orgCode,
-                      CallRecordListReq callRecordListReq,Integer orgId);
+                      CallRecordListReq callRecordListReq, Integer orgId);
 }

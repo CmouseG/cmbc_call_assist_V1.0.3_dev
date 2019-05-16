@@ -23,4 +23,6 @@ public interface MyCallOutPlanMapper {
     void createCallOutDetail(@Param("orgId") Integer orgId);
 
     List<Map> selectCallPlanRecord4Encrypt(MyCallOutPlanQueryEntity myCallOutPlanQueryEntity);
+
+    void batchDeleteCallRecord(MyCallOutPlanQueryEntity myCallOutPlanQueryEntity);
 }

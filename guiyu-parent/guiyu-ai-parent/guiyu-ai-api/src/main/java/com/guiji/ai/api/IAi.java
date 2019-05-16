@@ -1,7 +1,6 @@
 package com.guiji.ai.api;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -33,6 +32,6 @@ public interface IAi {
 	/**
 	 * 根据busiId查询TTS处理结果
 	 */
-	@GetMapping(value = "getResultByBusId")
+	@PostMapping(value = "getResultByBusId")
 	public ReturnData<TtsRsp> getResultByBusId(String busId);
 }

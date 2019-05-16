@@ -31,4 +31,7 @@ public class PortRo {
      */
     private String gwBrand;
 
+
+    private String ip;
+
 }

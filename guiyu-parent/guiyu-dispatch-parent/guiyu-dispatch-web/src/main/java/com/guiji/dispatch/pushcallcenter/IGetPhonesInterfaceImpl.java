@@ -193,7 +193,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	// --------------------------------------------------------------------------------------------------------
 
 	@Override
-	public List<Integer> getUsersByParams(Integer statusPlan, Integer statusSync, String flag) {
+	public List<Integer> getUsersByParams(Integer statusPlan, Integer statusSync, String flag, List<Integer> allOrgId) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -207,12 +207,23 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setStatusSync(statusSync);
 		dis.setFlag(flag);
 		// groupby
-		List<Integer> userIds = new ArrayList<>();
+		List<Integer> userIds = dispatchMapper.selectByCallHour4UserId(dis, allOrgId);
+		return userIds;
+	}
 
-		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4UserId(dis, getAllOrgIds());
-		for (DispatchPlan dto : selectByCallHour4UserId) {
-			userIds.add(dto.getUserId());
-		}
+	@Override
+	public List<Integer> getFutureUsersByParams(Integer statusPlan, Integer statusSync, String flag, List<Integer> allOrgId) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(statusPlan);
+		dis.setStatusSync(statusSync);
+		dis.setFlag(flag);
+		// groupby
+		List<Integer> userIds = dispatchMapper.selectFutureUserByParam(dis, allOrgId);
 		return userIds;
 	}
 
@@ -264,6 +275,26 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		return selectByCallHour;
 	}
 
+
+	@Override
+	public List<DispatchPlan> getFuturePlanByUserId(Integer userId, Integer limit, Integer statusPlan, Integer statusSync, String flag) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(statusPlan);
+		dis.setStatusSync(statusSync);
+		dis.setFlag(flag);
+		dis.setUserId(userId);
+		dis.setLimitStart(0);
+		dis.setLimitEnd(limit);
+
+		Integer orgId = getApiService.getOrgIdByUser(userId+"");
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectFuturePlanByUserId(dis, orgId);
+		return selectByCallHour;
+	}
 
 	private List<Integer> getAllOrgIds()
 	{

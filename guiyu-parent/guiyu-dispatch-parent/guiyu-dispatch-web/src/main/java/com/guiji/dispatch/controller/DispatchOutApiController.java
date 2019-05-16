@@ -65,7 +65,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<Boolean> successSchedule(String planUuid, String label) {
 		boolean result = dispatchPlanService.successSchedule(planUuid, label);
 		ReturnData<Boolean> res = new ReturnData<>();
-		res.body = result;
+		res.setBody(result);
 		return res;
 	}
 
@@ -112,7 +112,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		logger.info("receiveRobotId 接受到了。");
 		ReturnData<Boolean> result = new ReturnData<>();
 		boolean res = redisUtil.set(RobotId, RobotId);
-		result.body = res;
+		result.setBody(res);
 		return result;
 	}
 
@@ -127,7 +127,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		logger.info("successSchedule4TempId  完成模板通知升级:" + tempId);
 		ReturnData<Boolean> result = new ReturnData<>();
 		redisUtil.del(tempId);
-		result.body = true;
+		result.setBody(true);
 		return result;
 	}
 
@@ -135,7 +135,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode) {
 		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode, null);
 		ReturnData<PlanCountVO> result = new ReturnData<>();
-		result.body = planCountByUserId;
+		result.setBody(planCountByUserId);
 		return result;
 	}
 
@@ -143,7 +143,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode, String type) {
 		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, null, type);
 		ReturnData<Boolean> result = new ReturnData<>();
-		result.body = stopPlanByorgCode;
+		result.setBody(stopPlanByorgCode);
 		return result;
 	}
 
@@ -155,7 +155,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		dis.setResult(label);
 		int count = mapper.updateByExampleSelective(dis, ex);
 		ReturnData<Boolean> result = new ReturnData<>();
-		result.body = count > 0 ? true : false;
+		result.setBody(count > 0 ? true : false);
 		return result;
 	}
 
@@ -175,7 +175,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 		if(lines == null || lines.isEmpty())
 		{
-			res.body = false;
+			res.setBody(false);
 			return res;
 		}
 
@@ -202,11 +202,11 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 		int count = dispatchMapper.countByExample(planEx);
 		if (count > 0) {
-			res.body = true;
+			res.setBody(true);
 			return res;
 		}
 
-		res.body = false;
+		res.setBody(false);
 		return res;
 	}
 

@@ -33,7 +33,14 @@ public interface DispatchPlanMapper {
 
 	List<DispatchPlan> selectByCallHour(@Param("record")DispatchPlan record, @Param("orgId") Integer orgId);//@Param("orgIds")List<Integer> orgIds
 
-	List<DispatchPlan> selectByCallHour4UserId(@Param("record")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
+    //获取等于当前日期的拨打用户列表
+	List<Integer> selectByCallHour4UserId(@Param("record")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
+
+	//获取大于等于当前日期的拨打用户列表
+    List<Integer> selectFutureUserByParam(@Param("record")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
+
+    //获取大于等于当前日期的拨打任务列表
+    List<DispatchPlan> selectFuturePlanByUserId(@Param("record")DispatchPlan record, @Param("orgId") Integer orgId);
 
 	int updateDispatchPlanListByStatusSYNC(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgIds")List<Integer> orgIds);
 

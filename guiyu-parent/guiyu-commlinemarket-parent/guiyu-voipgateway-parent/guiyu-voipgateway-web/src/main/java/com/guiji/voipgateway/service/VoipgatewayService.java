@@ -107,7 +107,7 @@ public class VoipgatewayService {
 
     public PortStatusEnum querySipPortStatus(PortRo portRo) {
 
-        return getService(portRo.getGwBrand()).querySimPortStatus(portRo.getCompanyId(), portRo.getDevId(), portRo.getPortNo());
+        return getService(portRo.getGwBrand()).querySimPortStatus(portRo);
 
     }
 }

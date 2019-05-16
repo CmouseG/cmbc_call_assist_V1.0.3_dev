@@ -53,29 +53,34 @@ public class CallBack4MQListener {
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/
-		this.checkSimLineDisabled(mqSuccPhoneDto);
-		PushRecordsExample ex = new PushRecordsExample();
-		ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
-				.andCallbackStatusEqualTo(Constant.NOCALLBACK);
-		PushRecords re = new PushRecords();
-		// 设置已经回调的状态
-		re.setCallbackStatus(Constant.CALLBACKED);
-		int result = recordMapper.updateByExampleSelective(re, ex);
-		if (result > 0) {
-			try {
-				String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-				Object countObj = redisUtil.get(queueCount);
-				Integer currentCount = null != countObj?((Integer)countObj):null;
-				if (null != currentCount && currentCount > 0) {
+		//判断SIM卡线路是否可用
+		if (null != mqSuccPhoneDto
+				&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
+			this.checkSimLineDisabled(mqSuccPhoneDto);
+		}else {
+			PushRecordsExample ex = new PushRecordsExample();
+			ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
+					.andCallbackStatusEqualTo(Constant.NOCALLBACK);
+			PushRecords re = new PushRecords();
+			// 设置已经回调的状态
+			re.setCallbackStatus(Constant.CALLBACKED);
+			int result = recordMapper.updateByExampleSelective(re, ex);
+			if (result > 0) {
+				try {
+					String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
+					Object countObj = redisUtil.get(queueCount);
+					Integer currentCount = null != countObj ? ((Integer) countObj) : null;
+					if (null != currentCount && currentCount > 0) {
 //				currentCount = currentCount - 1;
 //				redisUtil.set(queueCount, currentCount);
-					redisUtil.decr(queueCount, 1);
-					redisUtil.expire(queueCount, 900);
-				}else{
-					logger.error("呼叫回调，" + queueCount + "已不存在");
+						redisUtil.decr(queueCount, 1);
+						redisUtil.expire(queueCount, 900);
+					} else {
+						logger.error("呼叫回调，" + queueCount + "已不存在");
+					}
+				} catch (Exception e) {
+					logger.error("计算器异常", e);
 				}
-			}catch(Exception e){
-				logger.error("计算器异常", e);
 			}
 		}
 	}

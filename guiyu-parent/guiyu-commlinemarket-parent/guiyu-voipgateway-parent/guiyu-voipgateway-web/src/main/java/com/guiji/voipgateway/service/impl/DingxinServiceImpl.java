@@ -2,10 +2,7 @@ package com.guiji.voipgateway.service.impl;
 
 import com.guiji.voipgateway.dingxin.dao.*;
 import com.guiji.voipgateway.dingxin.dao.entity.*;
-import com.guiji.voipgateway.model.Company;
-import com.guiji.voipgateway.model.GwDevtbl;
-import com.guiji.voipgateway.model.PortStatusEnum;
-import com.guiji.voipgateway.model.SimPort;
+import com.guiji.voipgateway.model.*;
 import com.guiji.voipgateway.service.ThirdGateWayService;
 import groovy.util.logging.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -181,18 +178,18 @@ public class DingxinServiceImpl implements ThirdGateWayService {
     }
 
     @Override
-    public PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo) {
+    public PortStatusEnum querySimPortStatus(PortRo ro) {
 
         TblPortExample tblPortExample = new TblPortExample();
 
-        tblPortExample.createCriteria().andNeUuidEqualTo(devId);
+        tblPortExample.createCriteria().andNeUuidEqualTo(ro.getDevId());
 
         List<TblPort> tblPorts = tblPortMapper.selectByExample(tblPortExample);
 
         TblPort port = null;
 
         for (TblPort obj : tblPorts) {
-            if(obj.getPortNo().equals(portNo)){
+            if(obj.getPortNo().equals(ro.getPortNo())){
                 port = obj;
             }
         }

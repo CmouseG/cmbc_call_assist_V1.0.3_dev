@@ -1,9 +1,6 @@
 package com.guiji.voipgateway.service;
 
-import com.guiji.voipgateway.model.Company;
-import com.guiji.voipgateway.model.GwDevtbl;
-import com.guiji.voipgateway.model.PortStatusEnum;
-import com.guiji.voipgateway.model.SimPort;
+import com.guiji.voipgateway.model.*;
 
 import java.util.List;
 
@@ -58,5 +55,5 @@ public interface ThirdGateWayService {
      * @param portNo
      * @return
      */
-    PortStatusEnum querySimPortStatus(Integer companyId, Integer devId, Integer portNo);
+    PortStatusEnum querySimPortStatus(PortRo ro);
 }

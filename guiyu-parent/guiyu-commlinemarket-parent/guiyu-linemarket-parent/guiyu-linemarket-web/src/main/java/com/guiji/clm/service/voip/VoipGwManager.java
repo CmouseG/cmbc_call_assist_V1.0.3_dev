@@ -647,11 +647,8 @@ public class VoipGwManager {
 		ro.setCompanyId(companyId);
 		ro.setDevId(devId);
 		ro.setGwBrand(brand);
-		if(BrandConfig.DINGXIN.equals(brand)) {
-			ro.setPortNo(port-1);
-		} else {
-			ro.setPortNo(port);
-		}
+		ro.setIp(voipGwInfo.getGwIp());
+		ro.setPortNo(port-1);
 
 		ReturnData<PortStatusEnum> data = voipGatewayRemote.querySipPortStatus(ro);
 

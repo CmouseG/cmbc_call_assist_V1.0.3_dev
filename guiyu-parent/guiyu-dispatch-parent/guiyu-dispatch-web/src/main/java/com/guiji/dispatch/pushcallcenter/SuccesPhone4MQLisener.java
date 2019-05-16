@@ -77,6 +77,13 @@ public class SuccesPhone4MQLisener {
 		try {
 			MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
 			logger.info("当前队列任务接受的uuid：" + mqSuccPhoneDto.getPlanuuid());
+			//判断SIM卡线路是否可用
+			if (null != mqSuccPhoneDto
+					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
+			    logger.info("当前计划plan_uuid:{},SIM卡线路id:{}不可用" + mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
+				return;
+			}
+
 			DispatchPlanExample ex = new DispatchPlanExample();
 
 			Integer orgId = IdUtils.doParse(Long.valueOf(mqSuccPhoneDto.getPlanuuid())).getOrgId();

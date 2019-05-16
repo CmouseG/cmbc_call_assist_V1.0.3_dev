@@ -95,4 +95,20 @@ public class GetApiServiceImpl implements GetApiService {
             return null;
         }
     }
+
+    @Override
+    public List<Integer> getAllOrgId() {
+        Result.ReturnData<List<Integer>> resp = orgService.getAllOrgId();
+        List<Integer> result = null;
+        if (resp != null && resp.getBody() != null) {
+            result = resp.getBody();
+        }
+
+        if(result == null)
+        {
+            result = new ArrayList<>();
+        }
+
+        return  result;
+    }
 }

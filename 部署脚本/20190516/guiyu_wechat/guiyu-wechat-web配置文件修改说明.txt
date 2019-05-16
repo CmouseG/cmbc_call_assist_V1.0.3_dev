@@ -1,0 +1,6 @@
+
+
+原有keFuUrl替换为新值
+
+新值： 
+keFuUrl: https://tel.guiji.ai/wx/index.html#/toChat

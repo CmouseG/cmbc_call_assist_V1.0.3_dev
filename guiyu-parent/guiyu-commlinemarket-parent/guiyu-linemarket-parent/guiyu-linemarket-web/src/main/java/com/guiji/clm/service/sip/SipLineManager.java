@@ -80,7 +80,7 @@ public class SipLineManager {
             throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
         }
 
-        if(sipLineBaseInfo.getSupplierType() == 0 && sipLineBaseInfo.getFeeOrNot()) {
+        if(sipLineBaseInfo.getSupplierType() == 0) {
             sipLineBaseInfo.setUnivalent(sipLineBaseInfo.getContractUnivalent());
         }
 

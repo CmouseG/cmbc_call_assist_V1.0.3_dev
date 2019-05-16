@@ -55,7 +55,7 @@ public class LineRateController implements ILineRate {
         }
 
         List<LineRateResponse> list =lineRateService.getLineRateAll(start, end);
-        log.info("getLineRateAll返回数据,list[{}]",list);
+//        log.info("getLineRateAll返回数据,list[{}]",list);
         return Result.ok(list);
     }
 

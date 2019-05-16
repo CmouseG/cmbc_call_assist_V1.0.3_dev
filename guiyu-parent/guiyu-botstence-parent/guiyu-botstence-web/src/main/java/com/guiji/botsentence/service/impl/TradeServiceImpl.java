@@ -66,11 +66,17 @@ public class TradeServiceImpl implements ITradeService {
 
         industryIds.forEach(industryId -> {
             BotSentenceTrade currentTrade = industryIdToTradeMap.get(industryId);
+            if(null == currentTrade){
+                return;
+            }
             String parentIndustryId = currentTrade.getParentId();
             StringBuilder fullNameBuilder = new StringBuilder(currentTrade.getIndustryName());
 
             while (StringUtils.isNotBlank(parentIndustryId)){
                 currentTrade = industryIdToTradeMap.get(parentIndustryId);
+                if(null == currentTrade){
+                    break;
+                }
                 parentIndustryId = currentTrade.getParentId();
                 fullNameBuilder.insert(0, currentTrade.getIndustryName() + "/");
             }

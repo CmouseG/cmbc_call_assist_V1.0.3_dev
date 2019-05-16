@@ -169,9 +169,9 @@ public class AdminController {
         }
 
         String openId = authAccessTokenDto.getOpenid();
-        String userName = getUserNameByCheckUserBind(openId);
-        if(StringUtils.isNotBlank(userName)){
-            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, userName));
+        SysUser user = getUserByCheckUserBind(openId);
+        if(null != user){
+            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, user.getUsername(), user.getOrgName()));
         }
 
         return new ModelAndView("redirect:" + buildLoginUrl(openId));
@@ -212,14 +212,17 @@ public class AdminController {
 
         return Result.ok(true);
     }
-
-
     private String buildKeFuUrl(String domain, String userName){
+        return buildKeFuUrl(domain, userName, GUEST);
+    }
+
+    private String buildKeFuUrl(String domain, String userName, String orgName){
 
         logger.info("domain:{}, userName:{}", domain, userName);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuUrl())
-                .queryParam("userName", userName);
+                .queryParam("userName", userName)
+                .queryParam("orgName", orgName);
 
         return builder.build().toUri().toString();
     }
@@ -228,7 +231,7 @@ public class AdminController {
         return weChatEnvProperties.getUserLoginUrl() + "?openId=" + openId;
     }
 
-    private String getUserNameByCheckUserBind(String openId){
+    private SysUser getUserByCheckUserBind(String openId){
         try{
             List<SysUser> userList = iAuth.getUserByOpenId(openId).getBody();
             logger.info("openId:{}, userList:{}", openId, JSON.toJSON(userList));
@@ -236,7 +239,7 @@ public class AdminController {
             if(CollectionUtils.isEmpty(userList)){
                 return null;
             }
-            return userList.get(0).getUsername();
+            return userList.get(0);
         }catch (Exception e){
             logger.error("failed get user by openId", e);
             return null;

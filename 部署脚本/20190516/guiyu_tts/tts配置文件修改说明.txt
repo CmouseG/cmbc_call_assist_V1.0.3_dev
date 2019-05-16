@@ -8,4 +8,11 @@ rabbit:
 rabbit:
   general:
     direct:
-      queues: szj.queue|mh.queue|SaveResultMQ.direct.TTS|CallBackMQ.direct.TTS
+      queues: szjMQ.direct.TTS|mhMQ.direct.TTS|SaveResultMQ.direct.TTS|CallBackMQ.direct.TTS
+	  
+	  
+	  
+filePath: /home/apps/tts/wav/ 
+下面加：
+threadNum: 6  # 线程并发数
+ttsVersion: cpu  # tts版本（gpu/cpu）

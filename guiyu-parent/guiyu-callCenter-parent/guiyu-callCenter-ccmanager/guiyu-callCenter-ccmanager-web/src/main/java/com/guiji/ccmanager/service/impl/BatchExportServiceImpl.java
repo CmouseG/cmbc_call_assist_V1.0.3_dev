@@ -80,6 +80,15 @@ public class BatchExportServiceImpl implements BatchExportService {
     private static final DateFormat df = new SimpleDateFormat("yyyyMMdd");
 
     @Override
+    public void batchDeleteCallRecord(Date startDate, Date endDate, Integer authLevel, String customerId,
+                                      CallRecordListReq callRecordListReq, Integer orgId) {
+
+        MyCallOutPlanQueryEntity myCallOutPlanQueryEntity = callDetailService.prepareQuery(startDate, endDate, authLevel, customerId, callRecordListReq, orgId);
+
+        myCallOutPlanMapper.batchDeleteCallRecord(myCallOutPlanQueryEntity);
+    }
+
+    @Override
     public int countTotalNum(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
                              CallRecordListReq callRecordListReq, Integer orgId) {
 

@@ -121,14 +121,14 @@ public class AssistCallController implements IAssistCall {
             return Result.error("0305015");
         }
 
-        log.info("开始判定是否需要等待，转协呼,callId[{}]",callId);
-        Channel channel = channelService.findByUuid(callId);
+        log.info("开始判定是否需要等待，转协呼,uuid[{}]",uuid);
+        Channel channel = channelService.findByUuid(uuid);
         if (channel != null && channel.isInPlay() && channel.getExpectEndPlayTime() != null) {
             long millNow = new Date().getTime();
             if (channel.getExpectEndPlayTime() > millNow) {
                 channel.setIsMediaLock(true); //通道锁住，不允许再播放其他录音
                 long watiMill = channel.getExpectEndPlayTime() - millNow;
-                log.info("将等待[{}]毫秒后再转协呼,callId[{}]",watiMill,callId);
+                log.info("将等待[{}]毫秒后再转协呼,uuid[{}]",watiMill,uuid);
                 try {
                     Thread.sleep(watiMill);
                 } catch (InterruptedException e) {
@@ -137,7 +137,7 @@ public class AssistCallController implements IAssistCall {
             }
         }
 
-        log.info("时间已到，开始转协呼,callId[{}]",callId);
+        log.info("时间已到，开始转协呼,uuid[{}]",uuid);
         CallOutPlan callPlan = new CallOutPlan();
         callPlan.setCallId(bigInteCallId);
         callPlan.setAgentStartTime(new Date());
@@ -147,17 +147,17 @@ public class AssistCallController implements IAssistCall {
         callOutPlanService.update(callPlan);
 
         String toAgentFs = toAgentManager.findToAgentFsAdder();
-        localFsServer.transferToAgentGroup(callId, toAgentFs, agentGroupId);
+        localFsServer.transferToAgentGroup(uuid, toAgentFs, agentGroupId);
 
         //如果已经进入挂断操作，则停止挂断
-        channelHelper.stopKillChannel(callId);
+        channelHelper.stopKillChannel(uuid);
 
 //        log.info("协呼之后，释放ai资源");
 
 //        aiManager.releaseAi(realCallPlan);
 
         //停止定时任务
-        robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
+        robotNextHelper.stopAiCallNextTimer(uuid);
         //构建事件抛出
         ToAgentEvent toAgentEvent = new ToAgentEvent(uuid);
         asyncEventBus.post(toAgentEvent);

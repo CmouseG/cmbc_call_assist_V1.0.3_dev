@@ -1,9 +1,9 @@
 -- 查看扣减金额
 	SELECT
 		a.company_name AS '企业名称',
-		a.available_balance AS '扣减之前的金额',
-		b.total_amount AS '扣减金额',
-		a.available_balance - b.total_amount AS '扣减之后的金额'
+		a.available_balance/100 AS '扣减之前的金额',
+		b.total_amount/100 AS '扣减金额',
+		(a.available_balance - b.total_amount)/100 AS '扣减之后的金额'
 	FROM 
 	(	
 		SELECT

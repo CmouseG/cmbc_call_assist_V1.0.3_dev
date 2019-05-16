@@ -143,6 +143,7 @@ public class AssistCallController implements IAssistCall {
         callPlan.setAgentStartTime(new Date());
         callPlan.setCallState(ECallState.to_agent.ordinal());
         callPlan.setIntervened(true); //已介入
+        callPlan.setOrgId(orgId);
         callOutPlanService.update(callPlan);
 
         String toAgentFs = toAgentManager.findToAgentFsAdder();

@@ -139,6 +139,12 @@
         <include refid="Select_Where_SQL" />
     </select>
 
+    <update id="batchDeleteCallRecord">
+        update call_out_plan
+        set isdel = 1
+        <include refid="Select_Where_SQL" />
+    </update>
+
     <select id="selectCallIdList" resultType="java.math.BigInteger">
         select
         call_id as callId

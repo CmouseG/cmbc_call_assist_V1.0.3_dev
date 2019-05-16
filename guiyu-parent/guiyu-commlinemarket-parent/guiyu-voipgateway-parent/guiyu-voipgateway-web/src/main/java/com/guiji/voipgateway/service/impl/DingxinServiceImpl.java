@@ -189,7 +189,7 @@ public class DingxinServiceImpl implements ThirdGateWayService {
         TblPort port = null;
 
         for (TblPort obj : tblPorts) {
-            if(obj.getPortNo().equals(ro.getDevId())){
+            if(obj.getPortNo().equals(ro.getPortNo())){
                 port = obj;
             }
         }

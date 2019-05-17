@@ -132,8 +132,8 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode) {
-		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode, null);
+	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode,Integer orgId) {
+		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode, orgId);
 		ReturnData<PlanCountVO> result = new ReturnData<>();
 		result.setBody(planCountByUserId);
 		return result;

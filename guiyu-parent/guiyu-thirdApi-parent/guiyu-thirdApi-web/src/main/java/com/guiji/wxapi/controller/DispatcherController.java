@@ -26,12 +26,12 @@ public class DispatcherController {
 
     @ApiOperation(value = "获取计划数")
     @GetMapping("getCallPlanCount")
-    public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode) {
-        logger.info("================getCallCount,orgCode[{}]",orgCode);
+    public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode,@RequestHeader Integer orgId) {
+        logger.info("================getCallCount,orgCode[{}],orgId[{}]",orgCode,orgId);
 /*        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");
         }*/
-        return dispatchPlanOut.getPlanCountByUserId(orgCode);
+        return dispatchPlanOut.getPlanCountByUserId(orgCode,orgId);
 
     }
 

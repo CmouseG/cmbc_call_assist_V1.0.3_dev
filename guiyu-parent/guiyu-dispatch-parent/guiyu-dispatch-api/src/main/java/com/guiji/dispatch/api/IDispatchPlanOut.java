@@ -92,7 +92,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "orgCode", value = "orgCode", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/getPlanCountByUserId")
-    Result.ReturnData<PlanCountVO> getPlanCountByUserId(@RequestParam("orgCode") String orgCode);
+    Result.ReturnData<PlanCountVO> getPlanCountByUserId(@RequestParam("orgCode") String orgCode,@RequestParam("orgId") Integer orgId);
     
     
     @ApiOperation(value = "微信小程序一键停止拨打")

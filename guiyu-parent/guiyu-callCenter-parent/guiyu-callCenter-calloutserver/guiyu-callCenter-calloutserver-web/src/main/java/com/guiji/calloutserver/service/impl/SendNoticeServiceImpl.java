@@ -55,16 +55,16 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         int userId = Integer.valueOf(callOutPlan.getCustomerId());
         String phone = callOutPlan.getPhoneNum();
         String intent = callOutPlan.getAccurateIntent();
-//        String orgCode = callOutPlan.getOrgCode();
+        Integer orgId = callOutPlan.getOrgId();
         int linId  = callOutPlan.getLineId();
-        log.info("进入方法sendNotice，进入发送消息流程， userId[{}],phone[{}],intent[{}]",userId,phone,intent);
+        log.info("进入方法sendNotice，进入发送消息流程， userId[{}],phone[{}],intent[{}],orgId[{}]",userId,phone,intent,orgId);
 
         //	意向客户
         String noticeLabels = getSendLables(userId);
         if(!StringUtils.isNullOrEmpty(noticeLabels)){
             if(noticeLabels.contains(intent)){
                 log.info("产生意向客户,userId[{}],intent[{}]",userId,intent);
-                sendIntentionalCustomer(Long.valueOf(userId), phone, intent, callOutPlan.getCallId());
+                sendIntentionalCustomer(Long.valueOf(userId), phone, intent, callOutPlan.getCallId(),orgId);
             }
         }
         dealIntentFNotice(intent,userId);
@@ -173,7 +173,7 @@ public class SendNoticeServiceImpl implements SendNoticeService {
     /**
      * 意向客户，发送消息
      */
-    public void sendIntentionalCustomer(long userId, String phone, String intent, BigInteger callId){
+    public void sendIntentionalCustomer(long userId, String phone, String intent, BigInteger callId,Integer orgId){
         MessageSend messageSend = new MessageSend();
         messageSend.setNoticeType(NoticeType.intentional_customer);
         messageSend.setUserId(userId);
@@ -186,7 +186,7 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setSmsContent("客户号码："+phone+"，点击查看详细通话记录，及时进行客户跟进");
         //微信
         messageSend.setWeixinTemplateId(weixinTemplateId);
-        messageSend.setWeixinPagePath(weixinCallReordUrl+callId.toString());
+        messageSend.setWeixinPagePath(weixinCallReordUrl+callId.toString()+"&orgId="+orgId);
         messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
         map.put("keyword2",new SendMsgReqVO.Item(intent+"类意向客户",null));

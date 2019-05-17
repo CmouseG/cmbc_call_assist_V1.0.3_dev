@@ -186,6 +186,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (callRecordReq.getTime() != null){
             myCallOutPlanQueryEntity.setTime(callRecordReq.getTime() - 1);
         }
+        if (callRecordReq.getIsDesensitization() != null){
+            myCallOutPlanQueryEntity.setIsDesensitization(callRecordReq.getIsDesensitization());
+        }
         if (callRecordReq.getAccurateIntent() != null){
             myCallOutPlanQueryEntity.setAccurateIntent(callRecordReq.getAccurateIntent());
         }

@@ -64,7 +64,7 @@ public class AfterCallHandler {
                 uploadMainRecord(callRecord,callPlan);
 
                 List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
-                log.info("待上传的分支对话录音为[{}]", callOutDetailRecords);
+                log.debug("待上传的分支对话录音为[{}]", callOutDetailRecords);
                 uploadDetailsRecord(callOutDetailRecords,Long.valueOf(callPlan.getCustomerId()));
             }else{
                 log.warn("录音文件大小为0，上传失败，callId[{}]", callPlan.getCallId());

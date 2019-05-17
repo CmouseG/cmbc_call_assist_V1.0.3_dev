@@ -56,7 +56,8 @@ public class CallBack4MQListener {
 		//判断SIM卡线路是否可用
 		if (null != mqSuccPhoneDto
 				&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
-			this.checkSimLineDisabled(mqSuccPhoneDto);
+			this.checkSimLineDisabled(mqSuccPhoneDto);//SIM卡线路不可用，则放回队列
+			this.counterDecr(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getTempId());//计数器-1
 		}else {
 			PushRecordsExample ex = new PushRecordsExample();
 			ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
@@ -66,22 +67,29 @@ public class CallBack4MQListener {
 			re.setCallbackStatus(Constant.CALLBACKED);
 			int result = recordMapper.updateByExampleSelective(re, ex);
 			if (result > 0) {
-				try {
-					String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-					Object countObj = redisUtil.get(queueCount);
-					Integer currentCount = null != countObj ? ((Integer) countObj) : null;
-					if (null != currentCount && currentCount > 0) {
-//				currentCount = currentCount - 1;
-//				redisUtil.set(queueCount, currentCount);
-						redisUtil.decr(queueCount, 1);
-						redisUtil.expire(queueCount, 900);
-					} else {
-						logger.error("呼叫回调，" + queueCount + "已不存在");
-					}
-				} catch (Exception e) {
-					logger.error("计算器异常", e);
-				}
+				this.counterDecr(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getTempId());//计数器-1
 			}
+		}
+	}
+
+	/**
+	 * 计数器减1
+	 * @param userId
+	 * @param tempId
+	 */
+	private void counterDecr(Integer userId, String tempId){
+		try {
+			String queueCount = RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + userId + "_" + tempId;
+			Object countObj = redisUtil.get(queueCount);
+			Integer currentCount = null != countObj ? ((Integer) countObj) : null;
+			if (null != currentCount && currentCount > 0) {
+				redisUtil.decr(queueCount, 1);
+				redisUtil.expire(queueCount, 900);
+			} else {
+				logger.error("呼叫回调，" + queueCount + "已不存在");
+			}
+		} catch (Exception e) {
+			logger.error("计算器异常", e);
 		}
 	}
 

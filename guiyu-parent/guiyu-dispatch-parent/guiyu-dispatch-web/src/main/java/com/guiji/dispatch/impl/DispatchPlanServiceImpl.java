@@ -916,16 +916,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		String dateNowStr = sdf.format(d);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andOrgCodeLike(orgCode + "%");
-		if(null != orgId){
-			ex.createCriteria().andOrgIdEqualTo(orgId);
-		}
+				.andOrgCodeLike(orgCode + "%").andOrgIdEqualTo(orgId);
 		// 总数
 		int countByExample = dispatchPlanMapper.countByExample(ex);
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
 		ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andOrgCodeEqualTo(orgCode);
+				.andOrgCodeEqualTo(orgCode).andOrgIdEqualTo(orgId);
 		int countByExample2 = dispatchPlanMapper.countByExample(ex1);
 
 		PlanCountVO bean = new PlanCountVO();

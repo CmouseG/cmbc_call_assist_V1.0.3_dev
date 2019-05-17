@@ -80,7 +80,7 @@ public class SuccesPhone4MQLisener {
 			//判断SIM卡线路是否可用
 			if (null != mqSuccPhoneDto
 					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
-			    logger.info("当前计划plan_uuid:{},SIM卡线路id:{}不可用" + mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
+			    logger.info("当前计划plan_uuid:{},SIM卡线路id:{}不可用", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
 				return;
 			}
 

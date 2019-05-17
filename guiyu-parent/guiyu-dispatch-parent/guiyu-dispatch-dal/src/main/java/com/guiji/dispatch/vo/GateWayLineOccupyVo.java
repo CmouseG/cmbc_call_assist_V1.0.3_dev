@@ -1,7 +1,5 @@
 package com.guiji.dispatch.vo;
 
-import java.util.Date;
-
 public class GateWayLineOccupyVo {
 
     /**
@@ -33,6 +31,11 @@ public class GateWayLineOccupyVo {
      * 被占话术模板ID
      */
     private String botstenceId;
+
+    /**
+     * planuuid
+     */
+    private String plannUuid;
 
     public String getLineId() {
         return lineId;
@@ -80,5 +83,13 @@ public class GateWayLineOccupyVo {
 
     public void setBotstenceId(String botstenceId) {
         this.botstenceId = botstenceId;
+    }
+
+    public String getPlannUuid() {
+        return plannUuid;
+    }
+
+    public void setPlannUuid(String plannUuid) {
+        this.plannUuid = plannUuid;
     }
 }

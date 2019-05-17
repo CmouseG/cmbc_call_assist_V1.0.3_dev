@@ -188,7 +188,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									continue;
 								}else{
 								    //推送成功，则标识网关SIM卡路线被占用
-									occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName());
+									occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName(), dispatchRedis.getPlanUuid());
                                 }
 							}
 							catch (Exception e) {
@@ -297,13 +297,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	 * @param userId
 	 * @param botstenceId
 	 */
-	private void occupyGateWayLine(GateWayLineOccupyVo occupyLine, String userId, String botstenceId){
+	private void occupyGateWayLine(GateWayLineOccupyVo occupyLine, String userId, String botstenceId, String plannUuid){
 		if(null != occupyLine){
 			try {
 				occupyLine.setStatus(GateWayLineStatusEnum.OCCUPY.getState());
 				occupyLine.setOccupyTime(DateTimeUtils.getDateString(new Date(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 				occupyLine.setUserId(userId);
 				occupyLine.setBotstenceId(botstenceId);
+				occupyLine.setPlannUuid(plannUuid);
 				redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKey + occupyLine.getLineId(),
 						occupyLine);
 			}catch(Exception e){

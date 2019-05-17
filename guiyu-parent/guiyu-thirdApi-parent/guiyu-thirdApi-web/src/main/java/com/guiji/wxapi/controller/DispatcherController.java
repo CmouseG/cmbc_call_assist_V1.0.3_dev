@@ -38,16 +38,16 @@ public class DispatcherController {
 
     @ApiOperation(value = "一键停止拨打,type： 1包括，0 不包括")
     @GetMapping("stopCallPlan")
-    public Result.ReturnData<Boolean> stopCallPlan(@RequestHeader("orgCode") String orgCode,
+    public Result.ReturnData<Boolean> stopCallPlan(@RequestHeader("orgCode") String orgCode,@RequestHeader Integer orgId,
                                                    @RequestParam("type") @NotEmpty(message = "type不能为空") String type) {
 
-        logger.info("================stopCallPlan,orgCode[{}],type[{}]",orgCode,type);
+        logger.info("================stopCallPlan,orgCode[{}],type[{}],orgId[{}]",orgCode,type,orgId);
 
    /*     if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");
         }*/
 
-        Result.ReturnData<Boolean>  result = dispatchPlanOut.opertationStopPlanByUserId(orgCode,type);
+        Result.ReturnData<Boolean>  result = dispatchPlanOut.opertationStopPlanByUserId(orgCode,type,orgId);
 /*        if(result.success && result.getBody()){
             redisUtil.set("thirdapi-stopCallPlan"+orgCode,"600",600);
         }*/

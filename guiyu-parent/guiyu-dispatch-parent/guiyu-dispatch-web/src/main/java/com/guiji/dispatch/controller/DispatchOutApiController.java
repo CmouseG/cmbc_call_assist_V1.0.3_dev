@@ -140,8 +140,8 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode, String type) {
-		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, null, type);
+	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode, String type, Integer orgId) {
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, orgId, type);
 		ReturnData<Boolean> result = new ReturnData<>();
 		result.setBody(stopPlanByorgCode);
 		return result;

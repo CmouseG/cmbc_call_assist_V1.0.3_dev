@@ -101,7 +101,9 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "type", value = "type", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/opertationStopPlanByUserId")
-    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode,@RequestParam("type") String type);
+    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode,
+                                                          @RequestParam("type") String type,
+                                                          @RequestParam("orgId") Integer orgId);
     
 	@ApiOperation(value = "修改意向标签")
 	@ApiImplicitParams({

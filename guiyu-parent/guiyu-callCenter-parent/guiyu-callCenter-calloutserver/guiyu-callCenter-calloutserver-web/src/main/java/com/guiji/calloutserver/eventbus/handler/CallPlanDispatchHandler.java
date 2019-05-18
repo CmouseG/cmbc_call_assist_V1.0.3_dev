@@ -156,24 +156,24 @@ public class CallPlanDispatchHandler {
                 callPlan.setTalkNum(0);
                 callPlan.setIntervened(false);
 
-                if(simCall!=null && simCall){
-                    boolean simIsOk = false;
-                    try{
-                        Result.ReturnData<SimLineStatus> lineResult = lineMarketRemote.querySimLineStatus(callPlan.getLineId());
-                        log.info("调用querySimLineStatus,返回lineResult[{}]",lineResult);
-                        if(lineResult!=null && lineResult.success && lineResult.getBody().getStatus()==1){  //sim卡处于空闲状态
-                            simIsOk = true;
-                        }
-                    }catch (Exception e){
-                        log.error("调用querySimLineStatus出现异常",e);
-                    }
-                    if(!simIsOk){
-                        dispatchService.successScheduleSim(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(),
-                                callPlan.getLineId(), callPlan.getTempId(), true, false);
-                        callingCountManager.removeOneCall();
-                        return;
-                    }
-                }
+//                if(simCall!=null && simCall){
+//                    boolean simIsOk = false;
+//                    try{
+//                        Result.ReturnData<SimLineStatus> lineResult = lineMarketRemote.querySimLineStatus(callPlan.getLineId());
+//                        log.info("调用querySimLineStatus,返回lineResult[{}]",lineResult);
+//                        if(lineResult!=null && lineResult.success && lineResult.getBody().getStatus()==1){  //sim卡处于空闲状态
+//                            simIsOk = true;
+//                        }
+//                    }catch (Exception e){
+//                        log.error("调用querySimLineStatus出现异常",e);
+//                    }
+//                    if(!simIsOk){
+//                        dispatchService.successScheduleSim(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(),
+//                                callPlan.getLineId(), callPlan.getTempId(), true, false);
+//                        callingCountManager.removeOneCall();
+//                        return;
+//                    }
+//                }
 
 
                 try {

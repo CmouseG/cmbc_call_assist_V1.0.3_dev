@@ -135,6 +135,12 @@ public class CallBack4MQListener {
 				Integer lineId = mqSuccPhoneDto.getLineId();
 			//	logger.info("释放网关线路ID:{}", lineId);
 				if(null != lineId) {
+
+                    if(redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+lineId) != null)
+                    {
+                        redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+lineId, 0, 10);
+                    }
+
 					String gateWayLineKey = RedisConstant.RedisConstantKey.gatewayLineKey + lineId;
 					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
 			//		logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
@@ -144,6 +150,7 @@ public class CallBack4MQListener {
 							this.releaseGateWay(gateWayLine, gateWayLineKey);
 						}
 					}
+
 				}else{
 					//如果返回lineId，则模糊匹配查询出所有网关路线
 					Set<String> gatewayLineKeySet = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.gatewayLineKey);

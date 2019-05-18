@@ -120,7 +120,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									continue;
 								}
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
-
+								boolean isSimPush = false;//是否是SIM卡推送
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
                                 GateWayLineOccupyVo occupyLine = null;
 								try {
@@ -129,7 +129,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									callBean.setRemarks(dispatchRedis.getAttach());
 									List<Integer> lines = new ArrayList<>();
-									boolean isSimPush = false;//是否是SIM卡推送
+
 
 									for (DispatchBatchLine line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
@@ -138,13 +138,27 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									    	callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
 									        Integer lineId = line.getLineId();
                                             GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey+lineId);
-                                            if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
-                                                lines.add(line.getLineId());
-                                                occupyLine = gateWayLine;
+
+											Integer redisSimUserdCount = (Integer) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+lineId);
+											if (redisSimUserdCount == null) {
+												redisSimUserdCount = 0;
+											}
+											if(redisSimUserdCount == 0)
+											{
+												lines.add(line.getLineId());
+												occupyLine = gateWayLine;
 												isSimPush = true;
-                                        //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
-                                                break;//有闲置，则推送，网关路线只能推送一个
-                                            }
+												//        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+												break;//有闲置，则推送，网关路线只能推送一个
+											}
+
+//                                            if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
+//                                                //lines.add(line.getLineId());
+//                                                occupyLine = gateWayLine;
+//												//isSimPush = true;
+//                                        //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+//                                               // break;//有闲置，则推送，网关路线只能推送一个
+//                                            }
                                         }else {
                                             lines.add(line.getLineId());
 											callBean.setSimCall(false);
@@ -175,6 +189,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								// 增加推送次数
 								addVariable(callBean, queueCount);
+								if(isSimPush) {
+									redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+occupyLine.getLineId(), 1, 420);
+								}
+
 								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()
 										+ "---------" + callBean.getLineList() + ", 通知呼叫中心时间:" + DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
@@ -183,8 +201,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if (!startMakeCall.success) {
 									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("启动呼叫中心任务失败");
+
 									// 减少推送次数
+									redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+occupyLine.getLineId(), 0, 10);
 									cutVariable(callBean, queueCount);
+
 									continue;
 								}else{
 								    //推送成功，则标识网关SIM卡路线被占用

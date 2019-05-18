@@ -25,6 +25,9 @@ public class RedisConstant {
         //网关线路KEY  + 线路Id
         public final static String gatewayLineKey = "redis_gateway_line_key_";
 
+        //网关线路KEY  + 线路Id
+        public final static String gatewayLineKeyTmp = "dispatch_redis_gateway_line_key_";
+
         //分配用户、话术模板的机器人数据
         public final static String ROBOT_USER_RESOURCE = "ROBOT_USER_RESOURCE";
 

@@ -180,66 +180,68 @@ public class DingxinServiceImpl implements ThirdGateWayService {
     @Override
     public PortStatusEnum querySimPortStatus(PortRo ro) {
 
-        TblPortExample tblPortExample = new TblPortExample();
+        return PortStatusEnum.IDLE;
 
-        tblPortExample.createCriteria().andNeUuidEqualTo(ro.getDevId());
-
-        List<TblPort> tblPorts = tblPortMapper.selectByExample(tblPortExample);
-
-        TblPort port = null;
-
-        for (TblPort obj : tblPorts) {
-            if(obj.getPortNo().equals(ro.getPortNo())){
-                port = obj;
-            }
-        }
-
-        TblGwpExample tblGwpExample = new TblGwpExample();
-
-        tblGwpExample.createCriteria().andPortUuidEqualTo(port.getUuid());
-
-        List<TblGwp> tblGwps = tblGwpMapper.selectByExample(tblGwpExample);
-
-        TblGwp tblGwp = tblGwps.get(0);
-
-        //	1 初始化
-        //	5 空的
-        //	6 通信失败（端口错误）
-        //	10 空闲
-        //	11 忙碌
-        //	23 关机
-        Integer runStatus = port.getRunStatus();
-
-        //	0 无卡
-        //	3 未注册
-        //	5 注册成功
-        //	9 关机+
-        Integer modStatus = tblGwp.getModStatus();
-
-        if(modStatus == 5) {
-            switch (runStatus){
-                case 10:
-                    return PortStatusEnum.IDLE;
-                case 11:
-                    return PortStatusEnum.BUSY;
-                case 5:
-                    return PortStatusEnum.EMPTY;
-                case 6:
-                    return PortStatusEnum.ERROR_CONN;
-                case 23:
-                    return PortStatusEnum.CLOSED;
-            }
-        } else if (modStatus == 0) {
-            return PortStatusEnum.NO_SIM;
-        } else if (modStatus == 3) {
-            return PortStatusEnum.NOT_REGIST;
-        } else if (modStatus == 9) {
-            return PortStatusEnum.CLOSED;
-        } else {
-            return PortStatusEnum.OTHER;
-        }
-
-
-        return null;
+//        TblPortExample tblPortExample = new TblPortExample();
+//
+//        tblPortExample.createCriteria().andNeUuidEqualTo(ro.getDevId());
+//
+//        List<TblPort> tblPorts = tblPortMapper.selectByExample(tblPortExample);
+//
+//        TblPort port = null;
+//
+//        for (TblPort obj : tblPorts) {
+//            if(obj.getPortNo().equals(ro.getPortNo())){
+//                port = obj;
+//            }
+//        }
+//
+//        TblGwpExample tblGwpExample = new TblGwpExample();
+//
+//        tblGwpExample.createCriteria().andPortUuidEqualTo(port.getUuid());
+//
+//        List<TblGwp> tblGwps = tblGwpMapper.selectByExample(tblGwpExample);
+//
+//        TblGwp tblGwp = tblGwps.get(0);
+//
+//        //	1 初始化
+//        //	5 空的
+//        //	6 通信失败（端口错误）
+//        //	10 空闲
+//        //	11 忙碌
+//        //	23 关机
+//        Integer runStatus = port.getRunStatus();
+//
+//        //	0 无卡
+//        //	3 未注册
+//        //	5 注册成功
+//        //	9 关机+
+//        Integer modStatus = tblGwp.getModStatus();
+//
+//        if(modStatus == 5) {
+//            switch (runStatus){
+//                case 10:
+//                    return PortStatusEnum.IDLE;
+//                case 11:
+//                    return PortStatusEnum.BUSY;
+//                case 5:
+//                    return PortStatusEnum.EMPTY;
+//                case 6:
+//                    return PortStatusEnum.ERROR_CONN;
+//                case 23:
+//                    return PortStatusEnum.CLOSED;
+//            }
+//        } else if (modStatus == 0) {
+//            return PortStatusEnum.NO_SIM;
+//        } else if (modStatus == 3) {
+//            return PortStatusEnum.NOT_REGIST;
+//        } else if (modStatus == 9) {
+//            return PortStatusEnum.CLOSED;
+//        } else {
+//            return PortStatusEnum.OTHER;
+//        }
+//
+//
+//        return null;
     }
 }

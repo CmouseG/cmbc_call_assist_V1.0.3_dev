@@ -356,7 +356,12 @@ public class LineMarketController {
      * @return
      */
     @RequestMapping(value = "/queryExclusiveSipLineByOrg", method = RequestMethod.POST)
-    public Result.ReturnData<List<LineVo>> queryExclusiveSipLineByOrg(@RequestParam String qOrgCode, @RequestHeader Long userId) {
+    public Result.ReturnData<List<LineVo>> queryExclusiveSipLineByOrg(
+            @RequestParam String qOrgCode,
+            @RequestHeader Long userId,
+            @RequestHeader String orgCode,
+            @RequestHeader Integer authLevel,
+            @RequestHeader Boolean isSuperAdmin) {
 
         if(StringUtils.isEmpty(qOrgCode)) {
             throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
@@ -367,11 +372,18 @@ public class LineMarketController {
         condition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
         condition.setOrgCode(qOrgCode);
 
+        String voipUserId = "";
+
+        if(authLevel.equals(ClmConstants.USER_DATA_AUTH_ME)) {
+            condition.setUserId(userId.toString());
+            voipUserId = userId.toString();
+        }
+
         List<LineVo> list = new ArrayList<>();
 
         List<SipLineExclusive> sipLineExclusives = sipLineExclusiveService.querySipLineExclusiveList(condition);
 
-        List<VoipGwPort> voipGwPorts = voipGwManager.queryByOrgCode(qOrgCode);
+        List<VoipGwPort> voipGwPorts = voipGwManager.queryByOrgCode(qOrgCode, voipUserId);
 
         sipLineExclusives.forEach(obj -> {
             LineVo vo = new LineVo();

@@ -1,8 +1,5 @@
 package com.guiji.clm.service.voip;
 
-import com.guiji.clm.model.SimLineStatus;
-import com.guiji.fsmanager.api.ILineOperation;
-import com.guiji.fsmanager.entity.OutLineInfoAddReq;
 import com.guiji.clm.cfg.BrandConfig;
 import com.guiji.clm.constant.ClmConstants;
 import com.guiji.clm.dao.VoipGwInfoMapper;
@@ -16,6 +13,7 @@ import com.guiji.clm.enm.VoipGwRegTypeStatusEnum;
 import com.guiji.clm.enm.VoipGwStatusEnum;
 import com.guiji.clm.exception.ClmErrorEnum;
 import com.guiji.clm.exception.ClmException;
+import com.guiji.clm.model.SimLineStatus;
 import com.guiji.clm.service.fee.FeeService;
 import com.guiji.clm.service.fee.FeeService.FeeOptEnum;
 import com.guiji.clm.util.CheckUtil;
@@ -31,9 +29,11 @@ import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dict.api.ISysDict;
 import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.fsmanager.api.ILineOperation;
 import com.guiji.fsmanager.api.ISimCard;
 import com.guiji.fsmanager.entity.FsSipVO;
 import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.fsmanager.entity.OutLineInfoAddReq;
 import com.guiji.fsmanager.entity.SimCardVO;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
@@ -45,6 +45,7 @@ import com.guiji.voipgateway.model.PortRo;
 import com.guiji.voipgateway.model.PortStatusEnum;
 import com.guiji.voipgateway.model.SimPort;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -663,11 +664,16 @@ public class VoipGwManager {
 		}
 	}
 
-	public List<VoipGwPort> queryByOrgCode(String code) {
+	public List<VoipGwPort> queryByOrgCode(String code, String userId) {
 
     	VoipGwPortExample example = new VoipGwPortExample();
 
-    	example.createCriteria().andOrgCodeEqualTo(code);
+		VoipGwPortExample.Criteria criteria = example.createCriteria();
+		criteria.andOrgCodeEqualTo(code);
+
+    	if(StringUtils.isNotEmpty(userId)) {
+    		criteria.andUserIdEqualTo(userId);
+		}
 
 		return voipGwPortMapper.selectByExample(example);
 

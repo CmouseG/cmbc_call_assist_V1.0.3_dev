@@ -440,11 +440,11 @@ public class TtsWavServiceImpl implements ITtsWavService {
                 logger.error("调用TTS工具生成语音失败，返回数据：{}" + ttsRspData);
                 throw new RobotException(ttsRspData.getCode(), ttsRspData.getMsg());
             }
-            if (!RobotConstants.TTS_RSP_SUCCESS.equals(ttsRspData.getBody())) {
-                //如果异步方法返回直接失败，那么这条TTS合成记录抛出异常
-                logger.error("调用TTS工具生成语音返回状态失败，返回数据：{}" + ttsRspData);
-                throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(), ttsRspData.getBody());
-            }
+//            if (!RobotConstants.TTS_RSP_SUCCESS.equals(ttsRspData.getBody())) {
+//                //如果异步方法返回直接失败，那么这条TTS合成记录抛出异常
+//                logger.error("调用TTS工具生成语音返回状态失败，返回数据：{}" + ttsRspData);
+//                throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(), ttsRspData.getBody());
+//            }
         } catch (Exception e) {
             logger.error("调用TTS工具接口异常", e);
             throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(), AiErrorEnum.AI00060029.getErrorMsg());

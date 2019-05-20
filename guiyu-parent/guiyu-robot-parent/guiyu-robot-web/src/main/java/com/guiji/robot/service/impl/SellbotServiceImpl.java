@@ -1,8 +1,5 @@
 package com.guiji.robot.service.impl;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.guiji.robot.model.HangupRes;
-import com.guiji.robot.service.vo.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.ISellbotService;
+import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.FlHelloReq;
+import com.guiji.robot.service.vo.SellbotMatchReq;
+import com.guiji.robot.service.vo.SellbotRestoreReq;
+import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.util.HttpClientUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
@@ -119,28 +121,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @return
 	 */
 	@Override
-	public HangupRes clean(AiInuseCache ai, EndReq endReq) {
+	public void clean(FlHelloReq flHelloReq) {
 		//sellbot 在restore清理
-
-		String url = "http://"+ai.getIp()+":"+ai.getPort()+"/end";
-
-		JSONObject jsonObject = new JSONObject();
-
-		jsonObject.put("sentence", endReq.getSentence());
-		jsonObject.put("hang_up_halfway", endReq.getHangupHalfWay());
-		jsonObject.put("total_call_time", endReq.getTotalCallTime());
-		jsonObject.put("hangup_type", endReq.getHangupType());
-		jsonObject.put("play_time", endReq.getPlayTime());
-
-		String sellbotRsp = HttpClientUtil.doPostJson(url, JSONUtils.toJSONString(jsonObject));
-
-		logger.info("notify sellbot clean return : {}", sellbotRsp);
-
-		try{
-			return JsonUtils.json2Bean(sellbotRsp, HangupRes.class);
-		} catch (Exception ex) {
-			logger.error("sellbot返回报文解析失败：{}", ex.getMessage());
-			throw new RobotException(AiErrorEnum.AI00060037.getErrorCode(),AiErrorEnum.AI00060037.getErrorMsg());
-		}
 	}
 }

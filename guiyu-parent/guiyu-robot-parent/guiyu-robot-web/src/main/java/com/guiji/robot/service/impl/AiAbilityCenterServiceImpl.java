@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.guiji.robot.model.*;
-import com.guiji.robot.service.vo.*;
 import com.guiji.utils.JsonUtils;
+import net.minidev.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,35 @@ import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
+import com.guiji.robot.model.AiCallApplyReq;
+import com.guiji.robot.model.AiCallLngKeyMatchReq;
+import com.guiji.robot.model.AiCallNext;
+import com.guiji.robot.model.AiCallNextReq;
+import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
+import com.guiji.robot.model.AiHangupReq;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckRsp;
+import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.IAiAbilityCenterService;
 import com.guiji.robot.service.IAiCycleHisService;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ITtsWavService;
+import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.AiFlowSentenceCache;
+import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.CallInfo;
+import com.guiji.robot.service.vo.CallSentence;
+import com.guiji.robot.service.vo.FlHelloReq;
+import com.guiji.robot.service.vo.HsReplace;
+import com.guiji.robot.service.vo.SellbotMatchReq;
+import com.guiji.robot.service.vo.SellbotMatchRsp;
+import com.guiji.robot.service.vo.SellbotRestoreReq;
+import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
@@ -571,10 +595,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * 3、正常情况下，将机器人状态变更为空闲，可以接收其他电话请求
 	 * 4、清空消息流缓存
 	 * @param aiHangupReq
-	 * @return
 	 */
 	@Override
-	public HangupRes aiHangup(AiHangupReq aiHangupReq) {
+	public void aiHangup(AiHangupReq aiHangupReq) {
 		if(aiHangupReq == null) {
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
@@ -608,15 +631,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		callDealService.delUserCall(aiHangupReq.getUserId(), aiHangupReq.getSeqId());
 		/**7、调用机器人服务清理数据**/
 		try {
-			EndReq endReq = new EndReq();
-			endReq.setSeqId(aiHangupReq.getSeqId());
-			endReq.setTemplateId(aiHangupReq.getTemplateId());
-			return robotServerSwitchService.getRobotServerInstance(aiHangupReq.getTemplateId()).clean(nowAi, endReq);
+			FlHelloReq flHelloReq = new FlHelloReq();
+			flHelloReq.setSeqid(aiHangupReq.getSeqId());
+			flHelloReq.setCfg_name(aiHangupReq.getTemplateId());
+			robotServerSwitchService.getRobotServerInstance(aiHangupReq.getTemplateId()).clean(flHelloReq);
 		} catch (Exception e) {
 			//如果调用外部挂断失败的话，只打印异常，但是不继续抛出，不影响主业务
 			logger.error("会话id："+aiHangupReq.getSeqId()+",调用机器人服务挂断电话清理数据发生异常",e);
-
-			return new HangupRes();
 		}
 	}
 	

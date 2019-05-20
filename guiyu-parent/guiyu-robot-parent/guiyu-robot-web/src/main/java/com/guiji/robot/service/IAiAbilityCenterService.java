@@ -3,7 +3,17 @@ package com.guiji.robot.service;
 import java.util.List;
 
 
-import com.guiji.robot.model.*;
+import com.guiji.robot.model.AiCallApplyReq;
+import com.guiji.robot.model.AiCallLngKeyMatchReq;
+import com.guiji.robot.model.AiCallNext;
+import com.guiji.robot.model.AiCallNextReq;
+import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
+import com.guiji.robot.model.AiHangupReq;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsComposeCheckRsp;
+import com.guiji.robot.model.TtsVoiceReq;
 
 /** 
 * @ClassName: IAiAbilityCenterService 
@@ -86,10 +96,9 @@ public interface IAiAbilityCenterService {
 	
 	/**
 	 * 电话挂断通知AI释放资源
-     * @param aiHangupReq
-     * @return
-     */
-	HangupRes aiHangup(AiHangupReq aiHangupReq);
+	 * @param aiHangupReq
+	 */
+	void aiHangup(AiHangupReq aiHangupReq);
 	
 	
 }

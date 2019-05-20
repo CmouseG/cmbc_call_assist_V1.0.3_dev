@@ -1,7 +1,10 @@
 package com.guiji.robot.service;
 
-import com.guiji.robot.model.HangupRes;
-import com.guiji.robot.service.vo.*;
+import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.FlHelloReq;
+import com.guiji.robot.service.vo.SellbotMatchReq;
+import com.guiji.robot.service.vo.SellbotRestoreReq;
+import com.guiji.robot.service.vo.SellbotSayhelloReq;
 
 /** 
 * @ClassName: ISellbotService 
@@ -37,8 +40,8 @@ public interface ISellbotService {
 	
 	/**
 	 * 电话挂断后做数据清理（目前只有飞龙需要，sellbot不需要，为接口统一需要统一封装下）
-	 * @param endReq
+	 * @param flHelloReq
 	 * @return
 	 */
-	HangupRes clean(AiInuseCache aiInuseCache, EndReq endReq);
+	void clean(FlHelloReq flHelloReq);
 }

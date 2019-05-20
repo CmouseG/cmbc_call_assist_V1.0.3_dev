@@ -19,6 +19,7 @@ import com.guiji.robot.service.impl.AiNewTransService;
 import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +104,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @return
 	 */
 	public Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq){
+		logger.warn("[{},{},{},{},{}]", aiCallApplyReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallApply-in", JsonUtils.bean2Json(aiCallApplyReq));
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallApply(aiCallApplyReq);
+		logger.warn("[{},{},{},{},{}]", aiCallApplyReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallApply-out", JsonUtils.bean2Json(aiCallApplyReq));
 		return Result.ok(aiCallNext);
 	}
 	
@@ -112,7 +116,7 @@ public class RobotRemoteController implements IRobotRemote{
 		iAiAbilityCenterService.flowMsgPush(aiFlowMsgPushReq);
 		return Result.ok();
 	}
-	
+
 	
 	/**
 	 * 拨打AI电话
@@ -120,7 +124,10 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @return
 	 */
 	public Result.ReturnData<AiCallNext> aiCallStart(@RequestBody AiCallStartReq aiCallStartReq){
+
+		logger.warn("[{},{},{},{},{}]", aiCallStartReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallStart-in", JsonUtils.bean2Json(aiCallStartReq));
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallStart(aiCallStartReq);
+		logger.warn("[{},{},{},{},{}]", aiCallStartReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallStart-out", JsonUtils.bean2Json(aiCallNext));
 		return Result.ok(aiCallNext);
 	}
 	
@@ -143,7 +150,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @return
 	 */
 	public Result.ReturnData<AiCallNext> aiCallNext(@RequestBody AiCallNextReq aiCallNextReq){
+		logger.warn("[{},{},{},{},{}]", aiCallNextReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallNext-in", JsonUtils.bean2Json(aiCallNextReq));
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallNext(aiCallNextReq);
+		logger.warn("[{},{},{},{},{}]", aiCallNextReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallNext-out", JsonUtils.bean2Json(aiCallNext));
 		return Result.ok(aiCallNext);
 	}
 	
@@ -154,7 +163,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @return
 	 */
 	public Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq){
+		logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-in", JsonUtils.bean2Json(aiHangupReq));
 		iAiAbilityCenterService.aiHangup(aiHangupReq);
+		logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-out", "");
 		return Result.ok();
 	}
 	

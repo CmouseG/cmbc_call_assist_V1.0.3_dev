@@ -117,6 +117,9 @@ public class CallPlanController implements ICallPlan {
         callOutPlan.setAgentGroupId(dispatchPlan.getAgentGroupId());
         callOutPlan.setRemarks(dispatchPlan.getRemarks());
         callOutPlan.setParams(dispatchPlan.getParams());
+        callOutPlan.setImportTime(dispatchPlan.getImportTime());
+        callOutPlan.setEnterprise(dispatchPlan.getEnterprise());
+        callOutPlan.setAnswerUser(dispatchPlan.getAnswerUser());
 
         return callOutPlan;
     }

@@ -83,6 +83,12 @@ public class CallOutPlan implements Serializable {
 
     private String params;
 
+    private String enterprise;
+
+    private String answerUser;
+
+    private Date importTime;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallId() {
@@ -397,6 +403,30 @@ public class CallOutPlan implements Serializable {
         this.params = params;
     }
 
+    public String getEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(String enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    public String getAnswerUser() {
+        return answerUser;
+    }
+
+    public void setAnswerUser(String answerUser) {
+        this.answerUser = answerUser;
+    }
+
+    public Date getImportTime() {
+        return importTime;
+    }
+
+    public void setImportTime(Date importTime) {
+        this.importTime = importTime;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -440,8 +470,11 @@ public class CallOutPlan implements Serializable {
         sb.append(", isCancel=").append(isCancel);
         sb.append(", isAnswer=").append(isAnswer);
         sb.append(", intervened=").append(intervened);
-        sb.append(", lineName=").append(lineName);
         sb.append(", params=").append(params);
+        sb.append(", lineName=").append(lineName);
+        sb.append(", enterprise=").append(enterprise);
+        sb.append(", answerUser=").append(answerUser);
+        sb.append(", importTime=").append(importTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

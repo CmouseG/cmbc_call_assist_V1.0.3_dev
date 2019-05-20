@@ -2555,6 +2555,206 @@ public class CallOutPlanExample {
             addCriterion("params not between", value1, value2, "params");
             return (Criteria) this;
         }
+
+        public Criteria andEnterpriseIsNull() {
+            addCriterion("enterprise is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseIsNotNull() {
+            addCriterion("enterprise is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseEqualTo(String value) {
+            addCriterion("enterprise =", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseNotEqualTo(String value) {
+            addCriterion("enterprise <>", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseGreaterThan(String value) {
+            addCriterion("enterprise >", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseGreaterThanOrEqualTo(String value) {
+            addCriterion("enterprise >=", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseLessThan(String value) {
+            addCriterion("enterprise <", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseLessThanOrEqualTo(String value) {
+            addCriterion("enterprise <=", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseLike(String value) {
+            addCriterion("enterprise like", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseNotLike(String value) {
+            addCriterion("enterprise not like", value, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseIn(List<String> values) {
+            addCriterion("enterprise in", values, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseNotIn(List<String> values) {
+            addCriterion("enterprise not in", values, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseBetween(String value1, String value2) {
+            addCriterion("enterprise between", value1, value2, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnterpriseNotBetween(String value1, String value2) {
+            addCriterion("enterprise not between", value1, value2, "enterprise");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserIsNull() {
+            addCriterion("answer_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserIsNotNull() {
+            addCriterion("answer_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserEqualTo(String value) {
+            addCriterion("answer_user =", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserNotEqualTo(String value) {
+            addCriterion("answer_user <>", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserGreaterThan(String value) {
+            addCriterion("answer_user >", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserGreaterThanOrEqualTo(String value) {
+            addCriterion("answer_user >=", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserLessThan(String value) {
+            addCriterion("answer_user <", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserLessThanOrEqualTo(String value) {
+            addCriterion("answer_user <=", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserLike(String value) {
+            addCriterion("answer_user like", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserNotLike(String value) {
+            addCriterion("answer_user not like", value, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserIn(List<String> values) {
+            addCriterion("answer_user in", values, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserNotIn(List<String> values) {
+            addCriterion("answer_user not in", values, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserBetween(String value1, String value2) {
+            addCriterion("answer_user between", value1, value2, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnswerUserNotBetween(String value1, String value2) {
+            addCriterion("answer_user not between", value1, value2, "answerUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeIsNull() {
+            addCriterion("import_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeIsNotNull() {
+            addCriterion("import_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeEqualTo(Date value) {
+            addCriterion("import_time =", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeNotEqualTo(Date value) {
+            addCriterion("import_time <>", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeGreaterThan(Date value) {
+            addCriterion("import_time >", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("import_time >=", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeLessThan(Date value) {
+            addCriterion("import_time <", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeLessThanOrEqualTo(Date value) {
+            addCriterion("import_time <=", value, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeIn(List<Date> values) {
+            addCriterion("import_time in", values, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeNotIn(List<Date> values) {
+            addCriterion("import_time not in", values, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeBetween(Date value1, Date value2) {
+            addCriterion("import_time between", value1, value2, "importTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andImportTimeNotBetween(Date value1, Date value2) {
+            addCriterion("import_time not between", value1, value2, "importTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

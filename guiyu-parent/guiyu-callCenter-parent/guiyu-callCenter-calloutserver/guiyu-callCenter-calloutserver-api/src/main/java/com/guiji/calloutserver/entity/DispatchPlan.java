@@ -1,6 +1,7 @@
 package com.guiji.calloutserver.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class DispatchPlan implements Serializable {
@@ -30,6 +31,13 @@ public class DispatchPlan implements Serializable {
     private String remarks;
 
     private String params;
+
+    //用户所属企业单位
+    private String enterprise ;
+    //用户名称
+    private String answerUser ;
+    //导入时间
+    private Date importTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -135,6 +143,34 @@ public class DispatchPlan implements Serializable {
 
     public void setOrgId(Integer orgId) {
         this.orgId = orgId;
+    }
+
+    public boolean isSimCall() {
+        return simCall;
+    }
+
+    public String getEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(String enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    public String getAnswerUser() {
+        return answerUser;
+    }
+
+    public void setAnswerUser(String answerUser) {
+        this.answerUser = answerUser;
+    }
+
+    public Date getImportTime() {
+        return importTime;
+    }
+
+    public void setImportTime(Date importTime) {
+        this.importTime = importTime;
     }
 
     @Override

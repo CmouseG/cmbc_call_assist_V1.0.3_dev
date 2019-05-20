@@ -1,12 +1,15 @@
 package com.guiji.robot.service.impl;
 
-import com.guiji.robot.model.HangupRes;
-import com.guiji.robot.service.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.service.ISellbotService;
+import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.FlHelloReq;
+import com.guiji.robot.service.vo.SellbotMatchReq;
+import com.guiji.robot.service.vo.SellbotRestoreReq;
+import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.utils.LocalCacheUtil;
 
 /** 
@@ -179,28 +182,16 @@ public class SellbotMockServiceImpl implements ISellbotService{
 				"    \"sentence\": \""+sellbotMatchReq.getSentence()+"\"\r\n" + 
 				"}";
 	}
-
-    @Override
-    public HangupRes clean(AiInuseCache aiInuseCache, EndReq endReq) {
-
-	    HangupRes res = new HangupRes();
-
-	    res.setSeqid(endReq.getSeqId());
-	    res.setAccurate_intent("A");
-
-	    return res;
-
-    }
-
-//    /**
-//	 * 电话挂断后做数据清理（目前只有飞龙需要，sellbot不需要，为接口统一需要统一封装下）
-//	 * @param flHelloReq
-//	 * @return
-//	 */
-//	@Override
-//	public void clean(FlHelloReq flHelloReq) {
-//		//sellbot 在restore清理
-//	}
+	
+	/**
+	 * 电话挂断后做数据清理（目前只有飞龙需要，sellbot不需要，为接口统一需要统一封装下）
+	 * @param flHelloReq
+	 * @return
+	 */
+	@Override
+	public void clean(FlHelloReq flHelloReq) {
+		//sellbot 在restore清理
+	}
 	
 	/**
 	 * 从数组从随机获取一个元素

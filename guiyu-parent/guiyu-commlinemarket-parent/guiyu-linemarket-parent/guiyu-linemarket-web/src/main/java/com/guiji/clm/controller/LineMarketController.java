@@ -356,10 +356,7 @@ public class LineMarketController {
      * @return
      */
     @RequestMapping(value = "/queryExclusiveSipLineByOrg", method = RequestMethod.POST)
-    public Result.ReturnData<List<LineVo>> queryExclusiveSipLineByOrg(@RequestParam String qOrgCode,
-                                                                      @RequestHeader Long userId,
-                                                                      @RequestHeader String orgCode,
-                                                                      @RequestHeader Integer authLevel) {
+    public Result.ReturnData<List<LineVo>> queryExclusiveSipLineByOrg(@RequestParam String qOrgCode, @RequestHeader Long userId) {
 
         if(StringUtils.isEmpty(qOrgCode)) {
             throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
@@ -367,8 +364,6 @@ public class LineMarketController {
 
         SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
 
-        condition.setAuthLevel(authLevel);
-        condition.setUserId(userId.toString());
         condition.setStatusList(Lists.newArrayList(SipLineStatusEnum.OK.getCode()));
         condition.setOrgCode(qOrgCode);
 

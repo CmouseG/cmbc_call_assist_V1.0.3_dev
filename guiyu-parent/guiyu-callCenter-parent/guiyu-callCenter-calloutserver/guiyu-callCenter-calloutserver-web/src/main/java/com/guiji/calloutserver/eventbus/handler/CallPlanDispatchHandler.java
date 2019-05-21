@@ -190,15 +190,15 @@ public class CallPlanDispatchHandler {
                     return;
                 }
                 try {
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "申请机器人开始", callPlan.getCallId());
                     callResourceChecker.checkSellbot(callPlan);
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "申请机器人成功", callPlan.getCallId());
                 } catch (NullPointerException e) {
                     //回掉给调度中心，更改通话记录
                     //没有机器人资源，会少一路并发数，直接return了
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "申请机器人失败", callPlan.getCallId());
                     readyFail(callPlan,"605",false);
                     return;
@@ -206,13 +206,13 @@ public class CallPlanDispatchHandler {
 
                 //下载tts语音合成文件 todo 并发是否会有问题
                 try {
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "下载tts语音开始", callPlan.getCallId());
                     fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getPlanUuid(), callPlan.getCallId().toString());
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "下载tts语音成功", callPlan.getCallId());
                 }catch (Exception e){
-                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "下载tts语音失败", callPlan.getCallId());
                     log.error("downloadTtsWav，下载tts语音，出现异常 callid{}", callPlan.getCallId(), e);
                     readyFail(callPlan,null,true);

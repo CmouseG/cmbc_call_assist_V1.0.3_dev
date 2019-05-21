@@ -189,7 +189,7 @@ public class FsEventHandler {
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
             asrCustomerEvent.setCallPlan(callPlan);
-            log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+            log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                     Constant.MODULE_CALLOUTSERVER, "收到asr事件", event);
             asyncEventBus.post(asrCustomerEvent);
 //            event.setUuid(callPlan.getAgentChannelUuid());

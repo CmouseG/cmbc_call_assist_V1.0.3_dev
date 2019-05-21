@@ -47,7 +47,7 @@ public class CallPlanController implements ICallPlan {
     @Override
     public Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan) {
 
-        log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+        log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "发起呼叫", dispatchPlan);
 
         if (tempReadyService.isTempOk(dispatchPlan.getTempId())) {
@@ -55,11 +55,11 @@ public class CallPlanController implements ICallPlan {
 
             callPlanDispatchHandler.readyToMakeCall(callOutPlan, dispatchPlan.getLineList(), dispatchPlan.getSimCall());
 
-            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                     Constant.MODULE_CALLOUTSERVER, "发起呼叫成功", dispatchPlan.getPlanUuid());
             return Result.ok();
         } else {
-            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                     Constant.MODULE_CALLOUTSERVER, "发起呼叫失败>模板不存在", dispatchPlan.getPlanUuid());
             return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
         }

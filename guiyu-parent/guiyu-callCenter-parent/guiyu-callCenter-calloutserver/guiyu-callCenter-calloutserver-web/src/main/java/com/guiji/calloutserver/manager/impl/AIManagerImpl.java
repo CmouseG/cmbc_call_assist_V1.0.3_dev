@@ -177,7 +177,7 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
         hangupReq.setTemplateId(callOutPlan.getTempId());
 
-        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "释放机器人资源开始", callOutPlan.getAiId());
         Result.ReturnData returnData = null;
         try {
@@ -189,7 +189,7 @@ public class AIManagerImpl implements AIManager {
 
                 @Override
                 public void onErrorResult(Result.ReturnData result) {
-                    log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+                    log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "释放机器人资源失败", result);
                 }
 
@@ -203,10 +203,10 @@ public class AIManagerImpl implements AIManager {
             }, 20, 1, 10, 180, true);
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
-            log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+            log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                     Constant.MODULE_CALLOUTSERVER, "释放机器人资源失败", callOutPlan.getAiId());
         }
-        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "释放机器人资源成功", callOutPlan.getAiId());
     }
 

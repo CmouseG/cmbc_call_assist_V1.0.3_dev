@@ -97,8 +97,8 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
         if(list30!=null && list30.size() >0){
             list.addAll(list0);
         }
+        statisticMapper.deleteCallTodayTruncate();
         if(list!=null && list.size()>0){
-            statisticMapper.deleteCallTodayTruncate();
             statisticMapper.insertReportCallToday(list);
         }
 

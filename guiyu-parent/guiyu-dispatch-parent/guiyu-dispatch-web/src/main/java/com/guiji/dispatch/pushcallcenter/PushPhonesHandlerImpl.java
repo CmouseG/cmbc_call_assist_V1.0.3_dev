@@ -125,9 +125,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                 GateWayLineOccupyVo occupyLine = null;
 								try {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
-									callBean.setTempId(dispatchRedis.getRobot());
-									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
-									callBean.setRemarks(dispatchRedis.getAttach());
+									callBean.setTempId(dispatchRedis.getRobot());			//模板
+									callBean.setAgentGroupId(dispatchRedis.getCallAgent());	//坐席组
+									callBean.setRemarks(dispatchRedis.getAttach());			//参数
+									callBean.setAnswerUser(dispatchRedis.getCustName());	//客户名称
+									callBean.setEnterprise(dispatchRedis.getCustCompany());	//客户所属单位
+									callBean.setImportTime(dispatchRedis.getGmtCreate());	//导入时间
 									List<Integer> lines = new ArrayList<>();
 
 

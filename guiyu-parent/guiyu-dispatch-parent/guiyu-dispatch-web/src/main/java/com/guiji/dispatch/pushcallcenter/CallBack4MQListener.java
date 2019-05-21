@@ -129,8 +129,6 @@ public class CallBack4MQListener {
 	private void leisureGateWayLine(MQSuccPhoneDto mqSuccPhoneDto){
 		try {
 			if (null != mqSuccPhoneDto) {
-				String userId = mqSuccPhoneDto.getUserId()+"";
-				String botstenceId = mqSuccPhoneDto.getTempId();
 				//获取网关线路对象
 				Integer lineId = mqSuccPhoneDto.getLineId();
 			//	logger.info("释放网关线路ID:{}", lineId);
@@ -145,10 +143,8 @@ public class CallBack4MQListener {
 					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
 			//		logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
 					if (null != gateWayLine) {
-						if (StringUtils.equals(gateWayLine.getUserId(), userId) && StringUtils.equals(gateWayLine.getBotstenceId(), botstenceId)) {
 							//释放网关路线
 							this.releaseGateWay(gateWayLine, gateWayLineKey);
-						}
 					}
 
 				}else{
@@ -160,10 +156,8 @@ public class CallBack4MQListener {
 							//获取网关线路
 							String gateWayLineKey = iter.next();
 							GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo)redisUtil.get(gateWayLineKey);
-							if (null != gateWayLine && StringUtils.equals(gateWayLine.getUserId(), userId) && StringUtils.equals(gateWayLine.getBotstenceId(), botstenceId)) {
 								//释放网关路线
 								this.releaseGateWay(gateWayLine, gateWayLineKey);
-							}
 						}
 					}
 				}
@@ -183,8 +177,6 @@ public class CallBack4MQListener {
 		//释放网关线路状态
 		gateWayLine.setStatus(GateWayLineStatusEnum.LEISURE.getState());
 		gateWayLine.setReleaseTime(DateTimeUtils.getDateString(new Date(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
-	//	gateWayLine.setUserId(null);
-	//	gateWayLine.setBotstenceId(null);
 		redisUtil.set(gateWayLineKey, gateWayLine);
 	}
 }

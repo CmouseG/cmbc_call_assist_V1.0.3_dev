@@ -20,6 +20,10 @@ public class SmsException extends RuntimeException
     	super(message);
         this.code = code;
     }
+    
+    public SmsException(String message) {
+    	super(message);
+    }
 
 	public String getCode() {
 		return code;

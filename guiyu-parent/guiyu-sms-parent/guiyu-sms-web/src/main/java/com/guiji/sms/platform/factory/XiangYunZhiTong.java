@@ -18,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.IOUtils;
@@ -29,6 +30,10 @@ import com.guiji.sms.queue.SendDetailQueue;
 import com.guiji.sms.utils.DateUtil;
 import com.guiji.sms.utils.SetDetailParamsUtil;
 
+/**
+ * 短信平台-祥云智通
+ */
+@Component
 public class XiangYunZhiTong implements ISendMessage
 {
 	private static final Logger log = LoggerFactory.getLogger(XiangYunZhiTong.class);
@@ -39,8 +44,8 @@ public class XiangYunZhiTong implements ISendMessage
 	public void sendMessage(JSONObject params, List<String> phoneList)
 	{
 		try{
-			ExecutorService executorService = Executors.newFixedThreadPool(20);
-			CompletableFuture[] cfs = phoneList.stream().map( phone -> 
+			ExecutorService executorService = Executors.newFixedThreadPool(5);
+			CompletableFuture[] cfs = phoneList.parallelStream().map( phone -> 
 					CompletableFuture.supplyAsync( () -> 
 							send(params, phone), executorService) // 多线程执行
 					.whenComplete((record,exception) -> {

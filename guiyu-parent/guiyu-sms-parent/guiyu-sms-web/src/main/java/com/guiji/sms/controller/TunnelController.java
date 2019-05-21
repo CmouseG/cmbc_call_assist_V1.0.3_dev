@@ -17,6 +17,7 @@ import com.guiji.sms.controller.bean.Condition;
 import com.guiji.sms.controller.bean.TunnelAddReq;
 import com.guiji.sms.controller.bean.TunnelListRsp;
 import com.guiji.sms.controller.bean.TunnelParamsRsp;
+import com.guiji.sms.controller.bean.TunnelSendTestReq;
 import com.guiji.sms.service.TunnerlService;
 
 @RestController
@@ -71,6 +72,19 @@ public class TunnelController
 	{
 		AuthLevelData authLevelData = new AuthLevelData(userId, authLevel, orgCode);
 		return Result.ok(tunnerlService.queryAllTunnelNameWithContentType(authLevelData));
+	}
+	
+	/**
+	 * 测试发送
+	 */
+	@PostMapping("testSend")
+	public void testSend(@RequestBody TunnelSendTestReq tunnelSendTestReq,
+					@RequestHeader Long userId, 
+					@RequestHeader String orgCode)
+	{
+		tunnelSendTestReq.setUserId(userId.intValue());
+		tunnelSendTestReq.setOrgCode(orgCode);
+		tunnerlService.testSend(tunnelSendTestReq);
 	}
 
 }

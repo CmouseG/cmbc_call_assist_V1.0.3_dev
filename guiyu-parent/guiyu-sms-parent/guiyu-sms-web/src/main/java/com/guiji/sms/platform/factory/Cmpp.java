@@ -15,6 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.IOUtils;
@@ -27,8 +28,8 @@ import com.guiji.sms.utils.SetDetailParamsUtil;
 
 /**
  * 短信平台-Cmpp
- * @author Sun
  */
+@Component
 public class Cmpp implements ISendMessage
 {
 	private static final Logger log = LoggerFactory.getLogger(Cmpp.class);
@@ -38,8 +39,8 @@ public class Cmpp implements ISendMessage
 	public void sendMessage(JSONObject params, List<String> phoneList)
 	{
 		try{
-			ExecutorService executorService = Executors.newFixedThreadPool(20);
-			CompletableFuture[] cfs = phoneList.stream().map( phone -> 
+			ExecutorService executorService = Executors.newFixedThreadPool(5);
+			CompletableFuture[] cfs = phoneList.parallelStream().map( phone -> 
 					CompletableFuture.supplyAsync( () -> 
 							send(params, phone), executorService) // 多线程执行
 					.whenComplete((record,exception) -> {

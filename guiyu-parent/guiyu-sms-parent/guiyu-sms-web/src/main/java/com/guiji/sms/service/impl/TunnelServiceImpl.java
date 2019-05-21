@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.sms.controller.bean.AuthLevelData;
 import com.guiji.sms.controller.bean.Condition;
 import com.guiji.sms.controller.bean.TunnelAddReq;
 import com.guiji.sms.controller.bean.TunnelListRsp;
 import com.guiji.sms.controller.bean.TunnelParamsRsp;
+import com.guiji.sms.controller.bean.TunnelSendTestReq;
 import com.guiji.sms.dao.SmsTunnelMapper;
+import com.guiji.sms.dao.entity.SmsPlatform;
 import com.guiji.sms.dao.entity.SmsTunnel;
 import com.guiji.sms.dao.entity.SmsTunnelExample;
+import com.guiji.sms.handler.SendMsgHandler;
 import com.guiji.sms.service.TunnerlService;
 import com.guiji.sms.utils.AuthUtil;
 import com.guiji.sms.utils.JsonUtil;
@@ -24,6 +30,9 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class TunnelServiceImpl implements TunnerlService
 {
+	private static final Logger log = LoggerFactory.getLogger(TunnelServiceImpl.class);
+	@Autowired
+	SendMsgHandler sendMsgHandler;
 	@Autowired
 	SmsTunnelMapper tunnelMapper;
 	@Autowired
@@ -125,6 +134,31 @@ public class TunnelServiceImpl implements TunnerlService
 		if(count > 0){
 			throw new RuntimeException("此通道名称已存在，请您更换其他名称");
 		}
+	}
+
+	/**
+	 * 测试发送
+	 */
+	@Override
+	public void testSend(TunnelSendTestReq tunnelSendTestReq)
+	{
+		// 获取短信平台
+		SmsPlatform platform = redisUtil.getT(tunnelSendTestReq.getPlatformName());
+		if(platform == null) {log.error("未能获取到短信平台"); return;}
+		// 内部标识
+		String identification = platform.getIdentification();
+		// 手机号列表
+		List<String> phoneList = new ArrayList<>();
+		phoneList.add(tunnelSendTestReq.getPhone());
+		// 平台配置参数 + 发送详情记录参数
+		JSONObject params = JsonUtil.jsonStr2JsonObj(tunnelSendTestReq.getPlatformConfig());
+		params.put("smsContent", tunnelSendTestReq.getContent());
+		params.put("orgCode", tunnelSendTestReq.getOrgCode());
+		params.put("tunnelName", tunnelSendTestReq.getTunnelName());
+		params.put("taskName", "测试短信");
+		params.put("createId", tunnelSendTestReq.getUserId());
+		params.put("createTime", new Date());
+		sendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
 	}
 
 }

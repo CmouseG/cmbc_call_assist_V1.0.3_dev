@@ -27,6 +27,8 @@ public class SendMsgTaskMQListener
 	private static final Logger log = LoggerFactory.getLogger(SendMsgTaskMQListener.class);
 	
 	@Autowired
+	SendMsgHandler sendMsgHandler;
+	@Autowired
 	SmsTaskMapper taskMapper;
 	@Autowired
 	RedisUtil redisUtil;
@@ -72,7 +74,7 @@ public class SendMsgTaskMQListener
 		params.put("createId", smsTask.getCreateId());
 		params.put("createTime", new Date());
 		
-		SendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
+		sendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
 		
 		// 修改任务状态
 		smsTask.setSendStatus(2); // 已发送

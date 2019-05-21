@@ -30,6 +30,8 @@ public class SendMsgMQListener
 	@Autowired
 	ConfigService configService;
 	@Autowired
+	SendMsgHandler sendMsgHandler;
+	@Autowired
 	RedisUtil redisUtil;
 	
 	@RabbitHandler
@@ -79,7 +81,7 @@ public class SendMsgMQListener
 		params.put("createId", sendMReq.getUserId());
 		params.put("createTime", new Date());
 		
-		SendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
+		sendMsgHandler.choosePlatformToSend(identification, params, phoneList); // 根据内部标识选择平台发送
 	}	
 	
 }

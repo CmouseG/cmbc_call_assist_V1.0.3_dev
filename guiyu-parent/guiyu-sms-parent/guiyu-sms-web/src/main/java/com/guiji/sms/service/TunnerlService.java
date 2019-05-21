@@ -7,6 +7,7 @@ import com.guiji.sms.controller.bean.Condition;
 import com.guiji.sms.controller.bean.TunnelAddReq;
 import com.guiji.sms.controller.bean.TunnelListRsp;
 import com.guiji.sms.controller.bean.TunnelParamsRsp;
+import com.guiji.sms.controller.bean.TunnelSendTestReq;
 
 public interface TunnerlService
 {
@@ -29,5 +30,10 @@ public interface TunnerlService
 	 * 获取所有的通道名称和内容形式
 	 */
 	List<TunnelParamsRsp> queryAllTunnelNameWithContentType(AuthLevelData authLevelData);
+
+	/**
+	 * 测试发送
+	 */
+	void testSend(TunnelSendTestReq tunnelSendTestReq);
 
 }

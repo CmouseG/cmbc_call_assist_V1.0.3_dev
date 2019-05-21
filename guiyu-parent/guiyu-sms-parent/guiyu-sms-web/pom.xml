@@ -35,6 +35,11 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>LF27</groupId>
+			<artifactId>notify-api</artifactId>
+			<version>20171013</version>
+		</dependency>
 	</dependencies>
 
 	<build>

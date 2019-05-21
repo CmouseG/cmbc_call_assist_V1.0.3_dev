@@ -16,6 +16,7 @@ public enum ExceptionEnum
 	ERROR_XUANWU_GET_CONNECTION("-6","获取连接失败（玄武）"),
 	ERROR_XUANWU_WRITE_RESPONSE("-7","获取响应失败（玄武）"),
 	ERROR_INTERRUPTED("-8","发送详情队列中断"),
+	ERROR_REQUEST_WJF("-9","网经服发送短信失败"),
 	;
 	
 	private String code;

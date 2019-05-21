@@ -63,6 +63,9 @@ public class MyCallOutPlanQueryEntity {
     Integer isDesensitization;
     //多少天的数据
     Integer time;
+
+    String answerUser;
+    String enterprise;
 }
 
 

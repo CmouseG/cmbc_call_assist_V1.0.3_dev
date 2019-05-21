@@ -73,6 +73,12 @@
             <if test="lineId != null">
                 and line_id = #{lineId}
             </if>
+            <if test="answerUser != null">
+                and answer_user = #{answerUser}
+            </if>
+            <if test="enterprise != null">
+                and enterprise = #{enterprise}
+            </if>
             <if test="orgId != null">
                 and org_id = #{orgId}
             </if>
@@ -293,6 +299,9 @@
         `is_answer` int(1) DEFAULT '0' COMMENT '是否接听',
         `intervened` tinyint(1) DEFAULT '0' COMMENT '是否已介入',
         `params` varchar(512) DEFAULT NULL COMMENT '变量参数',
+        `enterprise` VARCHAR(32) DEFAULT NULL COMMENT '用户所属企业单位',
+        `answer_user` VARCHAR(32) DEFAULT NULL COMMENT '用户名称',
+        `import_time` DATETIME DEFAULT NULL COMMENT '导入时间',
         PRIMARY KEY (`call_id`),
         UNIQUE KEY uk_call_out_plan_${orgId}_plan_uuid (`plan_uuid`),
         KEY idx_call_out_plan_${orgId}_phone_num (`phone_num`),

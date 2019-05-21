@@ -60,6 +60,10 @@ public class CallOutPlanRegistration {
     private String  userName;
     private String  params;
 
+    private String  enterprise;
+    private String  answerUser;
+    private Date  importTime;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallId() {
@@ -276,5 +280,29 @@ public class CallOutPlanRegistration {
 
     public void setParams(String params) {
         this.params = params;
+    }
+
+    public String getEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(String enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    public String getAnswerUser() {
+        return answerUser;
+    }
+
+    public void setAnswerUser(String answerUser) {
+        this.answerUser = answerUser;
+    }
+
+    public Date getImportTime() {
+        return importTime;
+    }
+
+    public void setImportTime(Date importTime) {
+        this.importTime = importTime;
     }
 }

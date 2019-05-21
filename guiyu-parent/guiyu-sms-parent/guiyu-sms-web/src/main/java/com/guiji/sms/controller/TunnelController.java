@@ -77,6 +77,7 @@ public class TunnelController
 	/**
 	 * 测试发送
 	 */
+	@Jurisdiction("smsCenter_smsManage_test")
 	@PostMapping("testSend")
 	public void testSend(@RequestBody TunnelSendTestReq tunnelSendTestReq,
 					@RequestHeader Long userId, 

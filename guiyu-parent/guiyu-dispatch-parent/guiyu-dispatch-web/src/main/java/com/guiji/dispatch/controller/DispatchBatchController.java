@@ -27,13 +27,12 @@ public class DispatchBatchController {
 
     @ApiOperation(value="删除计划任务", notes="删除计划任务")
     @Log(info ="删除计划任务")
-    @Jurisdiction("taskCenter_phonelist_batchDelete,taskCenter_phonelist_delete")
+  //  @Jurisdiction("taskCenter_phonelist_batchDelete,taskCenter_phonelist_delete")
     @RequestMapping(value = "/delPlanBatch", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public boolean delPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
                                 @RequestBody OptPlanDto optPlanDto){
-        logger.info("/dispatch/batch/controller/delPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -41,6 +40,7 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgCode(orgCode);
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
+        logger.info("/dispatch/batch/controller/delPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.delPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("删除计划失败");

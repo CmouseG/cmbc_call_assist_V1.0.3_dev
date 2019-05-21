@@ -92,12 +92,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     public boolean delPlanBatch(OptPlanDto optPlanDto) {
         boolean bool = false;
         if(null != optPlanDto){
-            //操作开始、结束时间
-            if(!StringUtils.isEmpty(optPlanDto.getStartTime()) && !StringUtils.isEmpty(optPlanDto.getEndTime())) {
-                optPlanDto.setStartTime(optPlanDto.getStartTime() + " " + DateTimeUtils.DEFAULT_DATE_START_TIME);
-                optPlanDto.setEndTime(optPlanDto.getEndTime() + " " + DateTimeUtils.DEFAULT_DATE_END_TIME);
-            }
-
             //如果不查batchId时，前端会传batchId=0
             if (optPlanDto.getBatchId() != null && optPlanDto.getBatchId() != 0) {
                 optPlanDto.setBatchId(optPlanDto.getBatchId());
@@ -105,33 +99,33 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId()));//获取用户ID,如果不是本人权限，则为null
             optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                     optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
-        }
 
-        //全选
-        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
-            if(null != optPlanDto){
-                optPlanDto.setNocheckPlanUuid(null);
-            }
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
-
-            //只勾选
-        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
-            if(null != optPlanDto
-                    && null != optPlanDto.getCheckPlanUuid()
-                    && optPlanDto.getCheckPlanUuid().size()>0){
+            //全选
+            if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+                if(null != optPlanDto){
+                    optPlanDto.setNocheckPlanUuid(null);
+                }
                 bool = DaoHandler.getMapperBoolRes(
-                        planBatchMapper.delPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
-            }
+                        planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
 
-            //全选去勾
-        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
+                //只勾选
+            }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+                if(null != optPlanDto
+                        && null != optPlanDto.getCheckPlanUuid()
+                        && optPlanDto.getCheckPlanUuid().size()>0){
+                    bool = DaoHandler.getMapperBoolRes(
+                            planBatchMapper.delPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
+                }
+
+                //全选去勾
+            }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+                bool = DaoHandler.getMapperBoolRes(
+                        planBatchMapper.delPlanBatchByParam(optPlanDto, new Date()));
+            }
         }
         return bool;
     }
@@ -145,12 +139,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     public boolean suspendPlanBatch(OptPlanDto optPlanDto) {
         boolean bool = false;
         if(null != optPlanDto){
-            //操作开始、结束时间
-            if(!StringUtils.isEmpty(optPlanDto.getStartTime()) && !StringUtils.isEmpty(optPlanDto.getEndTime())) {
-                optPlanDto.setStartTime(optPlanDto.getStartTime() + " " + DateTimeUtils.DEFAULT_DATE_START_TIME);
-                optPlanDto.setEndTime(optPlanDto.getEndTime() + " " + DateTimeUtils.DEFAULT_DATE_END_TIME);
-            }
-
             //如果不查batchId时，前端会传batchId=0
             if (optPlanDto.getBatchId() != null && optPlanDto.getBatchId() != 0) {
                 optPlanDto.setBatchId(optPlanDto.getBatchId());
@@ -158,33 +146,33 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId()));//获取用户ID,如果不是本人权限，则为null
             optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                     optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
-        }
 
-        //全选
-        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
-            if(null != optPlanDto){
-                optPlanDto.setNocheckPlanUuid(null);
-            }
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.suspendPlanBatchByParam(optPlanDto, new Date()));
-
-            //只勾选
-        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
-            if(null != optPlanDto
-                    && null != optPlanDto.getCheckPlanUuid()
-                    && optPlanDto.getCheckPlanUuid().size()>0){
+            //全选
+            if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+                if(null != optPlanDto){
+                    optPlanDto.setNocheckPlanUuid(null);
+                }
                 bool = DaoHandler.getMapperBoolRes(
-                        planBatchMapper.suspendPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
-            }
+                        planBatchMapper.suspendPlanBatchByParam(optPlanDto, new Date()));
 
-            //全选去勾
-        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.suspendPlanBatchByParam(optPlanDto, new Date()));
+                //只勾选
+            }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+                if(null != optPlanDto
+                        && null != optPlanDto.getCheckPlanUuid()
+                        && optPlanDto.getCheckPlanUuid().size()>0){
+                    bool = DaoHandler.getMapperBoolRes(
+                            planBatchMapper.suspendPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
+                }
+
+                //全选去勾
+            }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+                bool = DaoHandler.getMapperBoolRes(
+                        planBatchMapper.suspendPlanBatchByParam(optPlanDto, new Date()));
+            }
         }
         return bool;
     }
@@ -198,12 +186,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     public boolean stopPlanBatch(OptPlanDto optPlanDto) {
         boolean bool = false;
         if(null != optPlanDto){
-            //操作开始、结束时间
-            if(!StringUtils.isEmpty(optPlanDto.getStartTime()) && !StringUtils.isEmpty(optPlanDto.getEndTime())) {
-                optPlanDto.setStartTime(optPlanDto.getStartTime() + " " + DateTimeUtils.DEFAULT_DATE_START_TIME);
-                optPlanDto.setEndTime(optPlanDto.getEndTime() + " " + DateTimeUtils.DEFAULT_DATE_END_TIME);
-            }
-
             //如果不查batchId时，前端会传batchId=0
             if (optPlanDto.getBatchId() != null && optPlanDto.getBatchId() != 0) {
                 optPlanDto.setBatchId(optPlanDto.getBatchId());
@@ -211,33 +193,33 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId()));//获取用户ID,如果不是本人权限，则为null
             optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                     optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
-        }
 
-        //全选
-        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
-            if(null != optPlanDto){
-                optPlanDto.setNocheckPlanUuid(null);
-            }
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.stopPlanBatchByParam(optPlanDto, new Date()));
-
-        //只勾选
-        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
-            if(null != optPlanDto
-                    && null != optPlanDto.getCheckPlanUuid()
-                    && optPlanDto.getCheckPlanUuid().size()>0){
+            //全选
+            if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+                if(null != optPlanDto){
+                    optPlanDto.setNocheckPlanUuid(null);
+                }
                 bool = DaoHandler.getMapperBoolRes(
-                        planBatchMapper.stopPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
-            }
+                        planBatchMapper.stopPlanBatchByParam(optPlanDto, new Date()));
 
-        //全选去勾
-        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.stopPlanBatchByParam(optPlanDto, new Date()));
+            //只勾选
+            }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+                if(null != optPlanDto
+                        && null != optPlanDto.getCheckPlanUuid()
+                        && optPlanDto.getCheckPlanUuid().size()>0){
+                    bool = DaoHandler.getMapperBoolRes(
+                            planBatchMapper.stopPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
+                }
+
+            //全选去勾
+            }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+                bool = DaoHandler.getMapperBoolRes(
+                        planBatchMapper.stopPlanBatchByParam(optPlanDto, new Date()));
+            }
         }
         return bool;
     }
@@ -251,12 +233,6 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
     public boolean recoveryPlanBatch(OptPlanDto optPlanDto) {
         boolean bool = false;
         if(null != optPlanDto){
-            //操作开始、结束时间
-            if(!StringUtils.isEmpty(optPlanDto.getStartTime()) && !StringUtils.isEmpty(optPlanDto.getEndTime())) {
-                optPlanDto.setStartTime(optPlanDto.getStartTime() + " " + DateTimeUtils.DEFAULT_DATE_START_TIME);
-                optPlanDto.setEndTime(optPlanDto.getEndTime() + " " + DateTimeUtils.DEFAULT_DATE_END_TIME);
-            }
-
             //如果不查batchId时，前端会传batchId=0
             if (optPlanDto.getBatchId() != null && optPlanDto.getBatchId() != 0) {
                 optPlanDto.setBatchId(optPlanDto.getBatchId());
@@ -264,33 +240,33 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
             //获取权限
             Integer authLevel = optPlanDto.getAuthLevel();//操作用户权限等级
-            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getUserId()));//获取用户ID,如果不是本人权限，则为null
+            optPlanDto.setUserId(getAuthUtil.getUserIdByAuthLevel(authLevel, optPlanDto.getOperUserId()));//获取用户ID,如果不是本人权限，则为null
             optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                     optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
-        }
 
-        //全选
-        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
-            if(null != optPlanDto){
-                optPlanDto.setNocheckPlanUuid(null);
-            }
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.recoveryPlanBatchByParam(optPlanDto, new Date()));
-
-            //只勾选
-        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
-            if(null != optPlanDto
-                    && null != optPlanDto.getCheckPlanUuid()
-                    && optPlanDto.getCheckPlanUuid().size()>0){
+            //全选
+            if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+                if(null != optPlanDto){
+                    optPlanDto.setNocheckPlanUuid(null);
+                }
                 bool = DaoHandler.getMapperBoolRes(
-                        planBatchMapper.recoveryPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
-            }
+                        planBatchMapper.recoveryPlanBatchByParam(optPlanDto, new Date()));
 
-            //全选去勾
-        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            bool = DaoHandler.getMapperBoolRes(
-                    planBatchMapper.recoveryPlanBatchByParam(optPlanDto, new Date()));
+                //只勾选
+            }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+                if(null != optPlanDto
+                        && null != optPlanDto.getCheckPlanUuid()
+                        && optPlanDto.getCheckPlanUuid().size()>0){
+                    bool = DaoHandler.getMapperBoolRes(
+                            planBatchMapper.recoveryPlanBatchById(optPlanDto.getCheckPlanUuid(), optPlanDto.getOrgIdList(), new Date()));
+                }
+
+                //全选去勾
+            }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+                bool = DaoHandler.getMapperBoolRes(
+                        planBatchMapper.recoveryPlanBatchByParam(optPlanDto, new Date()));
+            }
         }
         return bool;
     }

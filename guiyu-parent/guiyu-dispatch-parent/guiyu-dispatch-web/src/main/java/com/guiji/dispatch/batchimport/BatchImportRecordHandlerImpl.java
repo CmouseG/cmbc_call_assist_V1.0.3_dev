@@ -48,9 +48,6 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	private IPhoneRegionService phoneRegionService;
 
 	@Autowired
-	private GateWayLineService gateWayLineService;
-
-	@Autowired
 	private IBlackListService blackService;
 
 	@Autowired
@@ -98,17 +95,6 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	@Override
 	public void saveDB(DispatchPlan vo)
 	{
-		//路线类型
-		Integer lineType = null != vo.getLineType() ? vo.getLineType() : PlanLineTypeEnum.SIP.getType();
-		vo.setLineType(lineType);
-		// 加入线路
-		List<DispatchBatchLine> lineList = vo.getLines();
-		//加入线路
-		for (DispatchBatchLine lines : lineList)
-		{
-			lines.setLineType(vo.getLineType());
-		}
-
 		try
 		{
 			//查询号码归属地
@@ -127,16 +113,6 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		try
 		{
 			boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(vo));
-			if (bool)
-			{
-				//判断是否是路由网关路线
-				if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType)
-				{
-					//设置加入路由网关路线redis及状态
-					gateWayLineService.setGatewayLineRedis(lineList);
-				}
-			}
-
 		} catch (Exception e)
 		{
 			// doNothing

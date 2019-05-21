@@ -15,6 +15,12 @@ public class BatchImportExcelModel extends BaseRowModel
     @ExcelProperty(index = 2)
     private String attach;
 
+    @ExcelProperty(index = 3)
+    private String custCompany;
+
+    @ExcelProperty(index = 4)
+    private String custName;
+
     public String getPhone()
     {
         if(null == phone || "".equals(phone)){
@@ -63,9 +69,30 @@ public class BatchImportExcelModel extends BaseRowModel
         this.attach = attach;
     }
 
+    public String getCustCompany() {
+        return custCompany;
+    }
+
+    public void setCustCompany(String custCompany) {
+        this.custCompany = custCompany;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
     @Override
-    public String toString()
-    {
-        return "BatchImportExcelModel{" + "phone='" + phone + '\'' + ", paramaters='" + paramaters + '\'' + ", attach='" + attach + '\'' + '}';
+    public String toString() {
+        return "BatchImportExcelModel{" +
+                "phone='" + phone + '\'' +
+                ", paramaters='" + paramaters + '\'' +
+                ", attach='" + attach + '\'' +
+                ", custCompany='" + custCompany + '\'' +
+                ", custName='" + custName + '\'' +
+                '}';
     }
 }

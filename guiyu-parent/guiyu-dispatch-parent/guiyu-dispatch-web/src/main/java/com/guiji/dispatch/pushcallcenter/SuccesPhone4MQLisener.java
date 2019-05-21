@@ -95,8 +95,8 @@ public class SuccesPhone4MQLisener {
 			} else {
 				DispatchPlan dispatchPlan = list.get(0);
 				dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
-				// 增加意向标签
-				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());
+				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());// 增加意向标签
+				dispatchPlan.setLineId(mqSuccPhoneDto.getLineId()+"");// 实际拨打线路ID
 				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 				logger.info("当前队列任务回调修改结果" + result);
 				//消息通知(后期线程池)

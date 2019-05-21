@@ -158,7 +158,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
-		dispatchPlanBatch.setStatusShow(dispatchPlan.getStatusShow());
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatch.setStatusShow(Constant.BATCH_STATUS_SHOW);
 		dispatchPlanBatch.setOrgCode(orgCode);

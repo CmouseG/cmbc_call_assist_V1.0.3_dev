@@ -15,6 +15,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.service.GateWayLineService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
@@ -46,6 +47,9 @@ public class AsynFileServiceImpl implements AsynFileService {
 	private IDispatchBatchLineService lineService;
 	@Autowired
 	private IBotSentenceProcess Process;
+
+	@Autowired
+	private GateWayLineService gateWayLineService;
 
 	@Override
 	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String str, String orgCode, Integer orgId)
@@ -87,13 +91,21 @@ public class AsynFileServiceImpl implements AsynFileService {
 		dispatchPlan.setLineType(lineType);
 		// 加入线路
 		List<DispatchBatchLine> lineList = dispatchPlan.getLines();
-		for (DispatchBatchLine lines : lineList) {
-			lines.setBatchId(dispatchPlanBatch.getId());
-			lines.setLineType(dispatchPlan.getLineType());
-			lines.setOrgId(orgId);
-			lines.setUserId(userId.intValue());
-			lines.setLineType(lineType);
-			lineService.insert(lines);
+		if(null != lineList && lineList.size()>0) {
+			for (DispatchBatchLine lines : lineList) {
+				lines.setBatchId(dispatchPlanBatch.getId());
+				lines.setLineType(dispatchPlan.getLineType());
+				lines.setOrgId(orgId);
+				lines.setUserId(userId.intValue());
+				lines.setLineType(lineType);
+				lineService.insert(lines);
+			}
+
+			//判断是否是路由网关路线
+			if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType){
+				//设置加入路由网关路线redis及状态
+				gateWayLineService.setGatewayLineRedis(lineList);
+			}
 		}
 
 		// 导入

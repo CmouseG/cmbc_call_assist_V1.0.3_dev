@@ -95,7 +95,6 @@ public class PhoneRegionServiceImpl implements IPhoneRegionService{
 	 * @param phoneRegion
 	 * @return
 	 */
-	@Transactional
 	private PhoneRegion save(PhoneRegion phoneRegion) {
 		if(phoneRegion!=null) {
 			if(phoneRegion.getId()!=null) {

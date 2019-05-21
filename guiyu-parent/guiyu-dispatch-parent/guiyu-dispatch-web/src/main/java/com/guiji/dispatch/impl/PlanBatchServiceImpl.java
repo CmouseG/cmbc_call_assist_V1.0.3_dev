@@ -17,10 +17,7 @@ import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.enums.*;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.ExportFileDto;
-import com.guiji.dispatch.service.GetApiService;
-import com.guiji.dispatch.service.GetAuthUtil;
-import com.guiji.dispatch.service.IExportFileService;
-import com.guiji.dispatch.service.IPlanBatchService;
+import com.guiji.dispatch.service.*;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
@@ -82,6 +79,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
     @Autowired
     private IExportFileService exportFileService;
+
+    @Autowired
+    private GateWayLineService gateWayLineService;
 
     /**
      * 删除计划任务
@@ -327,12 +327,20 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             Integer lineType = null != submitPlan.getLineType()?submitPlan.getLineType(): PlanLineTypeEnum.SIP.getType();
             // 加入线路
             List<DispatchBatchLine> lineList = submitPlan.getLines();
-            for (DispatchBatchLine lines : lineList) {
-                lines.setBatchId(batchPlan.getId());
-                lines.setOrgId(operOrgId);
-                lines.setUserId(operUserId.intValue());
-                lines.setLineType(lineType);
-                lineService.insert(lines);
+            if(null != lineList && lineList.size()>0) {
+                for (DispatchBatchLine lines : lineList) {
+                    lines.setBatchId(batchPlan.getId());
+                    lines.setOrgId(operOrgId);
+                    lines.setUserId(operUserId.intValue());
+                    lines.setLineType(lineType);
+                    lineService.insert(lines);
+                }
+
+                //判断是否是路由网关路线
+                if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType){
+                    //设置加入路由网关路线redis及状态
+                    gateWayLineService.setGatewayLineRedis(lineList);
+                }
             }
 
             //查询并批量加入MQ
@@ -377,8 +385,13 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         //查询条件列表（注意，号码去重）
         List<JoinPlanDataVo> phoneList = planBatchMapper.getDisPhone(optPlanDto, limit);
         logger.info(">>>>>加入数量:{}", null != phoneList?phoneList.size():0);
+
+        Set<String> phoneOnly = new HashSet<String>();//号码唯一
         for(JoinPlanDataVo phoneData : phoneList){
-            this.pushPlanCreateMQ(submitPlan, batchId, phoneData, operUserId, operOrgId, operOrgCode);
+            if(!phoneOnly.contains(phoneData.getPhone())) {
+                this.pushPlanCreateMQ(submitPlan, batchId, phoneData, operUserId, operOrgId, operOrgCode);
+                phoneOnly.add(phoneData.getPhone());
+            }
         }
     }
 
@@ -393,13 +406,17 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
      */
     private void pushPlanCreateMQ(DispatchPlan submitPlan, Integer batchId, JoinPlanDataVo phoneData, Long userId, Integer orgId, String orgCode){
         try {
-            DispatchPlan newPlan = new DispatchPlan();
-            if(null != submitPlan){
-                BeanUtils.copyProperties(submitPlan, newPlan, DispatchPlan.class);
+            if(null == submitPlan){
+                return;
             }
+            DispatchPlan newPlan = new DispatchPlan();
+            BeanUtils.copyProperties(submitPlan, newPlan, DispatchPlan.class);
+
             newPlan.setPhone(phoneData.getPhone()); //号码
             newPlan.setParams(phoneData.getParams());   //参数
             newPlan.setAttach(phoneData.getAttach());   //参数、备注
+            newPlan.setCustName(phoneData.getCustName());   //用户名称
+            newPlan.setCustCompany(phoneData.getCustCompany());//用户所在单位
             newPlan.setRobot(submitPlan.getRobot());
             newPlan.setCallAgent(submitPlan.getCallAgent());
 

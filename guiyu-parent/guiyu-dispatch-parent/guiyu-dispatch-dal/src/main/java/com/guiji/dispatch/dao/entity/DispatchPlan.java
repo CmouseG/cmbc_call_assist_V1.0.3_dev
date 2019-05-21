@@ -103,8 +103,26 @@ public class DispatchPlan implements Serializable {
     private String cityName;
 
     private String cityCode;
-    
-    
+
+    /**
+     * 客户姓名
+     */
+    private String custName;
+
+    /**
+     * 客户所属单位
+     */
+    private String custCompany;
+
+    /**
+     * 实际拨打线路ID
+     */
+    private String lineId;
+
+    /**
+     * 备注描述
+     */
+    private String remark;
     
     public String getCityName() {
 		return cityName;
@@ -435,6 +453,38 @@ public class DispatchPlan implements Serializable {
 
     }
 
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
+    public String getCustCompany() {
+        return custCompany;
+    }
+
+    public void setCustCompany(String custCompany) {
+        this.custCompany = custCompany;
+    }
+
+    public String getLineId() {
+        return lineId;
+    }
+
+    public void setLineId(String lineId) {
+        this.lineId = lineId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     @Override
     public String toString() {
         return "DispatchPlan{" +
@@ -479,6 +529,10 @@ public class DispatchPlan implements Serializable {
                 ", lineType=" + lineType +
                 ", cityName='" + cityName + '\'' +
                 ", cityCode='" + cityCode + '\'' +
+                ", custName='" + custName + '\'' +
+                ", custCompany='" + custCompany + '\'' +
+                ", lineId='" + lineId + '\'' +
+                ", remark='" + remark + '\'' +
                 '}';
     }
 }

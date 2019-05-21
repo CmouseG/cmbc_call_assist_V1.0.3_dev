@@ -106,7 +106,7 @@ public class DispatchPlanController {
 
 
 	/**
-	 * 批量修改任务状态
+	 * 批量修改任务状态(不再使用)
 	 * 
 	 * @param dto
 	 * @return
@@ -144,7 +144,7 @@ public class DispatchPlanController {
 	}
 
 	/**
-	 * 批量加入
+	 * 批量加入(不再使用)
 	 * @param plans
 	 * @param userId
 	 * @param orgCode

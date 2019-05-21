@@ -299,11 +299,11 @@
 
     <select id="getDisPhone" resultType="com.guiji.dispatch.vo.JoinPlanDataVo">
         SELECT
-          a.phone, a.attach, a.params, MAX(a.gmt_create)
+          a.phone, a.attach, a.params, a.cust_name, a.cust_company, MAX(a.gmt_create)
         FROM
         (
             SELECT
-              p.phone, p.attach, p.params, p.gmt_create
+              p.phone, p.attach, p.params, p.cust_name, p.cust_company, p.gmt_create
             FROM dispatch_plan p
             WHERE p.is_del = 0
             <if test="optPlanDto != null">
@@ -356,7 +356,7 @@
             ORDER BY p.gmt_create DESC
             LIMIT 0, #{limit}
         ) a
-        GROUP BY a.phone, a.attach, a.params
+        GROUP BY a.phone, a.attach, a.params, a.cust_name, a.cust_company
 
         <!--  因为在MQ消费流程中已经过滤黑名单，所以此处不需要关联过滤黑名单
         WHERE

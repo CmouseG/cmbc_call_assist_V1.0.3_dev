@@ -10,6 +10,16 @@ public class JoinPlanDataVo implements Serializable {
 
     private String params;
 
+    /**
+     * 号码客户名称
+     */
+    private String custName;
+
+    /**
+     * 号码客户所属单位
+     */
+    private String custCompany;
+
     public String getPhone() {
         return phone;
     }
@@ -32,5 +42,21 @@ public class JoinPlanDataVo implements Serializable {
 
     public void setParams(String params) {
         this.params = params;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
+    public String getCustCompany() {
+        return custCompany;
+    }
+
+    public void setCustCompany(String custCompany) {
+        this.custCompany = custCompany;
     }
 }

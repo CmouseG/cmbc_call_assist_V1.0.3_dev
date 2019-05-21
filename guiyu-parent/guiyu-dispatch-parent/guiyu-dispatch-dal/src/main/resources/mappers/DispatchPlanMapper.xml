@@ -97,7 +97,8 @@
     plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour,
     gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
-    batch_name, flag, org_code,org_id,  city_name, city_code, line_type
+    batch_name, flag, org_code,org_id,  city_name, city_code, line_type,
+    cust_name, cust_company
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -144,7 +145,8 @@
       username, replay_type, is_del,
       line_name, robot_name, batch_name,
       flag, org_code,org_id, city_name,
-      city_code, line_type)
+      city_code, line_type,
+      cust_name, cust_company)
     values ( #{planUuid,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER},
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR},
       #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER},
@@ -155,7 +157,8 @@
       #{userName,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER},
       #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR},
       #{flag,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR},#{orgId,jdbcType=INTEGER}, #{cityName,jdbcType=VARCHAR},
-      #{cityCode,jdbcType=VARCHAR}, #{lineType})
+      #{cityCode,jdbcType=VARCHAR}, #{lineType},
+      #{custName}, #{custCompany})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
@@ -256,6 +259,12 @@
       <if test="lineType != null" >
         line_type,
       </if>
+      <if test="custName != null">
+        cust_name,
+      </if>
+      <if test="custCompany != null">
+        cust_company,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="planUuid != null" >
@@ -353,6 +362,12 @@
       </if>
       <if test="lineType != null" >
         #{lineType},
+      </if>
+      <if test="custName != null">
+        #{custName},
+      </if>
+      <if test="custCompany != null">
+        #{custCompany},
       </if>
     </trim>
   </insert>
@@ -458,6 +473,15 @@
       <if test="record.lineType != null" >
         line_type = #{record.lineType},
       </if>
+      <if test="record.custName != null" >
+        cust_name = #{record.custName},
+      </if>
+      <if test="record.custCompany != null" >
+        cust_company = #{record.custCompany},
+      </if>
+      <if test="record.lineId != null" >
+        line_id = #{record.lineId},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -494,7 +518,9 @@
     org_code = #{record.orgCode,jdbcType=VARCHAR},
     city_name = #{record.cityName,jdbcType=VARCHAR},
     city_code = #{record.cityCode,jdbcType=VARCHAR},
-    line_type = #{lineType}
+    line_type = #{lineType},
+    cust_name = #{custName},
+    cust_company = #{custCompany}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -592,6 +618,12 @@
       <if test="lineType != null" >
         line_type = #{lineType},
       </if>
+      <if test="custName != null" >
+        cust_name = #{custName},
+      </if>
+      <if test="custCompany != null" >
+        cust_company = #{custCompany},
+      </if>
     </set>
     where plan_uuid = #{planUuid,jdbcType=BIGINT} and org_id=#{orgId,jdbcType=BIGINT}
   </update>
@@ -627,7 +659,9 @@
       org_code = #{orgCode,jdbcType=VARCHAR},
       city_name = #{cityName,jdbcType=VARCHAR},
       city_code = #{cityCode,jdbcType=VARCHAR},
-      line_type = #{lineType}
+      line_type = #{lineType},
+      cust_name = #{custName},
+      cust_company = #{custCompany}
     where plan_uuid = #{planUuid,jdbcType=BIGINT}  and org_id=#{orgId,jdbcType=BIGINT}
   </update>
   <select id="selectByCallHour" resultMap="BaseResultMap" >

@@ -133,6 +133,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 
 		String params = row.getParamaters();
 		String attach = row.getAttach();
+		String custName = row.getCustName();
+		String custCompany = row.getCustCompany();
 
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		BeanUtil.copyProperties(dispatchPlanParam, dispatchPlan);
@@ -140,6 +142,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setPhone(phone);
 		dispatchPlan.setAttach(attach);
 		dispatchPlan.setParams(params);
+		dispatchPlan.setCustName(custName);
+		dispatchPlan.setCustCompany(custCompany);
 		dispatchPlan.setPlanUuid(SnowflakeIdWorker.nextId(this.orgId));
 		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());

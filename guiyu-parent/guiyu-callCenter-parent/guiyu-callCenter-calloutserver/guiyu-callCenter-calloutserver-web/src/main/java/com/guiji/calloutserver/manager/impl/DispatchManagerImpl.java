@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.manager.impl;
 
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.entity.MQSuccPhoneDto;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.utils.JsonUtils;
@@ -8,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
  * @Auther: 魏驰
@@ -25,8 +28,8 @@ public class DispatchManagerImpl implements DispatchManager {
     @Override
     public void successScheduleSim(String planUuid, String phoneNo, String intent, Integer userId, Integer lineId,
                                    String tempId, Boolean isNeedPlan, Boolean simLineIsOk) {
-        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}]",
-                planUuid,phoneNo,intent,lineId,simLineIsOk);
+        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}],isNeedPlan[{}]",
+                planUuid,phoneNo,intent,lineId,simLineIsOk,isNeedPlan);
         if(StringUtils.isBlank(planUuid)){
             log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}]",
                     planUuid,phoneNo,intent,lineId,simLineIsOk);
@@ -49,10 +52,15 @@ public class DispatchManagerImpl implements DispatchManager {
         if(simLineIsOk!=null){
             mqSuccPhoneDto.setSimLineIsOk(simLineIsOk);
         }
+        log.warn("{},{},{},{},{}", phoneNo, LocalDateTime.now(),
+                Constant.MODULE_CALLOUTSERVER, "回调调度中心", planUuid);
+
         rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto)); // 用于判断计划是否完成，可以重复调用
         if(isNeedPlan){
             rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));//这个队列用于控制是否会有下一个计划过来，机器人申请失败无需调用
         }
+        log.warn("{},{},{},{},{}", phoneNo, LocalDateTime.now(),
+                Constant.MODULE_CALLOUTSERVER, "回调调度中心成功", planUuid);
         log.info("========successSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
     }
 

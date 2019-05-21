@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -176,8 +177,8 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
         hangupReq.setTemplateId(callOutPlan.getTempId());
 
-        log.info("释放机器人资源，aiId[{}]", callOutPlan.getAiId());
-//        dispatchLogService.startServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");
+        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+                Constant.MODULE_CALLOUTSERVER, "释放机器人资源开始", callOutPlan.getAiId());
         Result.ReturnData returnData = null;
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -188,8 +189,8 @@ public class AIManagerImpl implements AIManager {
 
                 @Override
                 public void onErrorResult(Result.ReturnData result) {
-                    //TODO: 报警
-                    log.warn("释放机器人资源出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
+                    log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "释放机器人资源失败", result);
                 }
 
                 @Override
@@ -202,10 +203,11 @@ public class AIManagerImpl implements AIManager {
             }, 20, 1, 10, 180, true);
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
+            log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+                    Constant.MODULE_CALLOUTSERVER, "释放机器人资源失败", callOutPlan.getAiId());
         }
-//        dispatchLogService.endServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求挂断");
-
-        log.info("------------------- releaseAi success aino:" + hangupReq.getAiNo());
+        log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), LocalDateTime.now(),
+                Constant.MODULE_CALLOUTSERVER, "释放机器人资源成功", callOutPlan.getAiId());
     }
 
 

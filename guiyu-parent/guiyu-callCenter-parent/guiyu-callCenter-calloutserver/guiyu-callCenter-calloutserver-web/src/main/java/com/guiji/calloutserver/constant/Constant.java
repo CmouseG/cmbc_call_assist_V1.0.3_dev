@@ -11,5 +11,6 @@ public class Constant {
 
 
     public static final String UUID_SEPARATE= "__";
+    public static final String MODULE_CALLOUTSERVER= "calloutserver";
 
 }

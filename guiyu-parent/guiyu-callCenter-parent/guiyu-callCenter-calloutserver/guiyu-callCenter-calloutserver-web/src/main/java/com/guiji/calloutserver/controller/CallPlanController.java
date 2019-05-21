@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -46,24 +47,22 @@ public class CallPlanController implements ICallPlan {
     @Override
     public Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan) {
 
-        log.info("------start startMakeCall dispatchPlan[{}]",dispatchPlan);//注释掉  todo 加上字段校验
+        log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+                Constant.MODULE_CALLOUTSERVER, "发起呼叫", dispatchPlan);
 
-//        if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
-            if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
-                CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
+        if (tempReadyService.isTempOk(dispatchPlan.getTempId())) {
+            CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
 
-                callPlanDispatchHandler.readyToMakeCall(callOutPlan,dispatchPlan.getLineList(),dispatchPlan.getSimCall());
+            callPlanDispatchHandler.readyToMakeCall(callOutPlan, dispatchPlan.getLineList(), dispatchPlan.getSimCall());
 
-                log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
-                return Result.ok();
-            }else{
-                log.info(">>>>>>>end startMakeCall,temp not ok dispatchPlan[{}]",dispatchPlan);
-                return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
-            }
-//        }else{
-//            log.info(">>>>>>>end startMakeCall,call count too big[{}]",dispatchPlan);
-//            return Result.error(Constant.ERROR_CALLCOUNT_OUTLIMIT);
-//        }
+            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+                    Constant.MODULE_CALLOUTSERVER, "发起呼叫成功", dispatchPlan.getPlanUuid());
+            return Result.ok();
+        } else {
+            log.warn("{},{},{},{},{}", dispatchPlan.getPhone(), LocalDateTime.now(),
+                    Constant.MODULE_CALLOUTSERVER, "发起呼叫失败>模板不存在", dispatchPlan.getPlanUuid());
+            return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
+        }
     }
 
     @Override

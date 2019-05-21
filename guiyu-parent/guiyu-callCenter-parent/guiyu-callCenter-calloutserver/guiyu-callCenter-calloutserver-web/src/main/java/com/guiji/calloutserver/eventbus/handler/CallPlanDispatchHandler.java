@@ -5,6 +5,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -182,26 +184,37 @@ public class CallPlanDispatchHandler {
                 } catch (Exception ex) {
                     log.error("插入calloutplan异常,重复的uuid", ex);
                     //重复的id，回调
-                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), null,
+                            callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
                     callingCountManager.removeOneCall();
                     return;
                 }
                 try {
-                    log.info("开始检查机器人资源");
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "申请机器人开始", callPlan.getCallId());
                     callResourceChecker.checkSellbot(callPlan);
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "申请机器人成功", callPlan.getCallId());
                 } catch (NullPointerException e) {
                     //回掉给调度中心，更改通话记录
                     //没有机器人资源，会少一路并发数，直接return了
-                    log.error("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "申请机器人失败", callPlan.getCallId());
                     readyFail(callPlan,"605",false);
                     return;
                 }
 
                 //下载tts语音合成文件 todo 并发是否会有问题
                 try {
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "下载tts语音开始", callPlan.getCallId());
                     fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getPlanUuid(), callPlan.getCallId().toString());
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "下载tts语音成功", callPlan.getCallId());
                 }catch (Exception e){
-                    log.error("downloadTtsWav，下载tts语音，出现异常 callPlan[{}]", callPlan, e);
+                    log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                            Constant.MODULE_CALLOUTSERVER, "下载tts语音失败", callPlan.getCallId());
+                    log.error("downloadTtsWav，下载tts语音，出现异常 callid{}", callPlan.getCallId(), e);
                     readyFail(callPlan,null,true);
                     //释放机器人
                     aiManager.releaseAi(callPlan);

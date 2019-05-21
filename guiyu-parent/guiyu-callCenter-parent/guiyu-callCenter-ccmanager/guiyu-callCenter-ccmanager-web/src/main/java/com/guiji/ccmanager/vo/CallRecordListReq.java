@@ -64,4 +64,8 @@ public class CallRecordListReq {
     @ApiModelProperty(value = "没有全选的时候，传递的id列表")
     List<String> includeList;
 
+    @ApiModelProperty(value = "用户名称")
+    String answerUser;
+    @ApiModelProperty(value = "用户所属企业单位")
+    String enterprise;
 }

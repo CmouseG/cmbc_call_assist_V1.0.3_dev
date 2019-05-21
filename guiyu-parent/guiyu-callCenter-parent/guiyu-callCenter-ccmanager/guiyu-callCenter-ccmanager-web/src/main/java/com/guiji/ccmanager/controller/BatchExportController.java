@@ -171,6 +171,10 @@ public class BatchExportController {
         sheet.setColumnView(10, 10);
         sheet.setColumnView(11, 100);
         sheet.setColumnView(12, 20);
+        sheet.setColumnView(13, 20);
+        sheet.setColumnView(14, 20);
+        sheet.setColumnView(15, 20);
+        sheet.setColumnView(16, 20);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
         sheet.addCell(new Label(2, 0 , "意向备注",format));
@@ -185,6 +189,10 @@ public class BatchExportController {
         sheet.addCell(new Label(11, 0 , "通话记录",format));
         sheet.addCell(new Label(12, 0 , "客户信息",format));
         sheet.addCell(new Label(13, 0 , "登记历史",format));
+
+        sheet.addCell(new Label(14, 0 , "所属单位",format));
+        sheet.addCell(new Label(15, 0 , "姓名",format));
+        sheet.addCell(new Label(16, 0 , "添加时间",format));
 
         return sheet;
 
@@ -228,6 +236,13 @@ public class BatchExportController {
                 registration = "暂无信息";
             }
             sheet.addCell(new Label(13, i , registration,format));
+
+
+            sheet.addCell(new Label(14, i , callPlan.getEnterprise(),format));
+            sheet.addCell(new Label(15, i , callPlan.getAnswerUser(),format));
+            sheet.addCell(new Label(16, i , callPlan.getImportTime()!=null? sdf.format(callPlan.getImportTime()) : "",format));
+
+
         }
         return sheet;
     }

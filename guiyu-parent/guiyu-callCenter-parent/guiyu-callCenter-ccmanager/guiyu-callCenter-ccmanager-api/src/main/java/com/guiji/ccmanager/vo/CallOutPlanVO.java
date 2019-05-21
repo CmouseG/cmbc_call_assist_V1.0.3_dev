@@ -58,4 +58,6 @@ public class CallOutPlanVO implements Serializable {
     private String attach;
     private String planUuid;
 
+    private String enterprise;
+    private String answerUser;
 }

@@ -93,6 +93,10 @@ public class CallOutPlan4ListSelect {
 
     private String params;
 
+    private String answerUser;
+    private String enterprise;
+
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -389,6 +393,22 @@ public class CallOutPlan4ListSelect {
 
     public void setOrgId(Integer orgId) {
         this.orgId = orgId;
+    }
+
+    public String getAnswerUser() {
+        return answerUser;
+    }
+
+    public void setAnswerUser(String answerUser) {
+        this.answerUser = answerUser;
+    }
+
+    public String getEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(String enterprise) {
+        this.enterprise = enterprise;
     }
 
     @Override

@@ -407,6 +407,12 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(null != callRecordListReq.getLineId()){
             myCallOutPlanQueryEntity.setLineId(callRecordListReq.getLineId());
         }
+        if(StringUtils.isNotEmpty(callRecordListReq.getAnswerUser())){
+            myCallOutPlanQueryEntity.setAnswerUser(callRecordListReq.getAnswerUser());
+        }
+        if(StringUtils.isNotEmpty(callRecordListReq.getEnterprise())){
+            myCallOutPlanQueryEntity.setEnterprise(callRecordListReq.getEnterprise());
+        }
 
         myCallOutPlanQueryEntity.setIsdel(0);
         myCallOutPlanQueryEntity.setCallStateMin(Constant.CALLSTATE_HANGUP_OK);

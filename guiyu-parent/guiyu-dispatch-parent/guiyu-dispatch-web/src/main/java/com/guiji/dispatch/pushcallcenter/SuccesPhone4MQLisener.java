@@ -7,6 +7,7 @@ import java.util.List;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.enums.IsNotifyMsgEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.sms.api.bean.SendMReqVO;
@@ -75,8 +76,15 @@ public class SuccesPhone4MQLisener {
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		try {
+			if(null == message || "".equals(message)){
+				return;
+			}
 			MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
+			String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
 			logger.info("当前队列任务接受的uuid：" + mqSuccPhoneDto.getPlanuuid());
+			String paramStr = JsonUtils.bean2Json(mqSuccPhoneDto);
+			logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
+					"guiyu_dispatch", "呼叫中心回调SuccesPhone4MQLisener.process", paramStr);
 			//判断SIM卡线路是否可用
 			if (null != mqSuccPhoneDto
 					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {

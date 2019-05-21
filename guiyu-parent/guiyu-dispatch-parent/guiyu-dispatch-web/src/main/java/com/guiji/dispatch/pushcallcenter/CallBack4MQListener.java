@@ -47,9 +47,16 @@ public class CallBack4MQListener {
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
+		if(null == message || "".equals(message)){
+			return;
+		}
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
 		MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
-		logger.info("呼叫中心回调数据:{},回调时间:{}", JsonUtils.bean2Json(mqSuccPhoneDto), DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
+		String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
+		String paramStr = JsonUtils.bean2Json(mqSuccPhoneDto);
+		logger.info("呼叫中心回调数据:{},回调时间:{}", paramStr, time);
+		logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
+				"guiyu_dispatch", "呼叫中心回调CallBack4MQListener.process", paramStr);
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/

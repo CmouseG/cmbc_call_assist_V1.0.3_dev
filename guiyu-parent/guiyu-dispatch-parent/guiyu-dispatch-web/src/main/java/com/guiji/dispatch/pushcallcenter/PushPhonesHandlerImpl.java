@@ -30,7 +30,6 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,8 +195,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKeyTmp+occupyLine.getLineId(), 1, 420);
 								}
 
+								String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);//时间
+								String paramStr = JsonUtils.bean2Json(callBean);
 								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()
-										+ "---------" + callBean.getLineList() + ", 通知呼叫中心时间:" + DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
+										+ "---------数据:" + paramStr + ", 通知呼叫中心时间:" + time);
+								logger.warn("通知呼叫中心数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", callBean.getPhone(), time,
+										"guiyu_dispatch", "调用呼叫中心callPlanCenter.startMakeCall", paramStr);
 								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 								// 记录推送记录
 								insertPush(dispatchRedis);

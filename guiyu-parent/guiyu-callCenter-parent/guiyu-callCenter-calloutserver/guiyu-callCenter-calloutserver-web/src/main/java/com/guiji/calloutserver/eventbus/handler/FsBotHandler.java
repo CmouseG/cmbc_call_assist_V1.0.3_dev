@@ -80,7 +80,8 @@ public class FsBotHandler {
     @Subscribe
     @AllowConcurrentEvents
     public void handleAnswer(ChannelAnswerEvent event) {
-        log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
+        log.warn("{},{},{},{},{}", event.getCallerNum(), LocalDateTime.now(),
+                "calloutserver", "收到channelAnser事件", event.getUuid());
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
             String uuid = event.getUuid();

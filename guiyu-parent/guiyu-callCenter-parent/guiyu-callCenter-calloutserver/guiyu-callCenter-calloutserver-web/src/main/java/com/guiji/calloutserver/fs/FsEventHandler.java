@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -188,7 +189,8 @@ public class FsEventHandler {
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
             asrCustomerEvent.setCallPlan(callPlan);
-            log.info("构建好ALI_ASR事件[{}]，等待后续处理", event);
+            log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), LocalDateTime.now(),
+                    Constant.MODULE_CALLOUTSERVER, "收到asr事件", event);
             asyncEventBus.post(asrCustomerEvent);
 //            event.setUuid(callPlan.getAgentChannelUuid());
         } else {

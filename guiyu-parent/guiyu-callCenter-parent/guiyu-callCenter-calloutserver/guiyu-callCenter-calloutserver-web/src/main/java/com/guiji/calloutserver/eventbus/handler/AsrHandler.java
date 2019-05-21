@@ -7,6 +7,7 @@ import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.*;
+import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIRequest;
@@ -70,7 +71,6 @@ public class AsrHandler {
     public void handleCustomerAsrEvent(AsrCustomerEvent event) {
         try {
             CallOutPlan callPlan = event.getCallPlan();
-
             if (callPlan.getCallState() == ECallState.agent_answer.ordinal()) {
                 handleAfterAgentAsr(callPlan, event);
             } else {

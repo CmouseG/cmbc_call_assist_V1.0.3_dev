@@ -1,23 +1,23 @@
 package com.guiji.eventbus.handler;
 
-import com.google.common.eventbus.AllowConcurrentEvents;
-import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.config.FsBotConfig;
 import com.guiji.constant.Constant;
-import com.guiji.entity.CallPlan;
+import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
-import com.guiji.eventbus.event.AgentAnswerEvent;
-import com.guiji.eventbus.event.ChannelAnswerEvent;
+import com.guiji.eventbus.event.*;
 import com.guiji.fs.FsManager;
+import com.guiji.fs.pojo.AgentState;
 import com.guiji.service.*;
 import com.guiji.util.DateUtil;
+import com.guiji.web.request.AgentInfo;
+import com.google.common.eventbus.AllowConcurrentEvents;
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 
 

@@ -69,6 +69,16 @@ public class QueryPlanListDto extends PageDto {
      */
     private List<String> resultList;
 
+    /**
+     * 客户姓名
+     */
+    private String custName;
+
+    /**
+     * 客户所属单位
+     */
+    private String custCompany;
+
     public String getPhone() {
         return phone;
     }
@@ -163,5 +173,21 @@ public class QueryPlanListDto extends PageDto {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
+    public String getCustCompany() {
+        return custCompany;
+    }
+
+    public void setCustCompany(String custCompany) {
+        this.custCompany = custCompany;
     }
 }

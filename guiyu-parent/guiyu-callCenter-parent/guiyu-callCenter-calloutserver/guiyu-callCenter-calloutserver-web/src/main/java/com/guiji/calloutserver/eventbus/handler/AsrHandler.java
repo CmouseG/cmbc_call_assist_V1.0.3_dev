@@ -123,7 +123,7 @@ public class AsrHandler {
 
             AIRequest aiRequest = new AIRequest(event);
 
-            aiManager.sendAiRequest(aiRequest);
+            aiManager.sendAiRequest(aiRequest,callPlan);
 
             if(dealWithError3002(callPlan.getCallId().toString(), event.getAsrText(), callPlan.getOrgId())){
                 event.setAsrText("线路异常3002");

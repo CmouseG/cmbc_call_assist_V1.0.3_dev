@@ -24,6 +24,7 @@ public interface AIManager {
     /**
      * 发起ai请求
      * @param aiRequest
+     * @param callPlan
      * @return
      * @throws Exception
      *
@@ -32,7 +33,7 @@ public interface AIManager {
 
     post /remote/aiCallNex
      */
-    void sendAiRequest(AIRequest aiRequest) throws Exception;
+    void sendAiRequest(AIRequest aiRequest, CallOutPlan callPlan) throws Exception;
 
     /**
      * 释放被占用的ai资源

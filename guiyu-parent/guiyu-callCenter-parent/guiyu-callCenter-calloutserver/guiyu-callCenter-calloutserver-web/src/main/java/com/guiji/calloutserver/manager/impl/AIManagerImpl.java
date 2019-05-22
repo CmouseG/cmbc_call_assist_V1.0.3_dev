@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -128,27 +127,27 @@ public class AIManagerImpl implements AIManager {
      * 发起ai请求
      *
      * @param aiRequest
+     * @param callPlan
      * @return
      * @throws Exception
      */
-    public void sendAiRequest(AIRequest aiRequest) throws Exception {
+    public void sendAiRequest(AIRequest aiRequest, CallOutPlan callPlan) throws Exception {
 
         String uuid = aiRequest.getUuid();
-        String callId;
-        Integer orgId;
-        BigInteger bigIntegerId = null;
-        try {
-            String[] arr = uuid.split(Constant.UUID_SEPARATE);
-            callId = arr[0];
-            orgId = Integer.valueOf(arr[1]);
-            bigIntegerId = new BigInteger(callId);
-        }catch (Exception e){
-            return;
-        }
+//        String callId;
+//        Integer orgId;
+//        BigInteger bigIntegerId = null;
+//        try {
+//            String[] arr = uuid.split(Constant.UUID_SEPARATE);
+//            callId = arr[0];
+//            orgId = Integer.valueOf(arr[1]);
+//            bigIntegerId = new BigInteger(callId);
+//        }catch (Exception e){
+//            return;
+//        }
 
-        log.info("开始发起sellbot请求，request[{}]", aiRequest);
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
+//            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId, orgId);
 
             AiFlowMsgPushReq aiFlowMsgPushReq = new AiFlowMsgPushReq();
             aiFlowMsgPushReq.setAiNo(callPlan.getAiId());
@@ -159,6 +158,7 @@ public class AIManagerImpl implements AIManager {
             aiFlowMsgPushReq.setUserId(String.valueOf(callPlan.getCustomerId()));
 //            dispatchLogService.startServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口flowMsgPush");
             Result.ReturnData returnData = robotRemote.flowMsgPush(aiFlowMsgPushReq);
+            log.info("结束发起sellbot请求，request[{}]", aiRequest);
 //            dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口flowMsgPush");
 
         } catch (Exception ex) {

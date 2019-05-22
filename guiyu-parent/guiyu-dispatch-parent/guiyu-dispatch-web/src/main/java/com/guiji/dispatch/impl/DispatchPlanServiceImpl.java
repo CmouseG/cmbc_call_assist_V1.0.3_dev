@@ -1116,13 +1116,22 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		  }
 	  }
 
-	  if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
+	  if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {//批次号
 		  createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
 	  }
 
-	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
+	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {//意向标签
 		  createCriteria.andResultIn(queryPlanDto.getResultList());
 	  }
+
+	  if(!StringUtils.isEmpty(queryPlanDto.getCustName())){//客户名称模糊查询条件
+		  createCriteria.andCustNameLike("%" + queryPlanDto.getCustName() + "%");
+	  }
+
+	  if(!StringUtils.isEmpty(queryPlanDto.getCustCompany())){//客户所属单位模糊查询条件
+	  	createCriteria.andCustCompanyLike("%" + queryPlanDto.getCustCompany() + "%");
+	  }
+
 	  /*if (!queryPlanDto.isSuperAdmin()) {
 		  createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
 	  }*/

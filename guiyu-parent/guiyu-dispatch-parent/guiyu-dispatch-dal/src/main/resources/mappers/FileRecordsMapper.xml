@@ -528,7 +528,26 @@
   <select id="queryFileRecordListPage" resultType="com.guiji.dispatch.vo.FileRecordsListVo" >
     SELECT
       COUNT(e.id) as error_count,
-      a.*
+      a.id				 ,
+      a.batchId          ,
+      a.batch_name       ,
+      a.file_name        ,
+      (a.success_count - COUNT(e.id)) as success_count   ,
+      a.failure_count    ,
+      a.create_time      ,
+      a.user_id          ,
+      a.org_code         ,
+      a.robot            ,
+      a.line_id          ,
+      a.call_data        ,
+      a.status           ,
+      a.call_hour        ,
+      a.is_clean         ,
+      a.url              ,
+      a.file_path        ,
+      a.line_name        ,
+      a.robot_name       ,
+      a.user_name
     FROM
     (
       SELECT

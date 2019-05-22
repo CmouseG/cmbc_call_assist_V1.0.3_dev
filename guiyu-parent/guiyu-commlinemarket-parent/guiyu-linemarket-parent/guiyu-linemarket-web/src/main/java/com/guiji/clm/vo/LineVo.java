@@ -1,6 +1,5 @@
 package com.guiji.clm.vo;
 
-import com.guiji.clm.dao.entity.SipLineExclusive;
 import lombok.Data;
 
 /** 

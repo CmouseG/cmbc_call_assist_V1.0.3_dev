@@ -73,13 +73,11 @@ public class DispatchPlan implements Serializable {
     private String batchName;
 
     private String flag;
-    
-    private static final long serialVersionUID = 1L;
 
 	private List<String> robotIds;
-	
+
 	private String userName ;
-	
+
     private String orgCode;
 
     /**
@@ -99,7 +97,7 @@ public class DispatchPlan implements Serializable {
      * PlanLineTypeEnum
      */
     private Integer lineType;
-    
+
     private String cityName;
 
     private String cityCode;
@@ -114,6 +112,9 @@ public class DispatchPlan implements Serializable {
      */
     private String custCompany;
 
+
+    private String callbackUrl;
+
     /**
      * 实际拨打线路ID
      */
@@ -123,7 +124,7 @@ public class DispatchPlan implements Serializable {
      * 备注描述
      */
     private String remark;
-    
+
     public String getCityName() {
 		return cityName;
 	}
@@ -170,7 +171,7 @@ public class DispatchPlan implements Serializable {
 
 	public void setSuccess(boolean isSuccess) {
 		this.isSuccess = isSuccess;
-	} 
+	}
 
 	public Integer getLimitStart() {
 		return limitStart;
@@ -451,6 +452,14 @@ public class DispatchPlan implements Serializable {
 
     public void setPlanUuidLong(long planUuidLong) {
 
+    }
+
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl == null ? null : callbackUrl.trim();
     }
 
     public String getCustName() {

@@ -1,20 +1,11 @@
 package com.guiji.clm.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.assertj.core.util.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.google.common.base.Function;
+import com.guiji.clm.api.VoipMarketRemote;
 import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.enm.VoipGwStatusEnum;
+import com.guiji.clm.model.SimLineVo;
 import com.guiji.clm.service.voip.VoipGwManager;
 import com.guiji.clm.service.voip.VoipGwPortService;
 import com.guiji.clm.util.DataLocalCacheUtil;
@@ -25,9 +16,13 @@ import com.guiji.clm.vo.VoipGwQueryCondition;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
-import com.guiji.user.dao.entity.SysOrganization;
-
+import com.guiji.utils.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /** 
 * @Description: 语音网关外部服务
@@ -38,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping(value = "/voip")
-public class VoipGwController {
-	@Autowired
-	VoipGwManager voipGwManager;
-	@Autowired
-	VoipGwPortService voipGwPortService;
-	@Autowired
-	DataLocalCacheUtil dataLocalCacheUtil;
+public class VoipGwController implements VoipMarketRemote {
+    @Autowired
+    VoipGwManager voipGwManager;
+    @Autowired
+    VoipGwPortService voipGwPortService;
+    @Autowired
+    DataLocalCacheUtil dataLocalCacheUtil;
 
 	/**
 	 * 语音网关设备初始化
@@ -213,5 +208,27 @@ public class VoipGwController {
 		}
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return Result.ok(list);
+	}
+
+	@Override
+	@RequestMapping(value = "/querySimLineInfo", method = RequestMethod.POST)
+	public Result.ReturnData<List<SimLineVo>> querySimLineInfo(@RequestParam("userId") Long userId) {
+		VoipGwPortQueryCondition condition = new VoipGwPortQueryCondition();
+		condition.setUserId(userId.toString());
+		if (condition.getGwStatus() == null) {
+			//默认查询正常数据
+			condition.setGwStatus(com.google.common.collect.Lists.newArrayList(VoipGwStatusEnum.OK.getCode()));
+		}
+		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
+
+		return Result.ok(com.google.common.collect.Lists.transform(list, new Function<VoipGwPort, SimLineVo>() {
+			@Override
+			public SimLineVo apply(VoipGwPort voipGwPort) {
+
+				SimLineVo simLineVo = new SimLineVo();
+				BeanUtil.copyProperties(voipGwPort, simLineVo);
+				return simLineVo;
+			}
+		}));
 	}
 }

@@ -16,6 +16,7 @@ import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.GateWayLineService;
+import com.guiji.dispatch.service.IDispatchPlanBatchService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
@@ -51,6 +52,9 @@ public class AsynFileServiceImpl implements AsynFileService {
 	@Autowired
 	private GateWayLineService gateWayLineService;
 
+	@Autowired
+	IDispatchPlanBatchService dispatchPlanBatchService;
+
 	@Override
 	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String str, String orgCode, Integer orgId)
 			throws Exception {
@@ -62,10 +66,6 @@ public class AsynFileServiceImpl implements AsynFileService {
 
 		//
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
-		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
-		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
-		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
-		dispatchPlanBatch.setUserId(userId.intValue());
 
 		// 查询用户名称
 		ReturnData<SysUser> sysUser = authService.getUserById(userId);
@@ -79,9 +79,9 @@ public class AsynFileServiceImpl implements AsynFileService {
 
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		dispatchPlanBatch.setUserId(userId.intValue());
-		dispatchPlanBatch.setOrgCode(orgCode);
-		dispatchPlanBatch.setStatusShow(Constant.BATCH_STATUS_SHOW);
-		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
+		dispatchPlanBatchService.addDispatchPlanBatch(dispatchPlanBatch);
+
 
 		FileRecords FileRecord = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, file);
 		dispatchPlan.setFileRecordId(FileRecord.getId().intValue());

@@ -1,41 +1,33 @@
 package com.guiji.dispatch.line;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Calendar;
-import java.util.Date;
-
 import com.guiji.auth.api.IOrg;
-import com.guiji.component.result.Result;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.ccmanager.entity.LineRateResponse;
-import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.model.RateTimeReq;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.guiji.dispatch.dao.DispatchBatchLineMapper;
-import com.guiji.dispatch.dao.entity.DispatchBatchLine;
-import com.guiji.dispatch.dao.entity.DispatchBatchLineExample;
 import com.guiji.ccmanager.api.ILineRate;
+import com.guiji.ccmanager.entity.LineRateResponse;
 import com.guiji.clm.api.LineSipRouteRemote;
 import com.guiji.clm.model.SipRouteItemVO;
 import com.guiji.clm.model.SipRouteRuleVO;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.dao.DispatchBatchLineMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
+import com.guiji.dispatch.dao.entity.DispatchBatchLineExample;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.model.RateTimeReq;
+import com.guiji.dispatch.service.GetApiService;
+import com.guiji.dispatch.service.LineMarketService;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 @Service
 public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 {
@@ -524,6 +516,37 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 		Calendar ca = Calendar.getInstance();
 		ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return ca.getTime();
+	}
+
+
+	@Autowired
+	GetApiService getApiService;
+
+	@Autowired
+	LineMarketService lineMarketService;
+
+
+	/**
+	 * @param batchId 批次id
+	 * @param userId 用户id
+	 * @param lineId 线路id
+	 * @return
+	 */
+	@Override
+	public DispatchBatchLine addByLineId(Integer batchId, Integer userId, Integer lineId) {
+		SysUser sysUser = getApiService.getUserById(userId.toString());
+
+		Integer orgId = getApiService.getOrgIdByUser(userId.toString());
+
+		DispatchBatchLine dispatchBatchLine = lineMarketService.getByLineId(lineId, userId);
+
+		dispatchBatchLine.setOrgId(orgId);
+		dispatchBatchLine.setBatchId(batchId);
+
+		dispatchBatchLineMapper.insert(dispatchBatchLine);
+
+		return dispatchBatchLine;
+
 	}
 
 }

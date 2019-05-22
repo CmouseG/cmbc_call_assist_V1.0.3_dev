@@ -1,28 +1,39 @@
 package com.guiji.dispatch.batchimport;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.guiji.component.result.Result;
+import com.guiji.dispatch.bean.DispatchPlanBatchAddRes;
+import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
-import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
-import com.guiji.dispatch.service.GateWayLineService;
+import com.guiji.dispatch.model.DispatchPlanBatchAddVo;
+import com.guiji.dispatch.model.MqNotifyMessage;
+import com.guiji.dispatch.model.PlanCallResultVo;
 import com.guiji.dispatch.service.IBlackListService;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhoneRegionService;
+import com.guiji.dispatch.service.ThirdApiNotifyService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.guiyu.message.component.FanoutSender;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +64,18 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	@Autowired
 	private FanoutSender fanoutSender;
 
+	@Autowired
+	IDispatchPlanService dispatchPlanService;
+
+	@Autowired
+	ThirdApiNotifyService thirdApiNotifyService;
+
+	@Autowired
+	DispatchPlanBatchMapper dispatchPlanBatchMapper;
+
+	@Autowired
+	QueueSender mqSender;
+
 	@Override
 	public void preCheck(DispatchPlan vo) throws Exception
 	{
@@ -64,6 +87,12 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		// 校验黑名单逻辑
 		if (blackService.checkPhoneInBlackList(vo.getPhone(),vo.getOrgCode())) {
 			blackService.setBlackPhoneStatus(vo);
+
+			if(StringUtils.isNotEmpty(vo.getCallbackUrl())) {
+				thirdApiNotifyService.singleNotify(vo);
+				decrBatchCount(vo);
+			}
+
 			return;
 		}
 
@@ -77,6 +106,13 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 					if(null != vo.getFileRecordId()) {
 						saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
 					}
+
+					if(StringUtils.isNotEmpty(vo.getCallbackUrl())) {
+						dispatchPlanService.saveError(vo);
+						thirdApiNotifyService.singleNotify(vo);
+						decrBatchCount(vo);
+					}
+
 					logger.error("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}
@@ -85,12 +121,23 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			if(null != vo.getFileRecordId()) {
 				saveFileErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 			}
+
+			if(StringUtils.isNotEmpty(vo.getCallbackUrl())) {
+
+				dispatchPlanService.saveError(vo);
+				thirdApiNotifyService.singleNotify(vo);
+				decrBatchCount(vo);
+			}
 			logger.error("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
 
 		fanoutSender.send("fanout.dispatch.BatchImportSaveDB", JsonUtils.bean2Json(vo));
 	}
+
+	@Autowired
+	RedisUtil redisUtil;
+
 
 	@Override
 	public void saveDB(DispatchPlan vo)
@@ -117,9 +164,32 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		{
 			// doNothing
 			logger.info("BatchImportRecordHandlerImpl.saveDB:{}", vo, e);
+		} finally {
+			decrBatchCount(vo);
 		}
 	}
 
+	/**
+	 * 计数减1
+	 * @param vo
+	 */
+	void decrBatchCount(DispatchPlan vo) {
+
+		String key = RedisConstant.RedisConstantKey.DISPATCH_ADD_PLAN_COUNT_PRE+vo.getBatchId();
+
+		long decr = redisUtil.decr(key, 1);
+
+		//添加完毕
+		if (decr == 0) {
+			// TODO: 2019/5/22 批次信息通知
+
+			thirdApiNotifyService.batchNotify(vo);
+
+			redisUtil.del(key);
+
+		}
+
+	}
 
 	private void saveFileErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {
 		FileErrorRecords records = new FileErrorRecords();

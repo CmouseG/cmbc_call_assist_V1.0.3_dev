@@ -73,6 +73,9 @@ public interface IThirdApiOut {
 	@GetMapping(value = "out/reTryThirdApi")
 	ReturnData<Boolean>  reTryThirdApi(@RequestParam("userId") Long userId);
 
+	@PostMapping(value = "out/getCalldetailForApi")
+	ReturnData<Page<CallPlanDetailRecordVO>> getCalldetailForApi(@RequestParam("userId") Long userId, @RequestParam("batchNumber") String batchNumber, @RequestParam("pagenum") int pagenum,
+																 @RequestParam("pagesize") int pagesize);
 
 
 }

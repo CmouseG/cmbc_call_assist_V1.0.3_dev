@@ -438,7 +438,7 @@ public class AiCacheService {
 			SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put(callInfo.getSeqId(), callInfo);
-			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId, map, 5*60);	//放入缓存，5分钟
+			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId, map, 5*60L);	//放入缓存，5分钟
 		}
 	}
 	/**

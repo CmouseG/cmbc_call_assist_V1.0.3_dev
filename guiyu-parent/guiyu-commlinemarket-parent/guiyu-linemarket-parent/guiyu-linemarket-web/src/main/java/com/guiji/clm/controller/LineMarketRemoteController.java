@@ -1,36 +1,30 @@
 package com.guiji.clm.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.guiji.clm.model.SimLineStatus;
-import com.guiji.clm.service.voip.VoipGwManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.VoipGwPort;
-import com.guiji.clm.enm.SipLineStatusEnum;
+import com.guiji.clm.model.SimLineStatus;
 import com.guiji.clm.model.SipLineVO;
-import com.guiji.component.result.Result;
-import com.guiji.utils.StrUtils;
-
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.service.sip.SipLineInfoService;
+import com.guiji.clm.service.voip.VoipGwManager;
 import com.guiji.clm.service.voip.VoipGwPortService;
 import com.guiji.clm.util.AreaDictUtil;
 import com.guiji.clm.vo.SipLineExclusiveQueryCondition;
 import com.guiji.clm.vo.SipLineInfoQueryCondition;
 import com.guiji.clm.vo.VoipGwPortQueryCondition;
-
+import com.guiji.component.result.Result;
+import com.guiji.utils.StrUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
 * @Description: 提供给其他系统的服务
@@ -84,10 +78,20 @@ public class LineMarketRemoteController implements LineMarketRemote{
 		condition.setLineId(lineId);
 		SipLineVO vo = new SipLineVO();
 		List<SipLineExclusive> list = SipLineExclusiveService.querySipLineExclusiveList(condition);
+
 		if(list!=null && !list.isEmpty()) {
+
+			vo = exclusive2SipLine(list.get(0));
+			vo.setLineId(lineId);
+			vo.setUserId(userId);
+			vo.setUnivalent(list.get(0).getUnivalent());
 			vo.setLineName(list.get(0).getLineName());
+			vo.setLineType(1);
 			return Result.ok(vo);
 		}else {
+			vo.setLineType(2);
+			vo.setLineId(lineId);
+			vo.setUserId(userId);
 			//卡线
 			VoipGwPortQueryCondition portCondition = new VoipGwPortQueryCondition();
 			portCondition.setLineId(lineId);

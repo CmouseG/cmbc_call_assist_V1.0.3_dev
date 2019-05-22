@@ -1,5 +1,7 @@
 package com.guiji.robot.web.controller;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.entity.BotSentenceProcess;
@@ -8,6 +10,7 @@ import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.api.CustAiAccountRemote;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
@@ -15,6 +18,7 @@ import com.guiji.robot.dao.entity.ext.UserAiCfgQuery;
 import com.guiji.robot.dao.ext.UserAiCfgInfoMapperExt;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
+import com.guiji.robot.model.CustTemplateVo;
 import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.IUserAiCfgService;
@@ -41,7 +45,7 @@ import java.util.*;
  */
 @RequestMapping(value = "/account")
 @RestController
-public class CustAiAccountController {
+public class CustAiAccountController implements CustAiAccountRemote {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     IUserAiCfgService iUserAiCfgService;
@@ -125,7 +129,7 @@ public class CustAiAccountController {
     /**
      * 查询用户机器人账户基本信息
      *
-     * @param userId
+     * @param qOrgCode
      * @return
      */
     @RequestMapping(value = "/queryUserAiCfgBaseInfoByOrgCode", method = RequestMethod.POST)
@@ -316,6 +320,9 @@ public class CustAiAccountController {
                             vo.setTtsFlag(hsReplace.isTemplate_tts_flag());    //是否需要tts
                             vo.setAgentFlag(hsReplace.isAgent()); //是否转人工
                         }
+
+                        vo.setTtsFlag(false);
+                        vo.setAgentFlag(false);
                     }
                 }
             }
@@ -452,4 +459,50 @@ public class CustAiAccountController {
         return Result.ok();
     }
 
+    @PostMapping(value = "/queryUserTemplateInfo")
+    @Override
+    public ReturnData<CustTemplateVo> queryUserTemplateInfo(Integer userId, String templateId) {
+
+        ReturnData<List<AiTemplateVO>> listReturnData = queryCustRobotTemplateList("", Long.valueOf(userId.toString()));
+
+        List<AiTemplateVO> body = listReturnData.getBody();
+
+        for(AiTemplateVO aiTemplateVO : body) {
+
+            if(aiTemplateVO.getTemplateId().equals(templateId)) {
+                CustTemplateVo vo = new CustTemplateVo();
+
+                BeanUtil.copyProperties(aiTemplateVO, vo);
+
+                return Result.ok(vo);
+
+            }
+        }
+
+        return Result.ok();
+    }
+
+    @Override
+    @PostMapping(value = "/queryCustTemplateList")
+    public Result.ReturnData<List<CustTemplateVo>> queryCustTemplateList(@RequestParam("userId") Long userId){
+
+        ReturnData<List<AiTemplateVO>> listReturnData = queryCustRobotTemplateList("", userId);
+
+        List<AiTemplateVO> body = listReturnData.getBody();
+
+        List<CustTemplateVo> custTemplateVos = Lists.transform(body, new Function<AiTemplateVO, CustTemplateVo>() {
+            @Override
+            public CustTemplateVo apply(AiTemplateVO aiTemplateVO) {
+
+                CustTemplateVo vo = new CustTemplateVo();
+
+                BeanUtil.copyProperties(aiTemplateVO, vo);
+
+                return vo;
+
+            }
+        });
+
+        return Result.ok(custTemplateVos);
+    }
 }

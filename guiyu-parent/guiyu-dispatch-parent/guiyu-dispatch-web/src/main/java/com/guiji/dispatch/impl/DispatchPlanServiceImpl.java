@@ -6,7 +6,9 @@ import com.guiji.auth.api.IOrg;
 import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.entity.CallPlanUuidQuery;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.batchimport.BatchImportQueueHandler;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
@@ -24,6 +26,8 @@ import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.model.DispatchPlanBatchAddVo;
+import com.guiji.dispatch.model.PhoneVo;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.service.*;
@@ -52,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -751,7 +756,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ReturnData<SysUser> user = auth.getUserById(userId);
 		if (user.getBody() != null) {
 			SysUser body = user.getBody();
-			long dateNow = new Date().getTime();
+			long dateNow = System.currentTimeMillis();
 			long endTimeLong = body.getCreateTime().getTime();
 			// long time = body.getVaildTime().getTime();
 			// 结束时间-开始时间 = 天数
@@ -1496,4 +1501,153 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public int queryPlanCountByBatch(Integer batchId) {
 		return planExtMapper.queryPlanCountByBatch(batchId);
 	}
+
+
+	/**
+	 * 添加计划
+	 * @param dispatchPlan
+	 */
+	@Override
+	public void addPlan(DispatchPlan dispatchPlan) {
+
+		Integer orgId = dispatchPlan.getOrgId();
+
+		dispatchPlan.setPlanUuid(SnowflakeIdWorker.nextId(orgId));
+		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
+		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
+		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
+		dispatchPlan.setIsDel(Constant.IS_DEL_0);
+		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
+		dispatchPlan.setIsTts(Constant.IS_TTS_0);
+		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+
+		// 放入队列
+		batchImportQueueHandler.add(dispatchPlan);
+	}
+
+	@Override
+	public void saveError(DispatchPlan dispatchPlan) {
+		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);
+		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+		dispatchPlan.setResult("X");
+		dispatchPlanMapper.insert(dispatchPlan);
+	}
+
+	@Override
+	public Integer getRightCount(DispatchPlan plan) {
+		DispatchPlanExample example = new DispatchPlanExample();
+
+		example.createCriteria().andBatchIdEqualTo(plan.getBatchId())
+				.andOrgIdEqualTo(plan.getOrgId())
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_1)
+				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0)
+				.andIsDelEqualTo(Constant.IS_DEL_0);
+
+		return dispatchPlanMapper.countByExample(example);
+	}
+
+	@Override
+	public List<DispatchPlan> getFailCount(DispatchPlan plan) {
+		DispatchPlanExample example = new DispatchPlanExample();
+
+		example.createCriteria().andBatchIdEqualTo(plan.getBatchId())
+				.andOrgIdEqualTo(plan.getOrgId())
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_2)
+				.andStatusSyncEqualTo(Constant.STATUS_SYNC_1)
+				.andIsDelEqualTo(Constant.IS_DEL_0);
+
+		return dispatchPlanMapper.selectByExample(example);
+	}
+
+	@Autowired
+	BatchImportQueueHandler batchImportQueueHandler;
+
+
+	/**
+	 *  查询通话记录
+	 * @param userId
+	 * @param batchId
+	 * @param pagenum
+	 * @param pagesize
+	 * @return
+	 */
+	@Override
+	public List<CallPlanDetailRecordVO> queryPlanByUserAndBatchId(Long userId, Integer batchId, int pagenum, int pagesize) {
+		DispatchPlanExample example = new DispatchPlanExample();
+		Criteria createCriteria = example.createCriteria();
+
+		Integer orgId = getApiService.getOrgIdByUser(userId.toString());
+
+		createCriteria.andBatchIdEqualTo(batchId);
+		createCriteria.andOrgIdEqualTo(orgId);
+		createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		example.setLimitStart((pagenum - 1) * pagesize);
+		example.setLimitEnd(pagesize);
+
+		List<Long> selectByExample = dispatchPlanMapper.getPlanUuidList(example);
+
+		List<String> ids = new ArrayList<>();
+		for (Long dis : selectByExample) {
+			ids.add(dis.toString());
+		}
+
+		CallPlanUuidQuery query = new CallPlanUuidQuery();
+
+		query.setOrgId(orgId);
+		query.setAuthLevel(AuthLevelEnum.USER.getLevel());
+		query.setCallIds(ids);
+
+		if (ids.size() > 0) {
+			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(query);
+			return callPlanDetailRecord.getBody();
+		} else {
+			throw new GuiyuException("查询无数据");
+		}
+
+	}
+
+	@Override
+	public DispatchPlanBatchAddVo getPlanResult(DispatchPlan vo) {
+		DispatchPlanBatchAddVo addVo = new DispatchPlanBatchAddVo();
+
+		DispatchPlanBatch batch = dispatchPlanBatchMapper.selectByPrimaryKey(vo.getBatchId());
+
+		List<DispatchPlan> dispatchPlans = getFailCount(vo);
+
+		Integer failCount = 0;
+
+		StringBuilder res = new StringBuilder();
+
+		List<PhoneVo> phoneVos = new ArrayList<>();
+
+		if(!CollectionUtils.isEmpty(dispatchPlans)) {
+			failCount = dispatchPlans.size();
+
+			dispatchPlans.forEach(obj -> {
+
+				PhoneVo phoneVo = new PhoneVo();
+
+				phoneVo.setAttach(obj.getAttach());
+				phoneVo.setPhoneNo(obj.getPhone());
+				phoneVo.setCustCompany(obj.getCustCompany());
+				phoneVo.setCustName(obj.getCustName());
+				phoneVo.setResult(obj.getResult());
+				phoneVo.setParams(obj.getParams());
+
+				phoneVos.add(phoneVo);
+
+			});
+
+		}
+
+		addVo.setAcceptCount(batch.getTotalNum());
+		addVo.setFailCount(failCount);
+		addVo.setFailList(phoneVos);
+		addVo.setSuccessCount(addVo.getAcceptCount() - failCount);
+		addVo.setBatchName(batch.getName());
+
+		return addVo;
+	}
+
 }

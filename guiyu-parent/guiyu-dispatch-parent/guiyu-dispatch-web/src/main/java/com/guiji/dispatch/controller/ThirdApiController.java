@@ -2,6 +2,7 @@ package com.guiji.dispatch.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IOrg;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.entity.BotSentenceProcess;
 import com.guiji.botsentence.api.entity.ServerResult;
@@ -17,25 +18,30 @@ import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
-import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.DispatchBatchLine;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.*;
+import com.guiji.dispatch.service.IDispatchPlanBatchService;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.thirdapi.ThirdApiImportQueueHandler;
 import com.guiji.dispatch.util.Constant;
+import com.guiji.dispatch.util.ResHandler;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -219,7 +225,7 @@ public class ThirdApiController implements IThirdApiOut {
 			newLine.setBatchId(batch.getId());
 			newLine.setLineType(lineType);
 			newLine.setOrgId(parseObject.getOrgId());
-			newLine.setUserId(batch.getUserId());
+			newLine.setUserId(Integer.valueOf(batch.getUserId()));
 			lineService.insert(newLine);
 		}
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
@@ -403,6 +409,65 @@ public class ThirdApiController implements IThirdApiOut {
 		}
 		ReturnData<Boolean> returndata = new ReturnData<>();
 		return returndata;
+	}
+
+	@Autowired
+	IDispatchPlanBatchService dispatchPlanBatchService;
+
+	@Override
+	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetailForApi(Long userId, String batchNumber, int pagenum, int pagesize) {
+		Page<com.guiji.dispatch.model.CallPlanDetailRecordVO> page = new Page<>();
+
+		DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchService.queryPlanBatchByName(batchNumber, userId.intValue());
+
+		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryPlanByUserAndBatchId(userId, dispatchPlanBatch.getId(), pagenum, pagesize);
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andBatchNameEqualTo(batchNumber).andOrgIdIn(getSubOrgIdsByUserId(userId.intValue()));
+		int countByExample = dispatchPlanMapper.countByExample(ex);
+		List<com.guiji.dispatch.model.CallPlanDetailRecordVO> list = new ArrayList<>();
+
+		if(CollectionUtils.isNotEmpty(queryDispatchPlanByPhoens)) {
+			for (CallPlanDetailRecordVO vo : queryDispatchPlanByPhoens) {
+				com.guiji.dispatch.model.CallPlanDetailRecordVO record = new com.guiji.dispatch.model.CallPlanDetailRecordVO();
+				BeanUtils.copyProperties(vo, record);
+				list.add(record);
+			}
+		}
+		page.setRecords(list);
+		page.setPageNo(pagenum);
+		page.setPageSize(pagesize);
+		page.setTotal(countByExample);
+		ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> returndata = new ReturnData<>();
+		returndata.setBody(page);
+		return returndata;
+	}
+
+	@Autowired
+	IOrg orgService;
+
+	private List<Integer> getSubOrgIds(Integer orgId)
+	{
+		ReturnData<List<Integer>>  resp = orgService.getSubOrgIdByOrgId(orgId);
+		List<Integer> result = null;
+		if (resp != null && resp.getBody() != null) {
+			result = resp.getBody();
+		}
+
+		if(result == null)
+		{
+			result = new ArrayList<>();
+		}
+
+		result.add(orgId);
+
+		return result;
+	}
+
+	private List<Integer> getSubOrgIdsByUserId(Integer userId)
+	{
+		SysOrganization userOrg = ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId)));
+
+		return getSubOrgIds(userOrg.getId());
 	}
 
 }

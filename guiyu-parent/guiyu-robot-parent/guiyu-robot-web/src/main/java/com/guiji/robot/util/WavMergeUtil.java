@@ -1,4 +1,6 @@
 package com.guiji.robot.util;
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.util.*;
 import javax.sound.sampled.AudioFileFormat;
@@ -71,15 +73,10 @@ public class WavMergeUtil {
 			} catch (Exception e) {
 
 			} finally {
-				if(bi1 != null) {
-					bi1.close();
-				}
-				if(bi2 != null) {
-					bi2.close();
-				}
-				if(bi3 != null) {
-					bi3.close();
-				}
+
+				IOUtils.closeQuietly(bi1);
+				IOUtils.closeQuietly(bi2);
+				IOUtils.closeQuietly(bi3);
 			}
 		} else {
 		   //否则只有一个,直接返回语音路径

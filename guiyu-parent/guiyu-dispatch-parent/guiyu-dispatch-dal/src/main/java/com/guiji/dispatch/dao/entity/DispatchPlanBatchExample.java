@@ -744,6 +744,206 @@ public class DispatchPlanBatchExample {
             addCriterion("org_id not between", value1, value2, "orgId");
             return (Criteria) this;
         }
+
+        public Criteria andCallbackUrlIsNull() {
+            addCriterion("callback_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlIsNotNull() {
+            addCriterion("callback_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlEqualTo(String value) {
+            addCriterion("callback_url =", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlNotEqualTo(String value) {
+            addCriterion("callback_url <>", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlGreaterThan(String value) {
+            addCriterion("callback_url >", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("callback_url >=", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlLessThan(String value) {
+            addCriterion("callback_url <", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlLessThanOrEqualTo(String value) {
+            addCriterion("callback_url <=", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlLike(String value) {
+            addCriterion("callback_url like", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlNotLike(String value) {
+            addCriterion("callback_url not like", value, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlIn(List<String> values) {
+            addCriterion("callback_url in", values, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlNotIn(List<String> values) {
+            addCriterion("callback_url not in", values, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlBetween(String value1, String value2) {
+            addCriterion("callback_url between", value1, value2, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallbackUrlNotBetween(String value1, String value2) {
+            addCriterion("callback_url not between", value1, value2, "callbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumIsNull() {
+            addCriterion("total_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumIsNotNull() {
+            addCriterion("total_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumEqualTo(Integer value) {
+            addCriterion("total_num =", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumNotEqualTo(Integer value) {
+            addCriterion("total_num <>", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumGreaterThan(Integer value) {
+            addCriterion("total_num >", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("total_num >=", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumLessThan(Integer value) {
+            addCriterion("total_num <", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumLessThanOrEqualTo(Integer value) {
+            addCriterion("total_num <=", value, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumIn(List<Integer> values) {
+            addCriterion("total_num in", values, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumNotIn(List<Integer> values) {
+            addCriterion("total_num not in", values, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumBetween(Integer value1, Integer value2) {
+            addCriterion("total_num between", value1, value2, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("total_num not between", value1, value2, "totalNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlIsNull() {
+            addCriterion("single_callback_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlIsNotNull() {
+            addCriterion("single_callback_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlEqualTo(String value) {
+            addCriterion("single_callback_url =", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlNotEqualTo(String value) {
+            addCriterion("single_callback_url <>", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlGreaterThan(String value) {
+            addCriterion("single_callback_url >", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("single_callback_url >=", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlLessThan(String value) {
+            addCriterion("single_callback_url <", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlLessThanOrEqualTo(String value) {
+            addCriterion("single_callback_url <=", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlLike(String value) {
+            addCriterion("single_callback_url like", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlNotLike(String value) {
+            addCriterion("single_callback_url not like", value, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlIn(List<String> values) {
+            addCriterion("single_callback_url in", values, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlNotIn(List<String> values) {
+            addCriterion("single_callback_url not in", values, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlBetween(String value1, String value2) {
+            addCriterion("single_callback_url between", value1, value2, "singleCallbackUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andSingleCallbackUrlNotBetween(String value1, String value2) {
+            addCriterion("single_callback_url not between", value1, value2, "singleCallbackUrl");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

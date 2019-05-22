@@ -1023,4 +1023,24 @@
       </if>
   </select>
 
+
+  <select id="getPlanUuidList" resultType="java.lang.Long" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    plan_uuid
+    from dispatch_plan
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+
 </mapper>

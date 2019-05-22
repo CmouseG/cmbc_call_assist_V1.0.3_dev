@@ -53,5 +53,8 @@ public class RedisConstant {
         //遇到呼叫中心线路不可用的数据： LINE_DISABLED_ + plan_uuid
         public final static String LINE_DISABLED = "LINE_DISABLED_";
 
+
+        public final static String DISPATCH_ADD_PLAN_COUNT_PRE = "dispatch.plan.batch.count";
+
     }
 }

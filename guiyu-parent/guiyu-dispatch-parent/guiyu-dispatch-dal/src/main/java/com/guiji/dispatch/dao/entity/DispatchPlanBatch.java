@@ -21,16 +21,12 @@ public class DispatchPlanBatch implements Serializable {
     private Date gmtModified;
 
     private String orgCode;
-    
-    private String batchName;
 
-    public String getBatchName() {
-        return batchName;
-    }
+    private String callbackUrl;
 
-    public void setBatchName(String batchName) {
-        this.batchName = batchName;
-    }
+    private Integer totalNum;
+
+    private String singleCallbackUrl;
 
     private static final long serialVersionUID = 1L;
 
@@ -106,6 +102,30 @@ public class DispatchPlanBatch implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl == null ? null : callbackUrl.trim();
+    }
+
+    public Integer getTotalNum() {
+        return totalNum;
+    }
+
+    public void setTotalNum(Integer totalNum) {
+        this.totalNum = totalNum;
+    }
+
+    public String getSingleCallbackUrl() {
+        return singleCallbackUrl;
+    }
+
+    public void setSingleCallbackUrl(String singleCallbackUrl) {
+        this.singleCallbackUrl = singleCallbackUrl == null ? null : singleCallbackUrl.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -121,6 +141,9 @@ public class DispatchPlanBatch implements Serializable {
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", callbackUrl=").append(callbackUrl);
+        sb.append(", totalNum=").append(totalNum);
+        sb.append(", singleCallbackUrl=").append(singleCallbackUrl);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -11,6 +11,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
 import com.guiji.dispatch.service.IBlackListService;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +29,14 @@ public class BatchImportService implements IBatchImportService {
 	@Autowired
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 	@Autowired
-	private IBatchImportQueueHandlerService batchImportQueueHandler;
-	@Autowired
 	private FileRecordsMapper fileRecordsMapper;
 	@Autowired
 	private IBlackListService blackService;
 	@Autowired
 	private IPhoneRegionService phoneRegionService;
+
+	@Autowired
+	private IDispatchPlanService dispatchPlanService;
 
 	@Async("asyncBatchImportExecutor")
 	@Override
@@ -44,11 +46,11 @@ public class BatchImportService implements IBatchImportService {
 		{
 			logger.info("批量导入开始，批次ID:{},dispatchPlanParam:{},userId:{},orgCode:{},orgId:{}",batchId,dispatchPlanParam,userId,orgCode,orgId);
 			BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode, orgId);
-			excelListener.setBatchImportQueueHandler(batchImportQueueHandler);
 			excelListener.setBlackService(blackService);
 			excelListener.setFileRecordErrorService(fileRecordErrorService);
 			excelListener.setFileRecordsMapper(fileRecordsMapper);
 			excelListener.setPhoneRegionService(phoneRegionService);
+			excelListener.setDispatchPlanService(dispatchPlanService);
 			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, BatchImportExcelModel.class), excelListener);
 		} catch (Exception e) {
 			logger.error("批量导入失败!!!", e);

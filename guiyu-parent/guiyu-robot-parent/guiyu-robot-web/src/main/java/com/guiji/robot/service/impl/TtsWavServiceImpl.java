@@ -25,6 +25,7 @@ import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.SystemUtil;
 import com.guiji.robot.util.WavMergeUtil;
 import com.guiji.utils.*;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -572,7 +573,7 @@ public class TtsWavServiceImpl implements ITtsWavService {
                 for (String tempTtsFilePath : ttsFilePathList) {
                     File tempFile = new File(tempTtsFilePath);
                     if (tempFile != null && tempFile.exists()) {
-                        tempFile.delete();
+                        FileUtils.deleteQuietly(tempFile);
                     }
                 }
             }
@@ -594,7 +595,9 @@ public class TtsWavServiceImpl implements ITtsWavService {
                 String splitFilePath = tempData.getAudioFilePath(); //临时文件本地路径
                 if (StrUtils.isNotEmpty(splitFilePath)) {
                     File tempFile = new File(splitFilePath);
-                    if (tempFile != null && tempFile.exists()) tempFile.delete();
+                    if (tempFile != null && tempFile.exists()) {
+                        FileUtils.deleteQuietly(tempFile);
+                    }
                 }
             }
         }

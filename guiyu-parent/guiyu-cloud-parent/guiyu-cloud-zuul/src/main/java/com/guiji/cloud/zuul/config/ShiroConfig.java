@@ -1,8 +1,10 @@
 package com.guiji.cloud.zuul.config;
 
+import com.guiji.cloud.zuul.filter.ApiFilter;
 import com.guiji.cloud.zuul.filter.JwtFilter;
 import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
 import com.guiji.cloud.zuul.realm.ShiroRealmConfig;
+import com.guiji.cloud.zuul.service.ApiCheckService;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -25,6 +27,9 @@ public class ShiroConfig {
 	private CachingSessionDAO sessionDAO;
 	@Autowired
     JwtConfig jwtConfig;
+	@Autowired
+    ApiCheckService apiCheckService;
+
 //	@Autowired
 //	private List<Realm> realms;
 	
@@ -56,6 +61,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/getUserId", "zuulAuthc");
         filterChainDefinitionMap.put("/api/getToken", "anon");  //第三方获取token
         filterChainDefinitionMap.put("/ai/callback", "anon");
+        //对第三方api不进行拦截
+        filterChainDefinitionMap.put("/v1/thirdApi/**", "anon");
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
         filterChainDefinitionMap.put("/**", "zuulAuthc,zuulPerms");
 

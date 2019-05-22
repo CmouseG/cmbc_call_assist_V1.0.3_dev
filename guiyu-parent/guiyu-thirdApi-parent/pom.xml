@@ -13,18 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-thirdApi-web</module>
+        <module>guiyu-thirdApi-api</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>20.0</version>
-        </dependency>
-    </dependencies>
 </project>

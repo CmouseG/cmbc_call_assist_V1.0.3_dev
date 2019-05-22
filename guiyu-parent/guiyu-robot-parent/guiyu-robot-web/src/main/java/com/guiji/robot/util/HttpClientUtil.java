@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -82,16 +83,8 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			logger.error("调用接口异常！",e);
 		} finally {
-			try {
-				if (response != null) {
-					response.close();
-				}
-				if(httpclient != null) {
-					httpclient.close();
-				}
-			} catch (IOException e) {
-				logger.error("关闭连接异常！",e);
-			}
+			IOUtils.closeQuietly(response);
+			IOUtils.closeQuietly(httpclient);
 		}
 		return resultString;
 	}
@@ -131,16 +124,8 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			logger.error("调用接口异常！",e);
 		} finally {
-			try {
-				if(response!=null) {
-					response.close();
-				}
-				if(httpClient!=null) {
-					httpClient.close();
-				}
-			} catch (IOException e) {
-				logger.error("关闭连接异常！",e);
-			}
+			IOUtils.closeQuietly(response);
+			IOUtils.closeQuietly(httpClient);
 		}
  
 		return resultString;
@@ -174,16 +159,8 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			logger.error("调用接口异常！",e);
 		} finally {
-			try {
-				if(response != null) {
-					response.close();
-				}
-				if(httpClient != null) {
-					httpClient.close();
-				}
-			} catch (IOException e) {
-				logger.error("关闭连接异常！",e);
-			}
+			IOUtils.closeQuietly(response);
+			IOUtils.closeQuietly(httpClient);
 		}
 		return resultString;
 	}

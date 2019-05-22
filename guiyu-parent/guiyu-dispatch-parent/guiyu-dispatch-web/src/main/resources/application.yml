@@ -71,7 +71,7 @@ properties:
 jdbc_driver0: com.mysql.jdbc.Driver
 jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: root
-jdbc_password0: 123456
+jdbc_password0: Root@123456
 validationQuery: SELECT1
 #xxl-job admin中心配置
 xxl:

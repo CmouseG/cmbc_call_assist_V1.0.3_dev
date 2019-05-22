@@ -41,4 +41,6 @@ public interface IDispatchBatchLineService {
 	 * 根据排序规则排序
 	 */
 	DispatchPlan sortLine(DispatchPlan dis);
+
+    DispatchBatchLine addByLineId(Integer batchId, Integer userId, Integer lineId);
 }

@@ -271,6 +271,9 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
         return bool;
     }
 
+    @Autowired
+    IDispatchPlanBatchService dispatchPlanBatchService;
+
     /**
      * 批量加入计划任务
      * @param joinPlanDto
@@ -289,14 +292,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             //批次入库
             DispatchPlanBatch batchPlan = new DispatchPlanBatch();
             batchPlan.setUserId(operUserId.intValue());
-            batchPlan.setOrgCode(operOrgCode);
             batchPlan.setName(submitPlan.getBatchName());
-            batchPlan.setBatchName(submitPlan.getBatchName());
-            batchPlan.setStatusShow(Constant.BATCH_STATUS_SHOW);
-            batchPlan.setStatusNotify(SyncStatusEnum.NO_SYNC.getStatus());
-            batchPlan.setGmtCreate(new Date());
-            batchPlan.setGmtModified(new Date());
-            dispatchPlanBatchMapper.insert(batchPlan);
+            dispatchPlanBatchService.addDispatchPlanBatch(batchPlan);
             Integer batchId = batchPlan.getId();
 
             //路线类型

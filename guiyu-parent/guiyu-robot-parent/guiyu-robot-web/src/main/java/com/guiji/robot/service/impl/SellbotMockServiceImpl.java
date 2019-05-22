@@ -225,6 +225,7 @@ public class SellbotMockServiceImpl implements ISellbotService{
 			Thread.sleep(average);
 		} catch (InterruptedException e) {
 			LOGGER.error("模拟调用sellbot的响应时间异常： {}", e.getMessage());
+			Thread.currentThread().interrupt();
 		}
 	}
 	/**

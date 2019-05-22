@@ -1,24 +1,13 @@
 server:
   port: 18019
+  tomcat:
+    uri-encoding: UTF-8
+    max-http-post-size: 1000000
+  max-http-header-size: 1000000
 #myconfig
 spring:
   application:
     name: guiyu-thirdApi-web
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: base
-    password: base@1234
-    driver-class-name: com.mysql.jdbc.Driver
-    minIdle: 5
-    maxActive: 200
-    initialSize: 5
-    timeBetweenEvictionRunsMillis: 3000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 'ZTM' FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
   redis:
     database: 0 # Redis数据库索引（默认为0）
     host: 192.168.1.81 # Redis服务器地址
@@ -42,7 +31,6 @@ spring:
   sleuth:
     sampler:
       percentage: 0.5
-
 endpoints:
   health:
     sensitive: false

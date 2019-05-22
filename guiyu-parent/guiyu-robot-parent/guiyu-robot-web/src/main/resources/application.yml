@@ -6,8 +6,8 @@ spring:
   datasource:  
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://192.168.1.81:3306/guiyu_robot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: robot
-    password: robot@1234
+    username: root
+    password: Root@123456
     driver-class-name: com.mysql.jdbc.Driver 
     minIdle: 5  
     maxActive: 200  

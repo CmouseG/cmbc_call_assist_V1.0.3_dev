@@ -434,12 +434,12 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			return;
 		}
 		//判断是否需要噪音检测
-		boolean isNeedVoiceCheckFlag = this.isNeedVoiceCheck(aiFlowMsgPushReq);
-		if(isNeedVoiceCheckFlag) {
-			//需要噪音检测
-			//TODO
-//			if("噪音") return;
-		}
+//		boolean isNeedVoiceCheckFlag = this.isNeedVoiceCheck(aiFlowMsgPushReq);
+//		if(isNeedVoiceCheckFlag) {
+//			//需要噪音检测
+//			//TODO
+////			if("噪音") return;
+//		}
 		//放入redis
 		AiFlowSentenceCache aiFlowSentenceCache = new AiFlowSentenceCache();
 		BeanUtil.copyProperties(aiFlowMsgPushReq, aiFlowSentenceCache);

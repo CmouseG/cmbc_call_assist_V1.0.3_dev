@@ -13,6 +13,7 @@ import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.service.IBlackListService;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
@@ -60,8 +61,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 	private IPhoneRegionService phoneRegionService;
 	private IBlackListService blackService;
-	private IBatchImportQueueHandlerService BatchImportQueueHandler;
 	private FileRecordsMapper fileRecordsMapper;
+	private IDispatchPlanService dispatchPlanService;
 
 	private Long i = new Long(0); //记录行数
 	@Override
@@ -112,7 +113,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 //			}
 			
 			// 放入队列
-			BatchImportQueueHandler.add(dispatchPlan);
+			dispatchPlanService.addPlan(dispatchPlan);
 			count = count + 1;
 			phones.add(dispatchPlan.getPhone());
 		} catch (Exception e) {
@@ -143,18 +144,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setPhone(phone);
 		dispatchPlan.setAttach(attach);
 		dispatchPlan.setParams(params);
-		dispatchPlan.setCustName(custName);
-		dispatchPlan.setCustCompany(custCompany);
-		dispatchPlan.setPlanUuid(SnowflakeIdWorker.nextId(this.orgId));
-		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
-		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
-
-		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
-		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
-		dispatchPlan.setIsDel(Constant.IS_DEL_0);
-		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
-		dispatchPlan.setIsTts(Constant.IS_TTS_0);
-		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+        dispatchPlan.setCustName(custName);
+        dispatchPlan.setCustCompany(custCompany);
         //路线类型
 		dispatchPlan.setLineType(null != dispatchPlan.getLineType()?
 				dispatchPlan.getLineType(): PlanLineTypeEnum.SIP.getType());
@@ -242,11 +233,13 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	public void setBlackService(IBlackListService blackService) {
 		this.blackService = blackService;
 	}
-	public void setBatchImportQueueHandler(IBatchImportQueueHandlerService batchImportQueueHandler) {
-		BatchImportQueueHandler = batchImportQueueHandler;
-	}
+
 	public void setFileRecordsMapper(FileRecordsMapper fileRecordsMapper) {
 		this.fileRecordsMapper = fileRecordsMapper;
 	}
-	
+
+
+	public void setDispatchPlanService(IDispatchPlanService dispatchPlanService) {
+		this.dispatchPlanService = dispatchPlanService;
+	}
 }

@@ -2,6 +2,7 @@ package com.guiji.robot.util;
 
 import com.guiji.robot.exception.RobotException;
 import com.guiji.utils.StrUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,29 +51,10 @@ public class ReadTxtUtil {
         } catch (Exception e) {
             logger.error("读取文件" + filePath + "内容出错", e);
         } finally {
-            if (bufferedReader != null){
-                try {
-                    if (bufferedReader != null) {
-                        bufferedReader.close();
-                    }
-                } catch (IOException e) {
-                    logger.error("buffer close error: {}", e.getMessage());
-                }
-                try {
-                    if (read != null) {
-                        read.close();
-                    }
-                } catch (IOException e) {
-                    logger.error("read close error: {}", e.getMessage());
-                }
-                try {
-                    if (is != null) {
-                        is.close();
-                    }
-                } catch (IOException e) {
-                    logger.error("is close error: {}", e.getMessage());
-                }
-            }
+
+            IOUtils.closeQuietly(bufferedReader);
+            IOUtils.closeQuietly(read);
+            IOUtils.closeQuietly(is);
 
         }
         return null;

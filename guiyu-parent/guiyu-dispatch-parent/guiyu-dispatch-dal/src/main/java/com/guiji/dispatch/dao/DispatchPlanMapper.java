@@ -47,7 +47,7 @@ public interface DispatchPlanMapper {
     int updPlanByStatusSync(@Param("params") List<Long> list , @Param("status")Integer status, @Param("orgId") Integer orgId);
 
 	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(@Param("dis")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
-	
+
 	List<DispatchPlan> selectPlanGroupByUserId(@Param("dis")DispatchPlan record, @Param("orgIds")List<Integer> orgIds);
 
     //按日期统计计划数量
@@ -62,4 +62,6 @@ public interface DispatchPlanMapper {
 
     //查询下载数据
     List<DownLoadPlanVo> queryDownloadPlanList(DispatchPlanExample example);
+
+    List<Long> getPlanUuidList(DispatchPlanExample example);
 }

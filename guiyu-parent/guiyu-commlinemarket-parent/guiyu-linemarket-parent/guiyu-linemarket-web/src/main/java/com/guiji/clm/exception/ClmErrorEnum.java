@@ -56,12 +56,7 @@ public enum ClmErrorEnum {
 	
 		return errorCode;
 	}
-	/** 
-	 @param errorCode the errorCode to set 
-	 */
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
+
 	/** 
 	 * @return the errorMsg 
 	 */
@@ -69,11 +64,6 @@ public enum ClmErrorEnum {
 	
 		return errorMsg;
 	}
-	/** 
-	 @param errorMsg the errorMsg to set 
-	 */
-	public void setErrorMsg(String errorMsg) {
-		this.errorMsg = errorMsg;
-	}
+
 }
   

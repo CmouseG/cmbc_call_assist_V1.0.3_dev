@@ -1,8 +1,11 @@
 package com.guiji.cloud.zuul.fallback;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.guiji.cloud.zuul.model.ErrorCode;
-import com.guiji.cloud.zuul.model.Msg;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,9 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.guiji.cloud.zuul.model.ErrorCode;
+import com.guiji.cloud.zuul.model.Msg;
 
 /**
  * Created by Administratorn 2017/12/26.
@@ -21,9 +24,11 @@ import java.io.InputStream;
  */
 @Component
 public class ServiceFallbackProvider implements FallbackProvider {
+	private static final Logger log = LoggerFactory.getLogger(ServiceFallbackProvider.class);
+
     @Override
     public ClientHttpResponse fallbackResponse(Throwable cause) {
-        cause.printStackTrace();
+    	log.error(cause.getMessage());
         return new ClientHttpResponse() {
             @Override
             public HttpStatus getStatusCode() throws IOException {

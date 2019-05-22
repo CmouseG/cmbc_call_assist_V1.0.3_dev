@@ -34,6 +34,11 @@
     <result column="city_name" property="cityName" jdbcType="VARCHAR" />
     <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
     <result column="line_type" property="lineType" jdbcType="INTEGER" />
+
+    <result column="line_id" property="lineId" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="cust_name" property="custName" jdbcType="VARCHAR" />
+    <result column="cust_company" property="custCompany" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -98,9 +103,9 @@
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour,
     gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
     batch_name, flag, org_code,org_id,  city_name, city_code, line_type,
-    cust_name, cust_company
+    line_id, remark, cust_name, cust_company
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
+  <select id="selectByExample" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
     <if test="distinct" >
       distinct
@@ -118,7 +123,7 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
     from dispatch_plan
@@ -664,7 +669,7 @@
       cust_company = #{custCompany}
     where plan_uuid = #{planUuid,jdbcType=BIGINT}  and org_id=#{orgId,jdbcType=BIGINT}
   </update>
-  <select id="selectByCallHour" resultMap="BaseResultMap" >
+  <select id="selectByCallHour" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     select
     <include refid="Base_Column_List" />
     from dispatch_plan
@@ -854,7 +859,7 @@
   </update>
 
 
-  <select id="selectPlanGroupByUserIdLineRobot" resultMap="BaseResultMap" >
+  <select id="selectPlanGroupByUserIdLineRobot" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     select
     user_id,robot
     from dispatch_plan  where 1=1
@@ -889,7 +894,7 @@
     group by user_id,robot
   </select>
 
-  <select id="selectPlanGroupByUserId" resultMap="BaseResultMap" >
+  <select id="selectPlanGroupByUserId" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     select
     user_id
     from dispatch_plan where 1=1

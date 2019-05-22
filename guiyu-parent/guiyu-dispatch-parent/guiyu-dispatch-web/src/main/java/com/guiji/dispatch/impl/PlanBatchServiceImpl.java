@@ -421,14 +421,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
 
     @Override
     public boolean exportPlanBatch(OptPlanDto optPlanDto) {
-        boolean bool = true;
+        boolean bool = false;
         if(null != optPlanDto){
-            //操作开始、结束时间
-            if(!StringUtils.isEmpty(optPlanDto.getStartTime()) && !StringUtils.isEmpty(optPlanDto.getEndTime())) {
-                optPlanDto.setStartTime(optPlanDto.getStartTime() + " " + DateTimeUtils.DEFAULT_DATE_START_TIME);
-                optPlanDto.setEndTime(optPlanDto.getEndTime() + " " + DateTimeUtils.DEFAULT_DATE_END_TIME);
-            }
-
             //如果不查batchId时，前端会传batchId=0
             if (optPlanDto.getBatchId() != null && optPlanDto.getBatchId() != 0) {
                 optPlanDto.setBatchId(optPlanDto.getBatchId());
@@ -440,41 +434,41 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             optPlanDto.setOrgIdList((null != optPlanDto.getOrgIdList() && optPlanDto.getOrgIdList().size()>0)?
                     optPlanDto.getOrgIdList()
                     :getAuthUtil.getOrgIdsByAuthLevel(authLevel, optPlanDto.getOperOrgId()));//获取组织ID
-        }
 
-
-        int count = 0;
-        int maxCount = 1000000;
-        OptPlanDto param = new OptPlanDto();
-        //全选
-        if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
-            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
-            param.setNocheckPlanUuid(null);
-            //只勾选
-        }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
-            if(null != optPlanDto
-                    && null != optPlanDto.getCheckPlanUuid() && optPlanDto.getCheckPlanUuid().size()>0){
-                param.setOrgIdList(optPlanDto.getOrgIdList());
-                param.setCheckPlanUuid(optPlanDto.getCheckPlanUuid());
-            }else{
-                throw new GuiyuException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+            int count = 0;
+            int maxCount = 1000000;
+            OptPlanDto param = new OptPlanDto();
+            //全选
+            if(PlanOperTypeEnum.ALL.getType() == optPlanDto.getType()){
+                BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+                param.setNocheckPlanUuid(null);
+                //只勾选
+            }else if(PlanOperTypeEnum.CHECK.getType() == optPlanDto.getType()){
+                if(null != optPlanDto
+                        && null != optPlanDto.getCheckPlanUuid() && optPlanDto.getCheckPlanUuid().size()>0){
+                    param.setOrgIdList(optPlanDto.getOrgIdList());
+                    param.setCheckPlanUuid(optPlanDto.getCheckPlanUuid());
+                }else{
+                    throw new GuiyuException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+                }
+                //全选去勾
+            }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
+                BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
             }
-            //全选去勾
-        }else if(PlanOperTypeEnum.NO_CHECK.getType() == optPlanDto.getType()){
-            BeanUtils.copyProperties(optPlanDto, param, OptPlanDto.class);
+
+            //查询总数
+            count = planBatchMapper.queryExportPlanCountList(param);
+            count = count<maxCount?count:maxCount;
+            //增加导出文件记录
+            ExportFileRecord recordRes = exportFileService.addExportFile(getExportFileData(optPlanDto.getOperUserId(), optPlanDto.getOperOrgCode(),count));
+            this.executeThread(count, param, recordRes);
+
+            logger.info(">>>>>>>>>>>>>>>>>>start");
+        //    this.executeThread(optPlanDto);
+        //    this.exportFileNew(optPlanDto);
+            logger.info(">>>>>>>>>>>>>>>>>>end");
+            bool = true;
         }
-
-        //查询总数
-        count = planBatchMapper.queryExportPlanCountList(param);
-        count = count<maxCount?count:maxCount;
-        //增加导出文件记录
-        ExportFileRecord recordRes = exportFileService.addExportFile(getExportFileData(optPlanDto.getOperUserId(), optPlanDto.getOperOrgCode(),count));
-        this.executeThread(count, param, recordRes);
-
-        logger.info(">>>>>>>>>>>>>>>>>>start");
-    //    this.executeThread(optPlanDto);
-    //    this.exportFileNew(optPlanDto);
-        logger.info(">>>>>>>>>>>>>>>>>>end");
         return bool;
     }
 
@@ -950,6 +944,8 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
             sheet.addCell(new Label(9, 0, "计划时间"));
             sheet.addCell(new Label(10, 0, "所属用户"));
             sheet.addCell(new Label(11, 0, "添加日期"));
+            sheet.addCell(new Label(12, 0, "客户名称"));
+            sheet.addCell(new Label(13, 0, "所属单位"));
 
             Map<Integer, String> batchLineMap = new HashMap<>();
             int len = planList.size();
@@ -1007,6 +1003,10 @@ public class PlanBatchServiceImpl implements IPlanBatchService {
                 sheet.addCell(new Label(k, i + 1, dispatchPlan.getUsername()));
                 k++;
                 sheet.addCell(new Label(k, i + 1, dispatchPlan.getAddTime()));
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getCustName()));
+                k++;
+                sheet.addCell(new Label(k, i + 1, dispatchPlan.getCustCompany()));
             }
 
             wb.write();

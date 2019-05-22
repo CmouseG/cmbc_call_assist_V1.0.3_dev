@@ -447,8 +447,8 @@ public class CallDetailServiceImpl implements CallDetailService {
                 List<CallOutDetailRecord> records = callOutDetailRecordMapper.selectByExample(exampleRecord);
 
                 List<CallOutDetailVO> resList = new ArrayList<CallOutDetailVO>();
-    //            for (CallOutDetail callOutDetail : details) {
-                for (int i=0; i<details.size(); i++) { //加上无声音的判断
+                int listSize = details.size();
+                for (int i=0; i<listSize; i++) { //加上无声音的判断
                     CallOutDetail callOutDetail = details.get(i);
                     CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                     BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
@@ -462,22 +462,57 @@ public class CallDetailServiceImpl implements CallDetailService {
                     if(callOutDetail.getBotAnswerTime()!=null && i>0){
                         CallOutDetail callOutDetailBefore = details.get(i-1);
                         if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
-                            CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
-                            callOutDetailVOInsert.setCustomerSayText("无声音");
-                            callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
-                            callOutDetailVOInsert.setCallId(callId);
-                            resList.add(callOutDetailVOInsert);
+
+                            boolean novoice = true;
+                            for(int m=i+1;i<listSize; i++){
+                                Date customerSayTime = details.get(m).getCustomerSayTime(); //这个时间存储到秒
+                                if(customerSayTime!=null){ //客户说话不为空
+                                    Integer asrDuration = details.get(m).getAsrDuration();  //asr识别用时。到毫秒
+                                    long actualStartTime = customerSayTime.getTime()-asrDuration-1000; //实际开始说话时间，防止误差，多减1秒
+                                    if(actualStartTime<callOutDetail.getBotAnswerTime().getTime()){ //客户说话在前，表示不需要插入无声音
+                                        novoice = false;
+                                    }
+                                    break;
+                                }
+                            }
+
+                            if(novoice){
+                                CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                                callOutDetailVOInsert.setCustomerSayText("无声音");
+                                callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
+                                callOutDetailVOInsert.setCallId(callId);
+                                resList.add(callOutDetailVOInsert);
+                            }
+
                         }
                     }else if(callOutDetail.getAgentAnswerTime()!=null && i>0){
                         CallOutDetail callOutDetailBefore = details.get(i-1);
                         if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
-                            CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
-                            callOutDetailVOInsert.setCustomerSayText("无声音");
-                            callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
-                            callOutDetailVOInsert.setCallId(callId);
-                            resList.add(callOutDetailVOInsert);
+
+
+                            boolean novoice = true;
+                            for(int m=i+1;i<listSize; i++){
+                                Date customerSayTime = details.get(m).getCustomerSayTime(); //这个时间存储到秒
+                                if(customerSayTime!=null){ //客户说话不为空
+                                    Integer asrDuration = details.get(m).getAsrDuration();  //asr识别用时。到毫秒
+                                    long actualStartTime = customerSayTime.getTime()-asrDuration-1000; //实际开始说话时间，防止误差，多减1秒
+                                    if(actualStartTime<callOutDetail.getAgentAnswerTime().getTime()){ //客户说话在前，表示不需要插入无声音
+                                        novoice = false;
+                                    }
+                                    break;
+                                }
+                            }
+
+                            if(novoice){
+                                CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                                callOutDetailVOInsert.setCustomerSayText("无声音");
+                                callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
+                                callOutDetailVOInsert.setCallId(callId);
+                                resList.add(callOutDetailVOInsert);
+                            }
+
                         }
-                    }else if(callOutDetail.getCustomerSayTime()!=null && i<details.size()-1){
+                    }else if(callOutDetail.getCustomerSayTime()!=null && i<listSize-1){
                         CallOutDetail callOutDetailAfter = details.get(i+1);
                         if(callOutDetailAfter.getBotAnswerTime()!=null){//客户说话之后，下面一个是机器人说话，则取出分词
                             callOutDetailVO.setWordSegmentResult(callOutDetailAfter.getWordSegmentResult());

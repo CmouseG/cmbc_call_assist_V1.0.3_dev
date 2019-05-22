@@ -152,7 +152,8 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) throws ParseException {
+    public List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate,
+                                                    String endDate, String tempId, Integer queryUser) throws ParseException {
 
         String[] arr = {"A","B","C","D","E","F","W"};
         try{
@@ -169,7 +170,7 @@ public class StatisticServiceImpl implements StatisticService {
             typeList.add("W");
         }
 
-        List<IntentCount> list = getIntentCountList(authLevel,userId,orgCode, startDate, endDate, tempId);
+        List<IntentCount> list = getIntentCountList(authLevel,userId,orgCode, startDate, endDate, tempId, queryUser);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sDate = sdf.parse(startDate);
@@ -220,7 +221,7 @@ public class StatisticServiceImpl implements StatisticService {
         return resList;
     }
 
-    public List<IntentCount> getIntentCountList(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) {
+    public List<IntentCount> getIntentCountList(int authLevel, long userId, String orgCode, String startDate, String endDate, String tempId, Integer queryUser) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
@@ -228,13 +229,13 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,orgCode,tempId,authLevel,userId);
+            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,orgCode,tempId,authLevel,userId,queryUser);
             listResult.addAll(listAgo);
         }
 
         //今天
         if(endDate.equals(today)){
-            List<IntentCount> listToday = statisticMapper.getIntentCountToday(orgCode,tempId,authLevel,userId);
+            List<IntentCount> listToday = statisticMapper.getIntentCountToday(orgCode,tempId,authLevel,userId,queryUser);
             listResult.addAll(listToday);
         }
 

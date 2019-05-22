@@ -20,7 +20,7 @@ public interface StatisticService {
 
     List<DashboardOverView> getDashboardOverView(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId);
 
-    List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) throws ParseException;
+    List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId, Integer queryUser) throws ParseException;
 
     List<CallCountHour> getConnectDataHour(int authLevel,long userId,String orgCode, Date startDate, Date endDate, String tempId);
 

@@ -19,6 +19,7 @@ import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
+import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,7 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getIntentCount")
-    public Result.ReturnData<Object> getIntentCount(String startDate, String endDate, String tempId,@RequestHeader Integer authLevel,
+    public Result.ReturnData<Object> getIntentCount(String startDate, String endDate, String tempId,String queryUserId,@RequestHeader Integer authLevel,
                                                     @RequestHeader String orgCode,@RequestHeader Long userId) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
@@ -132,8 +133,13 @@ public class StatisticController {
         if(!startDate.matches(regEx) || !endDate.matches(regEx)){
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
+        Integer queryUser = null;
+        if(StringUtils.isNotEmpty(queryUserId)){
+            queryUser = Integer.valueOf(queryUserId);
+        }
 
-        List<Map<String,Object>> list = statisticService.getIntentCount(authLevel,userId,orgCode, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<Map<String,Object>> list = statisticService.getIntentCount(authLevel,userId,orgCode, startDate, endDate,
+                StringUtils.isNotBlank(tempId)? tempId: null,queryUser);
 
         return Result.ok(list);
 

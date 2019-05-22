@@ -66,9 +66,9 @@ public interface StatisticMapper {
                                                                 @Param("authLevel") int authLevel,@Param("userId") long userId);
 
     List<IntentCount> getIntentCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,
-                                        @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
-    List<IntentCount> getIntentCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
-                                          @Param("authLevel") int authLevel,@Param("userId") long userId);
+                                        @Param("tempId") String tempId, @Param("authLevel") int authLevel, @Param("userId") long userId,@Param("queryUser") Integer queryUser);
+    List<IntentCount> getIntentCountToday(@Param("orgCode") String orgCode, @Param("tempId") String tempId,
+                                          @Param("authLevel") int authLevel, @Param("userId") long userId,@Param("queryUser") Integer queryUser);
 
     List<CallCountHour> getConnectDataHour(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("orgCode") String orgCode,
                                            @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);

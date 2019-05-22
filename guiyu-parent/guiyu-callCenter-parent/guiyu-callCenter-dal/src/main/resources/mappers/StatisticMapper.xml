@@ -472,6 +472,9 @@
         <if test="tempId != null" >
             AND tempid = #{tempId,jdbcType=VARCHAR}
         </if>
+        <if test="queryUser != null" >
+            AND user_id = #{queryUser}
+        </if>
         GROUP BY  callDate,intent
         ORDER BY  callDate
     </select>
@@ -490,6 +493,9 @@
         </if>
         <if test="tempId != null" >
             AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        <if test="queryUser != null" >
+            AND user_id = #{queryUser}
         </if>
         GROUP BY  intent
     </select>

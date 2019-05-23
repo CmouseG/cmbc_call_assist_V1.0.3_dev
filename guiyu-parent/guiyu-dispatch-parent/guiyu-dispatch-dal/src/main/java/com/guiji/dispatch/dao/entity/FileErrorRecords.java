@@ -26,6 +26,16 @@ public class FileErrorRecords implements Serializable {
 
     private String batchName;
 
+    /**
+     * 客户姓名
+     */
+    private String custName;
+
+    /**
+     * 客户所属单位
+     */
+    private String custCompany;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -116,6 +126,22 @@ public class FileErrorRecords implements Serializable {
         this.batchName = batchName == null ? null : batchName.trim();
     }
 
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
+    public String getCustCompany() {
+        return custCompany;
+    }
+
+    public void setCustCompany(String custCompany) {
+        this.custCompany = custCompany;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -133,6 +159,8 @@ public class FileErrorRecords implements Serializable {
         sb.append(", dataType=").append(dataType);
         sb.append(", batchId=").append(batchId);
         sb.append(", batchName=").append(batchName);
+        sb.append(", custName=").append(custName);
+        sb.append(", custCompany=").append(custCompany);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

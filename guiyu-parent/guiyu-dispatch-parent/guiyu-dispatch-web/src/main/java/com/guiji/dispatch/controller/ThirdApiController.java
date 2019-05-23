@@ -307,6 +307,8 @@ public class ThirdApiController implements IThirdApiOut {
 		records.setCreateTime(DateUtil.getCurrent4Time());
 		records.setParams(vo.getParams());
 		records.setPhone(vo.getPhone());
+		records.setCustName(vo.getCustName());
+		records.setCustCompany(vo.getCustCompany());
 		// records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
 		records.setDataType(Constant.IMPORT_DATA_TYPE_API);

@@ -13,6 +13,8 @@
     <result column="data_type" property="dataType" jdbcType="INTEGER" />
     <result column="batch_id" property="batchId" jdbcType="INTEGER" />
     <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
+    <result column="cust_name" property="custName" jdbcType="VARCHAR" />
+    <result column="cust_company" property="custCompany" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,9 +76,10 @@
   </sql>
   <sql id="Base_Column_List" >
     id, phone, attach, params, create_time, file_records_id, error_type, error_line, 
-    data_type, batch_id, batch_name
+    data_type, batch_id, batch_name, cust_name, cust_company
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" >
+  <select id="selectByExample" resultType="com.guiji.dispatch.dao.entity.FileErrorRecords"
+          parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" >
     select
     <if test="distinct" >
       distinct
@@ -114,11 +117,11 @@
     insert into file_error_records (id, phone, attach, 
       params, create_time, file_records_id, 
       error_type, error_line, data_type, 
-      batch_id, batch_name)
+      batch_id, batch_name, cust_name, cust_company)
     values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
       #{params,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{fileRecordsId,jdbcType=BIGINT}, 
       #{errorType,jdbcType=INTEGER}, #{errorLine,jdbcType=INTEGER}, #{dataType,jdbcType=INTEGER}, 
-      #{batchId,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR})
+      #{batchId,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR}, #{custName}, #{custCompany})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
     insert into file_error_records

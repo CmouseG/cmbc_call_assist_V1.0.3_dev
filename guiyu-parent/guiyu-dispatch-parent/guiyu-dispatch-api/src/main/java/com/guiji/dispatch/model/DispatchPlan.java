@@ -81,6 +81,16 @@ public class DispatchPlan implements Serializable {
 	
     private String orgCode;
 
+	/**
+	 * 客户姓名
+	 */
+	private String custName;
+
+	/**
+	 * 客户所属单位
+	 */
+	private String custCompany;
+
     private Integer fileRecordId;
 
 	public Integer getStatusShow() {
@@ -370,6 +380,20 @@ public class DispatchPlan implements Serializable {
 	public void setFileRecordId(Integer fileRecordId) {
 		this.fileRecordId = fileRecordId;
 	}
-    
-    
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getCustCompany() {
+		return custCompany;
+	}
+
+	public void setCustCompany(String custCompany) {
+		this.custCompany = custCompany;
+	}
 }

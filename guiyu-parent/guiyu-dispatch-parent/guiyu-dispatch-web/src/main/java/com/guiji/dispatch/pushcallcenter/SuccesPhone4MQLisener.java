@@ -166,42 +166,42 @@ public class SuccesPhone4MQLisener {
 	 * @return
 	 */
 	private MessageSend selectBatchOver(DispatchPlan dispatchPlan) {
-		/*
-		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
-				.andIsDelEqualTo(Constant.IS_DEL_0).andUserIdEqualTo(dispatchPlan.getUserId());
-		int count = dispatchPlanMapper.countByExample(ex);
-		*/
+		try {
+			String batchName = dispatchPlan.getBatchName();
+			DispatchPlanExample ex = new DispatchPlanExample();
+			ex.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId())
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_1)
+					.andUserIdEqualTo(dispatchPlan.getUserId())
+					.andOrgIdEqualTo(dispatchPlan.getOrgId());
+			int count = dispatchPlanMapper.countByExample(ex);
 
-		/*DispatchPlanExample ex1 = new DispatchPlanExample();
-		ex1.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId());
-		int batchCount = dispatchPlanMapper.countByExample(ex1);*/
-
-		//统计计划数量(已完成，计划中，暂停中，停止中)
-		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId(), dispatchPlan.getOrgId());
-	//	if (count == 0) {
-		if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0
-				) {//&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0
-			MessageSend send = new MessageSend();
-			send.setUserId(dispatchPlan.getUserId().longValue());
-			send.setNoticeType(NoticeType.task_finish);
-			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
-					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
-					+ "通号码的外呼任务已完成，点击查看外呼结果");
-			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
-					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setEmailSubject("任务完成");
-			// 微信
-			send.setWeixinTemplateId(weixinTemplateId);
-			send.setWeixinPagePath(mainUrl);
-			send.setWeixinAppId(weixinAppid);
-			HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-		//	map.put("keyword1", new SendMsgReqVO.Item(dispatchPlan.getUserId(), null));
-			map.put("keyword2", new SendMsgReqVO.Item("任务完成", null));
-			map.put("keyword3", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
-			send.setWeixinData(map);
-			return send;
+			//统计计划数量(已完成，计划中，暂停中，停止中)
+			//	TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId(), dispatchPlan.getOrgId());
+			if (count == 0) {
+				//	if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0) {
+				MessageSend send = new MessageSend();
+				send.setUserId(dispatchPlan.getUserId().longValue());
+				send.setNoticeType(NoticeType.task_finish);
+				send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchName //totalCount.getFinishCount()	//batchCount
+						+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
+				send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchName    //totalCount.getFinishCount()	//batchCount
+						+ "通号码的外呼任务已完成，点击查看外呼结果");
+				send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchName    //totalCount.getFinishCount()	//batchCount
+						+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
+				send.setEmailSubject("任务完成");
+				// 微信
+				send.setWeixinTemplateId(weixinTemplateId);
+				send.setWeixinPagePath(mainUrl);
+				send.setWeixinAppId(weixinAppid);
+				HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+				//	map.put("keyword1", new SendMsgReqVO.Item(dispatchPlan.getUserId(), null));
+				map.put("keyword2", new SendMsgReqVO.Item("任务完成", null));
+				map.put("keyword3", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
+				send.setWeixinData(map);
+				return send;
+			}
+		}catch(Exception e){
+			logger.error("消息通知异常", e);
 		}
 		return null;
 	}

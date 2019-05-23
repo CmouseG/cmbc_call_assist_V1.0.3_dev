@@ -185,6 +185,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		}
 		records.setParams(vo.getParams());
 		records.setPhone(vo.getPhone());
+		records.setCustName(vo.getCustName());
+		records.setCustCompany(vo.getCustCompany());
 		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
 		records.setErrorLine(errorLine);
@@ -204,6 +206,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		}
 		records.setParams(vo.getParams());
 		records.setPhone(vo.getPhone());
+		records.setCustName(vo.getCustName());
+		records.setCustCompany(vo.getCustCompany());
 		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
 		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);

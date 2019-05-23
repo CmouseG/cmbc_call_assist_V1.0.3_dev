@@ -328,7 +328,9 @@ public class FileController {
 		sheet.addCell(new Label(0, 0, "手机号码"));
 		sheet.addCell(new Label(1, 0, "attach"));
 		sheet.addCell(new Label(2, 0, "params"));
-		sheet.addCell(new Label(3, 0, "错误类型"));
+		sheet.addCell(new Label(3, 0, "客户名称"));
+		sheet.addCell(new Label(4, 0, "客户所属单位"));
+		sheet.addCell(new Label(5, 0, "错误类型"));
 		for (int i = 0; i < queryErrorRecords.size(); i++) {
 			FileErrorRecords fileErrorRecords = queryErrorRecords.get(i);
 			int k = 0;
@@ -337,6 +339,10 @@ public class FileController {
 			sheet.addCell(new Label(k, i + 1, fileErrorRecords.getAttach()));
 			k++;
 			sheet.addCell(new Label(k, i + 1, fileErrorRecords.getParams()));
+			k++;
+			sheet.addCell(new Label(k, i + 1, fileErrorRecords.getCustName()));
+			k++;
+			sheet.addCell(new Label(k, i + 1, fileErrorRecords.getCustCompany()));
 			k++;
 			sheet.addCell(new Label(k, i + 1, map.get(fileErrorRecords.getErrorType())));
 		}

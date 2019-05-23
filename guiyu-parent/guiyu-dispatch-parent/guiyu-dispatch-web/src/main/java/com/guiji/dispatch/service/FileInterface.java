@@ -13,7 +13,8 @@ public interface FileInterface {
 	public Page<FileRecordsListVo> queryFileInterface(int pagenum, int pagesize,
 													  String batchName, String startTime, String endTime,
 													  String userId, String orgCode, Integer authLevel);
-	
+
+	//查询导入错误记录
 	public 	List<FileErrorRecords> queryErrorRecords(String fileRecordId);
 
 	boolean deleteFileRecordsById(Integer id);

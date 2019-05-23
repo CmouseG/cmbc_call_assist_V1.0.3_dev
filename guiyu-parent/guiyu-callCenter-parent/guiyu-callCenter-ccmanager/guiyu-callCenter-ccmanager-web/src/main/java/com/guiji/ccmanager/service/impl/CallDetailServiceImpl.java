@@ -464,7 +464,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                         if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
 
                             boolean novoice = true;
-                            for(int m=i+1;i<listSize; i++){
+                            for(int m=i+1;m<listSize; m++){
                                 Date customerSayTime = details.get(m).getCustomerSayTime(); //这个时间存储到秒
                                 if(customerSayTime!=null){ //客户说话不为空
                                     Integer asrDuration = details.get(m).getAsrDuration();  //asr识别用时。到毫秒
@@ -491,7 +491,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
 
                             boolean novoice = true;
-                            for(int m=i+1;i<listSize; i++){
+                            for(int m=i+1;m<listSize; m++){
                                 Date customerSayTime = details.get(m).getCustomerSayTime(); //这个时间存储到秒
                                 if(customerSayTime!=null){ //客户说话不为空
                                     Integer asrDuration = details.get(m).getAsrDuration();  //asr识别用时。到毫秒

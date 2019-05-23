@@ -75,7 +75,7 @@ public class DownloadStatisticController {
         OutputStream out = null;
         try {
             out = resp.getOutputStream();
-            generateIntentCountExcel(list, out, startDate, endDate, tempId);
+            generateIntentCountExcel(list, out, startDate, endDate, tempId, queryUser);
 
         } catch (IOException e) {
             log.error("downloadDialogue IOException :" + e);
@@ -96,7 +96,7 @@ public class DownloadStatisticController {
     }
 
     public void generateIntentCountExcel(List<Map<String, Object>> list, OutputStream out, String startDate, String endDate,
-                                         String tempId) throws IOException, WriteException, ParseException {
+                                         String tempId, Integer queryUser) throws IOException, WriteException, ParseException {
         WritableWorkbook wb = Workbook.createWorkbook(out);
 
         WritableSheet sheet = wb.createSheet("sheet1", 0);
@@ -114,9 +114,17 @@ public class DownloadStatisticController {
             String tempName = cacheManager.getTempName(tempId);
             sheet.addCell(new Label(1, 0, tempName == null ? "" : tempName));
         }
-        sheet.addCell(new Label(2, 0, "起止时间："));
-        sheet.addCell(new Label(3, 0, startDate + "-" + endDate));
 
+        if (queryUser!=null) {
+            String username = cacheManager.getUserName(queryUser);
+            sheet.addCell(new Label(2, 0, "用户："));
+            sheet.addCell(new Label(3, 0, username == null ? "" : username));
+            sheet.addCell(new Label(4, 0, "起止时间："));
+            sheet.addCell(new Label(5, 0, startDate + "-" + endDate));
+        }else{
+            sheet.addCell(new Label(2, 0, "起止时间："));
+            sheet.addCell(new Label(3, 0, startDate + "-" + endDate));
+        }
 
         List<String> metaDatas = new ArrayList<>();
         Map<String, Object> map0 = list.get(0);

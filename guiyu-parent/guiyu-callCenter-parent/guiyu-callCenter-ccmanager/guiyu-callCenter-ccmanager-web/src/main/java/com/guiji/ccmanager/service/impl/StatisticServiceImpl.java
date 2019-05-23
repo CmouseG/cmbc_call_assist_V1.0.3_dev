@@ -155,7 +155,7 @@ public class StatisticServiceImpl implements StatisticService {
     public List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate,
                                                     String endDate, String tempId, Integer queryUser) throws ParseException {
 
-        String[] arr = {"A","B","C","D","E","F","W"};
+        String[] arr = {"A","B","C","D","E","F","W","N"};
         try{
             Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
             String intent = result.getBody().getIntenLabel();
@@ -168,6 +168,9 @@ public class StatisticServiceImpl implements StatisticService {
         List<String> typeList = new ArrayList<>(Arrays.asList(arr));
         if(!typeList.contains("W")){
             typeList.add("W");
+        }
+        if(!typeList.contains("N")){
+            typeList.add("N");
         }
 
         List<IntentCount> list = getIntentCountList(authLevel,userId,orgCode, startDate, endDate, tempId, queryUser);

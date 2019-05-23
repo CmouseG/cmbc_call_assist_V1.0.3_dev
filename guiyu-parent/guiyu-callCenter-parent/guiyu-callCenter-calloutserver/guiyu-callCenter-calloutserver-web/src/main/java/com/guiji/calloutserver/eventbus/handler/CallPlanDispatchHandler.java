@@ -94,7 +94,7 @@ public class CallPlanDispatchHandler {
         CallOutPlan callplan = event.getCallPlan();
 
         //全局录音文件名称, 必须在一开始就指定，因为呼叫命令中会用到
-        String recordFileName = callplan.getCallId() + ".wav";
+        String recordFileName = callplan.getCallId()+Constant.UUID_SEPARATE+callplan.getOrgId() + ".wav";
         callplan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
         if (callplan.getCallState() == null || callplan.getCallState() < ECallState.make_call.ordinal()) {
             callplan.setCallState(ECallState.make_call.ordinal());

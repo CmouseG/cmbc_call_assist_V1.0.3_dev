@@ -1,3 +1,4 @@
 操作步骤
 1、使用root用户执行"plan加字段sql.sql"脚本
 2、执行存储过程语句：call alterPlanTable();
+3、执行"失败记录表加入客户信息字段.sql"

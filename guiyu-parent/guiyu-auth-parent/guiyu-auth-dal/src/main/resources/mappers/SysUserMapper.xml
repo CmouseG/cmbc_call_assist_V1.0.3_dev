@@ -545,7 +545,7 @@
 		LEFT JOIN sys_organization f ON a.org_code = f.`code`
 		where a.del_flag = 0
 		<if test="authLevel == 1">
-			and a.create_id = #{userId}
+			and a.id = #{userId}
 		</if>
 		<if test="authLevel == 2">
 			and a.org_code = #{orgCode}
@@ -583,7 +583,7 @@
 		LEFT JOIN sys_organization f ON a.org_code = f.`code`
 		WHERE a.del_flag = 0
 		<if test="authLevel == 1">
-			and a.create_id = #{userId}
+			and a.id = #{userId}
 		</if>
 		<if test="authLevel == 2">
 			and a.org_code = #{orgCode}

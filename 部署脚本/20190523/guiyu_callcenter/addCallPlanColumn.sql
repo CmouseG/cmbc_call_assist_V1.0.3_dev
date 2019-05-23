@@ -45,7 +45,7 @@ BEGIN
 		-- 修改plan表
 		SET @alter_sql = CONCAT(
 		'ALTER TABLE ', tab_name,
-		" ADD COLUMN enterprise VARCHAR(32) COMMENT '用户所属企业单位',ADD COLUMN answer_user VARCHAR(32) COMMENT '用户名称',ADD COLUMN import_time DATETIME COMMENT '导入时间'; ");
+		" ADD COLUMN enterprise VARCHAR(64) COMMENT '用户所属企业单位',ADD COLUMN answer_user VARCHAR(32) COMMENT '用户名称',ADD COLUMN import_time DATETIME COMMENT '导入时间'; ");
 		
 		PREPARE alter_sql FROM @alter_sql;   
 		EXECUTE alter_sql; 

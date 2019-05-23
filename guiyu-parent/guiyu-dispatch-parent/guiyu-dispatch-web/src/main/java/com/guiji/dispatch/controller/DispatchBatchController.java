@@ -5,6 +5,7 @@ import com.guiji.common.exception.GuiyuExceptionEnum;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.dto.JoinPlanDto;
 import com.guiji.dispatch.dto.OptPlanDto;
+import com.guiji.dispatch.enums.PlanOperBatchEnum;
 import com.guiji.dispatch.service.IPlanBatchService;
 import com.guiji.dispatch.util.Log;
 import com.guiji.utils.JsonUtils;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,9 @@ public class DispatchBatchController {
     @Autowired
     private IPlanBatchService planBatchService;
 
+    @Autowired
+    private ThreadPoolTaskExecutor asyncServiceExecutor;
+
 
     @ApiOperation(value="删除计划任务", notes="删除计划任务")
     @Log(info ="删除计划任务")
@@ -32,7 +37,7 @@ public class DispatchBatchController {
     @ResponseBody
     public boolean delPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                                @RequestBody OptPlanDto optPlanDto){
+                                @RequestBody OptPlanDto optPlanDto)throws Exception{
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -41,11 +46,13 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/delPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
-        boolean bool = planBatchService.delPlanBatch(optPlanDto);
+        /*boolean bool = planBatchService.delPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("删除计划失败");
-        }
-        return bool;
+        }*/
+        this.batchOptThread(optPlanDto, PlanOperBatchEnum.DEL.getType());
+        Thread.sleep(1000L);//等待一秒
+        return true;
     }
 
 
@@ -56,7 +63,7 @@ public class DispatchBatchController {
     @ResponseBody
     public boolean suspendPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                 @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                                @RequestBody OptPlanDto optPlanDto){
+                                @RequestBody OptPlanDto optPlanDto)throws Exception{
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -65,11 +72,13 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/suspendPlanBatch入参:{}", JsonUtils.bean2Json(optPlanDto));
-        boolean bool = planBatchService.suspendPlanBatch(optPlanDto);
+        /*boolean bool = planBatchService.suspendPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("暂停计划失败");
-        }
-        return bool;
+        }*/
+        this.batchOptThread(optPlanDto, PlanOperBatchEnum.SUSPEND.getType());
+        Thread.sleep(1000L);//等待一秒
+        return true;
     }
 
     @ApiOperation(value="批量停止计划任务", notes="批量停止计划任务")
@@ -79,7 +88,7 @@ public class DispatchBatchController {
     @ResponseBody
     public boolean stopPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                              @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                             @RequestBody OptPlanDto optPlanDto){
+                             @RequestBody OptPlanDto optPlanDto)throws Exception{
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -88,11 +97,13 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/stopPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
-        boolean bool = planBatchService.stopPlanBatch(optPlanDto);
+        /*boolean bool = planBatchService.stopPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("批量停止计划任务失败");
-        }
-        return bool;
+        }*/
+        this.batchOptThread(optPlanDto, PlanOperBatchEnum.STOP.getType());
+        Thread.sleep(1000L);//等待一秒
+        return true;
     }
 
 
@@ -104,7 +115,7 @@ public class DispatchBatchController {
     @ResponseBody
     public boolean recoveryPlanBatch(@RequestHeader String userId, @RequestHeader String orgCode,
                                  @RequestHeader Integer orgId, @RequestHeader Integer authLevel,
-                                 @RequestBody OptPlanDto optPlanDto){
+                                 @RequestBody OptPlanDto optPlanDto)throws Exception{
         if(null == optPlanDto){
             optPlanDto = new OptPlanDto();
         }
@@ -113,11 +124,43 @@ public class DispatchBatchController {
         optPlanDto.setOperOrgId(orgId);
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/recoveryPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
-        boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
+        /*boolean bool = planBatchService.recoveryPlanBatch(optPlanDto);
         if(!bool){
             throw new GuiyuException("批量恢复计划任务失败");
+        }*/
+        this.batchOptThread(optPlanDto, PlanOperBatchEnum.RECOVERY.getType());
+        Thread.sleep(1000L);//等待一秒
+        return true;
+    }
+
+
+    protected void batchOptThread(OptPlanDto optPlanDto, Integer opType) {
+        logger.info("start batchOptThread");
+        try{
+            asyncServiceExecutor.execute(new Runnable(){
+                @Override
+                public void run(){
+                    switch (opType){
+                        case 1://删除
+                            planBatchService.delPlanBatch(optPlanDto);
+                            break;
+                        case 2://暂停
+                            planBatchService.suspendPlanBatch(optPlanDto);
+                            break;
+                        case 3://停止
+                            planBatchService.stopPlanBatch(optPlanDto);
+                            break;
+                        case 4://恢复
+                            planBatchService.recoveryPlanBatch(optPlanDto);
+                            break;
+                    }
+
+                }
+            });
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        return bool;
+        logger.info("end batchOptThread");
     }
 
 
@@ -163,7 +206,7 @@ public class DispatchBatchController {
         optPlanDto.setAuthLevel(authLevel);
         logger.info("/dispatch/batch/controller/exportPlanBatch:{}", JsonUtils.bean2Json(optPlanDto));
         boolean bool = planBatchService.exportPlanBatch(optPlanDto);
-        Thread.sleep(2000L);//等待三秒
+        Thread.sleep(2000L);//等待二秒
         if(!bool){
             throw new GuiyuException("批量导出计划任务失败");
         }

@@ -80,7 +80,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 				dispatchPlan.setPhone(row.getPhone());
 				dispatchPlan.setParams(row.getParamaters());
 				dispatchPlan.setAttach(row.getAttach());
-
+				dispatchPlan.setCustName(row.getCustName());
+				dispatchPlan.setCustCompany(row.getCustCompany());
 
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
 				return;

@@ -532,7 +532,7 @@
       a.batchId          ,
       a.batch_name       ,
       a.file_name        ,
-      (a.success_count - COUNT(e.id)) as success_count   ,
+      IFNULL(a.success_count - COUNT(e.id),0) AS success_count   ,
       a.failure_count    ,
       a.create_time      ,
       a.user_id          ,

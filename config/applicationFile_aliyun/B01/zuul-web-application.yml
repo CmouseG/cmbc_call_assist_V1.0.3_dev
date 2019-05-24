@@ -2,6 +2,8 @@ server:
   port: 18000
   tomcat:
     uri-encoding: UTF-8
+    max-http-post-size: 1000000
+  max-http-header-size: 1000000
 spring:
   application:
     name: guiyu-cloud-zuul
@@ -146,6 +148,9 @@ zuul:
       service-id: guiyu-sysoperalog-web
     guiyu-thirdApi-web:
       path: /api/**
+      service-id: guiyu-thirdApi-web
+    guiyu-thirdApi-web-api:
+      path: /v1/**
       service-id: guiyu-thirdApi-web
     guiyu-callcenter-toagentserver:
       path: /toagent/**

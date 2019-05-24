@@ -1,5 +1,9 @@
 server:
   port: 18019
+  tomcat:
+    uri-encoding: UTF-8
+    max-http-post-size: 1000000
+  max-http-header-size: 1000000
 #myconfig
 spring:
   application:

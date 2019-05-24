@@ -1,5 +1,6 @@
 package com.guiji.dispatch.pushcallcenter;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -85,6 +86,8 @@ public class CallBack4MQListener {
 			}
 		}
 
+		logger.info("ready to notify third api: {}", JsonUtils.bean2Json(mqSuccPhoneDto));
+
 		//通知三方单个号码完成
 		this.notifyThirdResult(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLabel());
 	}
@@ -109,13 +112,14 @@ public class CallBack4MQListener {
 	protected void notifyThirdResult(Integer userId, String planUuid, String result){
 		Integer orgId = getApiService.getOrgIdByUser(userId + "");
 		DispatchPlan vo = planMapper.queryDispatchPlanById(Long.valueOf(planUuid), orgId);
-		if(StringUtils.isNotEmpty(vo.getCallbackUrl())){
-			try {
-				thirdApiNotifyService.singleNotify(vo);
-			}catch(Exception e){
-				logger.error("MQ通知三方完成异常", e);
-			}
-		}
+
+		logger.info("notify plan info: {}", JsonUtils.bean2Json(vo));
+
+        try {
+            thirdApiNotifyService.singleNotify(vo);
+        }catch(Exception e){
+            logger.error("MQ通知三方完成异常", e);
+        }
 	}
 
 

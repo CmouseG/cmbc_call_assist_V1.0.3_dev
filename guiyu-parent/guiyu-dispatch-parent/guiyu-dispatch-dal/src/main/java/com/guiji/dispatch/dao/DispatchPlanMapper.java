@@ -63,5 +63,5 @@ public interface DispatchPlanMapper {
     //查询下载数据
     List<DownLoadPlanVo> queryDownloadPlanList(DispatchPlanExample example);
 
-    List<Long> getPlanUuidList(DispatchPlanExample example);
+    List<DispatchPlan> getPlanUuidList(DispatchPlanExample example);
 }

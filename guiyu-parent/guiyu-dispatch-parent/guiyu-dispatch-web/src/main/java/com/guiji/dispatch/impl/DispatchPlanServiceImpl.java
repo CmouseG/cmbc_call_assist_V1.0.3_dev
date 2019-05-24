@@ -9,16 +9,16 @@ import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.batchimport.BatchImportQueueHandler;
-import com.guiji.dispatch.bean.BatchDispatchPlanList;
-import com.guiji.dispatch.bean.IdsDto;
-import com.guiji.dispatch.bean.MQSuccPhoneDto;
-import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.bean.*;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.*;
+import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
@@ -27,9 +27,7 @@ import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
-import com.guiji.dispatch.model.DispatchPlanBatchAddVo;
-import com.guiji.dispatch.model.PhoneVo;
-import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.model.*;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.service.*;
 import com.guiji.dispatch.sys.ResultPage;
@@ -43,6 +41,7 @@ import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.CustTemplateVo;
 import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
@@ -56,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -1504,6 +1504,46 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 
+	@Async
+	@Override
+	public void addPlanAsync(AddPlanAsyncEntity entity){
+		DispatchPlanForApiRo ro = entity.getRo();
+		Integer lineType = entity.getLineType();
+		DispatchPlanBatch dispatchPlanBatch = entity.getBatch();
+		CustTemplateVo custTemplateVo = entity.getCustTemplateVo();
+		SysUser sysUser = entity.getSysUser();
+		SysOrganization orgInfo = entity.getOrgInfo();
+		Integer orgId = orgInfo.getId();
+
+		for(PhoneRo phoneRo : ro.getPhoneRoList()) {
+
+			DispatchPlan dispatchPlan = new DispatchPlan();
+
+			dispatchPlan.setPhone(phoneRo.getPhoneNo());
+			dispatchPlan.setParams(phoneRo.getParams());
+			dispatchPlan.setAttach(phoneRo.getAttach());
+			dispatchPlan.setCallAgent(ro.getCallAgent());
+			dispatchPlan.setCustName(phoneRo.getCustName());
+			dispatchPlan.setCustCompany(phoneRo.getCustCompany());
+			dispatchPlan.setLineType(lineType);
+			dispatchPlan.setCallData(ro.getCallData());
+			dispatchPlan.setCallHour(ro.getCallHour());
+			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
+			dispatchPlan.setRobot(custTemplateVo.getTemplateId());
+			dispatchPlan.setRobotName(custTemplateVo.getTemplateName());
+			dispatchPlan.setOrgCode(sysUser.getOrgCode());
+			dispatchPlan.setUsername(sysUser.getUsername());
+			dispatchPlan.setOrgId(orgInfo.getId());
+			dispatchPlan.setOrgCode(orgInfo.getCode());
+			dispatchPlan.setClean(ro.getClean());
+			dispatchPlan.setUserId(ro.getUserId());
+			dispatchPlan.setCallbackUrl(ro.getSingleCallBackUrl());
+			dispatchPlan.setBatchName(ro.getBatchName());
+			addPlan(dispatchPlan);
+		}
+	}
+
+
 	/**
 	 * 添加计划
 	 * @param dispatchPlan
@@ -1601,11 +1641,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 
-		List<Long> selectByExample = dispatchPlanMapper.getPlanUuidList(example);
+		List<DispatchPlan> planUuidList = dispatchPlanMapper.getPlanUuidList(example);
 
 		List<String> ids = new ArrayList<>();
-		for (Long dis : selectByExample) {
-			ids.add(dis.toString());
+		for (DispatchPlan dis : planUuidList) {
+			ids.add(dis.getPlanUuid()+"");
 		}
 
 		CallPlanUuidQuery query = new CallPlanUuidQuery();

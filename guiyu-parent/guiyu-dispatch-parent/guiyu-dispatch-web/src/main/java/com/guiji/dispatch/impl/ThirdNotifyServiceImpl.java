@@ -13,6 +13,8 @@ import com.guiji.dispatch.service.ThirdApiNotifyService;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ import org.springframework.util.CollectionUtils;
 public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
 
     private static final String NOTIFY_QUEUE = "thirdApi.notify";
+
+    /** logger */
+    private final static Logger LOGGER = LoggerFactory.getLogger(ThirdNotifyServiceImpl.class);
 
     @Autowired
     QueueSender mqSender;
@@ -46,8 +51,8 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
     @Async("asyncThirdApiNotify")
     public void singleNotify(DispatchPlan plan) {
 
-        DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(plan.getBatchId());
 
+        DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(plan.getBatchId());
         if(StringUtils.isNotEmpty(dispatchPlanBatch.getSingleCallbackUrl())) {
             PlanCallResultVo resultVo = new PlanCallResultVo();
 

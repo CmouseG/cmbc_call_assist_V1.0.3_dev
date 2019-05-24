@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.DispatchThirdApi;
+import com.guiji.dispatch.bean.AddPlanAsyncEntity;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.entity.DispatchBatchLine;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.enums.PlanStatusEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
@@ -24,6 +24,7 @@ import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +61,7 @@ public class DispatchThirdApiController implements DispatchThirdApi {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result.ReturnData<Boolean> addBatchPlan(@RequestBody DispatchPlanForApiRo ro) {
 
         //校验线路
@@ -94,33 +96,17 @@ public class DispatchThirdApiController implements DispatchThirdApi {
 
         setBatchRedisNum(Long.valueOf(num), dispatchPlanBatch.getId());
 
-        for(PhoneRo phoneRo : ro.getPhoneRoList()) {
+        AddPlanAsyncEntity entity = new AddPlanAsyncEntity();
 
-            DispatchPlan dispatchPlan = new DispatchPlan();
+        entity.setBatch(dispatchPlanBatch);
+        entity.setRo(ro);
+        entity.setSysUser(sysUser);
+        entity.setOrgInfo(orgInfo);
+        entity.setCustTemplateVo(custTemplateVo);
+        entity.setLineType(lineType);
 
-            dispatchPlan.setPhone(phoneRo.getPhoneNo());
-            dispatchPlan.setParams(phoneRo.getParams());
-            dispatchPlan.setAttach(phoneRo.getAttach());
-            dispatchPlan.setCallAgent(ro.getCallAgent());
-            dispatchPlan.setPhone(phoneRo.getCustName());
-            dispatchPlan.setCustCompany(phoneRo.getCustCompany());
-            dispatchPlan.setLineType(lineType);
-            dispatchPlan.setCallData(ro.getCallData());
-            dispatchPlan.setCallHour(ro.getCallHour());
-            dispatchPlan.setBatchId(dispatchPlanBatch.getId());
-            dispatchPlan.setRobot(custTemplateVo.getTemplateId());
-            dispatchPlan.setRobotName(custTemplateVo.getTemplateName());
-            dispatchPlan.setOrgCode(sysUser.getOrgCode());
-            dispatchPlan.setUsername(sysUser.getUsername());
-            dispatchPlan.setOrgId(orgInfo.getId());
-            dispatchPlan.setOrgCode(orgInfo.getCode());
-            dispatchPlan.setClean(ro.getClean());
-            dispatchPlan.setUserId(ro.getUserId());
-            dispatchPlan.setCallbackUrl(ro.getSingleCallBackUrl());
-            dispatchPlan.setBatchName(ro.getBatchName());
 
-            dispatchPlanService.addPlan(dispatchPlan);
-        }
+        dispatchPlanService.addPlanAsync(entity);
 
         return Result.ok();
     }
@@ -295,7 +281,7 @@ public class DispatchThirdApiController implements DispatchThirdApi {
      */
     @Override
     public Result.ReturnData<Boolean> recoveryPlanThirdBatch(@RequestBody OperDispatchRo ro) {
-        operPlanStatus(ro, STOP);
+        operPlanStatus(ro, RECOVER);
 
         return Result.ok(true);
     }

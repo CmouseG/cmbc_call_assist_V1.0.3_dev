@@ -2,6 +2,7 @@ package com.guiji.dispatch.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.dispatch.bean.AddPlanAsyncEntity;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
@@ -162,6 +163,8 @@ public interface IDispatchPlanService {
     int queryPlanCountByBatch(Integer batchId);
 
     void addPlan(DispatchPlan dispatchPlan);
+
+    void addPlanAsync(AddPlanAsyncEntity entity);
 
     void saveError(DispatchPlan dispatchPlan);
 

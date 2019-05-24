@@ -108,7 +108,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 					}
 
 					if(StringUtils.isNotEmpty(vo.getCallbackUrl())) {
-						dispatchPlanService.saveError(vo);
+						saveApiErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 						thirdApiNotifyService.singleNotify(vo);
 						decrBatchCount(vo);
 					}
@@ -124,7 +124,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 			if(StringUtils.isNotEmpty(vo.getCallbackUrl())) {
 
-				dispatchPlanService.saveError(vo);
+				saveApiErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 				thirdApiNotifyService.singleNotify(vo);
 				decrBatchCount(vo);
 			}
@@ -189,6 +189,32 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 		}
 
+	}
+
+
+	private void saveApiErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {
+
+		if(errorCodeEnum.equals(BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR)) {
+			vo.setResult("tts校验参数错误");
+		} else if(errorCodeEnum.equals(BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM)) {
+			vo.setResult("tts校验参数未通过");
+		}
+
+		logger.info("saveErrorRecords start");
+		FileErrorRecords records = new FileErrorRecords();
+		records.setAttach(vo.getAttach());
+		records.setCreateTime(DateUtil.getCurrent4Time());
+		records.setParams(vo.getParams());
+		records.setPhone(vo.getPhone());
+		records.setCustName(vo.getCustName());
+		records.setCustCompany(vo.getCustCompany());
+//		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
+		records.setErrorType(errorCodeEnum.getValue());
+		records.setDataType(Constant.IMPORT_DATA_TYPE_API);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
+		fileRecordErrorService.save(records);
+		logger.info("saveErrorRecords end");
 	}
 
 	private void saveFileErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {

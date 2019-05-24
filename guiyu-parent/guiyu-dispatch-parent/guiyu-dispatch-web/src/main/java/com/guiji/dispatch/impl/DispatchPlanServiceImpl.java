@@ -16,6 +16,7 @@ import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
@@ -1547,17 +1548,32 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return dispatchPlanMapper.countByExample(example);
 	}
 
+	@Autowired
+	FileErrorRecordsMapper fileErrorRecordsMapper;
+
 	@Override
 	public List<DispatchPlan> getFailCount(DispatchPlan plan) {
-		DispatchPlanExample example = new DispatchPlanExample();
+		FileErrorRecordsExample example = new FileErrorRecordsExample();
 
-		example.createCriteria().andBatchIdEqualTo(plan.getBatchId())
-				.andOrgIdEqualTo(plan.getOrgId())
-				.andStatusPlanEqualTo(Constant.STATUSPLAN_2)
-				.andStatusSyncEqualTo(Constant.STATUS_SYNC_1)
-				.andIsDelEqualTo(Constant.IS_DEL_0);
+		example.createCriteria().andBatchIdEqualTo(plan.getBatchId());
 
-		return dispatchPlanMapper.selectByExample(example);
+		List<FileErrorRecords> fileErrorRecords = fileErrorRecordsMapper.selectByExample(example);
+
+		List<DispatchPlan> dispatchPlans = new ArrayList<>();
+
+		fileErrorRecords.forEach(obj -> {
+			DispatchPlan dispatchPlan = new DispatchPlan();
+
+			dispatchPlan.setCustName(obj.getCustName());
+			dispatchPlan.setCustCompany(obj.getCustCompany());
+			dispatchPlan.setPhone(obj.getPhone());
+			dispatchPlan.setAttach(obj.getAttach());
+			dispatchPlan.setParams(obj.getParams());
+
+			dispatchPlans.add(dispatchPlan);
+		});
+
+		return dispatchPlans;
 	}
 
 	@Autowired
@@ -1613,11 +1629,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		DispatchPlanBatch batch = dispatchPlanBatchMapper.selectByPrimaryKey(vo.getBatchId());
 
+		Integer orgId = getApiService.getOrgIdByUser(batch.getUserId().toString());
+
 		List<DispatchPlan> dispatchPlans = getFailCount(vo);
 
 		Integer failCount = 0;
-
-		StringBuilder res = new StringBuilder();
 
 		List<PhoneVo> phoneVos = new ArrayList<>();
 

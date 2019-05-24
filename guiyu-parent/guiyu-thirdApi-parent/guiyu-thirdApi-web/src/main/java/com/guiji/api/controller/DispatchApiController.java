@@ -273,7 +273,9 @@ public class DispatchApiController {
 
         DispatchPlanForApiRo apiRo = new DispatchPlanForApiRo();
 
-        apiRo.setCallAgent(ro.getGroupId().toString());
+        if(ro.getGroupId() != null) {
+            apiRo.setCallAgent(ro.getGroupId().toString());
+        }
         apiRo.setBatchName(ro.getBatchName());
         apiRo.setCallData(Integer.valueOf(ro.getCallDate()));
         apiRo.setCallHour(ro.getCallHour());

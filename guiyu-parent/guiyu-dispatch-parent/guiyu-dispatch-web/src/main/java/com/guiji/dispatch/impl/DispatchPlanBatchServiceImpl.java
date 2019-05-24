@@ -206,7 +206,7 @@ public class DispatchPlanBatchServiceImpl implements IDispatchPlanBatchService {
         }
         Integer orgId = userService.getOrgIdByUser(userId.toString());//获取orgId
 
-        int pageNo = 0 >= ro.getPage() ? ro.getPage() : 1;
+        int pageNo = ro.getPage() > 0 ? ro.getPage() : 1;
         ResultPage<com.guiji.dispatch.dao.entity.DispatchPlan> page = new ResultPage<>(pageNo, ro.getPageNum());
 
         List<DispatchPlan> list = batchPlanExtMapper.queryPlanThirdBatchPage(planBatch.getId(), Lists.newArrayList(orgId), page);

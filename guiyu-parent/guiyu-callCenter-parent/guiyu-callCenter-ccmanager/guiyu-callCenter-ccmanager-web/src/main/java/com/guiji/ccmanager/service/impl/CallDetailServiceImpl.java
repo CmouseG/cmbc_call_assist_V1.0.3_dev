@@ -226,14 +226,18 @@ public class CallDetailServiceImpl implements CallDetailService {
 
         List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(callRecordReq.getAuthLevel(),callRecordReq.getOrgId());
         map.put("orgIdList",orgIdList);
-        if (callRecordReq.getUserId() != null)
+        if (callRecordReq.getAuthLevel()!=null && callRecordReq.getAuthLevel()==AuthLevelEnum.USER.getLevel()
+                && callRecordReq.getUserId() != null) {
             map.put("customerId", callRecordReq.getUserId());
+        }
 //        if (callRecordReq.getOrgCode() != null)
 //            map.put("orgCode", callRecordReq.getOrgCode());
-        if (callRecordReq.getTime() != null)
-            map.put("time", callRecordReq.getTime()-1);
-        if (callRecordReq.getAccurateIntent() != null)
+        if (callRecordReq.getTime() != null) {
+            map.put("time", callRecordReq.getTime() - 1);
+        }
+        if (callRecordReq.getAccurateIntent() != null) {
             map.put("accurateIntent", callRecordReq.getAccurateIntent());
+        }
         int i = callOutPlanMapper.countCallRecordList(map);
         return i;
     }

@@ -68,7 +68,7 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
 
             mqNotifyMessage.setUserId(plan.getUserId());
             mqNotifyMessage.setBody(JsonUtils.bean2Json(resultVo));
-            mqNotifyMessage.setNotifyUrl(plan.getCallbackUrl());
+            mqNotifyMessage.setNotifyUrl(dispatchPlanBatch.getSingleCallbackUrl());
 
             mqSender.send(NOTIFY_QUEUE, JsonUtils.bean2Json(mqNotifyMessage));
 

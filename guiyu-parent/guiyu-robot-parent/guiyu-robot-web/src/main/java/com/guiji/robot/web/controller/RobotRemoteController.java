@@ -116,7 +116,7 @@ public class RobotRemoteController implements IRobotRemote{
 		iAiAbilityCenterService.flowMsgPush(aiFlowMsgPushReq);
 		return Result.ok();
 	}
-
+	
 	
 	/**
 	 * 拨打AI电话
@@ -162,8 +162,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiHangupReq
 	 * @return
 	 */
-	public Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq){
-		logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-in", JsonUtils.bean2Json(aiHangupReq));
+	public Result.ReturnData<HangupRes> aiHangup(@RequestBody AiHangupReq aiHangupReq){
 		iAiAbilityCenterService.aiHangup(aiHangupReq);
 		logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-out", "");
 		return Result.ok();

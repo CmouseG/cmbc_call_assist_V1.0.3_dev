@@ -72,7 +72,7 @@ public class ChannelProgressHandler {
                 return;
             }else{
                 CallOutPlan callOutPlanNew = new CallOutPlan();
-                callOutPlanNew.setCallState(ECallState.progress.ordinal());
+                callOutPlanNew.setCallState(ECallState.progress.ordinal());//这个有会覆盖其他状态，比如hangup事件立马过来了
                 callOutPlanNew.setCallId(callOutPlan.getCallId());
                 callOutPlanNew.setOrgId(orgId);
                 callOutPlanService.update(callOutPlanNew);

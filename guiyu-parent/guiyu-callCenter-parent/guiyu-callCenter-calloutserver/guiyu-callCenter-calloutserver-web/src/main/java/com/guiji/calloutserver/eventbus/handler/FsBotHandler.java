@@ -142,15 +142,19 @@ public class FsBotHandler {
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse, false,true,orgId);
 
-            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况  todo 情况是否还有，需要验证
+            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况  todo 这个查询过后，可能状态立马被hangup那边改变
             CallOutPlan callPlanNew = callOutPlanService.findByCallId(bigIntegerId, orgId);
+            CallOutPlan callPlanUpdate = new CallOutPlan();
+            callPlanUpdate.setCallId(callPlan.getCallId());
+            callPlanUpdate.setOrgId(callPlan.getOrgId());
             if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
-                callPlan.setCallState(ECallState.answer.ordinal());
+                callPlanUpdate.setCallState(ECallState.answer.ordinal());
             }
-            callPlan.setAnswerTime(new Date());
-//            callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
-            callPlan.setIsAnswer(1);
-            callOutPlanService.update(callPlan);
+//            callPlanUpdate.setAnswerTime(new Date());
+            callPlanUpdate.setIsAnswer(1);
+            callPlanUpdate.setAccurateIntent(aiResponse.getAccurateIntent());
+            callPlanUpdate.setReason(aiResponse.getReason());
+            callOutPlanService.updateNotOverWriteIntent(callPlanUpdate);
 
             //插入通话记录详情
 //            String detailID = IdGenUtil.uuid();

@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.calloutserver.constant.Constant;
+import com.guiji.calloutserver.constant.HangupDirectionEnum;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
@@ -83,6 +84,19 @@ public class CallStateServiceImpl implements CallStateService {
                     hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
                     hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
                     hangupReq.setTemplateId(callOutPlan.getTempId());
+
+                    hangupReq.setTotalCallTime(callOutPlan.getBillSec());
+                    if(callOutPlan.getHangupDirection()!=null){
+                        if(callOutPlan.getHangupDirection()== HangupDirectionEnum.USER.ordinal()){
+                            hangupReq.setHangUpType(1);
+                        }else{
+                            hangupReq.setHangUpType(2);
+                        }
+                    }else{
+                        hangupReq.setHangUpType(0);
+                    }
+                    hangupReq.setHangUpHalfway(255);
+
                     Result.ReturnData result = robotRemote.aiHangup(hangupReq);
                     log.info("---->>回调机器人中心释放资源，返回结果result[{}],callId[{}]",result,callOutPlan.getCallId());
                 } catch (Exception e) {

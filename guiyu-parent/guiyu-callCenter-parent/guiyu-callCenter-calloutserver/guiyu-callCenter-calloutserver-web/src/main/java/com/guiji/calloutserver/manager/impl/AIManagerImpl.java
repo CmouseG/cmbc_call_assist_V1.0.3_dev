@@ -3,6 +3,7 @@ package com.guiji.calloutserver.manager.impl;
 import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.constant.Constant;
+import com.guiji.calloutserver.constant.HangupDirectionEnum;
 import com.guiji.calloutserver.entity.AIInitRequest;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
@@ -176,6 +177,18 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
         hangupReq.setTemplateId(callOutPlan.getTempId());
+
+        hangupReq.setTotalCallTime(callOutPlan.getBillSec());
+        if(callOutPlan.getHangupDirection()!=null){
+            if(callOutPlan.getHangupDirection()== HangupDirectionEnum.USER.ordinal()){
+                hangupReq.setHangUpType(1);
+            }else{
+                hangupReq.setHangUpType(2);
+            }
+        }else{
+            hangupReq.setHangUpType(0);
+        }
+        hangupReq.setHangUpHalfway(255);
 
         log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "释放机器人资源开始", callOutPlan.getAiId());

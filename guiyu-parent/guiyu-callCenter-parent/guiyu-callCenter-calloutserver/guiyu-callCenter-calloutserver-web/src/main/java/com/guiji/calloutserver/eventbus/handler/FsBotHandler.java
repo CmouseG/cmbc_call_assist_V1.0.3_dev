@@ -7,6 +7,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.calloutserver.constant.Constant;
+import com.guiji.calloutserver.constant.HangupDirectionEnum;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
@@ -329,9 +330,9 @@ public class FsBotHandler {
 //                callPlan.setCallStartTime(event.getStartStamp());
                 if(event.getHangupDisposition()!=null){
                     if(event.getHangupDisposition().equals("send_bye")){//机器人挂断
-                        callPlan.setHangupDirection(0);
+                        callPlan.setHangupDirection(HangupDirectionEnum.ROBOT.ordinal());
                     }else{//用户挂断
-                        callPlan.setHangupDirection(1);
+                        callPlan.setHangupDirection(HangupDirectionEnum.USER.ordinal());
                     }
                 }
 

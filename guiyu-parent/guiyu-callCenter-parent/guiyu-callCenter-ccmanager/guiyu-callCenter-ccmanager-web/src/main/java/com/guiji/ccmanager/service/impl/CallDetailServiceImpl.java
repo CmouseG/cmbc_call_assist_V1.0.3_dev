@@ -197,14 +197,13 @@ public class CallDetailServiceImpl implements CallDetailService {
             if (callRecordReq.getUserId() != null) {
                 myCallOutPlanQueryEntity.setCustomerId(callRecordReq.getUserId().intValue());
             }
-        }else{
-            List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,callRecordReq.getOrgId());
-            if(orgIdList!=null){
-                if(orgIdList.size()==1){
-                    myCallOutPlanQueryEntity.setOrgId(orgIdList.get(0));
-                }else{
-                    myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
-                }
+        }
+        List<Integer> orgIdList = authService.getOrgIdsByAuthlevel(authLevel,callRecordReq.getOrgId());
+        if(orgIdList!=null){
+            if(orgIdList.size()==1){
+                myCallOutPlanQueryEntity.setOrgId(orgIdList.get(0));
+            }else{
+                myCallOutPlanQueryEntity.setOrgIdList(orgIdList);
             }
         }
 

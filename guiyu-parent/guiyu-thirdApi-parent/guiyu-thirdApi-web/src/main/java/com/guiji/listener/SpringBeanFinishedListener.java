@@ -41,6 +41,9 @@ public class SpringBeanFinishedListener implements InitializingBean {
                 DelayMessage delayMessage = null;
                 try {
                     delayMessage = blockingQueue.take();
+
+                    logger.info("start call back , url : {}, body : {}", delayMessage.getNotifyUrl(), delayMessage.getBody());
+
                     HttpClientUtil.doPostJson(delayMessage.getNotifyUrl(), delayMessage.getBody());
                 } catch (Exception e) {
                     //将错误的消息体写到日志中

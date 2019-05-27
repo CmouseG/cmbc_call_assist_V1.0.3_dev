@@ -29,6 +29,7 @@ import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.auth.model.UserAuth;
 import com.guiji.auth.model.UserIdVo;
+import com.guiji.auth.model.UserRobotNumVO;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.UserService;
 import com.guiji.auth.util.AuthUtil;
@@ -382,7 +383,7 @@ public class UserController implements IAuth {
 	@RequestMapping("/user/queryButtonByUser")
 	public ReturnData<List<String>> queryButtonByUser(Long userId)
 	{
-		String roleId = getRoleByUserId(userId).body.get(0).getId().toString();
+		String roleId = getRoleByUserId(userId).getBody().get(0).getId().toString();
 		List<String> urlList = redisUtil.getT("Key_Jurisdiction_"+roleId);
 		if(urlList != null){return Result.ok(urlList);}
 		urlList = new ArrayList<>();
@@ -430,5 +431,21 @@ public class UserController implements IAuth {
 	@RequestMapping("/user/getUserCount")
 	public ReturnData<Integer> getUserCount(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
 		return Result.ok(service.getUserCount(userId,authLevel,orgCode));
+	}
+	
+	@RequestMapping("/user/queryUserRobotNumByOpenId")
+	public ReturnData<List<UserRobotNumVO>> queryUserRobotNumByOpenId(String openId)
+	{
+		List<UserRobotNumVO> list = new ArrayList<>();
+		List<SysUser> users = getUserByOpenId(openId).getBody();
+		for(SysUser user : users)
+		{
+			int robotNum = organizationService.countRobotByUserId(user.getId());
+			UserRobotNumVO vo = new UserRobotNumVO();
+			vo.setUsernName(user.getUsername());
+			vo.setRobotNum(robotNum);
+			list.add(vo);
+		}
+		return Result.ok(list);
 	}
 }

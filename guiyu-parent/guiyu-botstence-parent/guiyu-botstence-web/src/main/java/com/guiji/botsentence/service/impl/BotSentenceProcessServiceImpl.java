@@ -2122,16 +2122,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		this.updateValiableDomainName(domain.getProcessId(), oldDomainName, newDomainName, "update");
 
 		if(StringUtils.isNotBlank(domainId) && domainId.equals(blankDomain.getId())) {//如果修改的是当前domain才需要更新以下数据，否则只要更新上面的坐标即可
+			//第三步：更新所有domain为oldDomain的branch
 			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
 			branchExample.createCriteria()
 					.andProcessIdEqualTo(blankDomain.getProcessId())
 					.andDomainEqualTo(oldDomainName);
 			List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
 			branchList.forEach(branch -> {
-				branch.setDomain(newDomainName);//第三步：更新branch表的domain
-				branch.setNext(blankDomain.getLabel());//第四步：更新branch表的next
-				branch.setEnd(blankDomain.getLabel());//第五步：更新branch表的end
-				branch.setLstUpdateTime(new Date(System.currentTimeMillis()));
+				branch.setDomain(newDomainName);
+				branch.setLstUpdateTime(new Date());
 				branch.setLstUpdateUser(userId);
 
 				if(branch.getBranchName().contains("refuse_")){
@@ -2139,6 +2138,32 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					branch.setRespname(branch.getRespname().replaceAll(oldDomainName, newDomainName));
 				}
 
+				botSentenceBranchMapper.updateByPrimaryKey(branch);
+			});
+
+			//第四步：更新所有next为oldDomain的branch
+			BotSentenceBranchExample nextBranchExample = new BotSentenceBranchExample();
+			nextBranchExample.createCriteria()
+					.andProcessIdEqualTo(blankDomain.getProcessId())
+					.andNextEqualTo(oldDomainName);
+			List<BotSentenceBranch> nextBranchList = botSentenceBranchMapper.selectByExample(nextBranchExample);
+			nextBranchList.forEach(branch -> {
+				branch.setNext(newDomainName);
+				branch.setLstUpdateTime(new Date());
+				branch.setLstUpdateUser(userId);
+				botSentenceBranchMapper.updateByPrimaryKey(branch);
+			});
+
+			//第五步：更新所有end为oldDomain的branch
+			BotSentenceBranchExample endBranchExample = new BotSentenceBranchExample();
+			endBranchExample.createCriteria()
+					.andProcessIdEqualTo(blankDomain.getProcessId())
+					.andEndEqualTo(oldDomainName);
+			List<BotSentenceBranch> endBranchList = botSentenceBranchMapper.selectByExample(endBranchExample);
+			endBranchList.forEach(branch -> {
+				branch.setEnd(newDomainName);
+				branch.setLstUpdateTime(new Date());
+				branch.setLstUpdateUser(userId);
 				botSentenceBranchMapper.updateByPrimaryKey(branch);
 			});
 

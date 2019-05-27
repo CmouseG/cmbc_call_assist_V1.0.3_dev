@@ -611,6 +611,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			EndReq endReq = new EndReq();
 			endReq.setSeqId(aiHangupReq.getSeqId());
 			endReq.setTemplateId(aiHangupReq.getTemplateId());
+			endReq.setHangupHalfWay(aiHangupReq.getHangUpHalfway());
+			endReq.setHangupType(aiHangupReq.getHangUpType());
+			endReq.setTotalCallTime(aiHangupReq.getTotalCallTime());
 			return robotServerSwitchService.getRobotServerInstance(aiHangupReq.getTemplateId()).clean(nowAi, endReq);
 		} catch (Exception e) {
 			//如果调用外部挂断失败的话，只打印异常，但是不继续抛出，不影响主业务

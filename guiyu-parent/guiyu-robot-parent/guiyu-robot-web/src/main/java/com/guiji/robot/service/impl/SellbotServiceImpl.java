@@ -126,11 +126,9 @@ public class SellbotServiceImpl implements ISellbotService{
 
 		JSONObject jsonObject = new JSONObject();
 
-		jsonObject.put("sentence", endReq.getSentence());
 		jsonObject.put("hang_up_halfway", endReq.getHangupHalfWay());
 		jsonObject.put("total_call_time", endReq.getTotalCallTime());
 		jsonObject.put("hangup_type", endReq.getHangupType());
-		jsonObject.put("play_time", endReq.getPlayTime());
 
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JSONUtils.toJSONString(jsonObject));
 

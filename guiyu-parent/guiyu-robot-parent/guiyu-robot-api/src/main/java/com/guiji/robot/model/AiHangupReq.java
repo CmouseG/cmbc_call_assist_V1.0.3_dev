@@ -24,6 +24,26 @@ public class AiHangupReq {
 	@ApiModelProperty(value="话术模板编号",required=true)
 	private String templateId;
 
+	/**
+	 * 挂断方HANGUP_NO = 0
+	 *     HANGUP_HUMAN = 1 客户挂断
+	 *     HANGUP_AI = 2 ai挂断
+ 	*/
+	private Integer hangUpType;
+
+	/**
+	 * 播放完毕		0
+	 * 未播放完毕	1
+	 * 未知			255
+	 */
+	private Integer hangUpHalfway;
+
+	/**
+	 * 通话时长
+	 */
+	private Integer totalCallTime;
+
+
 	public String getSeqId() {
 		return seqId;
 	}
@@ -64,12 +84,41 @@ public class AiHangupReq {
 		this.templateId = templateId;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public Integer getHangUpType() {
+		return hangUpType;
+	}
+
+	public void setHangUpType(Integer hangUpType) {
+		this.hangUpType = hangUpType;
+	}
+
+	public Integer getHangUpHalfway() {
+		return hangUpHalfway;
+	}
+
+	public void setHangUpHalfway(Integer hangUpHalfway) {
+		this.hangUpHalfway = hangUpHalfway;
+	}
+
+	public Integer getTotalCallTime() {
+		return totalCallTime;
+	}
+
+	public void setTotalCallTime(Integer totalCallTime) {
+		this.totalCallTime = totalCallTime;
+	}
+
 	@Override
 	public String toString() {
-		return "AiHangupReq [seqId=" + seqId + ", userId=" + userId + ", phoneNo=" + phoneNo + ", aiNo=" + aiNo
-				+ ", templateId=" + templateId + "]";
+		return "AiHangupReq{" +
+				"seqId='" + seqId + '\'' +
+				", userId='" + userId + '\'' +
+				", phoneNo='" + phoneNo + '\'' +
+				", aiNo='" + aiNo + '\'' +
+				", templateId='" + templateId + '\'' +
+				", hangUpType=" + hangUpType +
+				", hangUpHalfway=" + hangUpHalfway +
+				", totalCallTime=" + totalCallTime +
+				'}';
 	}
 }

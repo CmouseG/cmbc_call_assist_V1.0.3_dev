@@ -382,13 +382,17 @@ public class UserController implements IAuth {
 	@RequestMapping("/user/queryButtonByUser")
 	public ReturnData<List<String>> queryButtonByUser(Long userId)
 	{
-		List<String> urlList = new ArrayList<>();
+		String roleId = getRoleByUserId(userId).body.get(0).getId().toString();
+		List<String> urlList = redisUtil.getT("Key_Jurisdiction_"+roleId);
+		if(urlList != null){return Result.ok(urlList);}
+		urlList = new ArrayList<>();
 		List<SysMenu> sysMenuList = service.querySysMenuByUser(userId.intValue(), 2);
 		if (sysMenuList != null && !sysMenuList.isEmpty()) {
 			for (SysMenu sysMenu : sysMenuList) {
 				urlList.add(sysMenu.getUrl());
 			}
 		}
+		redisUtil.set("Key_Jurisdiction_"+roleId, urlList);
 		return Result.ok(urlList);
 	}
 

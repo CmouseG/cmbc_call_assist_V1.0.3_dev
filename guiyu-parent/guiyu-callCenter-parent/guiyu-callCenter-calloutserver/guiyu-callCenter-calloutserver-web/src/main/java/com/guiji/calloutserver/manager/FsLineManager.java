@@ -9,5 +9,5 @@ import com.guiji.fsmanager.entity.FsLineInfoVO;
  * @Description:
  */
 public interface FsLineManager {
-    FsLineInfoVO getFsLine(Integer lineId);
+    FsLineInfoVO getFsLine(Integer lineId) throws Exception;
 }

@@ -3,6 +3,7 @@ package com.guiji.calloutserver.service.impl;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.config.AliAsrConfig;
 import com.guiji.calloutserver.constant.Constant;
+import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.manager.FsLineManager;
@@ -43,6 +44,8 @@ public class CallServiceImpl implements CallService {
     CallLineAvailableManager callLineAvailableManager;
     @Autowired
     ISysDict iSysDict;
+    @Autowired
+    CallPlanDispatchHandler callPlanDispatchHandler;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -51,8 +54,20 @@ public class CallServiceImpl implements CallService {
      */
     @Override
     public void makeCall(CallOutPlan callplan, String recordFile) {
-        //获取线路服务器  //todo  增加对获取线路失败的异常处理
-        FsLineInfoVO fsLine = fsLineManager.getFsLine(callplan.getLineId());
+        //获取线路服务器
+        FsLineInfoVO fsLine = null;
+        try {
+            fsLine = fsLineManager.getFsLine(callplan.getLineId());
+        }catch (Exception e){
+            log.error("获取呼叫线路出现异常",e);
+            callPlanDispatchHandler.readyFail(callplan,"605",false);
+            return;
+        }
+        if(fsLine==null){
+            log.error("获取呼叫线路出现异常");
+            callPlanDispatchHandler.readyFail(callplan,"605",false);
+            return;
+        }
         String codec = fsLine.getCodec();
 
         String ip = fsLine.getFsIp();

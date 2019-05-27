@@ -27,31 +27,23 @@ public class FsLineManagerImpl implements FsLineManager {
      * @return
      */
     @Override
-    public FsLineInfoVO getFsLine(Integer lineId) {
-        Result.ReturnData returnData = null;
-        try{
-            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
-                    return lineOperation.getFsInfoByLineId(lineId);
-                }
+    public FsLineInfoVO getFsLine(Integer lineId) throws Exception {
+        Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+            @Override
+            public Result.ReturnData execute() {
+                return lineOperation.getFsInfoByLineId(lineId);
+            }
 
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-                    //TODO: 报警
-                    log.warn("请求fsmanager获取呼叫线路失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
-                }
-                @Override
-                public boolean trueBreakOnCode(String code) {
-                    return false;
-                }
-            }, -1, 1, 1, 60, true);
-        }catch (Exception ex){
-            log.warn("获取fsline出现异常", ex);
-            //TODO: 报警，获取fsline异常
-        }
-
-        Preconditions.checkNotNull(returnData, "请求fsmanager获取呼叫线路失败，返回结果为空");
+            @Override
+            public void onErrorResult(Result.ReturnData result) {
+                //TODO: 报警
+                log.warn("请求fsmanager获取呼叫线路失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
+            }
+            @Override
+            public boolean trueBreakOnCode(String code) {
+                return false;
+            }
+        }, 3, 10, 1, 60, true);
         return (FsLineInfoVO) returnData.getBody();
     }
 }

@@ -234,7 +234,7 @@ public class CallPlanDispatchHandler {
 
     }
 
-    private void readyFail(CallOutPlan callPlan,String reason,Boolean isNeedPlan){
+    public void readyFail(CallOutPlan callPlan,String reason,Boolean isNeedPlan){
         callPlan.setCallState(ECallState.norobot_fail.ordinal());
         callPlan.setAccurateIntent("W");
         callPlan.setReason(reason);

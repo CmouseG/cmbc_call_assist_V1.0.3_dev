@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.guiji.botsentence.vo.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +45,6 @@ import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import com.guiji.botsentence.service.IBotSentenceTtsService;
 import com.guiji.botsentence.util.HttpRequestUtils;
-import com.guiji.botsentence.vo.RequestTtsVO;
-import com.guiji.botsentence.vo.ResponseTtsVO;
-import com.guiji.botsentence.vo.TtsBackup;
-import com.guiji.botsentence.vo.TtsBackupVO;
-import com.guiji.botsentence.vo.TtsParam;
-import com.guiji.botsentence.vo.TtsParamVO;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.FileUtil;
 import com.guiji.component.client.util.SFTPUtil;
@@ -122,6 +118,35 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 			}
 		}
 		botSentenceProcessServiceImpl.updateProcessState(param.getProcessId(), userId);
+	}
+
+	@Override
+	public void saveSingleTtsBackup(TtsBackupReqVO ttsBackupReqVO, String userId) {
+
+		if(this.validateContainParam(ttsBackupReqVO.getContent())) {
+			throw new CommonException("备用话术不允许存在变量");
+		}
+
+		String backupId = ttsBackupReqVO.getBackupId();
+		if (StringUtils.isBlank(backupId)){
+			BotSentenceTtsBackup backup = new BotSentenceTtsBackup();
+			backup.setProcessId(ttsBackupReqVO.getProcessId());
+			backup.setTemplateId(ttsBackupReqVO.getTemplateId());
+			backup.setContent(ttsBackupReqVO.getContent().replace("\n", "").trim().replace(",", "，"));//把英文逗号改成中文逗号，为了后面json格式化
+			backup.setVoliceId(ttsBackupReqVO.getVoliceId());
+			backup.setCrtTime(new Date());
+			backup.setCrtUser(userId);
+			botSentenceTtsBackupMapper.insertSelective(backup);
+		}else {
+			BotSentenceTtsBackup backup = botSentenceTtsBackupMapper.selectByPrimaryKey(backupId);
+			if(null == backup){
+				throw new CommonException("备用话术为找到！");
+			}
+			backup.setContent(ttsBackupReqVO.getContent().replace("\n", "").trim().replace(",", "，"));//把英文逗号改成中文逗号，为了后面json格式化
+			backup.setLstUpdateTime(new Date());
+			backup.setLstUpdateUser(userId);
+			botSentenceTtsBackupMapper.updateByPrimaryKeySelective(backup);
+		}
 	}
 
 	/**
@@ -235,6 +260,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 						backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
 						List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
 						if(null != backupList && backupList.size() > 0) {
+							backup.setBackupId(backupList.get(0).getBackupId());
 							backup.setBackup(backupList.get(0).getContent());
 							backup.setUrl(backupList.get(0).getUrl());
 							backup.setTimes(backupList.get(0).getTimes());

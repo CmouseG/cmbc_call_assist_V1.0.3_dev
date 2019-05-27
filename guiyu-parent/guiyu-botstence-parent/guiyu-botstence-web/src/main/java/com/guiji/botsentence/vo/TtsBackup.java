@@ -5,6 +5,7 @@ public class TtsBackup {
 	private String processId;
 	private String templateId;
 	private String voliceId;
+	private String backupId;
 	private String backup;
 	private String content;
 	private String url;
@@ -52,7 +53,12 @@ public class TtsBackup {
 	public void setTimes(Integer times) {
 		this.times = times;
 	}
-	
-	
-	
+
+	public String getBackupId() {
+		return backupId;
+	}
+
+	public void setBackupId(String backupId) {
+		this.backupId = backupId;
+	}
 }

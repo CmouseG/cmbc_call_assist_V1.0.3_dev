@@ -2,12 +2,8 @@ package com.guiji.botsentence.service;
 
 import java.util.List;
 
+import com.guiji.botsentence.vo.*;
 import org.springframework.stereotype.Service;
-
-import com.guiji.botsentence.vo.TtsBackup;
-import com.guiji.botsentence.vo.TtsBackupVO;
-import com.guiji.botsentence.vo.TtsParam;
-import com.guiji.botsentence.vo.TtsParamVO;
 
 /**
  * tts合成相关服务
@@ -16,6 +12,8 @@ import com.guiji.botsentence.vo.TtsParamVO;
  */
 @Service
 public interface IBotSentenceTtsService {
+
+	void saveSingleTtsBackup(TtsBackupReqVO ttsBackupReqVO, String userId);
 
 	public void saveTtsParam(TtsParamVO param, String userId);
 	

@@ -13,6 +13,7 @@ import com.guiji.botsentence.service.IBotSentenceApprovalService;
 import com.guiji.botsentence.util.TarUtil;
 import com.guiji.botsentence.util.enums.BranchNameEnum;
 import com.guiji.botsentence.util.enums.CategoryEnum;
+import com.guiji.botsentence.util.enums.SpeechAuditStatusEnum;
 import com.guiji.botsentence.vo.BotSentenceSellbotMachine;
 import com.guiji.botsentence.vo.DomainVO;
 import com.guiji.common.exception.CommonException;
@@ -197,9 +198,10 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		resetComDomain(processId, userId);
 
 		process.setProcessId(processId);
-		process.setState(Constant.APPROVE_PASS);
+		process.setState(SpeechAuditStatusEnum.PASSED.getKey());
 		process.setLstUpdateTime(new Date());
 		process.setLstUpdateUser(userId);
+		botSentenceProcessMapper.updateByPrimaryKeySelective(process);
 	}
 
 	@Override

@@ -143,6 +143,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 				throw new CommonException("备用话术为找到！");
 			}
 			backup.setContent(ttsBackupReqVO.getContent().replace("\n", "").trim().replace(",", "，"));//把英文逗号改成中文逗号，为了后面json格式化
+			backup.setUrl(null);
 			backup.setLstUpdateTime(new Date());
 			backup.setLstUpdateUser(userId);
 			botSentenceTtsBackupMapper.updateByPrimaryKeySelective(backup);

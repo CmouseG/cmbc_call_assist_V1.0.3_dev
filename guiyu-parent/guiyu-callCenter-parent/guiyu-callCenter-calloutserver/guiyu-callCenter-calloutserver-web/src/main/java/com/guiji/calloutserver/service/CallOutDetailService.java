@@ -18,4 +18,6 @@ public interface CallOutDetailService {
     CallOutDetail getLastDetail(String callId,Integer orgId);
 
     Integer getTalkNum(BigInteger bigInteger, Integer orgId);
+
+    CallOutDetail getLastCustomerDetail(BigInteger callId, Integer orgId);
 }

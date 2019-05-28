@@ -74,6 +74,24 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     }
 
     @Override
+    public CallOutDetail getLastCustomerDetail(BigInteger callId, Integer orgId) {
+
+        CallOutDetailExample example = new CallOutDetailExample();
+        CallOutDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andCallIdEqualTo(callId)
+                .andOrgIdEqualTo(orgId)
+                .andCustomerSayTimeIsNotNull();
+        example.setOrderByClause("customer_say_time desc");
+        example.setLimitStart(0);
+        example.setLimitEnd(1);
+        List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public Integer getTalkNum(BigInteger callId, Integer orgId) {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();

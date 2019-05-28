@@ -1,6 +1,7 @@
 package com.guiji.calloutserver.manager.impl;
 
 import com.google.common.base.Preconditions;
+import com.guiji.callcenter.dao.entity.CallOutDetail;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.constant.HangupDirectionEnum;
@@ -12,6 +13,7 @@ import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
+import com.guiji.calloutserver.service.CallOutDetailService;
 import com.guiji.calloutserver.service.CallOutPlanService;
 //import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.calloutserver.util.CommonUtil;
@@ -51,6 +53,8 @@ public class AIManagerImpl implements AIManager {
 //    DispatchLogService dispatchLogService;
     @Autowired
     RobotNextHelper robotNextHelper;
+    @Autowired
+    CallOutDetailService callOutDetailService;
 
     /**
      * 申请新的ai资源
@@ -189,6 +193,12 @@ public class AIManagerImpl implements AIManager {
             hangupReq.setHangUpType(0);
         }
         hangupReq.setHangUpHalfway(255);
+
+        //客户说的最后一句话
+        CallOutDetail callOutDetail = callOutDetailService.getLastCustomerDetail(callOutPlan.getCallId(),callOutPlan.getOrgId());
+        if(callOutDetail!=null && callOutDetail.getCustomerSayText()!=null){
+            hangupReq.setSentence(callOutDetail.getCustomerSayText());
+        }
 
         log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "释放机器人资源开始", callOutPlan.getAiId());

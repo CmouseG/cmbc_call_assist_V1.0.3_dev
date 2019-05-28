@@ -163,8 +163,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @return
 	 */
 	public Result.ReturnData<HangupRes> aiHangup(@RequestBody AiHangupReq aiHangupReq){
+		logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-in", JsonUtils.bean2Json(aiHangupReq));
         HangupRes hangupRes = iAiAbilityCenterService.aiHangup(aiHangupReq);
-        logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-out", "");
+        logger.warn("[{},{},{},{},{}]", aiHangupReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiHangup-out", JsonUtils.bean2Json(hangupRes));
 		return Result.ok(hangupRes);
 	}
 	

@@ -43,6 +43,11 @@ public class AiHangupReq {
 	 */
 	private Integer totalCallTime;
 
+	/**
+	 * 最后一句话
+	 */
+	private String sentence;
+
 
 	public String getSeqId() {
 		return seqId;
@@ -120,5 +125,13 @@ public class AiHangupReq {
 				", hangUpHalfway=" + hangUpHalfway +
 				", totalCallTime=" + totalCallTime +
 				'}';
+	}
+
+	public String getSentence() {
+		return sentence;
+	}
+
+	public void setSentence(String sentence) {
+		this.sentence = sentence;
 	}
 }

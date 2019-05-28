@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import com.guiji.robot.model.*;
 import com.guiji.robot.service.vo.*;
 import com.guiji.utils.JsonUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -614,10 +615,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			endReq.setHangupHalfWay(aiHangupReq.getHangUpHalfway());
 			endReq.setHangupType(aiHangupReq.getHangUpType());
 			endReq.setTotalCallTime(aiHangupReq.getTotalCallTime());
+			endReq.setSentence(StringUtils.isEmpty(aiHangupReq.getSentence()) ? "" : aiHangupReq.getSentence());
 			return robotServerSwitchService.getRobotServerInstance(aiHangupReq.getTemplateId()).clean(nowAi, endReq);
 		} catch (Exception e) {
 			//如果调用外部挂断失败的话，只打印异常，但是不继续抛出，不影响主业务
-			logger.error("会话id："+aiHangupReq.getSeqId()+",调用机器人服务挂断电话清理数据发生异常",e);
+			logger.error("会话id："+aiHangupReq.getSeqId()+",调用机器人服务挂断电话清理数据发生异常",e.getMessage());
 
 			return new HangupRes();
 		}

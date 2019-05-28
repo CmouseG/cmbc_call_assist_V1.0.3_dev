@@ -19,6 +19,7 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,15 +77,20 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
 
 			if (dispatchPlan == null) {
-				dispatchPlan = new DispatchPlan();
-				dispatchPlan.setFileRecordId(fileRecordId);
-				dispatchPlan.setPhone(row.getPhone());
-				dispatchPlan.setParams(row.getParamaters());
-				dispatchPlan.setAttach(row.getAttach());
-				dispatchPlan.setCustName(row.getCustName());
-				dispatchPlan.setCustCompany(row.getCustCompany());
+				if(StringUtils.isNotEmpty(row.getPhone())) {
 
-				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
+					dispatchPlan = new DispatchPlan();
+					dispatchPlan.setFileRecordId(fileRecordId);
+					dispatchPlan.setPhone(row.getPhone());
+					dispatchPlan.setParams(row.getParamaters());
+					dispatchPlan.setAttach(row.getAttach());
+					dispatchPlan.setCustName(row.getCustName());
+					dispatchPlan.setCustCompany(row.getCustCompany());
+
+					saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
+
+					count++;
+				}
 				return;
 			}
 			
@@ -93,6 +99,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 				phones.add(dispatchPlan.getPhone());
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, i.intValue());
 				logger.info("导入失败, 第{}行,电话号码{}存在重复的数据", i, dispatchPlan.getPhone());
+				count++;
 				return;
 			}
 			

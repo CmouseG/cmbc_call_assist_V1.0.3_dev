@@ -5,14 +5,15 @@ import com.guiji.clm.api.VoipMarketRemote;
 import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.enm.VoipGwStatusEnum;
+import com.guiji.clm.exception.ClmErrorEnum;
+import com.guiji.clm.exception.ClmException;
 import com.guiji.clm.model.SimLineVo;
+import com.guiji.clm.ro.OperPortLimitRo;
+import com.guiji.clm.service.VoipGwPortLimitService;
 import com.guiji.clm.service.voip.VoipGwManager;
 import com.guiji.clm.service.voip.VoipGwPortService;
 import com.guiji.clm.util.DataLocalCacheUtil;
-import com.guiji.clm.vo.VoipGwInfoVO;
-import com.guiji.clm.vo.VoipGwPortQueryCondition;
-import com.guiji.clm.vo.VoipGwPortVO;
-import com.guiji.clm.vo.VoipGwQueryCondition;
+import com.guiji.clm.vo.*;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
@@ -20,6 +21,7 @@ import com.guiji.utils.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -231,4 +233,69 @@ public class VoipGwController implements VoipMarketRemote {
 			}
 		}));
 	}
+
+	/**
+	 * 新增
+	 * @param ro
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/insertPortLimit")
+	public Result.ReturnData insertPortLimit(@RequestBody OperPortLimitRo ro, @RequestHeader Integer userId) {
+
+		if(CollectionUtils.isEmpty(ro.getRoList()) || ro.getPortId() == null) {
+			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
+		}
+
+		ro.setUserId(userId);
+
+		voipGwPortLimitService.insertLimitInfo(ro);
+
+		return Result.ok();
+
+	}
+
+	/**
+	 * 新增
+	 * @param ro
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/editPortLimit")
+	public Result.ReturnData editPortLimit(@RequestBody OperPortLimitRo ro, @RequestHeader Integer userId) {
+
+		if(CollectionUtils.isEmpty(ro.getRoList())) {
+			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
+		}
+
+		ro.setUserId(userId);
+
+		voipGwPortLimitService.updateLimitInfo(ro);
+
+		return Result.ok();
+
+	}
+
+	/**
+	 * 查询
+	 * @param portId
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/queryPortLimit")
+	public Result.ReturnData editPortLimit(@RequestParam(value = "portId", required = true) Integer portId, @RequestHeader Integer userId) {
+
+		if(portId == null) {
+			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
+		}
+
+		List<PortLimitInfoVo> voList = voipGwPortLimitService.queryPortLimitByPortId(portId);
+
+		return Result.ok(voList);
+
+	}
+
+
+	@Autowired
+	VoipGwPortLimitService voipGwPortLimitService;
 }

@@ -6,8 +6,10 @@ import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.VoipGwPort;
+import com.guiji.clm.model.PortLimitVo;
 import com.guiji.clm.model.SimLineStatus;
 import com.guiji.clm.model.SipLineVO;
+import com.guiji.clm.service.VoipGwPortLimitService;
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.service.sip.SipLineInfoService;
 import com.guiji.clm.service.voip.VoipGwManager;
@@ -127,6 +129,19 @@ public class LineMarketRemoteController implements LineMarketRemote{
 
 		return Result.ok(voipGwManager.querySimLineStatus(lineId));
 
+	}
+
+	@Autowired
+	VoipGwPortLimitService voipGwPortLimitService;
+
+	/**
+	 * 呼叫中心查询拨打限制信息
+	 * @param lineId
+	 * @return
+	 */
+	@Override
+	public Result.ReturnData<List<PortLimitVo>> querySimLineLimitInfo(Integer lineId) {
+		return Result.ok(voipGwPortLimitService.queryPortLimitByLineId(lineId));
 	}
 
 	/**

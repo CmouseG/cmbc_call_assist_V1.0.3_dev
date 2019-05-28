@@ -591,10 +591,20 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		/**2、将通话历史设置为完成 **/
-		robotNewTransService.updateRobotCallStatus(aiHangupReq.getSeqId(), RobotConstants.CALLING_STATUS_S);//通话完成
+
 		/**3、资源校验以及准备**/
 		AiInuseCache nowAi = iAiResourceManagerService.queryUserAi(aiHangupReq.getUserId(), aiHangupReq.getAiNo());
+
+		if(!aiHangupReq.getSeqId().equals(nowAi.getSeqId())) {
+			//机器人不存在，不再抛异常了
+			logger.error("当前机器人:{}会话id:{}，当前挂断会话id：{}不一致，挂断失败",aiHangupReq.getAiNo(), aiHangupReq.getSeqId(), aiHangupReq.getSeqId());
+
+			throw new RobotException(AiErrorEnum.AI00060038.getErrorCode(), AiErrorEnum.AI00060038.getErrorMsg());
+		}
+
+		/**2、将通话历史设置为完成 **/
+		robotNewTransService.updateRobotCallStatus(aiHangupReq.getSeqId(), RobotConstants.CALLING_STATUS_S);//通话完成
+
 		if(nowAi == null) {
 			//机器人不存在，不再抛异常了
 			logger.error("会话id：{}，机器人编号：{}，AI缓存不存在!",aiHangupReq.getSeqId(),aiHangupReq.getAiNo());

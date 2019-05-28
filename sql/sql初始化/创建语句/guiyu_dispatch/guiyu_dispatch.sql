@@ -364,6 +364,9 @@ CREATE TABLE `dispatch_plan_batch` (
   `gmt_create` datetime DEFAULT NULL COMMENT '创建时间;创建时间',
   `gmt_modified` datetime NOT NULL COMMENT '更新时间;更新时间',
   `org_code` varchar(30) NOT NULL COMMENT '组织code',
+  `callback_url`  varchar(200) null comment '批次回调地址',
+  `total_num`     int          null comment '总数量',
+  `single_callback_url` varchar(200) null comment '单个回调地址',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=42311 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='计划批次信息';
 

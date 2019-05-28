@@ -1,0 +1,9 @@
+1、server下更新
+  port: 18019
+  tomcat:
+    uri-encoding: UTF-8
+    max-http-post-size: 1000000
+  max-http-header-size: 1000000
+
+
+2、删除datasource及其子字段。

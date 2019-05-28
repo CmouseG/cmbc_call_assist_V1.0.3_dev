@@ -1,0 +1,14 @@
+1、server下更新
+  port: 18000
+  tomcat:
+    uri-encoding: UTF-8
+    max-http-post-size: 1000000
+  max-http-header-size: 1000000
+
+
+
+2、zuul:routes下增加
+
+guiyu-thirdApi-web-api:
+  path: /v1/**
+  service-id: guiyu-thirdApi-web

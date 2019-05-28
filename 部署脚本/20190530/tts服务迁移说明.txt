@@ -1,0 +1,13 @@
+修改 ai-web-application.yml:
+
+guiyu_tts_2_url: http://172.16.167.214:38002/
+
+改为： guiyu_tts_2_url: http://迁移机器的ip:38002/
+
+********************************************************************************************
+
+修改 tts-2.0-application.yml:
+
+nasServiceUrl: http://172.16.167.214:38001/uploadFile  #nas部署机器
+
+改为： nasServiceUrl: http://迁移机器的ip:38001/uploadFile  #nas部署机器

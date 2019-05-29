@@ -1092,7 +1092,7 @@
                 call_direction = #{callDirection,jdbcType=INTEGER},
             </if>
             <if test="callState != null">
-                call_state = IF( call_state &lt; #{call_state,jdbcType=INTEGER} ,#{callState,jdbcType=INTEGER}, call_state),
+                call_state = IF( call_state &lt; #{callState,jdbcType=INTEGER} ,#{callState,jdbcType=INTEGER}, call_state),
             </if>
             <if test="hangupDirection != null">
                 hangup_direction = #{hangupDirection,jdbcType=INTEGER},

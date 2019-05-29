@@ -142,26 +142,10 @@ public class FsBotHandler {
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse, false,true,orgId);
 
-            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况  todo 这个查询过后，可能状态立马被hangup那边改变
-            CallOutPlan callPlanNew = callOutPlanService.findByCallId(bigIntegerId, orgId);
-            CallOutPlan callPlanUpdate = new CallOutPlan();
-            callPlanUpdate.setCallId(callPlan.getCallId());
-            callPlanUpdate.setOrgId(callPlan.getOrgId());
-            if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
-                callPlanUpdate.setCallState(ECallState.answer.ordinal());
-            }
-//            callPlanUpdate.setAnswerTime(new Date());
-            callPlanUpdate.setIsAnswer(1);
-            callPlanUpdate.setAccurateIntent(aiResponse.getAccurateIntent());
-            callPlanUpdate.setReason(aiResponse.getReason());
-            callOutPlanService.updateNotOverWriteIntent(callPlanUpdate);
-
             //插入通话记录详情
-//            String detailID = IdGenUtil.uuid();
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callPlan.getCallId());
             callDetail.setOrgId(orgId);
-//            callDetail.setCallDetailId(detailID);
             callDetail.setAiDuration(Math.toIntExact(endTime - startTime));
             callDetail.setTotalDuration(callDetail.getAiDuration());
             callDetail.setBotAnswerText(aiResponse.getResponseTxt());
@@ -170,6 +154,14 @@ public class FsBotHandler {
             callDetail.setReason(aiResponse.getReason());
             callDetail.setCallDetailType(ECallDetailType.INIT.ordinal());
             callOutDetailService.save(callDetail);
+
+            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况
+            CallOutPlan callPlanUpdate = new CallOutPlan();
+            callPlanUpdate.setCallId(callPlan.getCallId());
+            callPlanUpdate.setOrgId(callPlan.getOrgId());
+            callPlanUpdate.setCallState(ECallState.answer.ordinal());
+            callPlanUpdate.setIsAnswer(1);
+            callOutPlanService.updateNotOverWriteCallState(callPlanUpdate);
 
             //插入录音文件信息
             CallOutDetailRecord callOutDetailRecord = new CallOutDetailRecord();
@@ -331,7 +323,7 @@ public class FsBotHandler {
                 }
                 callPlan.setHangupTime(event.getHangupStamp());
                 callPlan.setAnswerTime(event.getAnswerStamp());
-//                callPlan.setCallStartTime(event.getStartStamp());
+                callPlan.setCallStartTime(event.getStartStamp());
                 if(event.getHangupDisposition()!=null){
                     if(event.getHangupDisposition().equals("send_bye")){//机器人挂断
                         callPlan.setHangupDirection(HangupDirectionEnum.ROBOT.ordinal());
@@ -350,6 +342,21 @@ public class FsBotHandler {
                     callPlan.setBillSec(billSec);
                     if(billSec.intValue() > 0){
                         callPlan.setIsAnswer(1);
+                        //hangup和channelAnswer如果几乎同时过来，会有并发问题。线程等待5秒，等待channelAnswer把事情处理完
+                        if(callPlan.getAccurateIntent().equals("W")){
+                            log.info("billSec>0 ,但是意向却为W，需要重新查询意向标签");
+                            try{
+                                Thread.sleep(6000);
+                            }catch (Exception e){
+                                log.info("线程sleep出现异常",e);
+                            }
+                            CallOutDetail callDetailNew = callOutDetailService.getLastDetail(callId,orgId);
+                            if (callDetailNew != null) {
+                                log.info("再次查询意向标签[{}]和原因[{}]", callId, callDetailNew.getAccurateIntent(), callDetailNew.getReason());
+                                callPlan.setAccurateIntent(callDetailNew.getAccurateIntent());
+                                callPlan.setReason(callDetailNew.getReason());
+                            }
+                        }
                     }
                 }
 

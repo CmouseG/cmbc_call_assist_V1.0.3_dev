@@ -49,4 +49,6 @@ public interface CallOutPlanMapper {
                                         @Param("serverId") String serverId, @Param("orgIdList") List<Integer> orgIdList);
     List<CallOutDetailRecord> getUnuploadDetailByCallId(@Param("startTime") String startTime, @Param("endTime") String endTime,
                                                         @Param("serverId") String serverId, @Param("orgIdList") List<Integer> orgIdList);
+
+    void updateNotOverWriteCallState(CallOutPlan callPlan);
 }

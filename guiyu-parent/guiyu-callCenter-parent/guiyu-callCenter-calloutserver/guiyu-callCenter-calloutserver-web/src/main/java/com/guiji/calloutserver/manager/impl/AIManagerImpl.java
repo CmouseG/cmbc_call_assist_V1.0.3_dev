@@ -67,7 +67,6 @@ public class AIManagerImpl implements AIManager {
         aiCallStartReq.setUserId(aiRequest.getUserId());
         aiCallStartReq.setDisSeqId(aiRequest.getPlanUuid());
 
-//        dispatchLogService.startServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallStart");
         Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
             @Override
             public Result.ReturnData execute() {
@@ -86,8 +85,7 @@ public class AIManagerImpl implements AIManager {
                 }
                 return false;
             }
-        }, 4, 1, 1, 60, true);
-//        dispatchLogService.endServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");
+        }, 2, 1, 1, 60, true);
 
         if (returnData == null) {
             log.warn("请求ai资源失败");

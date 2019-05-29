@@ -81,4 +81,9 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     public void updateNotOverWriteIntent(CallOutPlan callPlan) {
         callOutPlanMapper.updateNotOverWriteIntent(callPlan);
     }
+
+    @Override
+    public void updateNotOverWriteCallState(CallOutPlan callPlan) {
+        callOutPlanMapper.updateNotOverWriteCallState(callPlan);
+    }
 }

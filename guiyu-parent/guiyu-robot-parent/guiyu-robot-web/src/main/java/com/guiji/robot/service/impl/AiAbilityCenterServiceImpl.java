@@ -599,8 +599,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//机器人不存在，不再抛异常了
 			logger.error("会话id：{}，机器人编号：{}，AI缓存不存在!",aiHangupReq.getSeqId(),aiHangupReq.getAiNo());
 		}
-		//将用户机器人释放掉
-		iAiResourceManagerService.aiRelease(nowAi);
 		/**4、清空消息流缓存**/
 		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
 		/**5、记录log **/
@@ -622,6 +620,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			logger.error("会话id："+aiHangupReq.getSeqId()+",调用机器人服务挂断电话清理数据发生异常",e.getMessage());
 
 			return new HangupRes();
+		} finally {
+			//将用户机器人释放掉
+			iAiResourceManagerService.aiRelease(nowAi);
 		}
 	}
 	

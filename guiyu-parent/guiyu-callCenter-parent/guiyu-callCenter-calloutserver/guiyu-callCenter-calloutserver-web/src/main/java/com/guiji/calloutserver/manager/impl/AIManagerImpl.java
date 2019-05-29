@@ -19,10 +19,7 @@ import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.util.CommonUtil;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
-import com.guiji.robot.model.AiCallNext;
-import com.guiji.robot.model.AiCallStartReq;
-import com.guiji.robot.model.AiFlowMsgPushReq;
-import com.guiji.robot.model.AiHangupReq;
+import com.guiji.robot.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -202,7 +199,7 @@ public class AIManagerImpl implements AIManager {
 
         log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "释放机器人资源开始", callOutPlan.getAiId());
-        Result.ReturnData returnData = null;
+        Result.ReturnData<HangupRes> returnData = null;
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -223,14 +220,27 @@ public class AIManagerImpl implements AIManager {
                     }
                     return false;
                 }
-            }, 20, 1, 10, 180, true);
+            }, 10, 1, 10, 180, true);
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
             log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                     Constant.MODULE_CALLOUTSERVER, "释放机器人资源失败", callOutPlan.getAiId());
         }
+
+        HangupRes hangupRes = returnData.getBody();
+        if(hangupRes!=null && hangupRes.getAccurate_intent()!=null){
+            CallOutPlan callOutPlanUpdate = new CallOutPlan();
+            callOutPlanUpdate.setCallId(callOutPlan.getCallId());
+            callOutPlanUpdate.setOrgId(callOutPlan.getOrgId());
+            callOutPlanUpdate.setAccurateIntent(hangupRes.getAccurate_intent());
+            callOutPlanUpdate.setReason(hangupRes.getReason());
+            callOutPlanService.update(callOutPlanUpdate);
+        }
+
         log.warn("{},{},{},{},{}", callOutPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
-                Constant.MODULE_CALLOUTSERVER, "释放机器人资源成功", callOutPlan.getAiId());
+                Constant.MODULE_CALLOUTSERVER, "释放机器人资源成功", hangupRes);
+
+
     }
 
 

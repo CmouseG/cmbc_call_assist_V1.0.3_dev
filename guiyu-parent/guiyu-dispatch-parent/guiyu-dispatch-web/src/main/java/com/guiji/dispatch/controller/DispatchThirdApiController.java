@@ -14,6 +14,7 @@ import com.guiji.dispatch.exception.BaseException;
 import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.*;
+import com.guiji.dispatch.service.CallAgentService;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.IDispatchPlanBatchService;
 import com.guiji.dispatch.service.IDispatchPlanService;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,6 +52,9 @@ public class DispatchThirdApiController implements DispatchThirdApi {
 
     @Autowired
     RedisUtil redisUtil;
+
+    @Autowired
+    CallAgentService callAgentService;
 
     private static final int STOP = 4;
     private static final int RECOVER = 1;
@@ -118,12 +123,18 @@ public class DispatchThirdApiController implements DispatchThirdApi {
      */
     private void checkCallAgent(Boolean agentFlag, DispatchPlanForApiRo ro) {
 
-        if(agentFlag && StringUtils.isEmpty(ro.getCallAgent())) {
-            throw new BaseException(DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorMsg(), DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorCode());
-        } else {
+        if(!agentFlag) {
             ro.setCallAgent(null);
+        } else {
+            if(StringUtils.isEmpty(ro.getCallAgent())) {
+                throw new BaseException(DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorMsg(), DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorCode());
+            } else {
+                List<String> agent = callAgentService.getAgent(ro.getUserId());
+                if(!agent.contains(ro.getCallAgent())) {
+                    throw new BaseException(DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorMsg(), DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorCode());
+                }
+            }
         }
-
     }
 
     /**

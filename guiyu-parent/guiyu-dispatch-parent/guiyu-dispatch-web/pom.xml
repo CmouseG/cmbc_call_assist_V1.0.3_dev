@@ -26,7 +26,11 @@
 			<artifactId>guiyu-robot-api</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-
+		<dependency>
+			<groupId>guiji.ai</groupId>
+			<artifactId>guiyu-callCenter-toagentserver-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>

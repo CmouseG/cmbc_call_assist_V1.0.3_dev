@@ -121,6 +121,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	}
 
 	@Override
+	@Transactional
 	public void saveSingleTtsBackup(TtsBackupReqVO ttsBackupReqVO, String userId) {
 
 		if(this.validateContainParam(ttsBackupReqVO.getContent())) {
@@ -146,7 +147,11 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 			backup.setUrl(null);
 			backup.setLstUpdateTime(new Date());
 			backup.setLstUpdateUser(userId);
-			botSentenceTtsBackupMapper.updateByPrimaryKeySelective(backup);
+			botSentenceTtsBackupMapper.updateByPrimaryKey(backup);
+
+			BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
+			ttsTaskExample.createCriteria().andBusiIdEqualTo(backup.getBackupId());
+			botSentenceTtsTaskMapper.deleteByExample(ttsTaskExample);
 		}
 	}
 

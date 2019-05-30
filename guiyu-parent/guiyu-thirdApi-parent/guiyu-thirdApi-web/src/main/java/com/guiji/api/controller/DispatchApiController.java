@@ -1,11 +1,13 @@
 package com.guiji.api.controller;
 
 import com.guiji.api.ro.*;
-import com.guiji.api.vo.AddPlanRes;
-import com.guiji.api.vo.BatchPlanCallSumary;
-import com.guiji.api.vo.BatchPlanListVo;
-import com.guiji.api.vo.PlanExecResultVo;
+import com.guiji.api.vo.*;
 import com.guiji.cfg.ThirdApiMqConfig;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.api.VoipMarketRemote;
+import com.guiji.clm.model.SimLineVo;
+import com.guiji.clm.model.SipLineVO;
+import com.guiji.common.GenericRo;
 import com.guiji.common.SuccessBody;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.DispatchThirdApi;
@@ -19,12 +21,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * dispatch相关的api
@@ -281,11 +283,16 @@ public class DispatchApiController {
         apiRo.setCallHour(ro.getCallHour());
         apiRo.setClean(ro.getIsClear());
 
+        checkCallHour(ro.getCallHour());
+
         List<Integer> lineIds = new ArrayList<>();
 
         for(String lineId : ro.getLineIds().split(",")) {
             lineIds.add(Integer.valueOf(lineId));
         }
+
+        checkLineIds(lineIds, ro.getUserId().intValue());
+
         apiRo.setLineIds(lineIds);
         apiRo.setPhoneRoList(lists);
         apiRo.setUserId(ro.getUserId().intValue());
@@ -311,6 +318,102 @@ public class DispatchApiController {
                 throw new ThirdApiException(ThirdApiExceptionEnum.ADD_BATCH_PLAN_ERROR);
             }
         }
+    }
+
+    private void checkCallHour(String callHour) {
+
+        for (String str : callHour.split(",")) {
+
+            if(!StringUtils.isNumeric(str)) {
+                throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
+            }
+
+            if(Integer.valueOf(str).intValue() < 9 || Integer.valueOf(str).intValue() > 20) {
+                throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
+            }
+        }
+
+    }
+
+    private void checkLineIds(List<Integer> lineIds, Integer userId) {
+
+        List<SipLineVO> lineList = getLineList(userId);
+
+        Map<Integer, SipLineVO> map = new HashMap<>();
+
+        lineList.forEach(obj -> {
+            map.put(obj.getLineId(), obj);
+        });
+
+        Set<Integer> lineTypeSet = new HashSet<>();
+
+        for (Integer lineId : lineIds) {
+
+            if(!map.containsKey(lineId)) {
+                throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
+            } else {
+                lineTypeSet.add(map.get(lineId).getLineType());
+            }
+
+        }
+
+        if(lineTypeSet.size() > 1) {
+            throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
+        }
+
+    }
+
+    @Autowired
+    LineMarketRemote lineMarketRemote;
+
+    @Autowired
+    VoipMarketRemote voipMarketRemote;
+
+    public List<SipLineVO> getLineList(Integer userId) {
+
+        Result.ReturnData<List<SipLineVO>> sipData = lineMarketRemote.queryUserSipLineList(userId.toString());
+
+        List<SipLineVO> sipLineVOS = new ArrayList<>();
+
+        if (sipData != null && sipData.success) {
+            if (!CollectionUtils.isEmpty(sipData.getBody())) {
+                sipData.getBody().forEach(obj -> {
+
+                    SipLineVO vo = new SipLineVO();
+
+                    vo.setLineId(obj.getLineId());
+                    vo.setLineName(obj.getLineName());
+                    vo.setLineType(1);
+
+                    sipLineVOS.add(vo);
+                });
+            }
+        }
+
+        Result.ReturnData<List<SimLineVo>> simData = voipMarketRemote.querySimLineInfo((long) userId.intValue());
+
+        if (simData != null && simData.success) {
+            if (!CollectionUtils.isEmpty(simData.getBody())) {
+                simData.getBody().forEach(obj -> {
+                    SipLineVO vo = new SipLineVO();
+
+                    vo.setLineId(obj.getLineId().intValue());
+                    vo.setLineName(obj.getLineName());
+                    vo.setLineType(2);
+
+                    sipLineVOS.add(vo);
+                });
+            }
+        }
+
+        if (sipLineVOS.size() > 0) {
+
+           return sipLineVOS;
+
+        } else {
+            throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
+        }
+
     }
 
 

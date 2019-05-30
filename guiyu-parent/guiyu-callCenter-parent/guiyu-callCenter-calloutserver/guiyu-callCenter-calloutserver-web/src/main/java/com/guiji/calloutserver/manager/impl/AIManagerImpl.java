@@ -171,7 +171,8 @@ public class AIManagerImpl implements AIManager {
     @Override
     public void releaseAi(CallOutPlan callOutPlan) {
         AiHangupReq hangupReq = new AiHangupReq();
-        hangupReq.setSeqId(callOutPlan.getCallId().toString()+Constant.UUID_SEPARATE+callOutPlan.getOrgId());
+        String seqId = callOutPlan.getCallId().toString()+Constant.UUID_SEPARATE+callOutPlan.getOrgId();
+        hangupReq.setSeqId(seqId);
         hangupReq.setAiNo(callOutPlan.getAiId());
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
@@ -226,7 +227,7 @@ public class AIManagerImpl implements AIManager {
         }
 
         HangupRes hangupRes = returnData.getBody();
-        if(hangupRes!=null && hangupRes.getAccurate_intent()!=null){
+        if(hangupRes!=null && hangupRes.getAccurate_intent()!=null && seqId.equals(hangupReq.getSeqId())  ){
             CallOutPlan callOutPlanUpdate = new CallOutPlan();
             callOutPlanUpdate.setCallId(callOutPlan.getCallId());
             callOutPlanUpdate.setOrgId(callOutPlan.getOrgId());

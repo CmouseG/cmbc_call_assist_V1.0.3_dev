@@ -320,9 +320,6 @@ public class CustAiAccountController implements CustAiAccountRemote {
                             vo.setTtsFlag(hsReplace.isTemplate_tts_flag());    //是否需要tts
                             vo.setAgentFlag(hsReplace.isAgent()); //是否转人工
                         }
-
-                        vo.setTtsFlag(false);
-                        vo.setAgentFlag(false);
                     }
                 }
             }

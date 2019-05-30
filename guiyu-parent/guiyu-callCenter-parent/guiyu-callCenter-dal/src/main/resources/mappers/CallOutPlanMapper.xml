@@ -304,7 +304,7 @@
             and accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
         </if>
         <if test="time != null">
-            and call_start_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+            and create_time >= DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
         </if>
         <if test="orgIdList != null and orgIdList.size()>0">
             and org_id in

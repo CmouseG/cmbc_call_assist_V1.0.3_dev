@@ -227,7 +227,7 @@ public class AIManagerImpl implements AIManager {
         }
 
         HangupRes hangupRes = returnData.getBody();
-        if(hangupRes!=null && hangupRes.getAccurate_intent()!=null && seqId.equals(hangupReq.getSeqId())  ){
+        if(hangupRes!=null && hangupRes.getAccurate_intent()!=null && seqId.equals(hangupRes.getSeqid())  ){
             CallOutPlan callOutPlanUpdate = new CallOutPlan();
             callOutPlanUpdate.setCallId(callOutPlan.getCallId());
             callOutPlanUpdate.setOrgId(callOutPlan.getOrgId());

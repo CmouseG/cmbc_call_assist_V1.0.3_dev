@@ -318,6 +318,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo - 1) * pageSize;
         myCallOutPlanQueryEntity.setLimitStart(limitStart);
         myCallOutPlanQueryEntity.setLimitEnd(pageSize);
+        myCallOutPlanQueryEntity.setIsDesensitization(isDesensitization);
 
         List<CallOutPlan> list = myCallOutPlanMapper.selectCallOutPlanList(myCallOutPlanQueryEntity);
 

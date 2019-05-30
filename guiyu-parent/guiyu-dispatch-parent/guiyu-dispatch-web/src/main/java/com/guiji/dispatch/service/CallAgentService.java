@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface CallAgentService {
 
-    List<String> getAgent(Integer userId);
+    List<String> getAgent(String orgCode);
 
 }

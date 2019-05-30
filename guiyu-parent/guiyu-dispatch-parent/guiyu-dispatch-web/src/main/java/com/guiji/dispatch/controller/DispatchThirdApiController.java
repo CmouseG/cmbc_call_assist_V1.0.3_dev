@@ -95,7 +95,7 @@ public class DispatchThirdApiController implements DispatchThirdApi {
 
         CustTemplateVo custTemplateVo = checkTemplate(ro.getUserId(), ro.getRobot());
 
-        checkCallAgent(custTemplateVo.getAgentFlag(), ro);
+        checkCallAgent(custTemplateVo.getAgentFlag(), ro, sysUser.getOrgCode());
 
         int num = ro.getPhoneRoList().size();
 
@@ -121,7 +121,7 @@ public class DispatchThirdApiController implements DispatchThirdApi {
      * @param agentFlag
      * @param ro
      */
-    private void checkCallAgent(Boolean agentFlag, DispatchPlanForApiRo ro) {
+    private void checkCallAgent(Boolean agentFlag, DispatchPlanForApiRo ro, String orgCode) {
 
         if(!agentFlag) {
             ro.setCallAgent(null);
@@ -129,7 +129,7 @@ public class DispatchThirdApiController implements DispatchThirdApi {
             if(StringUtils.isEmpty(ro.getCallAgent())) {
                 throw new BaseException(DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorMsg(), DispatchCodeExceptionEnum.THIS_TEMPLATE_HAS_CALL_AGENT.getErrorCode());
             } else {
-                List<String> agent = callAgentService.getAgent(ro.getUserId());
+                List<String> agent = callAgentService.getAgent(orgCode);
                 if(!agent.contains(ro.getCallAgent())) {
                     throw new BaseException(DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorMsg(), DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorCode());
                 }

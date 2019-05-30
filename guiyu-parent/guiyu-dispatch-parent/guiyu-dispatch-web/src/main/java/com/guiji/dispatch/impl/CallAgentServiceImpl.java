@@ -27,13 +27,13 @@ public class CallAgentServiceImpl implements CallAgentService {
 
     /**
      * 查询某个用户所拥有的坐席组
-     * @param userId
+     * @param orgCode
      * @return
      */
     @Override
-    public List<String> getAgent(Integer userId) {
+    public List<String> getAgent(String orgCode) {
 
-        Result.ReturnData<List<AgentGroupInfo>> groups = agentGroup.getGroups(userId.toString());
+        Result.ReturnData<List<AgentGroupInfo>> groups = agentGroup.getGroups(orgCode);
 
         if(groups == null || CollectionUtils.isEmpty(groups.getBody())) {
             throw new BaseException(DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorMsg(), DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorCode());

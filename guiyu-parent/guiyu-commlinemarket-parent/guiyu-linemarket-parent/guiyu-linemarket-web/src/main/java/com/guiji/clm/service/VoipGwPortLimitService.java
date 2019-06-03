@@ -1,8 +1,12 @@
 package com.guiji.clm.service;
 
 import com.guiji.clm.dao.VoipGwPortLimitMapper;
+import com.guiji.clm.dao.VoipGwPortMapper;
+import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.dao.entity.VoipGwPortLimit;
 import com.guiji.clm.dao.entity.VoipGwPortLimitExample;
+import com.guiji.clm.exception.ClmErrorEnum;
+import com.guiji.clm.exception.ClmException;
 import com.guiji.clm.model.PortLimitVo;
 import com.guiji.clm.ro.OperPortLimitRo;
 import com.guiji.clm.ro.PortLimitInfoRo;
@@ -29,6 +33,9 @@ public class VoipGwPortLimitService {
     @Autowired
     VoipGwPortLimitMapper voipGwPortLimitMapper;
 
+    @Autowired
+    VoipGwPortMapper voipGwPortMapper;
+
     /**
      * 新增
      * @param portLimitPojo
@@ -42,6 +49,12 @@ public class VoipGwPortLimitService {
 
         Integer portId = portLimitPojo.getPortId();
 
+        VoipGwPort voipGwPort = voipGwPortMapper.selectByPrimaryKey(portId);
+
+        if(voipGwPort == null) {
+            throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
+        }
+
         for (PortLimitInfoRo ro : ros) {
 
 
@@ -52,6 +65,7 @@ public class VoipGwPortLimitService {
             limit.setCrtUser(userId);
             limit.setCrtTime(new Date());
             limit.setPortId(portId);
+            limit.setLineId(voipGwPort.getLineId());
 
             voipGwPortLimitMapper.insert(limit);
 

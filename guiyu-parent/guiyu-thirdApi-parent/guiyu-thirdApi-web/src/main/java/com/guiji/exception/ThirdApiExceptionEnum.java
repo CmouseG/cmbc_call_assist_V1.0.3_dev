@@ -53,7 +53,12 @@ public enum ThirdApiExceptionEnum implements ExceptionEnum {
     /**
      * 批次名重复
      */
-    DUPLICATE_BATCH_NAME(1, "101007", "批次名已存在");
+    DUPLICATE_BATCH_NAME(1, "101007", "批次名已存在"),
+
+    /**
+     * 批次名重复
+     */
+    OVER_LIMIT_PLAN(1, "101008", "任务数量超限");
 
 
 

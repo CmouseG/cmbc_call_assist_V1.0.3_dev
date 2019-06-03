@@ -65,3 +65,6 @@ ribbon:
   MaxAutoRetriesNextServer: 1  #切换实例的重试次数
   eureka:
     enabled: true
+
+plan:
+  maxNum: 30000

@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -205,6 +206,9 @@ public class DispatchApiController {
 //
 //    }
 
+    @Value("${plan.maxNum}")
+    private Integer maxNum;
+
     /**
      * 添加计划
      * 清除错误的手机号/重复的手机号
@@ -234,6 +238,10 @@ public class DispatchApiController {
 
         int rightCount = 0;
         int failCount = 0;
+
+        if (mobiles.length > maxNum) {
+            throw new ThirdApiException(ThirdApiExceptionEnum.OVER_LIMIT_PLAN);
+        }
 
         for (String mobileInfo : mobiles) {
             String[] infos = mobileInfo.split("\\^", 5);

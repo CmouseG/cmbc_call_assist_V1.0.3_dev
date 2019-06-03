@@ -2,7 +2,6 @@ package com.guiji.clm.api;
 
 import java.util.List;
 
-import com.guiji.clm.model.PortLimitVo;
 import com.guiji.clm.model.SimLineStatus;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,9 +58,5 @@ public interface LineMarketRemote {
 	 */
 	@PostMapping(value = "/remote/querySimLineStatus")
 	public Result.ReturnData<SimLineStatus> querySimLineStatus(@RequestParam(value="lineId",required=true) Integer lineId);
-
-
-	@PostMapping(value = "/remote/querySimLineLimitInfo")
-	Result.ReturnData<List<PortLimitVo>> querySimLineLimitInfo(@RequestParam(value="lineId",required=true) Integer lineId);
-
+    
 }

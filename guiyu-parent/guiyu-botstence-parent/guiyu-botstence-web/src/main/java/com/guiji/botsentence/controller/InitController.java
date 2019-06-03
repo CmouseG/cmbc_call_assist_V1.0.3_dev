@@ -247,7 +247,7 @@ public class InitController {
 	}
 	
 	@Transactional
-	private void initDomain(List<BotSentenceDomain> domainList) {
+	public void initDomain(List<BotSentenceDomain> domainList) {
 
 		BotSentenceDomain domain = null;
 		for(BotSentenceDomain temp : domainList) {
@@ -342,7 +342,7 @@ public class InitController {
 	}
 	
 	@Transactional
-	private void initBranch(String processId, List<BotSentenceDomain> domainList) {
+	public void initBranch(String processId, List<BotSentenceDomain> domainList) {
 		
 		BotSentenceDomain startDomain = null;
 		BotSentenceDomain startExplainDomain = null;
@@ -407,7 +407,7 @@ public class InitController {
 	
 	
 	@Transactional
-	private void initRefuse(String processId, String template_id) {
+	public void initRefuse(String processId, String template_id) {
 		//创建流程时，默认创建一条挽回话术池--取domain为拒绝的negative数据
 		BotSentenceBranchExample refuseExample = new BotSentenceBranchExample();
 		refuseExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
@@ -713,8 +713,8 @@ public class InitController {
 		if("all".equals(type)) {
 			VoliceInfoExample example = new VoliceInfoExample();
 			example.createCriteria().andVoliceUrlIsNotNull().andTimesIsNull();
-			example.setLimitStart(0);
-			example.setLimitEnd(5000);
+			example.setOffset(0L);
+			example.setLimit(5000);
 			List<VoliceInfo>  list = voliceInfoMapper.selectByExample(example);
 			File dir = new File(tempPath);
 			if(null != list && list.size() > 0) {

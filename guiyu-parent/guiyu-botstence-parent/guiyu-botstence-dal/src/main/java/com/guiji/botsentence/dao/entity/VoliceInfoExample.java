@@ -11,9 +11,9 @@ public class VoliceInfoExample {
 
     protected List<Criteria> oredCriteria;
 
-    protected Integer limitStart;
+    private Integer limit;
 
-    protected Integer limitEnd;
+    private Long offset;
 
     public VoliceInfoExample() {
         oredCriteria = new ArrayList<Criteria>();
@@ -68,20 +68,20 @@ public class VoliceInfoExample {
         distinct = false;
     }
 
-    public void setLimitStart(Integer limitStart) {
-        this.limitStart=limitStart;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
-    public Integer getLimitStart() {
-        return limitStart;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setLimitEnd(Integer limitEnd) {
-        this.limitEnd=limitEnd;
+    public void setOffset(Long offset) {
+        this.offset = offset;
     }
 
-    public Integer getLimitEnd() {
-        return limitEnd;
+    public Long getOffset() {
+        return offset;
     }
 
     protected abstract static class GeneratedCriteria {
@@ -1195,6 +1195,66 @@ public class VoliceInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andTtsCompositeTypeIsNull() {
+            addCriterion("tts_composite_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeIsNotNull() {
+            addCriterion("tts_composite_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeEqualTo(Integer value) {
+            addCriterion("tts_composite_type =", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeNotEqualTo(Integer value) {
+            addCriterion("tts_composite_type <>", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeGreaterThan(Integer value) {
+            addCriterion("tts_composite_type >", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("tts_composite_type >=", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeLessThan(Integer value) {
+            addCriterion("tts_composite_type <", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("tts_composite_type <=", value, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeIn(List<Integer> values) {
+            addCriterion("tts_composite_type in", values, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeNotIn(List<Integer> values) {
+            addCriterion("tts_composite_type not in", values, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeBetween(Integer value1, Integer value2) {
+            addCriterion("tts_composite_type between", value1, value2, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsCompositeTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("tts_composite_type not between", value1, value2, "ttsCompositeType");
+            return (Criteria) this;
+        }
+
         public Criteria andTimesIsNull() {
             addCriterion("times is null");
             return (Criteria) this;
@@ -1326,6 +1386,8 @@ public class VoliceInfoExample {
         }
     }
 
+    /**
+     */
     public static class Criteria extends GeneratedCriteria {
 
         protected Criteria() {

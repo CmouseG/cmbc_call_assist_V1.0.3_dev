@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.botsentence.util.enums.TtsModelEnum;
 import com.guiji.botsentence.vo.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -332,18 +333,6 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		//保存本地生成TTS任务
 		Long taskId = null;
 		BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-		
-		//查询当前文案内容是否已经合成过，如果合成过，则不再重新合成
-		/*BotSentenceTtsContentExample example = new BotSentenceTtsContentExample();
-		example.createCriteria().andUrlIsNotNull().andContentEqualTo(temp.getContent().trim()).andSoundTypeEqualTo(temp.getSoundType());
-		List<BotSentenceTtsContent> contentList = botSentenceTtsContentMapper.selectByExample(example);
-		if(null != contentList && contentList.size() > 0) {
-			logger.info("当前录音已合成过，可直接使用该url,并直接设置任务状态为已完成....");
-			ttsTask.setStatus(Constant.TTS_TASK_FINISH);
-			ttsTask.setVoliceUrl(contentList.get(0).getUrl());
-		}else {
-			ttsTask.setStatus(Constant.TTS_TASK_NEW);
-		}*/
 		ttsTask.setContent(temp.getContent().trim());
 		ttsTask.setProcessId(processId);
 		ttsTask.setBusiId(temp.getBusiId());
@@ -455,7 +444,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId, String model) {
 		if(StringUtils.isBlank(model)) {
-			model = "mh";
+			model = TtsModelEnum.MH.getKey();
 		}
 		temp.setSoundType(model);
 		//保存本地生成TTS任务
@@ -468,17 +457,8 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 			logger.info("当前录音已合成过，可直接使用....");
 			
 			if("01".equals(temp.getBusiType()) && isNeedTts) {//如果是通话录音，并且需要TTS合成，则更新task记录
-				//VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(temp.getBusiId()));
-				/*if(StringUtils.isNotBlank(volice.getVoliceUrl()) && volice.getVoliceUrl().equals(taskList.get(0).getVoliceUrl())) {
-					logger.info("当前volice的url为TTS合成的URL,不需要更新,跳过...");
-				}else {
-					logger.info("更新volice表的url为当前TTS合成的URL");
-					volice.setNeedTts(false);
-				}*/
 				logger.info("当前为tts拆分文案，直接更新task表URL...");
 				temp.setVoliceUrl(taskList.get(0).getVoliceUrl());
-				//volice.setVoliceUrl(taskList.get(0).getVoliceUrl());
-				//voliceInfoMapper.updateByPrimaryKey(volice);
 				botSentenceTtsTaskMapper.updateByPrimaryKey(temp);
 			}
 			if("02".equals(temp.getBusiType())) {//如果是备用录音，则更新Backup表的数据
@@ -504,48 +484,16 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 			}
 			return;
 		}
-		
-		//根据voliceId查询是否已存在，如果存在，则更新，如果不存在，则新增
-		/*BotSentenceTtsTaskExample example2 = new BotSentenceTtsTaskExample();
-		example2.createCriteria().andVoliceIdEqualTo(new Long(temp.getVoliceId()));
-		List<BotSentenceTtsTask> taskList2 = botSentenceTtsTaskMapper.selectByExample(example2);
-		if(null != taskList2 && taskList2.size() > 0) {
-			logger.info("当前录音的合成任务已存在....");
-			BotSentenceTtsTask ttsTask = taskList2.get(0);
-			ttsTask.setContent(temp.getContent());
-			ttsTask.setStatus(Constant.TTS_ING);
-			botSentenceTtsTaskMapper.updateByPrimaryKey(ttsTask);
-			taskId = ttsTask.getId();
-			logger.info("更新tts合成任务表结束..."+ taskId);
-		}else {*/
-			//BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-			//ttsTask.setId(temp.getId());
-			//ttsTask.setContent(temp.getContent());
-			//ttsTask.setProcessId(processId);
-			//ttsTask.setStatus(Constant.TTS_ING);
-			//ttsTask.setBusiId(temp.getBusiId());
-			//ttsTask.setBusiType(temp.getBusiType());
-			//ttsTask.setCrtTime(new Date(System.currentTimeMillis()));
-			//ttsTask.setCrtUser(UserUtil.getUserId());
-			//botSentenceTtsTaskMapper.insert(ttsTask);
-		
-		
+
 		if(null != temp.getId()) {
 			temp.setStatus(Constant.TTS_ING);
 			botSentenceTtsTaskMapper.updateByPrimaryKey(temp);
 		}else {
-			//BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-			//ttsTask.setId(temp.getId());
-			//ttsTask.setContent(temp.getContent());
 			temp.setProcessId(processId);
 			temp.setStatus(Constant.TTS_ING);
-			//ttsTask.setBusiId(temp.getBusiId());
-			//ttsTask.setBusiType(temp.getBusiType());
 			temp.setCrtTime(new Date(System.currentTimeMillis()));
 			temp.setCrtUser(userId);
-			
 			botSentenceTtsTaskMapper.insert(temp);
-			
 		}
 		
 			

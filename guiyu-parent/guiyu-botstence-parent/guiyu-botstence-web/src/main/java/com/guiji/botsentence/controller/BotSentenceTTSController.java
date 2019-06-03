@@ -1,19 +1,20 @@
 package com.guiji.botsentence.controller;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import com.guiji.botsentence.dao.entity.BotSentenceTtsParam;
+import com.guiji.botsentence.service.IBotSentenceTtsService;
+import com.guiji.botsentence.service.ITtsService;
 import com.guiji.botsentence.vo.*;
+import com.guiji.component.client.config.JsonParam;
+import com.guiji.component.result.ServerResult;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.botsentence.service.IBotSentenceTtsService;
-import com.guiji.botsentence.service.impl.BotSentenceTtsServiceImpl;
-import com.guiji.component.client.config.JsonParam;
-import com.guiji.component.result.ServerResult;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 
@@ -26,8 +27,11 @@ import com.guiji.component.result.ServerResult;
 @RequestMapping(value="tts")
 public class BotSentenceTTSController {
 
-	@Autowired
+	@Resource
 	private IBotSentenceTtsService botSentenceTtsService;
+
+	@Resource
+	private ITtsService iTtsService;
 	
 	@RequestMapping(value="saveTtsParam")
 	public ServerResult saveTtsParam(@JsonParam TtsParamVO param, @RequestHeader String userId) {
@@ -91,10 +95,15 @@ public class BotSentenceTTSController {
 		if(StringUtils.isBlank(processId)) {
 			return ServerResult.createByErrorMessage("话术流程编号为空");
 		}
-		
-		List<TtsParam> list = botSentenceTtsService.queryTtsParamList(processId);
-		
-		return ServerResult.createBySuccess(list);
+		List<TtsParam> ttsParams = Lists.newArrayList();
+		List<BotSentenceTtsParam> ttsParamList = iTtsService.getSortedParams(processId);
+		ttsParamList.forEach(ttsParam -> {
+			TtsParam param = new TtsParam();
+			param.setParamKey(ttsParam.getParamKey());
+			param.setParamType(ttsParam.getParamType());
+			ttsParams.add(param);
+		});
+		return ServerResult.createBySuccess(ttsParams);
 	}
 	
 	@RequestMapping(value="queryTtsBackupList")

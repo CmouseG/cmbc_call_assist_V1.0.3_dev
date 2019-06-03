@@ -19,10 +19,7 @@ import com.guiji.botsentence.service.IBotSentenceProcessService;
 import com.guiji.botsentence.service.IBotSentenceTemplateService;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
 import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.util.enums.BranchNameEnum;
-import com.guiji.botsentence.util.enums.BranchTypeEnum;
-import com.guiji.botsentence.util.enums.CategoryEnum;
-import com.guiji.botsentence.util.enums.DomainNameEnum;
+import com.guiji.botsentence.util.enums.*;
 import com.guiji.botsentence.vo.*;
 import com.guiji.common.exception.CommonException;
 import com.guiji.component.client.util.BeanUtil;
@@ -3432,7 +3429,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			//查询volice非TTS的录音URL为空的数据
 			VoliceInfoExample voliceExample = new VoliceInfoExample();
 			voliceExample.createCriteria().andProcessIdEqualTo(processId).andVoliceUrlIsNull().andNeedTtsEqualTo(false);
-			int count1 = voliceInfoMapper.countByExample(voliceExample);
+			Long count1 = voliceInfoMapper.countByExample(voliceExample);
 			logger.info("一般录音未合成: " + count1);
 
 			BotSentenceTtsTaskExample example = new BotSentenceTtsTaskExample();
@@ -3446,7 +3443,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			int unfinisn_back_num = botSentenceTtsBackupMapper.countByExample(backExample);
 			logger.info("备用话术录音未合成: " + unfinisn_back_num);
 
-			int total = count1 + unfinish_tts_num + unfinisn_back_num;
+			int total = count1.intValue() + unfinish_tts_num + unfinisn_back_num;
 
 			logger.info("还剩下" + total + "个未合成...");
 			if(total == 0) {
@@ -3543,6 +3540,18 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	@Override
 	//@Transactional
 	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId, String model) {
+
+		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+		if(null == process){
+			throw new CommonException("话术不存在！");
+		}
+
+		if(StringUtils.isBlank(process.getSoundType())){
+			model = TtsModelEnum.MH.getKey();
+		}else {
+			model = process.getSoundType();
+		}
+
 
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);

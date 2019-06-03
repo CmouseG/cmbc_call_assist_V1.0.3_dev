@@ -1,163 +1,105 @@
 package com.guiji.botsentence.service.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.jar.Attributes.Name;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.util.bcel.Const;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.DOMImplementationList;
-
-import com.google.common.io.Files;
+import com.google.common.collect.Lists;
 import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceDeployMapper;
-import com.guiji.botsentence.dao.BotSentenceDomainMapper;
-import com.guiji.botsentence.dao.BotSentenceProcessMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.VoliceInfoMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceDeploy;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptions;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceProcessExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTask;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.BusinessAnswerTaskExt;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.VoliceInfoExample;
-import com.guiji.botsentence.dao.entity.VoliceInfoExt;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
+import com.guiji.botsentence.service.ITtsService;
 import com.guiji.botsentence.service.IVoliceService;
 import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.vo.AutoDeployExecuteVo;
+import com.guiji.botsentence.util.enums.TtsParamTypeEnum;
+import com.guiji.botsentence.util.enums.TtsTaskParamEnum;
+import com.guiji.botsentence.util.enums.TtsTaskTypeEnum;
 import com.guiji.botsentence.vo.CommonDialogVO;
 import com.guiji.botsentence.vo.RefuseVoliceVO;
 import com.guiji.botsentence.vo.TtsBackup;
+import com.guiji.common.exception.CommonException;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.component.client.util.DateUtil;
 import com.guiji.component.client.util.FileUtil;
-import com.guiji.component.client.util.FtpUploadUtil;
 import com.guiji.component.client.util.IOUtil;
 import com.guiji.component.client.util.JsonBase64Crypter;
-import com.guiji.component.client.util.QiuniuUploadUtil;
-import com.guiji.component.client.util.ZipUtil;
-import com.guiji.common.exception.CommonException;
-import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.utils.NasUtil;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
-import com.netflix.discovery.converters.Auto;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class VoliceServiceImpl implements IVoliceService {
 
 	Logger logger = LoggerFactory.getLogger(VoliceServiceImpl.class);
 
-	@Autowired
+	@Resource
 	private VoliceInfoMapper voliceInfoMapper;
 
-	@Autowired
+	@Resource
 	private VoliceInfoExtMapper voliceInfoExtMapper;
 
-	@Autowired
-	private QiuniuUploadUtil qiuniuUploadUtil;
-
-	@Autowired
-	private AutoDeployExecuteService autoDeployExecuteService;
-
-	@Autowired
-	private FtpUploadUtil ftpUploadUtil;
-
-	@Autowired
+	@Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 
-	@Autowired
+	@Resource
 	private BusinessAnswerTaskServiceImpl businessAnswerTaskService;
 
-	@Autowired
+	@Resource
 	private BotSentenceTtsServiceImpl botSentenceTtsService;
 
-	@Autowired
+	@Resource
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
-	@Autowired
+	@Resource
 	private BotsentenceVariableServiceImpl botsentenceVariableService;
 	
-	@Autowired
+	@Resource
 	private IProcessSchedule iProcessSchedule;
 	
-	@Autowired
+	@Resource
 	private IDispatchPlanOut iDispatchPlanOut;
 	
-	@Autowired
-	private BotSentenceDeployMapper botSentenceDeployMapper;
-	
-	@Autowired
+	@Resource
 	private BotSentenceApprovalServiceImpl botSentenceApprovalService;
 	
-	@Autowired
+	@Resource
 	private VoliceServiceImpl voliceService;
+
+	@Resource
+	private ITtsService iTtsService;
 	
 	private static String NAS_UPLAOD_SYSTEM_CODE="09";
 	
@@ -219,7 +161,8 @@ public class VoliceServiceImpl implements IVoliceService {
 				if (!newContent.equals(oldContent)) {
 					logger.info("先删除原先文案的TTS合成任务记录...");
 					BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
-					ttsTaskExample.createCriteria().andBusiTypeEqualTo(Constant.TTS_BUSI_TYPE_01)
+					ttsTaskExample.createCriteria()
+							.andBusiTypeEqualTo(TtsTaskTypeEnum.CALL_RECORD.getKey())
 							.andBusiIdEqualTo(voliceInfo.getVoliceId().toString());
 					botSentenceTtsTaskMapper.deleteByExample(ttsTaskExample);
 
@@ -253,20 +196,16 @@ public class VoliceServiceImpl implements IVoliceService {
 			}
 			voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
 			voliceInfo.setLstUpdateUser(userId);
-			voliceInfoMapper.updateByPrimaryKeySelective(voliceInfo);
+			voliceInfoMapper.updateByPrimaryKey(voliceInfo);
 
 		} else {
 			logger.info("新增一条录音信息");
 			voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
 			voliceInfo.setCrtUser(userId);
-			voliceInfo.setNeedTts(false);
-			if (BotSentenceUtil.validateContainParam(newContent)) {// 包含TTS变量，则需要保存tts任务表数据
-				voliceInfo.setNeedTts(true);
-			}
-			
+			voliceInfo.setNeedTts(BotSentenceUtil.validateContainParam(newContent));
 			voliceInfoMapper.insert(voliceInfo);
 			
-			if (BotSentenceUtil.validateContainParam(newContent)) {// 包含TTS变量，则需要保存tts任务表数据
+			if (voliceInfo.getNeedTts()) {// 包含TTS变量，则需要保存tts任务表数据
 				logger.info("当前文案需要TTS合成，需要拆分文案生成多个TTS任务");
 				logger.info("更新当前录音的url为空");
 				
@@ -1426,170 +1365,53 @@ public class VoliceServiceImpl implements IVoliceService {
 				paramList.add(match);
 			}
 		}
-		// 判断是否变量是第一个
-		/*boolean isStart = false;
-		boolean isEnd = false;
-		for (int i = 0; i < paramList.size(); i++) {
-			int index = newContent.indexOf(paramList.get(i));
-			if (index == 0) {
-				isStart = true;
-				break;
-			}
-			
-			int endIndex = newContent.lastIndexOf(paramList.get(i));
-			if(endIndex == (newContent.length() - 5)) {
-				isEnd = true;
-				break;
-			}
-		}
-		if(isStart) {//如果变量在开头，则不允许保存
-			throw new CommonException("tts变量不允许出现在文案开头!");
-		}
-		
-		if(isEnd) {//如果变量在结尾，则不允许保存
-			throw new CommonException("tts变量不允许出现在文案结尾!");
-		}
-
-		
-		//校验两个变量是否挨着
-		String regEx2 = "\\$[0-9]{4}\\$[0-9]{4}";// 正则表达式
-		// 获取变量列表
-		Pattern pattern2 = Pattern.compile(regEx2);
-		Matcher matcher2 = pattern2.matcher(newContent);
-		
-		if(matcher2.find()) {
-			throw new CommonException("两个tts变量中间必须有文案!");
-		}
-		
-		
-		String[] array = voliceInfo.getContent().split(regEx);
-		List<String> contentList = new ArrayList<>();
-
-		// 使用变量切割成的文案列表
-		if (null != array && array.length > 0) {
-			for (int i = 0; i < array.length; i++) {
-				if (StringUtils.isNotBlank(array[i]) && !"。".equals(array[i]) && !".".equals(array[i])
-						&& !"，".equals(array[i]) && !",".equals(array[i]) && !"！".equals(array[i])
-						&& !"!".equals(array[i]) && !"？".equals(array[i]) && !"?".equals(array[i])) {
-					contentList.add(array[i]);
-				}
-				contentList.add(array[i]);
-			}
-		}
-
-		
-		if (isStart) {
-			for (int i = 0; i < paramList.size(); i++) {
-				String seq = voliceInfo.getVoliceId() + "_" + ((i + 1) * 2 - 1);
-				BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-				ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-				ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-				ttsTask.setContent(paramList.get(i));
-				ttsTask.setSeq(seq);
-				ttsTask.setIsParam(Constant.IS_PARAM_TRUE);
-				botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
-			}
-
-			for (int i = 0; i < contentList.size(); i++) {
-				String seq = voliceInfo.getVoliceId() + "_" + ((i + 1) * 2);
-				BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-				ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-				ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-				ttsTask.setContent(contentList.get(i).trim());
-				ttsTask.setSeq(seq);
-				ttsTask.setIsParam(Constant.IS_PARAM_FALSE);
-				botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
-			}
-		} else {
-			// 如果第一个是文案，则从文案开始为第1个，变量从第2开始依次排序
-			for (int i = 0; i < contentList.size(); i++) {
-				String seq = voliceInfo.getVoliceId() + "_" + ((i + 1) * 2 - 1);
-				BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-				ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-				ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-				ttsTask.setContent(contentList.get(i).trim());
-				ttsTask.setSeq(seq);
-				ttsTask.setIsParam(Constant.IS_PARAM_FALSE);
-				botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
-			}
-			for (int i = 0; i < paramList.size(); i++) {
-				String seq = voliceInfo.getVoliceId() + "_" + (i + 1) * 2;
-				BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-				ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-				ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-				ttsTask.setContent(paramList.get(i));
-				ttsTask.setSeq(seq);
-				ttsTask.setIsParam(Constant.IS_PARAM_TRUE);
-				botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
-			}
-		}*/
-		
-		
-		
 		
 		// 获取变量列表
-		List<String> list = new ArrayList<>();
+		List<String> splitContentList = Lists.newArrayList();
 		Matcher matcher2 = pattern.matcher(newContent);
 		while (matcher2.find()) {
-			/*String match = matcher2.group();
-			String [] array = newContent.split("[$]"+match.substring(1, match.length()));
-			list.add(array[0]);
-			list.add(match);
-			if(array.length > 1) {
-				newContent = array[1];
-				if(!BotSentenceUtil.validateContainParam(newContent)) {
-					list.add(newContent);
-				}
-				matcher2 = pattern.matcher(newContent);
-			}*/
-
 			String match = matcher2.group();
 			int i = matcher2.start();
-			newContent.substring(0, i);
 			String [] array = new String[2];
 			array[0] = newContent.substring(0, i);
 			array[1] = newContent.substring(i+5);
-			list.add(array[0]);
-			list.add(match);
+			splitContentList.add(array[0]);
+			splitContentList.add(match);
 			newContent = array[1];
 			if(!BotSentenceUtil.validateContainParam(newContent)) {
-				list.add(newContent);
+				splitContentList.add(newContent);
 				break;
 			}
-			
 			matcher2 = pattern.matcher(newContent);
 		}
 		
 		int index = 1;
-		for(String temp : list) {
-			if(StringUtils.isNotBlank(temp) && !"。".equals(temp) && !".".equals(temp)
-					&& !"，".equals(temp) && !",".equals(temp) && !"！".equals(temp)
-					&& !"!".equals(temp) && !"？".equals(temp) && !"?".equals(temp)) {
-				System.out.println(temp);
-				if(paramList.contains(temp)) {
-					String seq = voliceInfo.getVoliceId() + "_" + index;
-					BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-					ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-					ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-					ttsTask.setContent(temp);
-					ttsTask.setSeq(seq);
-					ttsTask.setIsParam(Constant.IS_PARAM_TRUE);
-					botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
+		for(String splitContent : splitContentList) {
+			if(StringUtils.isNotBlank(splitContent) && !"。".equals(splitContent) && !".".equals(splitContent)
+					&& !"，".equals(splitContent) && !",".equals(splitContent) && !"！".equals(splitContent)
+					&& !"!".equals(splitContent) && !"？".equals(splitContent) && !"?".equals(splitContent)) {
+
+				String seq = voliceInfo.getVoliceId() + "_" + index;
+
+				BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
+				ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
+				ttsTask.setBusiType(TtsTaskTypeEnum.CALL_RECORD.getKey());
+				ttsTask.setContent(splitContent);
+				ttsTask.setSeq(seq);
+				if(paramList.contains(splitContent)) {
+					ttsTask.setIsParam(TtsTaskParamEnum.IS_PARAM.getKey());
+					iTtsService.saveTtsParam(splitContent, TtsParamTypeEnum.NORMAL, voliceInfo.getProcessId(), userId);
 				}else {
-					String seq = voliceInfo.getVoliceId() + "_" + index;
-					BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-					ttsTask.setBusiId(voliceInfo.getVoliceId().toString());
-					ttsTask.setBusiType(Constant.TTS_BUSI_TYPE_01);
-					ttsTask.setContent(temp);
-					ttsTask.setSeq(seq);
 					ttsTask.setIsParam(Constant.IS_PARAM_FALSE);
-					botSentenceTtsService.saveTTSTask(ttsTask, voliceInfo.getProcessId(), userId);
 				}
+				ttsTask.setProcessId(voliceInfo.getProcessId());
+				ttsTask.setCrtTime(new Date());
+				ttsTask.setCrtUser(userId);
+				botSentenceTtsTaskMapper.insert(ttsTask);
+				botSentenceProcessService.updateProcessState(voliceInfo.getProcessId(), userId);
 				index++;
 			}
 		}
-		
-		
 	}
 
 	@Override
@@ -1603,7 +1425,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		ignoreDomainList.add("自由介绍");
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andVoliceUrlIsNotNull().andDomainNameNotIn(ignoreDomainList).andNeedTtsNotEqualTo(true);
-		int num = voliceInfoMapper.countByExample(example);
+		Long num = voliceInfoMapper.countByExample(example);
 		
 		//tts录音已完成数量
 		BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
@@ -1616,7 +1438,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		backupExample.createCriteria().andProcessIdEqualTo(processId).andUrlIsNotNull();
 		int backNum = botSentenceTtsBackupMapper.countByExample(backupExample);	
 		
-		return num + ttsNum + backNum;
+		return num.intValue() + ttsNum + backNum;
 	}
 
 	@Override
@@ -1629,7 +1451,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		ignoreDomainList.add("自由介绍");
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andVoliceUrlIsNull().andDomainNameNotIn(ignoreDomainList).andNeedTtsNotEqualTo(true);;
-		int num = voliceInfoMapper.countByExample(example);
+		Long num = voliceInfoMapper.countByExample(example);
 		
 		//tts录音已完成数量
 		BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
@@ -1642,7 +1464,7 @@ public class VoliceServiceImpl implements IVoliceService {
 		backupExample.createCriteria().andProcessIdEqualTo(processId).andUrlIsNull();
 		int backNum = botSentenceTtsBackupMapper.countByExample(backupExample);	
 		
-		return num + ttsNum + backNum;
+		return num.intValue() + ttsNum + backNum;
 	}
 
 	

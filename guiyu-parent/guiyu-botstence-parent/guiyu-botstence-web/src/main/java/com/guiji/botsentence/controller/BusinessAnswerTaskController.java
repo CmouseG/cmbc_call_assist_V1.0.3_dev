@@ -70,7 +70,6 @@ public class BusinessAnswerTaskController {
 	@RequestMapping(value="/updateBusinessAnswerById")
 	public ServerResult updateBusinessAnswerById(@JsonParam BusinessAnswerVo record, @RequestHeader String userId){
 		service.updateBusinessAnswer(record, userId);
-		//List<BusinessAnswerTaskExt> list = service.queryBusinessAnswerListByPage(record.getProcessId());
 		return ServerResult.createBySuccess();
 	}
 	

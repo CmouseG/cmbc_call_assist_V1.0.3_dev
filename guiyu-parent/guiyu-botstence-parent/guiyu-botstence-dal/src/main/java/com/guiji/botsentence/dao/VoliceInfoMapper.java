@@ -1,13 +1,12 @@
 package com.guiji.botsentence.dao;
 
+import com.guiji.botsentence.dao.entity.VoliceInfo;
+import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.VoliceInfoExample;
-
 public interface VoliceInfoMapper {
-    int countByExample(VoliceInfoExample example);
+    long countByExample(VoliceInfoExample example);
 
     int deleteByExample(VoliceInfoExample example);
 

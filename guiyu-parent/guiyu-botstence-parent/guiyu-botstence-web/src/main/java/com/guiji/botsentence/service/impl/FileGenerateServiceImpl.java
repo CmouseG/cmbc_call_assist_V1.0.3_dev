@@ -1,92 +1,40 @@
 package com.guiji.botsentence.service.impl;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.guiji.botsentence.constant.Constant;
+import com.guiji.botsentence.controller.server.vo.*;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
+import com.guiji.botsentence.service.IFileGenerateService;
+import com.guiji.botsentence.service.ITtsService;
+import com.guiji.botsentence.service.IVoliceService;
+import com.guiji.botsentence.util.AudioConvertUtil;
+import com.guiji.botsentence.util.BotSentenceUtil;
+import com.guiji.botsentence.util.TtsUtil;
+import com.guiji.botsentence.util.enums.TtsTaskParamEnum;
+import com.guiji.botsentence.util.enums.TtsTaskTypeEnum;
+import com.guiji.common.exception.CommonException;
+import com.guiji.component.client.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.controller.server.vo.BranchNegativeVO;
-import com.guiji.botsentence.controller.server.vo.BranchPositiveVO;
-import com.guiji.botsentence.controller.server.vo.BranchRefuseVO;
-import com.guiji.botsentence.controller.server.vo.BranchSpecialQuestionVO;
-import com.guiji.botsentence.controller.server.vo.DomainVO;
-import com.guiji.botsentence.dao.BotSentenceAdditionMapper;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceDomainMapper;
-import com.guiji.botsentence.dao.BotSentenceIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceLabelMapper;
-import com.guiji.botsentence.dao.BotSentenceProcessMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsParamMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.VoliceInfoMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceAddition;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
-import com.guiji.botsentence.dao.entity.BotSentenceIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceLabel;
-import com.guiji.botsentence.dao.entity.BotSentenceLabelExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptions;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsParam;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsParamExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTask;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.VoliceInfoExample;
-import com.guiji.botsentence.service.IBotSentenceProcessService;
-import com.guiji.botsentence.service.IFileGenerateService;
-import com.guiji.botsentence.service.IVoliceService;
-import com.guiji.botsentence.util.AudioConvertUtil;
-import com.guiji.botsentence.util.BotSentenceUtil;
-import com.guiji.botsentence.vo.NextVO;
-import com.guiji.botsentence.vo.OptionsJson;
-import com.guiji.component.client.util.FileUtil;
-import com.guiji.component.client.util.IOUtil;
-import com.guiji.common.exception.CommonException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * 不适用addition表
@@ -98,42 +46,45 @@ import org.springframework.http.ResponseEntity;
 @Service
 public class FileGenerateServiceImpl implements IFileGenerateService {
 
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
-	@Autowired
+	@javax.annotation.Resource
 	private VoliceInfoMapper voliceInfoMapper;
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceIntentMapper botSentenceIntentMapper;
-	@Autowired
+	@javax.annotation.Resource
 	private IVoliceService voliceService;
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceLabelMapper botSentenceLabelMapper;
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceAdditionMapper botSentenceAdditionMapper;
 
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceTtsServiceImpl botSentenceTtsServiceImpl;
 	
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
 	
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceTtsParamMapper botSentenceTtsParamMapper;
 	
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
-	@Autowired
+	@javax.annotation.Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
-	@Autowired
+	@javax.annotation.Resource
 	private BotsentenceVariableServiceImpl botsentenceVariableService;
+
+	@javax.annotation.Resource
+	private ITtsService iTtsService;
 	
 	@Value("${template.dir}")
 	private String tempDir;
@@ -157,34 +108,13 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 
 		// 获取流程对象
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
-		//BotSentenceTemplate template = botSentenceTemplateMapper.selectByPrimaryKey(botSentenceProcess.getOldProcessId());
 		String templateId = botSentenceProcess.getTemplateId();
-		
-		//templateId = templateId.split("_")[0];
-		
-		/*if(templateId.contains("_en")) {
-			templateId = templateId.replaceAll("_en", "");
-		}*/
+
 		if(templateId.contains("trade_")) {
 			templateId = templateId.replaceAll("trade_", "");
 		}
-		
-		//tempDir = tempDir + FILE_SEPARATOR + botSentenceProcess.getAccountNo();
-		
-		// 模板文件路径
-		/***************String tempPath = null;
-		if (FileUtil.getFilePath(tempDir, templateId) != null) {
-			tempPath = FileUtil.getFilePath(tempDir, templateId);
-		} else {
-			tempPath = FileUtil.getFilePath2Deep(tempDir, templateId);
-		}
-		if (tempPath == null) {
-			logger.error("can not find template file!! " + templateId);
-			return false;
-		}*/
 
 		// 拷贝一份模板文件出来
-		//String dirName = DateUtil.getCurrentTime2() + "-" + templateId;
 		String processDir = tempDir + FILE_SEPARATOR + dirName ;
 		
 		File processDirFile = new File(processDir);
@@ -201,8 +131,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		String templateCfgsDir = processDir+ FILE_SEPARATOR + templateId;
 		
 		try {
-			
-			//FileUtil.copyDir(tempDir+FILE_SEPARATOR+"copyfiles_test", templateCfgsDir);
 			FileUtil.copyDir(copyfilesDir, templateCfgsDir);
 		} catch (IOException e) {
 			logger.error("copy file failed !! " + templateId, e);
@@ -219,9 +147,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		if(!wavfile.exists()) {
 			wavfile.mkdirs();
 		}
-		
-		//String statDir = templateCfgsDir + FILE_SEPARATOR + "stat_cfg" + FILE_SEPARATOR;
-		
+
 		// 获取录音文件列表
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);
@@ -257,12 +183,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		}
 
 		// 获取所有domain
-		/*List<String> ignoreDomainList = new ArrayList<>();
-		ignoreDomainList.add("不清楚");
-		ignoreDomainList.add("不知道");
-		ignoreDomainList.add("等待");
-		ignoreDomainList.add("用户不清楚");
-		ignoreDomainList.add("自由介绍");*/
 		BotSentenceDomainExample botSentenceDomainExample = new BotSentenceDomainExample();
 		botSentenceDomainExample.createCriteria().andProcessIdEqualTo(processId);
 		List<BotSentenceDomain> domains = botSentenceDomainMapper.selectByExample(botSentenceDomainExample);
@@ -399,7 +319,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 						}
 					}
 				}
-				
+
 				/*//设置重复次数是否受限
 				if(null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
 					//写入每个流程
@@ -409,8 +329,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				}*/
 				
 			}
-			
-			
 			//处理挽回话术(除结束之外的每个主domain都必须有)
 			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory())
 					&& !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))){
@@ -594,89 +512,22 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			//设置坐标
 			jsonObject.put("position_x", botSentenceDomain.getPositionX());
 			jsonObject.put("position_y", botSentenceDomain.getPositionY());
-			
-			// 设置ignore_but_domains
-			/*boolean ignore_user_sentence = false;
-			boolean ignore_but_negative = false;
-			boolean ignore = false;
-			List<String> ignoreList = new ArrayList<String>();
-			
-			String ignoreButDomains = botSentenceDomain.getIgnoreButDomains();
-			if (!StringUtils.isBlank(ignoreButDomains)) {
-				String[] butDomainsArr = ignoreButDomains.replace("\"", "").replace("[", "").replace("]", "").split(",");
-				List<String> butDomainList = new ArrayList<String>();
-				for(String butDomain:butDomainsArr) {
-					if(butDomain.startsWith("ignore_")) {
-						ignore= true;
-						String ignoreDomain = butDomain.replace("ignore_", "");
-						if(ignoreDomain.length()>0) {
-							ignoreList.add(ignoreDomain);
-						}
-						
-					}else if(butDomain.equals("user_sentence_ignored")) {
-						ignore_user_sentence =true;
-					}else if(butDomain.equals("user_sentence_but_negative_ignored")) {
-						ignore_but_negative = true;
-					}else {
-						butDomainList.add(butDomain);
-					}
-				}
-				domainVO.setIgnore_but_domains(butDomainList);
-			}
-			
-			String jsonstr = JSON.toJSONString(domainVO);
-			JSONObject jsonObject = JSON.parseObject(jsonstr);
-			
-			if(ignore_user_sentence) {
-				jsonObject.put("ignore_user_sentence", true);
-			}
-			if(ignore_but_negative) {
-				jsonObject.put("ignore_but_negative", true);
-			}
-			if(ignore) {
-				jsonObject.put("ignore", ignoreList);
-			}*/
 
-			/*if (domainName.equals("拒绝")) {
-				jsonObject.remove("com_domain");
-			} else {
-				jsonObject.remove("limit");
-				if (domainName.equals("投诉")) {
-					jsonObject.remove("ignore_but_domains");
-				} else if (domainName.equals("不清楚") || domainName.equals("号码过滤") || domainName.equals("在忙")
-						|| domainName.equals("未匹配响应") || domainName.equals("结束") || domainName.equals("结束_在忙")
-						|| domainName.equals("结束_未匹配")) {
-					jsonObject.remove("com_domain");
-					jsonObject.remove("ignore_but_domains");
-				} else if (domainName.equals("不知道") || domainName.equals("强制结束")) {
-					jsonObject.remove("com_domain");
-					jsonObject.remove("ignore_but_domains");
-					jsonObject.remove("branch");
-				} else if (domainName.equals("等待") || domainName.equals("出错")) {
-					jsonObject.remove("com_domain");
-					jsonObject.remove("ignore_but_domains");
-					jsonObject.remove("branch");
-					jsonObject.remove("failed_enter");
-				}
-			}*/
-
-			/*String domainJson = "{\"" + domainName + "\":" + jsonObject.toJSONString().replace("[{", "{")
-					.replace("}},{", "},").replace("}]", "}").replace("\"branch\":[]", "\"branch\":{}").replace("\\", "")
-					.replace("[\"\"]", "[]").replace("[\"\"", "[\"").replace("\"\"]", "\"]").replace("]\"]", "]]").replace("[\"[\"", "[[\"")+ "}";*/
-			
-			/*String domainJson = JSON.toJSONString(domainVO);
-			domainJson = "{\"" + domainName + "\":" + domainJson.replace("[{", "{")
-					.replace("}},{", "},").replace("}]", "}").replace("\"branch\":[]", "\"branch\":{}").replace("\\", "")
-					.replace("[\"\"]", "[]").replace("[\"\"", "[\"").replace("\"\"]", "\"]").replace("]\"]", "]]").replace("[\"[\"", "[[\"")+ "}";
-			*/
-			//String domainJson = BotSentenceUtil.javaToJson(domainVO, DomainVO.class);
-			
-			//String domainJson = JSON.toJSONString(domainVO);
 			String domainJson = JSON.toJSONString(jsonObject, SerializerFeature.SortField); 
 			//jsonObject.toJSONString(jsonObject, SerializerFeature.SortField);
-			domainJson = "{\"" + domainName + "\":" + domainJson.replace("[{", "{")
-			.replace("}},{", "},").replace("}]", "}").replace("\"branch\":[]", "\"branch\":{}").replace("\\", "")
-			.replace("[\"\"]", "[]").replace("[\"\"", "[\"").replace("\"\"]", "\"]").replace("]\"]", "]]").replace("[\"[\"", "[[\"")+ "}";
+			domainJson = "{\"" + domainName + "\":"
+					+ domainJson
+					.replace("[{", "{")
+					.replace("}},{", "},")
+					.replace("}]", "}")
+					.replace("\"branch\":[]", "\"branch\":{}")
+					.replace("\\", "")
+					.replace("[\"\"]", "[]")
+					.replace("[\"\"", "[\"")
+					.replace("\"\"]", "\"]")
+					.replace("]\"]", "]]")
+					.replace("[\"[\"", "[[\"")
+					+ "}";
 	
 			//domainJson = BotSentenceUtil.javaToJson(domainVO, DomainVO.class);
 			try {
@@ -688,32 +539,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		}
 
 		// 生成select.json
-		/*Map<String, String> selectMap = new HashMap<String, String>();
-		BotSentenceIntentExample exampleIntent = new BotSentenceIntentExample();
-		exampleIntent.createCriteria().andProcessIdEqualTo(processId);
-		List<BotSentenceIntent> listIntent = botSentenceIntentMapper.selectByExampleWithBLOBs(exampleIntent);
-		for (BotSentenceIntent botSentenceIntent : listIntent) {
-			if (botSentenceIntent.getForSelect() == 1) {
-				String keys = "";
-				if(Constant.DOMAIN_TYPE_AGENT.equals(botSentenceIntent.getDomainName())) {
-					if(null != agentKeywords && agentKeywords.size() > 0) {
-						for(String temp : agentKeywords) {
-							keys = keys + temp + ",";
-						}
-						keys = "[" + keys.substring(0, keys.length() - 1) + "]";
-					}else {
-						keys = "[]";
-					}
-				}else {
-					keys = botSentenceIntent.getKeywords();
-				}
-				String[] arr = botSentenceIntent.getName().split("_");
-				//String domain = arr[2];
-				String domain = botSentenceIntent.getDomainName();
-				selectMap.put(domain, keys);
-			}
-		}
-		String selectJson = JSON.toJSONString(selectMap).replace("\"[", "[").replace("]\"", "]").replace("\\", "");*/
 		String selectJson = botsentenceVariableService.generateSelectJson(processId, agentKeywords);
 		try {
 			FileUtil.writeFile(selectDir + "select.json", formatJson(selectJson));
@@ -753,8 +578,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			logger.error("generate rule_在忙关键词.json has exception:", e);
 			return null;
 		}
-		
-		
+
 		//生成rule_投诉关键词.json
 		String touSuJson = botsentenceVariableService.generateTouSuJson(processId);
 		String touSuPath = templateCfgsDir + FILE_SEPARATOR + "stat_cfg" + FILE_SEPARATOR + "rule_投诉关键词.json";
@@ -774,7 +598,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			logger.error("generate common.json has exception:", e);
 			return null;
 		}
-		
 
 		// 下载音频文件
 		RestTemplate restTemplate = new RestTemplate();
@@ -804,8 +627,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		String s2w_ids_path = templateCfgsDir+ FILE_SEPARATOR + "s2w_cfg" + FILE_SEPARATOR + "s2w_ids.txt";
 		String s2w_need_record_path = templateCfgsDir+ FILE_SEPARATOR + "s2w_cfg" + FILE_SEPARATOR + "s2w_need_record.txt";
 		String s2w_new_path = templateCfgsDir+ FILE_SEPARATOR + "s2w_cfg" + FILE_SEPARATOR + "s2w_new.txt";
-		List<Integer> ids = new ArrayList<>();
-		
+
 		String s2w_ids_txt= "";
 		String s2w_need_record_txt= "";
 		String s2w_new_txt= "";
@@ -828,23 +650,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 
 		// 生成一些附加的文件
 		BotSentenceAddition botSentenceAddition = botSentenceAdditionMapper.selectByPrimaryKey(processId);
-		//String optionJson = botSentenceAddition.getOptionsJson();
-		
+
 		//生成options.josn
-		/*OptionsJson option = new OptionsJson();
-		option.setCheck_sim(true);
-		option.setCur_domain_prior(true);
-		option.setUse_endfiles_list(true);
-		option.setUse_not_match_logic(true);
-		option.setNot_match_solution("solution_two");
-		option.setTrade(botSentenceProcess.getIndustry());
-		option.setTempname(botSentenceProcess.getTemplateId());
-		option.setDes(botSentenceProcess.getTemplateName());
-		option.setDianame(botSentenceProcess.getTemplateName());
-		String optionJson = BotSentenceUtil.javaToJson(option, OptionsJson.class);*/
-		//替换optionjson里面的模板名称和编号
-		//optionJson = replateTemplateOption(optionJson, templateId, botSentenceProcess.getIndustry());
-		
 		String optionJson = botsentenceVariableService.generateOptionJson(processId, voliceMap);
 		String optionPath = templateCfgsDir+ FILE_SEPARATOR + "options.json";
 		try {
@@ -900,17 +707,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			return null;
 		}
 		
-		/*String temlateJson = botSentenceAddition.getTemplateJson();
-		if(StringUtils.isNotBlank(temlateJson)) {
-			String temlatePath = templateCfgsDir + FILE_SEPARATOR + "template" + FILE_SEPARATOR + "template.json";
-			try {
-				FileUtil.writeFile(temlatePath, temlateJson);
-			} catch (IOException e) {
-				logger.error("generate stopwords.txt has exception:", e);
-				return null;
-			}
-		}*/
-		
 		try {
 			String userDictTxt =botSentenceAddition.getUserdictTxt();
 			String userDictPath = templateCfgsDir + FILE_SEPARATOR + "jieba_dict" + FILE_SEPARATOR + "userdict.txt";
@@ -925,7 +721,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			return null;
 		}
 		
-		//String weightsTxt = botSentenceAddition.getWeightsTxt();
 		String weightsTxt = botsentenceVariableService.generateWeightJson(processId);
 		String weightsPath = templateCfgsDir + FILE_SEPARATOR + "weights_cfg" + FILE_SEPARATOR + "weights.txt";
 		try {
@@ -938,9 +733,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		//判断是否需要tts
 		logger.info("判断是否需要TTS合成..." + needTts);
-		/*BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
-		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
-		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);*/
 		if(needTts) {
 			logger.info("当前话术需要TTS合成");
 			//生成replace.json
@@ -969,97 +761,67 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			replaceMap.put("old_num_sentence_merge_lst", wavs);
 			
 			//voliceIdsMap.get(key);
-			Map<String, List<String>> map1 = new LinkedHashMap<>();
-			Map<String, String> tts_pos_map1 = new LinkedHashMap<>();
-			Map<String, String> tts_pos_map2 = new LinkedHashMap<>();
-			
-			
-			List<String> allParamList  = new ArrayList<>();
-			
+			Map<String, List<String>> voiceIndexToWavIndexListMap = Maps.newLinkedHashMap();
+			Map<String, String> wavIndexToContentMap = Maps.newLinkedHashMap();
+
+			Map<String, String> voiceIndexToReplaceContentMap = Maps.newLinkedHashMap();
+
 			for(VoliceInfo temp : ttsVoliceList) {
-				
-				if(StringUtils.isNotBlank(temp.getContent())) {
-				   List<String> wavNameList = new ArrayList<>();
-				   
-				   Map<Integer, String> indexMap = new HashMap<>();
-				   List<Integer> indexList = new ArrayList<>();
-				   
-				   BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
-					ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
-							.andBusiIdEqualTo(temp.getVoliceId().toString()).andBusiTypeEqualTo(Constant.TTS_BUSI_TYPE_01);
-					ttsTaskExample.setOrderByClause(" seq");
-					List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
-					if (null != taskList && taskList.size() > 0) {
-						for (BotSentenceTtsTask task : taskList) {
-							String seq = task.getSeq();
-							//使用序号替换voliceId
-							int index = voliceIdsMap.get(new Long(task.getBusiId()));
-							String wavName = index + "_" + seq.split("_")[1];
-							//wavNameList.add(wavName);
-							
-							indexMap.put(new Integer(seq.split("_")[1]), wavName);
-							indexList.add(new Integer(seq.split("_")[1]));
-							
-							if(Constant.IS_PARAM_FALSE.equals(task.getIsParam())) {
-								if(StringUtils.isNotBlank(task.getVoliceUrl())) {
-									generateWAV(restTemplate, task.getVoliceUrl(), wavName, wavfile.getPath());
-								}
-							}
-							
-							if(Constant.IS_PARAM_TRUE.equals(task.getIsParam())) {
-								tts_pos_map2.put(task.getContent(), wavName);
-								tts_pos_map1.put(wavName, task.getContent());
-								if(!allParamList.contains(task.getContent())) {
-									allParamList.add(task.getContent());
-								}
-							}
-							
-							task.setWavName(wavName);
-							botSentenceTtsTaskMapper.updateByPrimaryKey(task);
+				if(StringUtils.isBlank(temp.getContent())){
+					continue;
+				}
+			    BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
+				ttsTaskExample.createCriteria()
+						.andProcessIdEqualTo(processId)
+						.andBusiIdEqualTo(temp.getVoliceId().toString())
+						.andBusiTypeEqualTo(TtsTaskTypeEnum.CALL_RECORD.getKey());
+				ttsTaskExample.setOrderByClause("seq asc");
+				List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
+
+				//按照seq从小到大排列
+				taskList.sort((task1, task2) -> TtsUtil.getIndexFromSeq(task1.getSeq()) - TtsUtil.getIndexFromSeq(task2.getSeq()));
+				List<String> indexWavNameList = Lists.newArrayList();
+				int voiceIndex = voliceIdsMap.get(temp.getVoliceId());
+				StringBuilder replaceContentBuilder = new StringBuilder();
+				for (BotSentenceTtsTask task : taskList) {
+
+					int seqIndex = TtsUtil.getIndexFromSeq(task.getSeq());
+					String wavName = voiceIndex + "_" + seqIndex;
+					indexWavNameList.add(wavName);
+
+
+					if(TtsTaskParamEnum.NOT_PARAM.getKey().equals(task.getIsParam())) {
+						replaceContentBuilder.append(task.getContent());
+
+						if(StringUtils.isNotBlank(task.getVoliceUrl())) {
+							generateWAV(restTemplate, task.getVoliceUrl(), wavName, wavfile.getPath());
 						}
+					}else if(TtsTaskParamEnum.IS_PARAM.getKey().equals(task.getIsParam())) {
+						replaceContentBuilder
+								.append("$")
+								.append(wavName);
+						wavIndexToContentMap.put(wavName, task.getContent());
 					}
-				   
-					//对Tts拆分的录音文案进行排序
-					Collections.sort(indexList);
-					for(int index : indexList) {
-						wavNameList.add(indexMap.get(index));
-					}
-					
-					
-					map1.put(voliceIdsMap.get(temp.getVoliceId()).toString(), wavNameList);
+					voiceIndexToReplaceContentMap.put(voiceIndex + "_replace_sentence", replaceContentBuilder.toString());
+					task.setWavName(wavName);
+					botSentenceTtsTaskMapper.updateByPrimaryKey(task);
 				}
+				voiceIndexToWavIndexListMap.put(voliceIdsMap.get(temp.getVoliceId()).toString(), indexWavNameList);
 			}
 			
-			replaceMap.put("rec_tts_wav", map1);
-			
-			
-			//生成tts_pos
-			replaceMap.put("tts_pos", tts_pos_map1);
-			
-			
-			//生成replace_variables_flag
-			Collections.sort(allParamList);
-			replaceMap.put("replace_variables_flag", allParamList);
-			
-			//生成replace_variables_type
-			List<String> replace_variables_type_list = new ArrayList<>();
-			for(String param : allParamList) {
-				BotSentenceTtsParamExample ttsParamexample = new BotSentenceTtsParamExample();
-				ttsParamexample.createCriteria().andProcessIdEqualTo(processId).andParamKeyEqualTo(param);
-				List<BotSentenceTtsParam> ttsParamList = botSentenceTtsParamMapper.selectByExample(ttsParamexample);
-				if(null != ttsParamList && ttsParamList.size() > 0) {
-					if(StringUtils.isNotBlank(ttsParamList.get(0).getParamType())) {
-						replace_variables_type_list.add(ttsParamList.get(0).getParamType());
-					}else {
-						replace_variables_type_list.add("normal");
-					}
-					
-				}else {
-					//throw new CommonException("变量"+param+"没有设置类型");
-					replace_variables_type_list.add("normal");
-				}
+			replaceMap.put("rec_tts_wav", voiceIndexToWavIndexListMap);
+			replaceMap.put("tts_pos", wavIndexToContentMap);
+			List<BotSentenceTtsParam> ttsParamList = iTtsService.getSortedParams(processId);
+			if(!CollectionUtils.isEmpty(ttsParamList)){
+				List<String> paramKeys = Lists.newArrayList();
+				List<String> paramTypes = Lists.newArrayList();
+				ttsParamList.forEach(ttsParam -> {
+					paramKeys.add(ttsParam.getParamKey());
+					paramTypes.add(ttsParam.getParamType());
+				});
+				replaceMap.put("replace_variables_flag", paramKeys);
+				replaceMap.put("replace_variables_type", paramTypes);
 			}
-			replaceMap.put("replace_variables_type", replace_variables_type_list);
 			
 			//生成备用话术
 			for(VoliceInfo temp : ttsVoliceList) {
@@ -1087,32 +849,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				}
 			}
 			
-			
-			//生成完整话术
-			for(VoliceInfo temp : ttsVoliceList) {
-				int index = voliceIdsMap.get(temp.getVoliceId());
-				String content = temp.getContent();
-				
-				 String regEx = "\\$[0-9]{4}";
-			    // 编译正则表达式
-			    Pattern pattern = Pattern.compile(regEx);
-			    Matcher matcher = pattern.matcher(content);
-			    List<String> paramList = new ArrayList<>();
-			    // 字符串是否与正则表达式相匹配
-			    while(matcher.find()) {
-			    	 String match = matcher.group();
-			    	 paramList.add(match);
-			    }
-			    
-			    for(String str : paramList) {
-			    	if(tts_pos_map2.containsKey(str)) {
-			    		content = content.replace(str, "$"+tts_pos_map2.get(str));
-			    	}
-			    }
-				
-				replaceMap.put(index + "_replace_sentence", content);
-			}
-			
+			replaceMap.putAll(voiceIndexToReplaceContentMap);
 			
 			String replacePath = templateCfgsDir+ FILE_SEPARATOR + "replace.json";
 			String replaceJson = JSON.toJSONString(replaceMap).replace("\"[", "[").replace("]\"", "]").replace("\\", "");
@@ -1157,28 +894,10 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		return voliceService.uploadVoliceJsonZip(dir, dirName,processId,templateId, userId);
 	}
 	
-
-	private void writeFile(InputStream in,File file){
-		OutputStream out=null;
-		try {
-			out=new FileOutputStream(file);
-			byte[] b=new byte[1024];
-			int index=-1;
-			while((index=in.read(b))!=-1){
-				out.write(b, 0, index);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally {
-			IOUtil.close(out);
-			IOUtil.close(in);
-		}
-	}
-	
 	/**
 	 * 下载音频文件
 	 */
-	public void generateWAV(RestTemplate template, String url,String name,String dir) throws IOException {
+	private void generateWAV(RestTemplate template, String url,String name,String dir) throws IOException {
 		if(offline) {
 			logger.info("下载录音: 当前是离线模式");
 			if(url.contains("static")) {

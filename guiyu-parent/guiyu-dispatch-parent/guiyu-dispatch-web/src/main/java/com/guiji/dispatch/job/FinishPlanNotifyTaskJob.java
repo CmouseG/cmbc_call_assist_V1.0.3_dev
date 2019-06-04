@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -27,6 +28,7 @@ import java.util.*;
  * 通知已完成的任务批次
  */
 @JobHandler(value="finishPlanNotifyTaskJob")
+@Component
 public class FinishPlanNotifyTaskJob extends IJobHandler {
 
     private Logger logger = LoggerFactory.getLogger(FinishPlanNotifyTaskJob.class);

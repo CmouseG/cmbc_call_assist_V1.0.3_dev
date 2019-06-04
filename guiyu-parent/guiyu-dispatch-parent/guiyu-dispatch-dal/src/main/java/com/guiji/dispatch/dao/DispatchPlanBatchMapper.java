@@ -37,5 +37,5 @@ public interface DispatchPlanBatchMapper {
     List<Integer> queryBatchUserIdByTime(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 
     //根据批次号更新批次通知状态
-    int updNotifyStatusByBatch(Integer batchId, Integer notifyStatus);
+    int updNotifyStatusByBatch(@Param("batchId") Integer batchId, @Param("statusNotify") Integer statusNotify);
 }

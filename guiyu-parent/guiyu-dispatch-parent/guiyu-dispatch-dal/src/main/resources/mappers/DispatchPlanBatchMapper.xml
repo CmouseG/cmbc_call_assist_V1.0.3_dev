@@ -337,9 +337,9 @@
 
   <select id="queryBatchUserIdByTime" resultType="java.lang.Integer">
     SELECT
-      DISTINCT(b.user_id)
+      b.user_id
     FROM dispatch_plan_batch b
-    WHERE b.status_notify = ${@BatchNotifyStatusEnum@WAITING.getStatus()}
+    WHERE b.status_notify = ${@com.guiji.dispatch.enums.BatchNotifyStatusEnum@WAITING.getStatus()}
       AND b.gmt_create BETWEEN #{beginTime} AND #{endTime}
   </select>
 

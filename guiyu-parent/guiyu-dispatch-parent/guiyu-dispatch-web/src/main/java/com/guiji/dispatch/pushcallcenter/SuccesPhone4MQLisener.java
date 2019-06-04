@@ -81,14 +81,13 @@ public class SuccesPhone4MQLisener {
 			}
 			MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
 			String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-			logger.info("当前队列任务接受的uuid：" + mqSuccPhoneDto.getPlanuuid());
-			String paramStr = JsonUtils.bean2Json(mqSuccPhoneDto);
+			logger.info("当前队列任务接受的回调：" + message);
 			logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
-					"guiyu_dispatch", "呼叫中心回调SuccesPhone4MQLisener.process", paramStr);
-			//判断SIM卡线路是否可用
+					"guiyu_dispatch", "呼叫中心回调SuccesPhone4MQLisener.process", message);
+			//判断线路是否可用(线路不可用，或被限制)
 			if (null != mqSuccPhoneDto
 					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
-			    logger.info("当前计划plan_uuid:{},SIM卡线路id:{}不可用", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
+			    logger.info("当前计划plan_uuid:{},线路id:{}不可用或被限制", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
 				return;
 			}
 
@@ -107,8 +106,8 @@ public class SuccesPhone4MQLisener {
 				dispatchPlan.setLineId(mqSuccPhoneDto.getLineId()+"");// 实际拨打线路ID
 				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 				logger.info("当前队列任务回调修改结果" + result);
-				//消息通知(后期线程池)
-				this.sendMsgNotify(dispatchPlan);
+				//消息通知(改成定时任务，每小时执行一次)
+			//	this.sendMsgNotify(dispatchPlan);
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信

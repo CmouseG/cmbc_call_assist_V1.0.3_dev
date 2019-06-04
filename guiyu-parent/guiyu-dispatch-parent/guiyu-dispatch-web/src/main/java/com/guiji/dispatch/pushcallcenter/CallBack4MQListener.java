@@ -61,17 +61,16 @@ public class CallBack4MQListener {
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
 		MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
 		String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-		String paramStr = JsonUtils.bean2Json(mqSuccPhoneDto);
-		logger.info("呼叫中心回调数据:{},回调时间:{}", paramStr, time);
+		logger.info("呼叫中心回调数据:{},回调时间:{}", message, time);
 		logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
-				"guiyu_dispatch", "呼叫中心回调CallBack4MQListener.process", paramStr);
+				"guiyu_dispatch", "呼叫中心回调CallBack4MQListener.process", message);
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/
-		//判断SIM卡线路是否可用
+		//判断线路是否可用
 		if (null != mqSuccPhoneDto
 				&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
-			this.checkSimLineDisabled(mqSuccPhoneDto);//SIM卡线路不可用，则放回队列
+			this.checkSimLineDisabled(mqSuccPhoneDto);//线路不可用，则放回队列
 			this.counterDecr(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getTempId());//计数器-1
 		}else {
 			PushRecordsExample ex = new PushRecordsExample();

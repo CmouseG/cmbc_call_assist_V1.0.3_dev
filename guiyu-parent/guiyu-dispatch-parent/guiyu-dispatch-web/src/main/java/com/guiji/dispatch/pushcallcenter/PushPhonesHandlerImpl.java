@@ -204,7 +204,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 								// 记录推送记录
 								insertPush(dispatchRedis);
-								if (!startMakeCall.success) {
+								if (!startMakeCall.success) {//推送不成功
 									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("启动呼叫中心任务失败");
 
@@ -213,7 +213,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									cutVariable(callBean, queueCount);
 
 									continue;
-								}else{
+								}else{//推送成功
 								    //推送成功，则标识网关SIM卡路线被占用
 									occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName(), dispatchRedis.getPlanUuid());
                                 }

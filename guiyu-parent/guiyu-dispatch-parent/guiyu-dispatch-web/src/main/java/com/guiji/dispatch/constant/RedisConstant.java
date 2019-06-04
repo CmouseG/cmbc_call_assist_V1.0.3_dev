@@ -50,7 +50,7 @@ public class RedisConstant {
         //临时话术模板名称数据有效时间 一小时
         public final static long TMP_BOTSTENCENAME_TIMEOUT = 3600L;
 
-        //遇到呼叫中心线路不可用的数据： LINE_DISABLED_ + plan_uuid
+        //遇到呼叫中心线路不可用或者被限制的数据： LINE_DISABLED_ + plan_uuid
         public final static String LINE_DISABLED = "LINE_DISABLED_";
 
 

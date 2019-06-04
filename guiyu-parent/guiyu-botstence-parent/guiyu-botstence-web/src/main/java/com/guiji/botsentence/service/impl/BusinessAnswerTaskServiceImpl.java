@@ -10,6 +10,7 @@ import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper;
 import com.guiji.botsentence.service.BusinessAnswerTaskService;
+import com.guiji.botsentence.service.IGradeService;
 import com.guiji.botsentence.service.IKeywordsVerifyService;
 import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.util.enums.DomainNameEnum;
@@ -19,43 +20,48 @@ import com.guiji.common.exception.CommonException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService{
 
-	@Autowired
+	@Resource
 	private BusinessAnswerTaskExtMapper mapper;
 
-	@Autowired
+	@Resource
 	private VoliceInfoMapper voliceInfoMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceIntentMapper botSentenceIntentMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
-	@Autowired
+	@Resource
 	private VoliceServiceImpl voliceServiceImpl;
 	
-	@Autowired
+	@Resource
 	private BotSentenceKeyWordsServiceImpl botSentenceKeyWordsService;
 
 	@Resource
 	private IKeywordsVerifyService iKeywordsVerifyService;
+	
+	@Resource
+	private IGradeService iGradeService;
 
 	private static final String SPECIAL ="special_";
 	
@@ -257,6 +263,9 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		if(null == branch) {
 			throw new CommonException("删除数据不存在!");
 		}
+
+		iGradeService.deleteGradeForBindBranch(branch.getProcessId(), branch.getBranchName());
+
 		String resp = branch.getResponse();
 		
 		String[] resp_array = BotSentenceUtil.getResponses(resp);

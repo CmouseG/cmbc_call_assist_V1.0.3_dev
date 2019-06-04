@@ -324,4 +324,30 @@
       single_callback_url = #{singleCallbackUrl,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="queryBatchByTime" resultType="com.guiji.dispatch.dao.entity.DispatchPlanBatch">
+    SELECT
+      id, user_id, name, status_show, status_notify, times, gmt_create, gmt_modified,
+      org_code, callback_url, total_num, single_callback_url
+    FROM dispatch_plan_batch b
+    WHERE status_notify = ${@BatchNotifyStatusEnum@WAITING.getStatus()}
+      AND b.gmt_create BETWEEN #{beginTime} AND #{endTime}
+  </select>
+
+
+  <select id="queryBatchUserIdByTime" resultType="java.lang.Integer">
+    SELECT
+      DISTINCT(b.user_id)
+    FROM dispatch_plan_batch b
+    WHERE b.status_notify = ${@BatchNotifyStatusEnum@WAITING.getStatus()}
+      AND b.gmt_create BETWEEN #{beginTime} AND #{endTime}
+  </select>
+
+  <update id="updNotifyStatusByBatch">
+    UPDATE dispatch_plan_batch
+    SET status_notify = #{statusNotify},
+        gmt_modified = NOW()
+    WHERE id = #{batchId}
+  </update>
+
 </mapper>

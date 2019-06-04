@@ -1039,4 +1039,22 @@
     </if>
   </select>
 
+
+  <select id="totalPlanByOrg" resultType="com.guiji.dispatch.vo.TotalBatchPlanCountVo">
+    SELECT
+      p.batch_id,
+      p.user_id,
+      b.gmt_create AS add_batch_time,
+      COUNT(p.plan_uuid) AS totalCount,
+      IFNULL(SUM(p.status_plan = 1),0) AS doingCount,
+      IFNULL(SUM(p.status_plan = 2),0) AS finishCount,
+      IFNULL(SUM(p.status_plan = 3),0) AS suspendCount,
+      IFNULL(SUM(p.status_plan = 4),0) AS stopCount
+    FROM dispatch_plan p , dispatch_plan_batch b
+    WHERE p.batch_id = b.id
+      AND org_id = #{orgId}
+      AND call_data = #{callData}
+      GROUP BY batch_id, user_id
+  </select>
+
 </mapper>

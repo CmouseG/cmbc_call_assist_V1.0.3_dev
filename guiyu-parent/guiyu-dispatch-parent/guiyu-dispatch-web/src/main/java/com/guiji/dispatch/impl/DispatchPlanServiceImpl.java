@@ -23,6 +23,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.enums.AuthLevelEnum;
+import com.guiji.dispatch.enums.BatchNotifyStatusEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
@@ -161,7 +162,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanBatch dispatchPlanBatch = new DispatchPlanBatch();
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		// 通知状态;通知状态1等待2失败3成功
-		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
+		dispatchPlanBatch.setStatusNotify(BatchNotifyStatusEnum.WAITING.getStatus());
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setUserId(userId.intValue());

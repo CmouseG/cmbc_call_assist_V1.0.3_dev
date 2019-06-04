@@ -33,6 +33,8 @@ public class DateTimeUtils {
 	public final static String DEFAULT_MONTH_DAY_FORMAT_PATTERN_SHORT = "MM-dd";
 	
 	public final static String DEFAULT_TIME_NOT_SECOND_FORMAT_PATTERN_SHORT = "HH:mm";
+
+	public final static String DEFAULT_DATE_FORMAT_PATTERN_SPLICING = "yyyyMMdd";
 	
 	public final static String DEFAULT_DATE_END_TIME = "23:59:59";
 	

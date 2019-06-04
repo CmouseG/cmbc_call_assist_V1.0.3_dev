@@ -2,6 +2,8 @@ package com.guiji.dispatch.dao;
 
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +29,13 @@ public interface DispatchPlanBatchMapper {
     int updateByPrimaryKeySelective(DispatchPlanBatch record);
 
     int updateByPrimaryKey(DispatchPlanBatch record);
+
+    //根据时间查询批次
+    List<DispatchPlanBatch> queryBatchByTime(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+
+    //根据时间查询批次用户ID
+    List<Integer> queryBatchUserIdByTime(@Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+
+    //根据批次号更新批次通知状态
+    int updNotifyStatusByBatch(Integer batchId, Integer notifyStatus);
 }

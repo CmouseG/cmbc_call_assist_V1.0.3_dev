@@ -9,6 +9,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 import com.guiji.dispatch.dao.ext.BatchPlanExtMapper;
+import com.guiji.dispatch.enums.BatchNotifyStatusEnum;
 import com.guiji.dispatch.enums.PlanStatusEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
@@ -78,7 +79,7 @@ public class DispatchPlanBatchServiceImpl implements IDispatchPlanBatchService {
                 if(CollectionUtils.isEmpty(dispatchPlanBatches)) {
                     dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
                     dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
-                    dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
+                    dispatchPlanBatch.setStatusNotify(BatchNotifyStatusEnum.WAITING.getStatus());
                     dispatchPlanBatch.setOrgCode(sysUser.getOrgCode());
                     dispatchPlanBatch.setStatusShow(Constant.BATCH_STATUS_SHOW);
 

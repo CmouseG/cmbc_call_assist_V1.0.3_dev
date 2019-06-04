@@ -787,7 +787,7 @@ public class DispatchApiController {
             throw new ThirdApiException(ThirdApiExceptionEnum.ILLEGAL_ARG);
         }
 
-        if (planCallListRo.getPage() > MAX_PAGE_SIZE) {
+        if (planCallListRo.getPageNum() > MAX_PAGE_SIZE) {
             throw new ThirdApiException(ThirdApiExceptionEnum.QUEYR_OVER_NUM);
         }
 

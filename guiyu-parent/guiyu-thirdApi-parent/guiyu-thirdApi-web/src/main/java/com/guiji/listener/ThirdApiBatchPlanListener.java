@@ -80,7 +80,7 @@ public class ThirdApiBatchPlanListener {
 
                 Result.ReturnData<Page<CallPlanDetailRecordVO>> calldetail = iThirdApiOut.getCalldetailForApi(userId, batchName, searchPage, searchSize);
 
-                if (calldetail != null && calldetail.success) {
+                if (calldetail != null && "0".equals(calldetail.getCode())) {
 
                     if (firstFlag) {
                         batchCount = calldetail.getBody().getTotalRecord();

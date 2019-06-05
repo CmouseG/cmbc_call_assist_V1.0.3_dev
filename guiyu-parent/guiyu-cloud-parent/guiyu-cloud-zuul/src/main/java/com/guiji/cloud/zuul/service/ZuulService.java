@@ -41,5 +41,9 @@ public class ZuulService {
 	public String getPermissionsByUrl(String url){
 		return menuMapper.getPermissionsByUrl(url);
 	}
+
+	public Long checkEffective(Long userId){
+		return userMapper.checkEffective(userId);
+	}
 	
 }

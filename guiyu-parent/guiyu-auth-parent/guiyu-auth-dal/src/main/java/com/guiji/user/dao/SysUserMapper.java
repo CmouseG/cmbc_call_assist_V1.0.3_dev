@@ -81,4 +81,6 @@ public interface SysUserMapper {
 	Integer getAuthLevelByUserId(Long userId);
 
 	List<SysUser> getUserByOpenId(@Param("openId") String openId);
+
+	Long checkEffective(Long userId);
 }

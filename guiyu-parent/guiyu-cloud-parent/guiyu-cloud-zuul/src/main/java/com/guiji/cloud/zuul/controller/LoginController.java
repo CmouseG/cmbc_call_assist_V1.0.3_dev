@@ -55,59 +55,69 @@ public class LoginController implements ILogin {
     @GetMapping("login")
     public Result.ReturnData login(@RequestParam("username") String username, @RequestParam("password") String password) {
 
-        try {
-            boolean isSuperAdmin = false;
+		boolean isSuperAdmin = false;
+		Long userId = zuulService.getUserId(username, AuthUtil.encrypt(password));
+		if(userId == null){
+			return Result.error("00010003");
+		}
+		userId = checkEffective(userId);
+		if(userId == null){
+			return Result.error("00010007");
+		}
+		List<SysRole> sysRoles = zuulService.getRoleByUserId(userId);
+		if (sysRoles != null){
+			for (SysRole sysRole : sysRoles){
+				if (SUPER_ADMIN == sysRole.getSuperAdmin()){
+					isSuperAdmin = true;
+					break;
+				}
+			}
+		}
+		Long roleId = sysRoles.get(0).getId().longValue();
+		long orgId = -1;
+		ReturnData<SysOrganization> result = auth.getOrgByUserId(userId);
+		if (result != null && result.getBody() != null)
+		{
+			orgId = result.getBody().getId();
+		}
+		SysUser sysUser = sysUserMapper.getUserById(userId);
+		WxAccount wxAccount = new WxAccount();
+		wxAccount.setUserId(userId);
+		wxAccount.setOrgCode(sysUser.getOrgCode());
+		wxAccount.setSuperAdmin(isSuperAdmin);
+		wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
+		wxAccount.setLastTime(new Date());
+		Integer authLevel = null;
+		if (sysRoles.get(0).getDataAuthLevel() == null)
+		{
+			logger.error("用户：{}，没有配置数据查询权限，默认最低权限，查询本人数据..", username);
+			authLevel = 1;
+		} else
+		{
+			authLevel = sysRoles.get(0).getDataAuthLevel();
+		}
+		wxAccount.setAuthLevel(authLevel);
+		wxAccount.setOrgId(orgId);
+		wxAccount.setRoleId(roleId);
+		String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
+		JwtToken token = new JwtToken(jwtToken);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("isSuperAdmin", isSuperAdmin);
+		map.put("token", jwtToken);
+		map.put("username", sysUser.getUsername());
+		map.put("isDesensitization", sysUser.getIsDesensitization());
+		map.put("orgId", orgId);
+		map.put("authLevel", authLevel);
+		map.put("roleId", roleId);
+		return Result.ok(map);
+	}
 
-            Long userId = zuulService.getUserId(username, AuthUtil.encrypt(password));
-            List<SysRole> sysRoles = zuulService.getRoleByUserId(userId);
-            if (sysRoles != null) {
-                for (SysRole sysRole : sysRoles) {
-                    if (SUPER_ADMIN == sysRole.getSuperAdmin()) {
-                        isSuperAdmin = true;
-                        break;
-                    }
-                }
-            }
-            Long roleId = sysRoles.get(0).getId().longValue();
-            long orgId = -1;
-            ReturnData<SysOrganization> result = auth.getOrgByUserId(userId);
-            if(result != null && result.getBody() != null) {
-            	orgId = result.getBody().getId();
-            }
-            SysUser sysUser = sysUserMapper.getUserById(userId);
-            WxAccount wxAccount = new WxAccount();
-            wxAccount.setUserId(userId);
-            wxAccount.setOrgCode(sysUser.getOrgCode());
-            wxAccount.setSuperAdmin(isSuperAdmin);
-            wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
-            wxAccount.setLastTime(new Date());
-            Integer authLevel = null;
-            if(sysRoles.get(0).getDataAuthLevel()==null) {
-            	logger.error("用户：{}，没有配置数据查询权限，默认最低权限，查询本人数据..",username);
-            	authLevel = 1;
-            }else {
-            	authLevel = sysRoles.get(0).getDataAuthLevel();
-            }
-            wxAccount.setAuthLevel(authLevel);
-            wxAccount.setOrgId(orgId);
-            wxAccount.setRoleId(roleId);
-            String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
-            JwtToken token = new JwtToken(jwtToken);
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("isSuperAdmin", isSuperAdmin);
-            map.put("token", jwtToken);
-            map.put("username", sysUser.getUsername());
-            map.put("isDesensitization", sysUser.getIsDesensitization());
-            map.put("orgId", orgId);
-            map.put("authLevel", authLevel);
-            map.put("roleId", roleId);
-            return Result.ok(map);
-        } catch (Exception e) {
-            return Result.error("00010003");
-        }
-    }
+    private Long checkEffective(Long userId)
+	{
+    	return zuulService.checkEffective(userId);
+	}
 
-    @RequestMapping("loginOut")
+	@RequestMapping("loginOut")
     public void loginOut (@RequestHeader String Authorization) {
         jwtConfig.deleteToken(Authorization);
         Subject subject = SecurityUtils.getSubject();

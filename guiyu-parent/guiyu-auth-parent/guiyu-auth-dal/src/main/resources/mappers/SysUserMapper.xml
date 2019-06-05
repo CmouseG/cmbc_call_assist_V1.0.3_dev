@@ -471,12 +471,9 @@
 
 	<select id="getUserIdForLogin" resultType="long">
 		SELECT t.id FROM sys_user t
-		LEFT JOIN sys_organization o ON t.org_code = o.`code`
 		WHERE t.username = #{username}
 		AND t.`password` = #{password}
 		AND t.`status` = 1
-		AND(o.effective_date <![CDATA[<=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
-		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
 	</select>
 
 
@@ -695,4 +692,13 @@
 		LEFT JOIN sys_user_ext b ON a.id = b.user_id
 		WHERE b.wechat_openid = #{openId}
   	</select>
+  	
+  	<select id="checkEffective" resultType="long">
+  		SELECT u.id FROM sys_user u
+		LEFT JOIN sys_organization o ON u.org_code = o.`code`
+		WHERE u.id = 1
+		AND(o.effective_date <![CDATA[<=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
+		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
+  	</select>
+  	
 </mapper>

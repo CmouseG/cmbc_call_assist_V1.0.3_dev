@@ -11,10 +11,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
 import com.guiji.calloutserver.manager.*;
-import com.guiji.calloutserver.service.CallOutPlanService;
-import com.guiji.calloutserver.service.CallOutRecordService;
-import com.guiji.calloutserver.service.CallService;
-import com.guiji.calloutserver.service.LineCountWService;
+import com.guiji.calloutserver.service.*;
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.model.SimLineStatus;
 import com.guiji.component.result.Result;
@@ -25,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -70,6 +66,8 @@ public class CallPlanDispatchHandler {
     ISysDict iSysDict;
     @Autowired
     LineMarketRemote lineMarketRemote;
+    @Autowired
+    SimLimitService simLimitService;
 
 
     //注册这个监听器
@@ -158,25 +156,16 @@ public class CallPlanDispatchHandler {
                 callPlan.setTalkNum(0);
                 callPlan.setIntervened(false);
 
-//                if(simCall!=null && simCall){
-//                    boolean simIsOk = false;
-//                    try{
-//                        Result.ReturnData<SimLineStatus> lineResult = lineMarketRemote.querySimLineStatus(callPlan.getLineId());
-//                        log.info("调用querySimLineStatus,返回lineResult[{}]",lineResult);
-//                        if(lineResult!=null && lineResult.success && lineResult.getBody().getStatus()==1){  //sim卡处于空闲状态
-//                            simIsOk = true;
-//                        }
-//                    }catch (Exception e){
-//                        log.error("调用querySimLineStatus出现异常",e);
-//                    }
-//                    if(!simIsOk){
-//                        dispatchService.successScheduleSim(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(),
-//                                callPlan.getLineId(), callPlan.getTempId(), true, false);
-//                        callingCountManager.removeOneCall();
-//                        return;
-//                    }
-//                }
-
+                if(simCall!=null && simCall){
+                    //判断拨打是否超限
+                    Boolean allowSimCall = simLimitService.isAllowSimCall(callPlan.getLineId());
+                    if(!allowSimCall){
+                        log.info("sim卡超限，不允许拨打,planUuid[{}]",callPlan.getPlanUuid());
+                        dispatchService.successScheduleSim(callPlan.getPlanUuid(), callPlan.getPhoneNum(), null, callPlan.getCustomerId(),
+                                callPlan.getLineId(), callPlan.getTempId(), true, false);
+                        return;
+                    }
+                }
 
                 try {
                     callOutPlanService.add(callPlan);

@@ -20,7 +20,7 @@ public class SimCallManagerImpl implements SimCallManager {
     public void addSimCall(String callId, Boolean simCall) {
 
         if(simCall!=null && simCall){
-            redisUtil.set("calloutserver_simCall_"+callId,simCall,3600); //1个小时
+            redisUtil.set("cout_simCall_"+callId,simCall,3600); //1个小时
         }
 
     }
@@ -28,7 +28,7 @@ public class SimCallManagerImpl implements SimCallManager {
 
     @Override
     public boolean isSimCall(String callId) {
-        if(redisUtil.get("calloutserver_simCall_"+callId)!=null){
+        if(redisUtil.get("cout_simCall_"+callId)!=null){
             return true;
         }
         return false;

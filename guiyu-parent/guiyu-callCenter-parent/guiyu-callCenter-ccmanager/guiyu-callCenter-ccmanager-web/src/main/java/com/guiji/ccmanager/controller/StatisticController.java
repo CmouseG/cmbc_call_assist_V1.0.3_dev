@@ -166,7 +166,7 @@ public class StatisticController {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
         List<CallCountHour> list = statisticService.getConnectDataHour(authLevel,userId,orgCode, sdf.parse(startDate), sdf.parse(endDate),
-                                                                        StringUtils.isNotBlank(tempId)? tempId: null);
+                StringUtils.isNotBlank(tempId)? tempId: null);
         return Result.ok(list);
     }
 
@@ -188,7 +188,7 @@ public class StatisticController {
         }
         String regEx = "^\\d{4}-\\d{2}-\\d{2}$";
         if(!startDate.matches(regEx) || !endDate.matches(regEx)){
-           return Result.error(Constant.ERROR_DATEFORMAT);
+            return Result.error(Constant.ERROR_DATEFORMAT);
         }
         List<ReasonCount> list = statisticService.getConnectReasonDay(authLevel,userId,orgCode, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
@@ -248,8 +248,8 @@ public class StatisticController {
         //对中文的结果，进行转换，转成英文的
         List<Map<String,List<Map<String,ReasonDetail>>>> returnList = new ArrayList();
         for(Map<String,Object> map:resList){
-           String callDate = (String) map.get("callDate");
-           Map<String,List<Map<String,ReasonDetail>>> dateMap = new HashMap();
+            String callDate = (String) map.get("callDate");
+            Map<String,List<Map<String,ReasonDetail>>> dateMap = new HashMap();
             List<Map<String,ReasonDetail>> listEnnameMap = new ArrayList();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String key = entry.getKey();

@@ -82,15 +82,15 @@ public class FsEventHandler {
         }
     }
 
-        private void postChannelProgressEvent(Map<String, String> eventHeaders) {
-            ChannelProgressEvent event = new ChannelProgressEvent();
-            event.setUuid(eventHeaders.get("Unique-ID"));
+    private void postChannelProgressEvent(Map<String, String> eventHeaders) {
+        ChannelProgressEvent event = new ChannelProgressEvent();
+        event.setUuid(eventHeaders.get("Unique-ID"));
 
-            log.info("构建好ChannelProgressEvent[{}]，等待后续处理", event);
-            asyncEventBus.post(event);
-        }
+        log.info("构建好ChannelProgressEvent[{}]，等待后续处理", event);
+        asyncEventBus.post(event);
+    }
 
-        private void postCallCenterEvent(EslEvent eslEvent) {
+    private void postCallCenterEvent(EslEvent eslEvent) {
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();
         String action = eventHeaders.get("CC-Action");
         if (action.equals("bridge-agent-start")) {    //座席应答事件

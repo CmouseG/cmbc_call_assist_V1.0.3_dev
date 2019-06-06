@@ -70,6 +70,8 @@ public class FsBotHandler {
     CallLineResultService callLineResultService;
     @Value("${callInspect.open}")
     Boolean callInspectOpen;
+    @Autowired
+    SimLimitService simLimitService;
 
     //注册这个监听器
     @PostConstruct
@@ -256,6 +258,9 @@ public class FsBotHandler {
                 log.info("根据挂断事件找到CallOutPlan[{}]", callPlan.getCallId());
             }
 
+            //记录sim卡拨打次数，防止sim卡拨打超限
+            simLimitService.addSimCall(callId,callPlan.getLineId(),event.getBillSec());
+
             boolean goEndProcess = false;
             //如果通了，则走原来的流程...
             if (callLineAvailableManager.isAvailable(callId)) {
@@ -372,11 +377,6 @@ public class FsBotHandler {
 
                 callOutPlanService.updateNotOverWriteIntent(callPlan);
 
-                //报表统计事件
-                log.info("构建StatisticReportEvent，报表流转");
-                StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
-                asyncEventBus.post(statisticReportEvent);
-
                 //释放实时通道相关资源
                 log.info("开始释放Channel资源,uuid[{}]", uuid);
                 channelHelper.hangup(uuid);
@@ -384,6 +384,11 @@ public class FsBotHandler {
                 //释放ai资源
                 log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());
                 aiManager.releaseAi(callPlan);
+
+                //报表统计事件
+                log.info("构建StatisticReportEvent，报表流转");
+                StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
+                asyncEventBus.post(statisticReportEvent);
 
                 //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
                 log.info("构建afterCallEvent，上传录音，回调调度中心");

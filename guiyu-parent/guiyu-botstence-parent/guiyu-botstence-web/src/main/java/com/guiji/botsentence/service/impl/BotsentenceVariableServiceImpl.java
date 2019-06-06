@@ -1,70 +1,32 @@
 package com.guiji.botsentence.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.google.common.collect.Lists;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.controller.server.vo.DomainParamVO;
 import com.guiji.botsentence.controller.server.vo.OptionsVO;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceDomainMapper;
-import com.guiji.botsentence.dao.BotSentenceIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceOptionsLevelMapper;
-import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
-import com.guiji.botsentence.dao.BotSentenceSurveyIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceSurveyMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.VoliceInfoMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGrade;
-import com.guiji.botsentence.dao.entity.BotSentenceIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptions;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsLevel;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsLevelExample;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceSurvey;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyExample;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.VoliceInfoExample;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper;
-import com.guiji.botsentence.dao.ext.BotSentenceGradeDetailExtMapper;
-import com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper;
 import com.guiji.botsentence.json.Options_interruption_config;
 import com.guiji.botsentence.json.SurveyJSON;
 import com.guiji.botsentence.json.Survey_info;
 import com.guiji.botsentence.service.IBotsentenceVariableService;
 import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.vo.BotSentenceSurveyVO;
-import com.guiji.component.client.util.BeanUtil;
-import com.guiji.component.client.util.FileUtil;
 import com.guiji.common.exception.CommonException;
+import com.guiji.component.client.util.BeanUtil;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * 变量设置相关服务类
@@ -76,56 +38,44 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 
 	private Logger logger = LoggerFactory.getLogger(BotsentenceVariableServiceImpl.class);
 	
-	@Autowired
+	@Resource
 	private BotSentenceOptionsMapper botSentenceOptionsMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceOptionsLevelMapper botSentenceOptionsLevelMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyMapper botSentenceSurveyMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyIntentMapper botSentenceSurveyIntentMapper;
 	
-	@Autowired
+	@Resource
 	private VoliceServiceImpl voliceService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 	
-	@Autowired
+	@Resource
 	private VoliceInfoMapper voliceInfoMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainExtMapper botSentenceDomainExtMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceIntentMapper botSentenceIntentMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceGradeServiceImpl botSentenceGradeService;
-	
-	@Autowired
-	private BotSentenceGradeDetailExtMapper botSentenceGradeDetailExtMapper;
-	
-	@Autowired
-	private BotSentenceGradeRuleExtMapper botSentenceGradeRuleExtMapper;
-	
-	@Autowired
+
+	@Resource
 	private FileGenerateServiceImpl fileGenerateService;
-	
-	@Autowired
-	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
-	
-	@Autowired
-	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
 	@Override
 	@Transactional
@@ -151,12 +101,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 			options.setCrtUser(userId);
 			botSentenceOptionsMapper.insert(options);
 		}
-		
-		//根据flag标志分别保存不同变量字段
-		/*String flag = vo.getFlag();
-		
-		logger.info("当前保存标志: " + flag);*/
-		
+
 		BotSentenceOptions newOptions = new BotSentenceOptions();
 		BeanUtil.copyProperties(vo, newOptions);
 		newOptions.setOptionsId(options.getOptionsId());
@@ -167,19 +112,22 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		for(BotSentenceDomain domain : domainList) {
 			map.put(domain.getDomainName(), domain);
 		}
-		
-		if(null != vo.getIgnoreButDomains() && vo.getIgnoreButDomains().size() > 0) {
-			for(DomainParamVO domainParam : vo.getIgnoreButDomains()) {
-				if(null != domainParam.getToList() && domainParam.getToList().size() > 0) {
-					BotSentenceDomain domain = map.get(domainParam.getDomain());
-					domain.setIgnoreButDomains(BotSentenceUtil.listToString(domainParam.getToList()));
-					domain.setLstUpdateTime(new Date(System.currentTimeMillis()));
-					domain.setLstUpdateUser(userId);
-					botSentenceDomainMapper.updateByPrimaryKey(domain);
-				}
-			}
-		}
-		
+
+        //保存 domain 里的 ignore_but_domain
+        if(!CollectionUtils.isEmpty(vo.getIgnoreButDomains())){
+            vo.getIgnoreButDomains().forEach(domainParam -> {
+                BotSentenceDomain domain = map.get(domainParam.getDomain());
+                if(CollectionUtils.isEmpty(domainParam.getToList())){
+                    domain.setIgnoreButDomains(null);
+                }else {
+                    domain.setIgnoreButDomains(BotSentenceUtil.listToString(domainParam.getToList()));
+                }
+                domain.setLstUpdateTime(new Date());
+                domain.setLstUpdateUser(userId);
+                botSentenceDomainMapper.updateByPrimaryKey(domain);
+            });
+        }
+
 		//保存ignore_but_negative
 		if(Constant.VARIABLE_FLAG_09.equals(vo.getFlag())) {
 			List<BotSentenceDomain> allDomainList = botSentenceProcessService.getAllDomainList(vo.getProcessId());
@@ -219,21 +167,24 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 				}
 			}
 		}
-		
-		
-		
-		if(null != vo.getMatchOrders() && vo.getMatchOrders().size() > 0) {
-			for(DomainParamVO domainParam : vo.getMatchOrders()) {
-				if(null != domainParam.getToList() && domainParam.getToList().size() > 0) {
-					BotSentenceDomain domain = map.get(domainParam.getDomain());
-					domain.setMatchOrder(BotSentenceUtil.listToString(domainParam.getToList()));
-					domain.setLstUpdateTime(new Date(System.currentTimeMillis()));
-					domain.setLstUpdateUser(userId);
-					botSentenceDomainMapper.updateByPrimaryKey(domain);
-				}
-			}
-		}
-		
+
+        //保存 domain 里的 match_orders
+        if(!CollectionUtils.isEmpty(vo.getMatchOrders())){
+            vo.getMatchOrders().forEach(domainParam -> {
+                BotSentenceDomain domain = map.get(domainParam.getDomain());
+                if(CollectionUtils.isEmpty(domainParam.getToList())){
+                    domain.setMatchOrder(null);
+                }else {
+                    String matchOrders = BotSentenceUtil.listToString(domainParam.getToList());
+                    matchOrders = matchOrders.replaceAll("肯定", "positive");
+                    domain.setMatchOrder(matchOrders);
+                }
+                domain.setLstUpdateTime(new Date(System.currentTimeMillis()));
+                domain.setLstUpdateUser(userId);
+                botSentenceDomainMapper.updateByPrimaryKey(domain);
+            });
+        }
+
 		if(null != vo.getNotMatchLess4Tos() && vo.getNotMatchLess4Tos().size() > 0) {
 			for(DomainParamVO domainParam : vo.getNotMatchLess4Tos()) {
 				if(null != domainParam.getToList() && domainParam.getToList().size() > 0) {

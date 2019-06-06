@@ -302,6 +302,7 @@
         `enterprise` VARCHAR(32) DEFAULT NULL COMMENT '用户所属企业单位',
         `answer_user` VARCHAR(32) DEFAULT NULL COMMENT '用户名称',
         `import_time` DATETIME DEFAULT NULL COMMENT '导入时间',
+        `last_modify_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (`call_id`),
         UNIQUE KEY uk_call_out_plan_${orgId}_plan_uuid (`plan_uuid`),
         KEY idx_call_out_plan_${orgId}_phone_num (`phone_num`),

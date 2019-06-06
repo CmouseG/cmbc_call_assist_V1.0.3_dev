@@ -273,7 +273,9 @@ public class DispatchApiController {
             PhoneRo phoneRo = new PhoneRo();
 
             phoneRo.setAttach(attach);
-            phoneRo.setParams(params);
+            if(StringUtils.isNotEmpty(params)) {
+                phoneRo.setParams(params.replace("-", "|"));
+            }
             phoneRo.setPhoneNo(mobile);
             phoneRo.setCustName(custName);
             phoneRo.setCustCompany(custCompany);
@@ -637,7 +639,7 @@ public class DispatchApiController {
                     res.append("^");
                     res.append(StringUtils.isEmpty(obj.getAttach()) ? "" : obj.getAttach());
                     res.append("^");
-                    res.append(StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams());
+                    res.append(StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams().replace("|", "-"));
                     res.append("^");
                     res.append(StringUtils.isEmpty(obj.getCustName()) ? "" : obj.getCustName());
                     res.append("^");
@@ -751,7 +753,7 @@ public class DispatchApiController {
                     res.append("^");
                     res.append(StringUtils.isEmpty(obj.getAttach()) ? "" : obj.getAttach());
                     res.append("^");
-                    res.append(StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams());
+                    res.append(StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams().replace("|", "-"));
                     res.append("^");
                     res.append(StringUtils.isEmpty(obj.getCustName()) ? "" : obj.getCustName());
                     res.append("^");

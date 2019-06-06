@@ -57,7 +57,9 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
             PlanCallResultVo resultVo = new PlanCallResultVo();
 
             resultVo.setAttach(plan.getAttach());
-            resultVo.setParams(plan.getParams().replace("|", "-"));
+            if(StringUtils.isNotEmpty(plan.getParams())) {
+                resultVo.setParams(plan.getParams().replace("|", "~"));
+            }
             resultVo.setBatchName(plan.getBatchName());
             resultVo.setCustName(plan.getCustName());
             resultVo.setCustCompany(plan.getCustCompany());

@@ -1,10 +1,10 @@
 package com.guiji.botsentence.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsParamMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.VoliceInfoMapper;
+import com.guiji.ai.api.IAi;
+import com.guiji.ai.bean.SynPostReq;
+import com.guiji.botsentence.dao.*;
 import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.service.ITtsService;
 import com.guiji.botsentence.util.BotSentenceUtil;
@@ -14,6 +14,7 @@ import com.guiji.botsentence.util.enums.TtsTaskParamEnum;
 import com.guiji.botsentence.util.enums.TtsTaskTypeEnum;
 import com.guiji.botsentence.vo.*;
 import com.guiji.common.exception.CommonException;
+import com.guiji.component.result.Result;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,14 @@ import java.util.List;
 public class TtsServiceImpl implements ITtsService {
 
     private static final Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
+
+    private static final String DEFAULT_TTS_MODEL = "mh";
+
+    @Resource
+    private IAi iAi;
+
+    @Resource
+    private BotSentenceProcessMapper botSentenceProcessMapper;
 
     @Resource
     private VoliceInfoMapper voliceInfoMapper;
@@ -263,5 +272,97 @@ public class TtsServiceImpl implements ITtsService {
         ttsParamExample.setOrderByClause("param_key asc");
 
         return botSentenceTtsParamMapper.selectByExample(ttsParamExample);
+    }
+
+    @Override
+    public void ttsGenerateVoice(String processId, String userId) {
+        BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+        if(null == process){
+            throw new CommonException("话术不存在！");
+        }
+
+        String model;
+        if(org.apache.commons.lang3.StringUtils.isBlank(process.getSoundType())){
+            model = DEFAULT_TTS_MODEL;
+        }else {
+            model = process.getSoundType();
+        }
+
+        VoliceInfoExample voliceInfoExample = new VoliceInfoExample();
+        voliceInfoExample.createCriteria().andProcessIdEqualTo(processId);
+        List<VoliceInfo> voiceList = voliceInfoMapper.selectByExample(voliceInfoExample);
+        if(CollectionUtils.isEmpty(voiceList)){
+            logger.info("empty voice list need to tts generate");
+            return;
+        }
+
+        voiceList.forEach(voiceInfo -> {
+            if(voiceInfo.getNeedTts()){
+                BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
+                ttsTaskExample.createCriteria()
+                        .andProcessIdEqualTo(processId)
+                        .andBusiIdEqualTo(String.valueOf(voiceInfo.getVoliceId()))
+                        .andBusiTypeEqualTo(TtsTaskParamEnum.NOT_PARAM.getKey());
+
+                List<BotSentenceTtsTask> ttsTasks = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
+                ttsTasks.forEach(ttsTask -> {
+                    SynPostReq synPostReq = new SynPostReq();
+                    synPostReq.setContent(ttsTask.getContent());
+                    synPostReq.setModel(model);//TTS合成声音模型
+                    synPostReq.setBusId("bot-ttsTask-" + ttsTask.getId());
+
+                    ttsTask.setVoliceUrl(getVoiceUrlFromTts(synPostReq));
+                    ttsTask.setLstUpdateTime(new Date());
+                    ttsTask.setLstUpdateUser(userId);
+                    ttsTask.setSoundType(model);
+                    ttsTask.setStatus("02");//已合成
+                    botSentenceTtsTaskMapper.updateByPrimaryKey(ttsTask);
+                });
+            }else {
+                SynPostReq synPostReq = new SynPostReq();
+                synPostReq.setContent(voiceInfo.getContent());
+                synPostReq.setModel(model);//TTS合成声音模型
+                synPostReq.setBusId("bot-" + voiceInfo.getVoliceId());
+
+                voiceInfo.setVoliceUrl(getVoiceUrlFromTts(synPostReq));
+                voiceInfo.setLstUpdateUser(userId);
+                voiceInfo.setLstUpdateTime(new Date());
+                voliceInfoMapper.updateByPrimaryKey(voiceInfo);
+            }
+        });
+
+        //备用文案TTS生成
+        BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+        backupExample.createCriteria().andProcessIdEqualTo(processId);
+        List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+
+        backupList.forEach(ttsBackup -> {
+            SynPostReq synPostReq = new SynPostReq();
+            synPostReq.setContent(ttsBackup.getContent());
+            synPostReq.setModel(model);//TTS合成声音模型
+            synPostReq.setBusId("bot-backup-" + ttsBackup.getBackupId());
+
+            ttsBackup.setUrl(getVoiceUrlFromTts(synPostReq));
+            ttsBackup.setLstUpdateUser(userId);
+            ttsBackup.setLstUpdateTime(new Date());
+            botSentenceTtsBackupMapper.updateByPrimaryKey(ttsBackup);
+        });
+    }
+
+    private String getVoiceUrlFromTts(SynPostReq synPostReq) {
+        logger.info("发送tts合成请求, req：{}", JSON.toJSONString(synPostReq));
+        Result.ReturnData<String> result;
+        try {
+            result = iAi.synPost(synPostReq);
+        } catch (Exception e) {
+            logger.error("调用TTS合成接口失败...", e);
+            throw new CommonException("tts合成异常，请联系管理员!");
+        }
+        logger.info("tts合成返回结果, result：{}", JSON.toJSONString(result));
+
+        if(!"0".equals(result.getCode()) || org.apache.commons.lang3.StringUtils.isBlank(result.getBody())){
+            throw new CommonException("tts合成结果异常");
+        }
+        return result.getBody();
     }
 }

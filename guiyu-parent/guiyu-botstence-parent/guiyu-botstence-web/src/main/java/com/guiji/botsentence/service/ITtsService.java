@@ -23,4 +23,5 @@ public interface ITtsService {
 
     List<BotSentenceTtsParam> getSortedParams(String processId);
 
+    void ttsGenerateVoice(String processId, String userId);
 }

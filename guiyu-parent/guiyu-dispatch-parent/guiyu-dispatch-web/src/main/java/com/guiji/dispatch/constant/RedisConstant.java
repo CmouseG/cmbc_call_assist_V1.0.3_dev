@@ -56,5 +56,12 @@ public class RedisConstant {
 
         public final static String DISPATCH_ADD_PLAN_COUNT_PRE = "dispatch.plan.batch.count";
 
+
+        public static interface lineKey{
+            public final static String LINE_RULE_USER_ID = "LINE_RULE_USER_ID_";
+
+            public final static long USER_LINE_RULE_TIMEOUT = 300L;
+        }
+
     }
 }

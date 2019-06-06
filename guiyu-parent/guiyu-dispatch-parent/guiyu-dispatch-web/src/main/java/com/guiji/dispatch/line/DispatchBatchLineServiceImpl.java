@@ -8,6 +8,7 @@ import com.guiji.clm.model.SipRouteItemVO;
 import com.guiji.clm.model.SipRouteRuleVO;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchBatchLineMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchBatchLine;
@@ -17,8 +18,10 @@ import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.model.RateTimeReq;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.LineMarketService;
+import com.guiji.dispatch.util.ResHandler;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,43 +177,59 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 			}
 			// 获取用户的排序规则
 			List<SipRouteRuleVO> userRule = (List<SipRouteRuleVO>) redisUtils
-					.get("LINE_RULE_USER_ID_" + dis.getUserId());
-
-			if(userRule.get(0).getRuleContent() ==null){
-				logger.info("当前用户没用用户规则 不排序",dis.getUserId());
-				return new ArrayList<>();
+					.get(RedisConstant.RedisConstantKey.lineKey.LINE_RULE_USER_ID + dis.getUserId());
+			if(null == userRule){
+				userRule = ResHandler.getResObj(remote.querySipRouteRule(String.valueOf(dis.getUserId())));
+				if(null != userRule && userRule.size()>0
+					&& !StringUtils.isEmpty(userRule.get(0).getRuleContent())){
+					// 查询每个用户的分配规则
+					redisUtils.set(RedisConstant.RedisConstantKey.lineKey.LINE_RULE_USER_ID + dis.getUserId(), userRule,
+							RedisConstant.RedisConstantKey.lineKey.USER_LINE_RULE_TIMEOUT);
+				} else {
+					logger.info("查询用户ID:{},sip线路路由规则为null,不排序",dis.getUserId());
+					return new ArrayList<>();
+				}
 			}
 
-			if (userRule != null) {
-				// 获取不同用户排序规则
-				SipRouteRuleVO ruleVO = getRule(dis, userRule);
-				if (ruleVO == null) {
-					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前redis用户没有线路规则去查询接口" + dis.getUserId());
-					// 去接口查询
-					ReturnData<List<SipRouteRuleVO>> querySipRouteRule = remote
-							.querySipRouteRule(String.valueOf(dis.getUserId()));
-					if (querySipRouteRule.getBody() != null) {
-						if (querySipRouteRule.getBody().size() > 0) {
-							List<SipRouteItemVO> itemList = querySipRouteRule.getBody().get(0).getItemList();
-							// 排序算法
-							List<DispatchBatchLine> sort = sort(dis, itemList);
-							dis.setLines(sort);
-							res.add(dis);
-							continue;
-						} else {
-							logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
-							continue;
-						}
+			// 获取不同用户排序规则
+			SipRouteRuleVO ruleVO = getRule(dis, userRule);
+			if (ruleVO == null) {
+				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前redis用户没有线路规则去查询接口" + dis.getUserId());
+				/*
+				// 去接口查询
+				ReturnData<List<SipRouteRuleVO>> querySipRouteRule = remote
+						.querySipRouteRule(String.valueOf(dis.getUserId()));
+				if (querySipRouteRule.getBody() != null) {
+					if (querySipRouteRule.getBody().size() > 0) {
+						List<SipRouteItemVO> itemList = querySipRouteRule.getBody().get(0).getItemList();
+						// 排序算法
+						List<DispatchBatchLine> sort = sort(dis, itemList);
+						dis.setLines(sort);
+						res.add(dis);
+						continue;
 					} else {
 						logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
 						continue;
 					}
+				} else {
+					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
+					continue;
 				}
-				// 排序算法
-				List<DispatchBatchLine> sort = sort(dis, ruleVO.getItemList());
-				dis.setLines(sort);
-				res.add(dis);
+				*/
+
+				List<SipRouteItemVO> routeItemList = userRule.get(0).getItemList();
+				if(null != routeItemList && routeItemList.size()>0){
+					// 排序算法
+					List<DispatchBatchLine> sort = sort(dis, routeItemList);
+					dis.setLines(sort);
+					res.add(dis);
+					continue;
+				}
 			}
+			// 排序算法
+			List<DispatchBatchLine> sort = sort(dis, ruleVO.getItemList());
+			dis.setLines(sort);
+			res.add(dis);
 		}
 		return res;
 	}
@@ -233,42 +252,57 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 		}
 		// 获取用户的排序规则
 		List<SipRouteRuleVO> userRule = (List<SipRouteRuleVO>) redisUtils
-				.get("LINE_RULE_USER_ID_" + dis.getUserId());
-
-		if(userRule.get(0).getRuleContent() ==null){
-			logger.info("当前用户没用用户规则 不排序",dis.getUserId());
-			return dis;
+				.get(RedisConstant.RedisConstantKey.lineKey.LINE_RULE_USER_ID + dis.getUserId());
+		if(null == userRule){
+			userRule = ResHandler.getResObj(remote.querySipRouteRule(String.valueOf(dis.getUserId())));
+			if(null != userRule && userRule.size()>0
+					&& !StringUtils.isEmpty(userRule.get(0).getRuleContent())){
+				// 查询每个用户的分配规则
+				redisUtils.set(RedisConstant.RedisConstantKey.lineKey.LINE_RULE_USER_ID + dis.getUserId(), userRule,
+						RedisConstant.RedisConstantKey.lineKey.USER_LINE_RULE_TIMEOUT);
+			} else {
+				logger.info("查询用户ID:{},sip线路路由没有线路规则,不排序",dis.getUserId());
+				return dis;
+			}
 		}
 
-		if (userRule != null) {
-			// 获取不同用户排序规则
-			SipRouteRuleVO ruleVO = getRule(dis, userRule);
-			if (ruleVO == null) {
-				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前redis用户没有线路规则去查询接口" + dis.getUserId());
-				// 去接口查询
-				ReturnData<List<SipRouteRuleVO>> querySipRouteRule = remote
-						.querySipRouteRule(String.valueOf(dis.getUserId()));
-				if (querySipRouteRule.getBody() != null) {
-					if (querySipRouteRule.getBody().size() > 0) {
-						List<SipRouteItemVO> itemList = querySipRouteRule.getBody().get(0).getItemList();
-						// 排序算法
-						List<DispatchBatchLine> sort = sort(dis, itemList);
-						dis.setLines(sort);
-						return dis;
-					} else {
-						logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
-						return dis;
-					}
+		// 获取不同用户排序规则
+		SipRouteRuleVO ruleVO = getRule(dis, userRule);
+		if (ruleVO == null) {
+			logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前redis用户没有线路规则去查询接口" + dis.getUserId());
+			/*
+			// 去接口查询
+			ReturnData<List<SipRouteRuleVO>> querySipRouteRule = remote
+					.querySipRouteRule(String.valueOf(dis.getUserId()));
+			if (querySipRouteRule.getBody() != null) {
+				if (querySipRouteRule.getBody().size() > 0) {
+					List<SipRouteItemVO> itemList = querySipRouteRule.getBody().get(0).getItemList();
+					// 排序算法
+					List<DispatchBatchLine> sort = sort(dis, itemList);
+					dis.setLines(sort);
+					return dis;
 				} else {
 					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
 					return dis;
 				}
+			} else {
+				logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>当前用户接口查询没有线路规则" + dis.getUserId());
+				return dis;
 			}
-			// 排序算法
-			List<DispatchBatchLine> sort = sort(dis, ruleVO.getItemList());
-			dis.setLines(sort);
+			*/
 
+			List<SipRouteItemVO> routeItemList = userRule.get(0).getItemList();
+			if(null != routeItemList && routeItemList.size()>0){
+				// 排序算法
+				List<DispatchBatchLine> sort = sort(dis, routeItemList);
+				dis.setLines(sort);
+				return dis;
+			}
 		}
+		// 排序算法
+		List<DispatchBatchLine> sort = sort(dis, ruleVO.getItemList());
+		dis.setLines(sort);
+
 		return dis;
 	}
 

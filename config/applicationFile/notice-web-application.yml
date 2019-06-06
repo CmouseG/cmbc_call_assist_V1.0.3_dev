@@ -3,6 +3,17 @@ server:
 spring:
   application:
     name: guiyu-notice-web
+  redis:
+    database: 0 # Redis数据库索引（默认为0）
+    host: 192.168.1.81 # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: 123456 # Redis服务器连接密码（默认为空）
+    timeout: 5000 # 连接超时时间（毫秒）
+    pool:
+      max-active: 400 # 连接池最大连接数（使用负值表示没有限制
+      max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-idle: 300 # 连接池中的最大空闲连接
+      min-idle: 100 # 连接池中的最小空闲连接
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://192.168.1.81:3306/guiyu_notice?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true

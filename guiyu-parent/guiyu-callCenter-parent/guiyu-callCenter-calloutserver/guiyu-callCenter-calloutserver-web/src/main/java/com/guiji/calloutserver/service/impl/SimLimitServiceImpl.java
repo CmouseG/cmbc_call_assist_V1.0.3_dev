@@ -101,7 +101,7 @@ public class SimLimitServiceImpl implements SimLimitService {
                     }
                 }
                 //接通时长
-                Integer connectTimeTop = lineSimlimitConfig.getConnectTimeTop();
+                Integer connectTimeTop = lineSimlimitConfig.getConnectTimeTop()*60; //数据库里存的是分钟
                 if (connectTimeTop != null && connectTimeTop != 0) {
                     Object simLimitConnectTimeValue = redisUtil.get(simLimitConnectTime + lineId);
                     if (simLimitConnectTimeValue != null && connectTimeTop <= (Integer) simLimitConnectTimeValue) { // 接通时长超过限制

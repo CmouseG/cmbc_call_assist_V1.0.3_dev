@@ -91,11 +91,12 @@ public class CallServiceImpl implements CallService {
                 aliAsrConfig.getAccessSecret(),
                 recordFile);
 
+        log.info("执行呼叫命令前sleep,callId[{}]",callid);
         synchronized (this){
             try {
                 Thread.sleep(50);
             } catch (Exception e) {
-                e.printStackTrace();
+               log.error("makeCall线程sleep出现异常",e);
             }
             log.info("开始执行呼叫命令[{}]", cmd);
             fsManager.executeAsync(cmd);

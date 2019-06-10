@@ -43,14 +43,14 @@ public class SimLimitServiceImpl implements SimLimitService {
                 LineSimlimitConfig lineSimlimitConfig = lineSimlimitConfigMapper.selectByPrimaryKey(lineId);
                 if (lineSimlimitConfig != null) {
                     //拨打次数
-                    setSimCount(simLimitCallCount + lineId, lineSimlimitConfig.getCallCountPeriod());
+                    setSimCount(simLimitCallCount + lineId, lineSimlimitConfig.getCallCountPeriod(),1);
 
                     if (billSec != null && billSec > 0) {
                         //接通次数
-                        setSimCount(simLimitConnectCount + lineId, lineSimlimitConfig.getConnectCountPeriod());
+                        setSimCount(simLimitConnectCount + lineId, lineSimlimitConfig.getConnectCountPeriod(),1);
 
                         //接通时长
-                        setSimCount(simLimitConnectTime + lineId, lineSimlimitConfig.getConnectTimePeriod());
+                        setSimCount(simLimitConnectTime + lineId, lineSimlimitConfig.getConnectTimePeriod(),billSec);
                     }
                 }
             }
@@ -60,14 +60,14 @@ public class SimLimitServiceImpl implements SimLimitService {
 
     }
 
-    private void setSimCount(String key, Integer period) {
+    private void setSimCount(String key, Integer period, Integer incr) {
         //查询缓存分钟数
         Integer simLimitCallPeriod = ESimLimitPeriod.getMinutesByValue(period);
         if (simLimitCallPeriod != null && simLimitCallPeriod != 0) {
             Object simLimitCallCountValue = redisUtil.get(key);
             if (simLimitCallCountValue != null) {
-                long newValue = redisUtil.incr(key, 1);
-                if (newValue == 1) {//表示在进来的一瞬间，key过期了
+                long newValue = redisUtil.incr(key, incr);
+                if (newValue == incr.intValue()) {//表示在进来的一瞬间，key过期了
                     redisUtil.expire(key, simLimitCallPeriod * 60);
                 }
             } else {

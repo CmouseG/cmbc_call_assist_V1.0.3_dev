@@ -106,7 +106,7 @@ public class RobotRemoteController implements IRobotRemote{
 	public Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq){
 		logger.warn("[{},{},{},{},{}]", aiCallApplyReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallApply-in", JsonUtils.bean2Json(aiCallApplyReq));
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallApply(aiCallApplyReq);
-		logger.warn("[{},{},{},{},{}]", aiCallApplyReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallApply-out", JsonUtils.bean2Json(aiCallApplyReq));
+		logger.warn("[{},{},{},{},{}]", aiCallApplyReq.getPhoneNo(), DateUtil.formatDatetime(new Date()), "robot", "aiCallApply-out", JsonUtils.bean2Json(aiCallNext));
 		return Result.ok(aiCallNext);
 	}
 	

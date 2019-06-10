@@ -33,7 +33,6 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,95 +49,104 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	@Resource
 	private FanoutSender fanoutSender;
 
-	@Autowired
+	@Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceIntentMapper botSentenceIntentMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchExtMapper botSentenceBranchExtMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainExtMapper botSentenceDomainExtMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceIntentExtMapper botSentenceIntentExtMapper;
 	
-	@Autowired
+	@Resource
 	private com.guiji.botsentence.dao.VoliceInfoMapper voliceInfoMapper;
 	
-	@Autowired
+	@Resource
 	private VoliceInfoExtMapper voliceInfoExtMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTemplateMapper botSentenceTemplateMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceAdditionMapper botSentenceAdditionMapper;
 	
-	@Autowired
+	@Resource
 	private BusinessAnswerTaskServiceImpl businessAnswerTaskService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
+
+	@Resource
+	private BotSentenceTtsParamMapper botSentenceTtsParamMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsServiceImpl botSentenceTtsService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
-	@Autowired
+	@Resource
 	private VoliceServiceImpl voliceServiceImpl;
 
-	@Autowired
+	@Resource
 	private BotSentenceTradeMapper botSentenceTradeMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceKeyWordsService botSentenceKeyWordsService;
+
+	@Resource
+	private BotSentenceProcessExtMapper botSentenceProcessExtMapper;
+
+	@Resource
+	private BotSentenceGradeMapper botSentenceGradeMapper;
 	
-	@Autowired
-	private BotSentenceKeyWordsValidateServiceImpl botSentenceKeyWordsValidateService;
-	
-	@Autowired
+	@Resource
 	private BotSentenceGradeRuleMapper botSentenceGradeRuleMapper;
 	
-	@Autowired
+	@Resource
 	private BotsentenceVariableServiceImpl botsentenceVariableService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceOptionsMapper botSentenceOptionsMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyMapper botSentenceSurveyMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
-	@Autowired
+	@Resource
 	private IBotSentenceTemplateService botSentenceTemplateService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceGradeRuleExtMapper botSentenceGradeRuleExtMapper;
+
+	@Resource
+	private BotSentenceKeywordAuditMapper botSentenceKeywordAuditMapper;
 	
-	@Autowired
+	@Resource
 	private IAuth iAuth;
 	
-	@Autowired
+	@Resource
 	private IOrg orgService;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyIntentMapper botSentenceSurveyIntentMapper;
-	
-	@Autowired
-	private BotSentenceTradeExtMapper botSentenceTradeExtMapper;
+
+	@Resource
+	private BotAvailableTemplateMapper botAvailableTemplateMapper;
 
 	@Resource
 	private IKeywordsVerifyService iKeywordsVerifyService;
@@ -149,10 +157,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	
 	@Value("${all_tts}")
 	private boolean all_tts;
-	
-	@Value("${offline}")
-	private boolean offline;
-	
+
 	@Override
 	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
@@ -233,8 +238,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			throw new CommonException("创建模板失败，请求参数为空!");
 		}
 		logger.info("是否全TTS: " + all_tts);
-		logger.info("是否离线版本: " + offline);
-		
+
 		//查询已生效的话术模板
 		//BotSentenceProcess botSentenceTemplate = botSentenceProcessMapper.selectByPrimaryKey(paramVO.getProcessId());
 		BotSentenceTemplateExample templateExample = new BotSentenceTemplateExample();
@@ -344,17 +348,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				vo.setCrtTime(new Date(System.currentTimeMillis()));
 				vo.setCrtUser(userId);
 				vo.setProcessId(process.getProcessId());
-				
-				//设置agent
-				/*if(StringUtils.isNotBlank(vo.getIgnoreButDomains())) {
-					String ignoreButDomains = vo.getIgnoreButDomains().substring(0, vo.getIgnoreButDomains().length()-1);
-					ignoreButDomains = ignoreButDomains + ",\"agent\"]";
-					vo.setIgnoreButDomains(ignoreButDomains);
-				}*/
-				
-				/*if("1".equals(vo.getCategory())) {
-					vo.setIsMainFlow("01");
-				}*/
 				domainList_new.add(vo);
 				//botSentenceDomainMapper.insert(vo);
 			}
@@ -384,22 +377,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			for(BotSentenceBranch temp : branchList) {
 				BotSentenceBranch vo = new BotSentenceBranch();
 				BeanUtil.copyProperties(temp, vo);
-				
-				//保存意图信息
-				/*String intents = temp.getIntents();
-				logger.info("当前意图信息为: " + intents);
-				if(StringUtils.isNotBlank(intents)) {
-					String[] intentsArray = intents.split(",");
-					for(int i = 0 ; i < intentsArray.length ; i++) {
-						if(intentIdList.contains(new Long(intentsArray[i].trim()))) {
-							continue;
-						}
-						
-						intentIdList.add(new Long(intentsArray[i].trim()));
-					}
-				}*/
-				
-				
 				//保存录音信息
 				String resp = temp.getResponse();
 				String resp_new = "";
@@ -581,30 +558,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		long time4 = System.currentTimeMillis();
 		logger.info("======保存brach信息耗时======" + (time4-time3));
 		
-		
-		//保存意向标签数据
-		//modify by zhangpeng 20190112 新意向不需要
-		/*BotSentenceLabelExample labelExample = new BotSentenceLabelExample();
-		labelExample.createCriteria().andProcessIdEqualTo(paramVO.getProcessId());
-		List<BotSentenceLabel> labelList = botSentenceLabelMapper.selectByExample(labelExample);
-		if(null != labelList && labelList.size() > 0) {
-			for(BotSentenceLabel label : labelList) {
-				label.setLabelId(null);
-				label.setProcessId(process.getProcessId());
-				if(StringUtils.isBlank(label.getKeywords())) {
-					label.setKeywords("[]");
-				}else {
-					label.setKeywords(label.getKeywords());
-				}
-				label.setCrtUser(userId);
-				label.setCrtTime(new Date(System.currentTimeMillis()));
-				label.setLstUpdateTime(null);
-				label.setLstUpdateUser(null);
-			}
-			botSentenceLabelExtMapper.batchInsert(labelList);
-			logger.info("保存意向标签信息成功");
-		}*/
-		
 		//保存附件相关信息
 		//botSentenceTemplate
 		BotSentenceAddition addition = botSentenceAdditionMapper.selectByPrimaryKey(botSentenceTemplate.getProcessId());
@@ -646,15 +599,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			}
 		}
 		logger.info("保存默认一条挽回话术池成功...");
-		
-		//生成二维码
-		/*logger.info("生成当前话术的二维码...");
-		String qrCodeUrl = weChatAppletService.generateQrCode(process.getTemplateId());
-		process.setQrCode(qrCodeUrl);
-		logger.info("生成二维码成功..." + qrCodeUrl);
-		botSentenceProcessMapper.updateByPrimaryKey(process);*/
-		
-		
+
 		//初始化options数据
 		logger.info("新增options");
 		BotSentenceOptions options = new BotSentenceOptions();
@@ -679,9 +624,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//初始化回访数据
 		for(BotSentenceDomain domain : domainList_new) {
 			if(Constant.CATEGORY_TYPE_1.equals(domain.getCategory())) {
-				//BotSentenceSurvey survey = new BotSentenceSurvey();
-				//survey.setDomain(domain.getDomainName());
-				//surveyList.add(survey);
 				botsentenceVariableService.initDomainSurveyIntent(process.getProcessId(), domain.getDomainName(), process.getTemplateId(), userId);
 			}
 		}
@@ -764,20 +706,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			}
 		}
 		
-		//校验所有结束节点只有指向，没有分支  为了可以增加无头卡片
-		/*if(null != list && list.size() > 0) {
-			for(String domainName : endDomainList) {
-				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-				branchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andNextEqualTo(domainName);
-				int num = botSentenceBranchMapper.countByExample(branchExample);
-				if(num < 1) {
-					throw new CommonException("节点["+domainName+"]未连线!");
-				}
-			}
-		}*/
-		
-		
-		
 		//校验是否所有连线都已有连接
 		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
 		branchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainIn(domainList);
@@ -796,17 +724,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			
 		}
 		
-		//校验所有节点是否都有其它节点指向它（开始节点除外） 为了可以增加无头卡片
-		/*for(BotSentenceDomain domain : list) {
-			String domainName = domain.getDomainName();
-			BotSentenceBranchExample notStartBranchExample = new BotSentenceBranchExample();
-			notStartBranchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andNextEqualTo(domainName);
-			List<BotSentenceBranch> notStartBranchList = botSentenceBranchMapper.selectByExample(notStartBranchExample);
-			if((!Constant.DOMAIN_TYPE_START.equals(domain.getType())) && (null == notStartBranchList || notStartBranchList.size() < 1)) {
-				throw new CommonException("节点[" + domainName + "]连线不完整!");
-			}
-		}*/
-		
 		for(String domainName : domainList) {
 			BotSentenceBranch branch = getEnterBranch(processId, domainName);
 			if(StringUtils.isBlank(branch.getResponse())) {
@@ -819,26 +736,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				throw new CommonException("节点[" + domainName + "]文案不完整!");
 			}
 		}
-		
-		
-		
-		/*BotSentenceDomainExample domainExample2 = new BotSentenceDomainExample();
-		domainExample2.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andDomainNameNotIn(domainList);
-		List<String> domainList2 = new ArrayList<>();
-		List<BotSentenceDomain> list2 = botSentenceDomainMapper.selectByExample(domainExample2);
-		if(null != list && list.size() > 0) {
-			for(BotSentenceDomain domain : list2) {
-				if(!"end".equals(domain.getType())) {
-					domainList2.add(domain.getDomainName());
-				}
-			}
-		}
-		
-		if(domainList2.size() > 0) {
-			throw new CommonException("提交失败,节点"+domainList2.toString()+"应该是结束类型!");
-		}*/
-		
-		
 		//暂时先过滤掉这几个域-
 		List<String> ignoreDomainList = new ArrayList<>();
 		ignoreDomainList.add("不清楚");
@@ -992,48 +889,92 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 * 删除一条制作中的话术
 	 */
 	@Override
+	@Transactional
 	public void delete(String processId, String userId) {
 		if(StringUtils.isBlank(processId)) {
 			throw new CommonException("修改话术失败，请求参数为空!");
 		}
 		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
-		if(null != process && ("00".equals(process.getState()) || "02".equals(process.getState()) || "03".equals(process.getState())) && !"00".equals(process.getTemplateType())) {
-			logger.info("删除话术流程信息...");
-			/*int a = botSentenceProcessMapper.deleteByPrimaryKey(processId);
-			logger.info("删除话术流程信息数量: " + a);
-			
-			logger.info("删除话术domain信息...");
-			BotSentenceDomainExample domainExample = new BotSentenceDomainExample();
-			domainExample.createCriteria().andProcessIdEqualTo(processId);
-			int b = botSentenceDomainMapper.deleteByExample(domainExample);
-			logger.info("删除话术domain信息数量: " + b);
-			
-			logger.info("删除话术branch信息...");
-			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-			branchExample.createCriteria().andProcessIdEqualTo(processId);
-			int c = botSentenceBranchMapper.deleteByExample(branchExample);
-			logger.info("删除话术branch信息数量: " + c);
-			
-			logger.info("删除话术intent信息...");
-			BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
-			intentExample.createCriteria().andProcessIdEqualTo(processId);
-			int d = botSentenceIntentMapper.deleteByExample(intentExample);
-			logger.info("删除话术intent信息数量: " + d);*/
-			
-			process.setState("99");//状态修改为作废
-			process.setLstUpdateTime(new Date(System.currentTimeMillis()));
-			process.setLstUpdateUser(userId);
-			botSentenceProcessMapper.updateByPrimaryKey(process);
-			
-			//删除分享
-			BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
-			example.createCriteria().andProcessIdEqualTo(processId);
-			botSentenceShareAuthMapper.deleteByExample(example);
-			logger.info("删除话术数据成功...");
-		}else {
-			throw new CommonException("当前状态不是制作中，不允许删除!");
+		if(null == process){
+			throw new CommonException("话术不存在!");
 		}
-		 
+
+		SpeechAuditStatusEnum auditStatus = SpeechAuditStatusEnum.getEnumByKey(process.getState());
+		if(null == auditStatus){
+			throw new CommonException("当前话术状态不合法!");
+		}
+		if(auditStatus != SpeechAuditStatusEnum.MAKING
+			&& auditStatus != SpeechAuditStatusEnum.NOT_PASSED
+			&& auditStatus != SpeechAuditStatusEnum.DEPLOY_FAILED){
+
+			throw new CommonException("当前话术状态为:" + auditStatus.getDesc() + "，不允许删除！");
+		}
+		botSentenceProcessMapper.deleteByPrimaryKey(processId);
+
+		BotAvailableTemplateExample availableTemplateExample = new BotAvailableTemplateExample();
+		availableTemplateExample.createCriteria().andTemplateIdEqualTo(process.getTemplateId());
+		botAvailableTemplateMapper.deleteByExample(availableTemplateExample);
+
+		BotSentenceGradeExample gradeExample = new BotSentenceGradeExample();
+		gradeExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceGradeMapper.deleteByExample(gradeExample);
+
+		BotSentenceGradeRuleExample gradeRuleExample = new BotSentenceGradeRuleExample();
+		gradeRuleExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceGradeRuleMapper.deleteByExample(gradeRuleExample);
+
+		BotSentenceKeywordAuditExample auditExample = new BotSentenceKeywordAuditExample();
+		auditExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceKeywordAuditMapper.deleteByExample(auditExample);
+
+		BotSentenceOptionsExample optionsExample = new BotSentenceOptionsExample();
+		optionsExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceOptionsMapper.deleteByExample(optionsExample);
+
+		//删除domain
+		BotSentenceDomainExample deleteDomainExample = new BotSentenceDomainExample();
+		deleteDomainExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceDomainMapper.deleteByExample(deleteDomainExample);
+
+		//删除branch
+		BotSentenceBranchExample deleteBranchExample = new BotSentenceBranchExample();
+		deleteBranchExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceBranchMapper.deleteByExample(deleteBranchExample);
+
+		//删除intent
+		BotSentenceIntentExample deleteIntentExample = new BotSentenceIntentExample();
+		deleteIntentExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceIntentMapper.deleteByExample(deleteIntentExample);
+
+		//删除volice
+		VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
+		deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
+		voliceInfoMapper.deleteByExample(deleteVoliceExample);
+
+		//删除addition
+		BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
+		deleteAdditionExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceAdditionMapper.deleteByExample(deleteAdditionExample);
+
+		//删除tts task
+		BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
+		ttsExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceTtsTaskMapper.deleteByExample(ttsExample);
+
+		BotSentenceTtsParamExample ttsParamExample = new BotSentenceTtsParamExample();
+		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceTtsParamMapper.deleteByExample(ttsParamExample);
+
+		//删除tts 备用话术
+		BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+		backupExample.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceTtsBackupMapper.deleteByExample(backupExample);
+
+		//删除分享
+		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
+		example.createCriteria().andProcessIdEqualTo(processId);
+		botSentenceShareAuthMapper.deleteByExample(example);
+		logger.info("删除话术数据成功...");
 	}
 
 	
@@ -1464,80 +1405,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		return branchList;
 	}
 
-	public static void main(String[] args) throws BadHanyuPinyinOutputFormatCombination {
-		/*String currentName1 = "分支";
-		String currentName = "分支10";
-		int currentNum = new Integer(currentName.substring(currentName1.length(), currentName.length())) + 1;
-		System.out.println(currentNum);*/
-		String []keys = new String[3];
-		String a="一";
-		String b="bb";
-		String c="cc";
-		keys[0] = a;
-		keys[1] = b;
-		keys[2] = c;
-				
-		//aa = DigestUtils.md5Hex("192.168.1.208:8888");
-		System.out.println(JSONObject.toJSONString(keys));
-			
-		String aa = "0102";
-		System.out.println(aa.substring(aa.length() -2, aa.length()));
-		
-		
-//		
-//		System.out.println(System.currentTimeMillis());
-//		System.out.println(System.currentTimeMillis());
-//		System.out.println(System.currentTimeMillis());
-//		Pinyin4jUtil util= new Pinyin4jUtil();
-//		String p = util.toPinYinLowercase("shadfsafd");
-//		System.out.println(p);
-		
-		/*String resp = "[111,22,33,44,55,";
-		resp = resp.substring(0, resp.length() -1) + "]";
-		
-		
-		
-		String bb = "新增分支_123";
-		System.out.println(bb.indexOf("_"));
-		System.out.println(bb.substring(bb.indexOf("_")+1, bb.length()));
-		System.out.println(bb.substring(bb.length()-1, bb.length()));
-		*/
-		/*
-		String aa = "[\"公众号\",\"联系电话\",[\"优惠\",\"发我手机上*!\"],[\"发我手机上\",\"资料*!\"],[\"发我手机上\",\"等一会*!\"],\"公司简介\",[\"发送\",\"看看*!\"],[\"公司*!\",\"发送\"],[\"手机号*!\",\"重复一下\"],[\"发个\",\"发点\",\"有什么\",\"资料*!\"],\"有资料\",\"发我手机上\",\"怎么联系\",\"你的联系方式\",\"手机号\",\"号码多少\",\"加下微信\",\"发送\",\"再说\",\"再联系\",\"有需要再联系\"]";
-		aa = aa.substring(1,aa.length()-1);
-		
-		String yuliu = "";
-		List<String> yulius = new ArrayList<>();
-		
-		while(aa.contains("[")) {
-			System.out.println(aa);	
-			int start = aa.indexOf("[");
-			int end = aa.indexOf("]");
-			yulius.add(aa.substring(start,end+1));
-			//System.out.println(aa.substring(start,end+1));
-			aa = aa.substring(0, start) + aa.substring(end+2, aa.length());
-		}
-		
-		String yuliuStr = "";
-		for(String temp : yulius) {
-			yuliuStr = yuliuStr + temp + ",";
-		}
-		yuliuStr = yuliuStr.substring(0, yuliuStr.length()-1);
-		
-		System.out.println(yuliuStr);
-		System.out.println(aa);*/
-		
-		
-		
-		
-		/*String []keyArray = aa.split(",");
-		for(int i = 0 ; i < keyArray.length ; i++) {
-			System.out.println(keyArray[i]);
-		}*/
-		
-	}
-	
-	
 	@Override
 	@Transactional
 	public void updateCommonDialog(CommonDialogVO commonDialog, String userId) {
@@ -1689,277 +1556,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//如果当前状态为审批通过、已上线，则把状态修改为“制作中”
 		this.updateProcessState(commonDialog.getProcessId(), userId);
 	}
-	
-
-	/*@Override
-	public ProcessInfo initProcessInfo(String processId) {
-		if(StringUtils.isNotBlank(processId)) {
-			ProcessInfo processInfo = new ProcessInfo();
-			processInfo.setProcessId(processId);
-			
-			BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
-			
-			List<LevelVO> results = new ArrayList<>();
-			//第一步：先查询name为开场白的domain作为顶层数据
-			BotSentenceDomainExample domaninExample = new BotSentenceDomainExample();
-			domaninExample.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1");
-			domaninExample.setOrderByClause(" level desc");
-			List<BotSentenceDomain> domainList = botSentenceDomainMapper.selectByExample(domaninExample);
-			if(null != domainList && domainList.size() > 0) {
-				BotSentenceDomain end = domainList.get(0);
-				int maxLevel = end.getLevel();
-				List<String> domainNameList = new ArrayList<>();
-				
-				//获取解释开场白
-				VoliceInfo startExplainVolice = getStartExplain(processId);
-				
-				
-				for(int i = 1 ; i <= maxLevel ; i++) {
-					LevelVO level = new LevelVO();
-					level.setId(i);
-					List<DomainVO> domins = new ArrayList<>();
-					BotSentenceDomainExample example = new BotSentenceDomainExample();
-					
-					if(domainNameList.size()>0 && !"systemImport".equals(process.getCrtUser())) {
-						example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andLevelEqualTo(i).andDomainNameIn(domainNameList);
-						String orderStr = "";
-						for(int m = 0 ; m < domainNameList.size() ; m++) {
-							if(m == domainNameList.size() -1) {
-								orderStr = orderStr + "'" + domainNameList.get(m) + "'";
-							}else {
-								orderStr = orderStr + "'" +domainNameList.get(m) + "',";
-							}
-						}
-						
-						example.setOrderByClause(" field(domain_name, " + orderStr + ")");
-					}else {
-						example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andLevelEqualTo(i);
-					}
-					
-					List<BotSentenceDomain> levelList = botSentenceDomainMapper.selectByExample(example);
-					
-					domainNameList = new ArrayList<>();
-					
-					if(null != levelList && levelList.size() > 0) {
-						for(BotSentenceDomain temp : levelList) {
-							DomainVO vo = new DomainVO();
-							vo.setLevel(i+"");
-							vo.setType(temp.getType());//节点类型
-							vo.setName(temp.getDomainName());//设置domain名称
-							vo.setDomainId(temp.getDomainId());//
-							//获取当前domain的主分支
-							BotSentenceBranch mainBranch = getMainBranch(processId, temp.getDomainName());
-							if(null != mainBranch) {
-								vo.setMainFlowId(mainBranch.getBranchId());
-								vo.setMainFlow(mainBranch.getBranchId());
-							}
-							
-							//如果当前节点为场白，则把解释开场白作为开场白的的一个属性
-							if(null != startExplainVolice && "start".equals(temp.getType())) {
-								vo.setStartExplainText(startExplainVolice.getContent());
-								vo.setStartExplainUrl(startExplainVolice.getVoliceUrl());
-								
-								//如果当前节点是开始节点，则查询解释开场白的意图信息
-								//获取解释开场白的branch分支的positive
-								BotSentenceBranch branch = getPositiveBranch(processId, "解释开场白");
-								if(null != branch && StringUtils.isNotBlank(branch.getIntents())) {
-									String intentId = branch.getIntents().split(",")[0];
-									BotSentenceIntent intent = botSentenceIntentMapper.selectByPrimaryKey(new Long(intentId));
-									vo.setStartExplainKeywords(BotSentenceUtil.generateShowKeywords(intent.getKeywords()));
-								}
-							}
-							
-							//查询当前domain的enter话术branch
-							BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-							branchExample.createCriteria().andDomainEqualTo(temp.getDomainName()).andProcessIdEqualTo(processId).andBranchNameEqualTo("enter_branch");
-							List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
-							if(null != branchList && branchList.size() > 0) {
-								BotSentenceBranch branch = branchList.get(0);
-								//获取当前branch对应的话术内容
-								String resp = branch.getResponse();
-								if(StringUtils.isNotBlank(resp) && !"[]".equals(resp)) {
-									String[] respArray = resp.substring(1,resp.length()-1).split(",");
-									VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(respArray[0]));
-									vo.setText(volice.getContent());//设置文案内容
-									vo.setUrl(volice.getVoliceUrl());//设置录音URL
-								}
-							}
-							
-							
-							//查询当前domain的连线branch
-							BotSentenceBranchExample lineExample = new BotSentenceBranchExample();
-							lineExample.createCriteria().andDomainEqualTo(temp.getDomainName()).andProcessIdEqualTo(processId).andIsShowEqualTo("1");
-							lineExample.setOrderByClause(" crt_time");
-							List<BotSentenceBranch> lineBranchList = botSentenceBranchMapper.selectByExample(lineExample);
-							if(null != lineBranchList && lineBranchList.size() > 0) {
-								List<NextVO> nextList = new ArrayList<NextVO>();
-								
-								for(BotSentenceBranch lineBranch : lineBranchList) {
-									NextVO next = new NextVO();
-									next.setName(lineBranch.getLineName());
-									next.setShow(lineBranch.getIsShow());
-									
-									next.setTo(lineBranch.getNext());
-									next.setBranchId(lineBranch.getBranchId());
-									
-									String intents = lineBranch.getIntents();
-									if(StringUtils.isNotBlank(intents)) {
-										String intent = intents.split(",")[0];
-										BotSentenceIntent botSentenceIntent = botSentenceIntentMapper.selectByPrimaryKey(new Long(intent));
-										
-										String keyword = botSentenceIntent.getKeywords();
-										
-										if(StringUtils.isNotBlank(keyword)) {
-
-											List<String> keyword_list = BotSentenceUtil.getKeywords(keyword);
-											if(null != keyword_list && keyword_list.size() > 0) {
-												next.setText(keyword_list.get(0).replace("\"", ""));
-											}
-										}
-									}
-									nextList.add(next);
-									if(!domainNameList.contains(lineBranch.getNext())) {
-										domainNameList.add(lineBranch.getNext());
-									}
-									
-								}
-								vo.setNext(nextList);
-							}
-							
-							//获取当前domain的挽回话术列表
-							List<RefuseBranchVO> refuses = new ArrayList<>();
-							BotSentenceBranchExample refuseBranchExample = new BotSentenceBranchExample();
-							refuseBranchExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(temp.getDomainName()).andBranchNameEqualTo("refuse_" + temp.getDomainName());
-							List<BotSentenceBranch> refuseBranchs = botSentenceBranchMapper.selectByExample(refuseBranchExample);
-							if(null != refuseBranchs && refuseBranchs.size() > 0) {
-								String resp = refuseBranchs.get(0).getResponse();
-								
-								if(StringUtils.isNotBlank(resp) && !"[]".equals(resp.trim()) && resp.trim().startsWith("[") && resp.trim().endsWith("]")) {
-									String[] respArray = resp.substring(1,resp.length()-1).split(",");
-									for(int m = 0 ; m < respArray.length ; m++) {
-										long voliceId_new = new Long(respArray[m]);
-										VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(voliceId_new);
-										if(null != volice) {
-											RefuseBranchVO refuse = new RefuseBranchVO();
-											refuse.setContent(volice.getContent());
-											refuse.setVoliceId(volice.getVoliceId().toString());
-											refuse.setName(volice.getName());
-											refuses.add(refuse);
-										}
-									}
-								}
-							}
-							vo.setRefuses(refuses);
-							
-							
-							domins.add(vo);
-						}
-						level.setArr(domins);
-					}
-					results.add(level);
-				}
-				processInfo.setLevelList(results);
-			}
-			
-			return processInfo;
-		}
-		
-		
-		return null;
-	}*/
 
 
-	public boolean hasChild(String domainName, String processId) {
-		BotSentenceDomainExample example = new BotSentenceDomainExample();
-		
-		example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andParentEqualTo(domainName);
-		
-		int num = botSentenceDomainMapper.countByExample(example);
-		if(num > 0) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	public int getParentXnum(String domainName, List<LevelVO> levelList, String processId) {
-		//获取parent
-		BotSentenceDomainExample example = new BotSentenceDomainExample();
-		
-		example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andDomainNameEqualTo(domainName);
-		
-		List<BotSentenceDomain> domainList = botSentenceDomainMapper.selectByExample(example);
-		BotSentenceDomain parent = domainList.get(0);
-		
-		for(int i = 0 ; i < levelList.size() ; i++) {
-			List<DomainVO> list = levelList.get(i).getArr();
-			for(int j = 0 ; j < list.size() ; j++) {
-				if(parent.getParent().equals(list.get(j).getName())) {
-					return list.get(j).getxNum();
-				}
-			}
-		}
-		return 0;
-	}
-	
-	public int getMaxChildLength(String processId, String domainName) {
-		
-		List<String> domainNameList = new ArrayList<>();
-		List<String> allDomainNameList = new ArrayList<>();
-		
-		domainNameList.add(domainName);
-		allDomainNameList.add(domainName);
-		
-		while(null != domainNameList && domainNameList.size() > 0) {//如果上级有值，则继续遍历
-			BotSentenceDomainExample example = new BotSentenceDomainExample();
-			
-			example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andParentIn(domainNameList);
-			
-			List<BotSentenceDomain> levelList = botSentenceDomainMapper.selectByExample(example);
-			
-			domainNameList = new ArrayList<>();
-			
-			if(null != levelList && levelList.size() > 0) {
-				
-				for(BotSentenceDomain temp : levelList) {
-					//vo.setxNum(xnum);
-					
-					if(!domainNameList.contains(temp.getDomainName())) {
-						allDomainNameList.add(temp.getDomainName());
-						domainNameList.add(temp.getDomainName());
-					}
-				}
-			}
-			
-		}
-		
-		int branchNum = 0;
-		
-		for(int i = 0 ; i < allDomainNameList.size() ; i++) {
-			BotSentenceDomainExample example = new BotSentenceDomainExample();
-			example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andParentEqualTo(allDomainNameList.get(i));
-			int num = botSentenceDomainMapper.countByExample(example);
-			if(num > 1) {
-				branchNum = branchNum + num - 1;
-			}
-		}
-		return branchNum;
-	}
-	
-	
-	private int getNextDomainNum(int level ,List<LevelVO> results) {
-		int count = 0;
-		LevelVO last = results.get(0);
-		for(LevelVO temp : results) {
-			if(level == temp.getId()) {
-				
-			}
-		}
-		
-		return count;
-	}
-	
-	
 	@Transactional
 	@Override
 	public BotSentenceDomain saveNode(FlowNode blankDomain, String userId) {
@@ -2064,32 +1662,13 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		//初始化回访数据
 		botsentenceVariableService.initDomainSurveyIntent(process.getProcessId(), domain.getDomainName(), process.getTemplateId(), userId);
-		
-		
-		/*if(Constant.DOMAIN_TYPE_AGENT.equals(blankDomain.getType())){//如果当前节点是转人工，则新增一个转人工意图
-			BotSentenceIntent intent = new BotSentenceIntent();
-			intent.setCrtTime(date);
-			intent.setCrtUser(userId);
-			intent.setProcessId(blankDomain.getProcessId());
-			intent.setKeywords("[]");
-			intent.setIndustry(process.getIndustry());
-			intent.setDomainName(Constant.DOMAIN_TYPE_AGENT);
-			String key_str = process.getTemplateId().split("_")[0];
-			intent.setTemplateId(key_str);
-			intent.setForSelect(1);
-			intent.setName("trade_" + key_str + "_" + Constant.DOMAIN_TYPE_AGENT + "_" + Constant.DOMAIN_TYPE_AGENT);
-			botSentenceIntentMapper.insert(intent);
-		}*/
-		
-		//如果当前状态为审批通过、已上线，则把状态修改为“制作中”
+
 		updateProcessState(blankDomain.getProcessId(), userId);
-		
 		return domain;
 	}
 	
 	/**
 	 * 更新一个domain卡片
-	 * @param node
 	 */
 	@Transactional
 	public BotSentenceDomain updateNode(FlowNode blankDomain, String domainId, String userId) {
@@ -2224,108 +1803,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		return domain;
 	}
-	
-	/**
-	 * 更新开场白信息
-	 * @param blankDomain
-	 * @return
-	 */
-	@Transactional
-	private void saveStartExplain(FlowNode blankDomain, String domainId, String userId) {
-		//如果当前节点为开场白，则需要同时更新解释开场白信息
-		if(Constant.DOMAIN_TYPE_START.equals(blankDomain.getType()) && StringUtils.isNotBlank(blankDomain.getStartExplainText())) {
-			
-			VoliceInfo volice = getStartExplain(blankDomain.getProcessId());
-			//判断解释开场白的文案是否有变化，如果有，则设置volice-flag【修改】
-			if(StringUtils.isNotBlank(volice.getContent()) && !volice.getContent().equals(blankDomain.getStartExplainText()) && !"【新增】".equals(volice.getFlag())) {
-				volice.setFlag("【修改】");
-			}
-			
-			volice.setContent(blankDomain.getStartExplainText().replace("\n", "").trim());
-			volice.setLstUpdateTime(new Date(System.currentTimeMillis()));
-			volice.setLstUpdateUser(userId);
-			
-			voliceServiceImpl.saveVoliceInfo(volice, userId);
-			
-			
-			if(StringUtils.isNotBlank(domainId) && domainId.equals(blankDomain.getId())) {//只有保存开场白卡片才需要校验关键字是否重复
-
-				//获取同级分支的关键字列表
-				Map<String, String> keywords = new HashMap<>(); 
-				
-				BotSentenceBranch explainBranch = getStartExplainBranch(blankDomain.getProcessId());
-						
-				BotSentenceBranchExample branchexample = new BotSentenceBranchExample();
-				branchexample.createCriteria().andProcessIdEqualTo(blankDomain.getProcessId()).andIsShowEqualTo("1").andDomainEqualTo(explainBranch.getDomain()).andBranchIdNotEqualTo(explainBranch.getBranchId());
-				List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchexample);
-				if(null != branchList && branchList.size() > 0) {
-					for(BotSentenceBranch branch : branchList) {
-						String intents = branch.getIntents();
-						if(StringUtils.isNotBlank(intents)) {
-							String [] array = intents.split(",");
-							for(int i = 0 ; i < array.length ; i++) {
-								BotSentenceIntent temp = botSentenceIntentMapper.selectByPrimaryKey(new Long(array[i]));
-								if(null != temp) {
-									String[] keywordList = BotSentenceUtil.getKeywords(temp.getKeywords()).get(0).replace("\"", "").split(",");
-									if(null != keywordList && keywordList.length > 0) {
-										for(String str : keywordList) {
-											str = str.replace("\"", "");
-											keywords.put(str, branch.getLineName());
-										}
-									}
-								}
-								
-							}
-						}
-					}
-				}
-				
-				
-				if(null != blankDomain.getStartExplainIntentList()	&& blankDomain.getStartExplainIntentList().size() > 0) {
-					String message = "";
-					//获取所有关键词库对应关键词集合
-					String allKeywords = "";
-					for(BotSentenceIntentVO temp : blankDomain.getStartExplainIntentList()) {
-						if(StringUtils.isNotBlank(temp.getKeywords())) {
-							String replaceKeyWords = temp.getKeywords().replaceAll("，", ",");
-							replaceKeyWords = replaceKeyWords.replace("\n", "");
-
-							allKeywords = allKeywords + replaceKeyWords + ",";
-						}
-					}
-
-					if(StringUtils.isNotBlank(allKeywords)) {
-						String []keywords_array = allKeywords.split(",");
-
-						//校验关键字是否重复
-						for(int j = 0 ; j < keywords_array.length ; j++) {
-							if(keywords.containsKey(keywords_array[j])) {
-								String repeat = "【" + keywords_array[j] + "】 与 【" + keywords.get(keywords_array[j]) + "】的关键字重复了";
-								message = message + repeat + "<br/>";
-							}
-						}
-					}
-
-					String message2 = botSentenceKeyWordsValidateService.validateIntentKeywords(blankDomain.getStartExplainIntentList());
-
-
-					if(StringUtils.isNotBlank(message+message2)) {
-						throw new CommonException(message);
-					}
-					BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(blankDomain.getProcessId());
-					String intentIds2 = botSentenceKeyWordsService.saveIntent(explainBranch.getDomain(), blankDomain.getProcessId(), process.getTemplateId(), blankDomain.getStartExplainIntentList(), "01", explainBranch, userId);
-					if(StringUtils.isNotBlank(intentIds2)) {
-						explainBranch.setIntents(intentIds2);
-						explainBranch.setLstUpdateTime(new Date(System.currentTimeMillis()));
-						explainBranch.setLstUpdateUser(userId);
-						botSentenceBranchMapper.updateByPrimaryKey(explainBranch);
-					}
-				}
-			}
-
-		}
-	}
-
 
 	/**
 	 * 保存线条
@@ -2477,54 +1954,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 
 
-	/**
-	 * 获取当前domain的主分支
-	 * @param processId
-	 * @param domain
-	 * @return
-	 */
-	private BotSentenceBranch getMainBranch(String processId, String domain) {
-		BotSentenceBranchExample mainExample = new BotSentenceBranchExample();
-		mainExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(domain).andBranchNameEqualTo("positive");
-		List<BotSentenceBranch> mainBranchList = botSentenceBranchMapper.selectByExample(mainExample);
-		if(null != mainBranchList && mainBranchList.size() > 0) {
-			return mainBranchList.get(0);
-		}
-		return null;
-	}
-
-	private VoliceInfo getStartExplain(String processId) {
-		//获取解释开场白
-		BotSentenceBranchExample example = new BotSentenceBranchExample();
-		example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("解释开场白").andBranchNameEqualTo("enter_branch");
-		List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(example);
-		if(null != branchList && branchList.size() > 0) {
-			BotSentenceBranch branch = branchList.get(0);
-			//获取当前branch对应的话术内容
-			String resp = branch.getResponse();
-			if(StringUtils.isNotBlank(resp) && !"[]".equals(resp)) {
-				String[] respArray = resp.substring(1,resp.length()-1).split(",");
-				VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(respArray[0]));
-				return volice;
-			}
-		}
-		return null;
-	}
-
-
-	public BotSentenceBranch getStartExplainBranch(String processId) {
-		//获取解释开场白
-		BotSentenceBranchExample startExample = new BotSentenceBranchExample();
-		startExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("开场白").andNextEqualTo("解释开场白");
-		List<BotSentenceBranch> startBranchList = botSentenceBranchMapper.selectByExample(startExample);
-
-		if(null != startBranchList && startBranchList.size() > 0) {
-			BotSentenceBranch branch = startBranchList.get(0);
-			return branch;
-		}
-		return null;
-	}
-
 
 	/**
 	 * 获取当前domain的enter_branch分支
@@ -2575,31 +2004,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		return null;
 	}
-
-	/**
-	 * 生成新的lineName
-	 * @param processId
-	 * @return
-	 */
-	private String getNewLineName(String processId) {
-		String lineName = line_prefix + "1";
-		BotSentenceBranchExample queryExample = new BotSentenceBranchExample();
-		queryExample.createCriteria().andProcessIdEqualTo(processId).andLineNameLike(line_prefix + "%");
-		List<BotSentenceBranch> queryList = botSentenceBranchMapper.selectByExample(queryExample);
-		if(null != queryList && queryList.size() > 0) {
-			List<Integer> list = new ArrayList<>();
-			for(BotSentenceBranch temp : queryList) {
-				String currentName = temp.getLineName();
-				int currentNum = new Integer(currentName.substring(line_prefix.length(), currentName.length()));
-				list.add(currentNum);
-			}
-
-			int maxLineNum = Collections.max(list) + 1;
-			lineName = line_prefix + maxLineNum;
-		}
-		return lineName;
-	}
-
 
 	/**
 	 * 生成新的branchName
@@ -2702,58 +2106,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				index++;
 			}
 
-
-
-			/*String resp = "[";
-			String respname = "[";
-			for(String temp : voliceIdList) {
-				if(StringUtils.isBlank(temp)) {
-					continue;
-				}
-				resp = resp + temp + ",";
-
-				VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(temp));
-				respname = respname + volice.getName() + ",";
-
-			}
-			resp = "[" + resp.substring(0, resp.length() -1) + "]";
-			respname = "[" + respname.substring(0, respname.length() -1) + "]";
-
-			String userId = UserUtil.getUserId();
-			BotSentenceBranchExample example = new BotSentenceBranchExample();
-			example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(domainName).andBranchNameEqualTo("refuse_" + domainName);
-			List<BotSentenceBranch> list = botSentenceBranchMapper.selectByExample(example);
-			if(null != list && list.size() > 0) {
-				branch = list.get(0);
-				branch.setResponse(resp);
-				branch.setRespname(respname);
-				branch.setLstUpdateTime(new Date(System.currentTimeMillis()));
-				branch.setLstUpdateUser(userId);
-				botSentenceBranchMapper.updateByPrimaryKey(branch);
-			}else {
-				branch.setResponse(resp);
-				branch.setRespname(respname);
-				branch.setBranchName("refuse_" + domainName);
-				branch.setCrtTime(new Date(System.currentTimeMillis()));
-				branch.setCrtUser(userId);
-				branch.setDomain(domainName);
-				branch.setIsShow("0");
-				branch.setNext(domainName);
-				branch.setEnd("结束");
-				branch.setTemplateId(process.getTemplateId());
-				branch.setProcessId(processId);
-
-				//获取意图信息：来源：domin为拒绝的enter分支的intent
-				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
-				intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("enter_branch");
-				List<BotSentenceBranch> intentList = botSentenceBranchMapper.selectByExample(intentExample);
-				if(null != intentList && intentList.size() > 0) {
-					branch.setIntents(intentList.get(0).getIntents());
-				}
-
-				botSentenceBranchMapper.insert(branch);
-			}*/
-
 		}else {
 			throw new CommonException("挽回话术列表为空!");
 		}
@@ -2769,55 +2121,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(domainName).andBranchNameEqualTo("refuse_" + domainName).andResponseLike("%"+voliceId+"%");
 		example.createCriteria().andProcessIdEqualTo(processId).andBranchNameLike("refuse_%").andResponseLike("%"+voliceId+"%");
 		botSentenceBranchMapper.deleteByExample(example);
-
-
-		/*List<BotSentenceBranch> list = botSentenceBranchMapper.selectByExample(example);
-		if(null != list && list.size() > 0) {
-			BotSentenceBranch refuseBranch = list.get(0);
-			String resp = refuseBranch.getResponse();
-			if(StringUtils.isNotBlank(resp) && !"[]".equals(resp.trim()) && resp.trim().startsWith("[") && resp.trim().endsWith("]")) {
-				String[] respArray = resp.substring(1,resp.length()-1).split(",");
-				String resp_new = "[";
-				int index = -1;
-
-				if(respArray.length ==1) {
-					resp_new = "[]";
-				}else {
-					for(int i = 0 ; i < respArray.length ; i++) {
-						if(voliceId.equals(respArray[i])) {
-							index = i;
-						}else {
-							resp_new = resp_new + respArray[i] + ",";
-						}
-					}
-					resp_new = resp_new.substring(0, resp_new.length() -1)  + "]";
-				}
-
-
-				//更新resp和respname值
-				String respname = refuseBranch.getRespname();
-				String respname_new = "[";
-				if(StringUtils.isNotBlank(respname) && !"[]".equals(respname.trim()) && respname.trim().startsWith("[") && respname.trim().endsWith("]")) {
-					String[] respnameArray = respname.substring(1,respname.length()-1).split(",");
-
-					if(respnameArray.length == 1) {
-						respname_new = "[]";
-					}else {
-						for(int i = 0 ; i < respnameArray.length ; i++) {
-							if(i != index) {
-								respname_new = respname_new + respnameArray[i] + ",";
-							}
-						}
-					}
-				}
-				respname_new = respname_new.substring(0, respname_new.length() -1)  + "]";
-
-				refuseBranch.setResponse(resp_new);
-				refuseBranch.setRespname(respname_new);
-				botSentenceBranchMapper.updateByPrimaryKey(refuseBranch);
-
-			}
-		}*/
 	}
 
 	@Override
@@ -2923,20 +2226,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//删除branch本身
 		//BotSentenceBranch branch = botSentenceBranchMapper.selectByPrimaryKey(branchId);
 		botSentenceBranchMapper.deleteByPrimaryKey(branchId);
-		//String userId = UserUtil.getUserId();
-		//如果当前branch为positive，则更新domain表的com_domain为空
-		/*if("positive".equals(branch.getBranchName())) {
-			BotSentenceDomainExample updateDomainExample = new BotSentenceDomainExample();
-			updateDomainExample.createCriteria().andProcessIdEqualTo(processId).andComDomainEqualTo(branch.getDomain());
-			List<BotSentenceDomain> domains = botSentenceDomainMapper.selectByExample(updateDomainExample);
-			if(null != domains && domains.size() > 0) {
-				BotSentenceDomain domain = domains.get(0);
-				domain.setComDomain(null);
-				domain.setLstUpdateTime(new Date(System.currentTimeMillis()));
-				domain.setLstUpdateUser(userId);
-				botSentenceDomainMapper.updateByPrimaryKey(domain);
-			}
-		}*/
 
 		this.updateProcessState(processId, userId);
 	}
@@ -3033,21 +2322,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		BotSentenceDomain domain = botSentenceDomainMapper.selectByPrimaryKey(domainId);
 		botSentenceDomainMapper.deleteByPrimaryKey(domainId);
 
-		//删除原来comdomain指向当前domain的数据
-		/*BotSentenceDomainExample domaninExample = new BotSentenceDomainExample();
-		domaninExample.createCriteria().andProcessIdEqualTo(processId).andComDomainEqualTo(domain.getDomainName());
-		List<BotSentenceDomain> domainList = botSentenceDomainMapper.selectByExample(domaninExample);
-		if(null != domainList && domainList.size() > 0) {
-			for(BotSentenceDomain temp : domainList) {
-				temp.setComDomain(null);
-				temp.setLstUpdateTime(new Date(System.currentTimeMillis()));
-				temp.setLstUpdateUser(UserUtil.getUserId());
-				botSentenceDomainMapper.updateByPrimaryKey(temp);
-			}
-		}*/
-
-
-
 		//删除branch信息
 		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
 		branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(domain.getDomainName());
@@ -3113,17 +2387,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		List<FlowNode> nodeList = new ArrayList<>();
 
 		List<FlowEdge> edgeList = new ArrayList<>();
-
-
-
-
 		BotSentenceDomainExample example = new BotSentenceDomainExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1");
 		List<BotSentenceDomain> levelList = botSentenceDomainMapper.selectByExample(example);
 
 		if(null != levelList && levelList.size() > 0) {
 			//获取解释开场白
-			//VoliceInfo startExplainVolice = getStartExplain(processId);
 			for(BotSentenceDomain temp : levelList) {
 
 				FlowNode node = new FlowNode();
@@ -3131,49 +2400,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				node.setLabel(temp.getDomainName());
 				node.setX(temp.getPositionX());
 				node.setY(temp.getPositionY());
-
 				node.setType(temp.getType());//节点类型
 				node.setLabel(temp.getDomainName());//设置domain名称
-				//如果当前节点为场白，则把解释开场白作为开场白的的一个属性
-				/*if(null != startExplainVolice && Constant.DOMAIN_TYPE_START.equals(temp.getType())) {
-					node.setStartExplainText(startExplainVolice.getContent());
-					node.setStartExplainUrl(startExplainVolice.getVoliceUrl());
-
-					//如果当前节点是开始节点，则查询解释开场白的意图信息
-					BotSentenceBranch branch = getStartExplainBranch(processId);
-
-					//查询关键词库列表
-					List<BotSentenceIntentVO> intentList = botSentenceKeyWordsService.getIntent(branch.getBranchId());
-					node.setStartExplainIntentList(intentList);
-
-					//设置解释开场白的挽回列表add by 2018-09-29
-					node.setStartExplainDomainName("解释开场白");
-
-					List<RefuseBranchVO> refuses = new ArrayList<>();
-					BotSentenceBranchExample refuseBranchExample = new BotSentenceBranchExample();
-					refuseBranchExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("解释开场白").andBranchNameEqualTo("refuse_解释开场白");
-					List<BotSentenceBranch> refuseBranchs = botSentenceBranchMapper.selectByExample(refuseBranchExample);
-					if(null != refuseBranchs && refuseBranchs.size() > 0) {
-						for(BotSentenceBranch refuseBranch : refuseBranchs) {
-							String respStr = refuseBranch.getResponse();
-
-							if(StringUtils.isNotBlank(respStr) && !"[]".equals(respStr.trim()) && respStr.trim().startsWith("[") && respStr.trim().endsWith("]")) {
-								String resp = respStr.substring(1,respStr.length()-1);
-								long voliceId_new = new Long(resp);
-								VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(voliceId_new);
-								if(null != volice) {
-									RefuseBranchVO refuse = new RefuseBranchVO();
-									refuse.setContent(volice.getContent());
-									refuse.setVoliceId(volice.getVoliceId().toString());
-									refuse.setName(volice.getName());
-									refuses.add(refuse);
-								}
-							}
-						}
-					}
-					node.setStartExplainRefuses(refuses);
-				}*/
-
 
 				//查询当前domain的enter话术branch
 				BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
@@ -3233,23 +2461,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						//查询关键词库列表
 						List<BotSentenceIntentVO> intentList = botSentenceKeyWordsService.getIntent(lineBranch.getBranchId());
 						edge.setIntentList(intentList);
-						/*String intents = lineBranch.getIntents();
-						if(StringUtils.isNotBlank(intents)) {
-							String intent = intents.split(",")[0];
-							BotSentenceIntent botSentenceIntent = botSentenceIntentMapper.selectByPrimaryKey(new Long(intent));
-
-							String keyword = botSentenceIntent.getKeywords();
-
-							if(StringUtils.isNotBlank(keyword)) {
-
-								List<String> keyword_list = BotSentenceUtil.getKeywords(keyword);
-								if(null != keyword_list && keyword_list.size() > 0) {
-									//edge.setText(keyword_list.get(0).replace("\"", ""));
-									edge.setKeyWords(keyword_list.get(0).replace("\"", ""));
-								}
-							}
-						}*/
-
 						edge.setId(lineBranch.getBranchId());
 						edge.setSource(temp.getDomainId());
 						edge.setLabel(lineBranch.getLineName());
@@ -3781,33 +2992,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				}
 			}
 		}
-		
-		
-		/*voliceInfoExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(domains).andDomainNameNotIn(ignoreDomainList);
-		List<VoliceInfo> list = voliceInfoMapper.selectByExample(voliceInfoExample);
-		for(int i = 0 ; i < list.size() ; i++) {
-			VoliceInfo volice = list.get(i);
-			if(Constant.VOLICE_TYPE_REFUSE.equals(volice.getType())) {
-				continue;
-			}
-			
-			CommonDialogVO vo = new CommonDialogVO();
-			vo.setHuashu(volice.getContent());//话术
-			vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setYujin(volice.getDomainName());//语境
-			vo.setLuoji("触发\"" + volice.getDomainName() +"\"流程");//逻辑
-			vo.setTitle(volice.getDomainName());
-			//vo.setBranchId(branch.getBranchId());
-			vo.setVoliceId(volice.getVoliceId());
-			vo.setTemplateId(volice.getTemplateId());
-			vo.setProcessId(processId);
-			//vo.setBranchName(branch.getBranchName());
-			vo.setVoliceName(volice.getName());
-			vo.setFlag(volice.getFlag());
-			resultList.add(vo);
-		}*/
-		
-		
 		//根据录音ID去重
 		if(resultList.size() > 1) {
 			for(int i = 0 ; i < resultList.size() ; i++) {
@@ -4075,8 +3259,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 	
 	
-	@Autowired
-	private BotSentenceProcessExtMapper botSentenceProcessExtMapper;
+
 	
 	@Override
 	public List<BotSentenceProcess> getTemplateBySelf(String accountNo) {

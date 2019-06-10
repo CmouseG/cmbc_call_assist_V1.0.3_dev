@@ -71,7 +71,7 @@ public class SimLimitServiceImpl implements SimLimitService {
                     redisUtil.expire(key, simLimitCallPeriod * 60);
                 }
             } else {
-                redisUtil.set(key, 1, simLimitCallPeriod * 60);
+                redisUtil.set(key, incr, simLimitCallPeriod * 60);
             }
         }
     }

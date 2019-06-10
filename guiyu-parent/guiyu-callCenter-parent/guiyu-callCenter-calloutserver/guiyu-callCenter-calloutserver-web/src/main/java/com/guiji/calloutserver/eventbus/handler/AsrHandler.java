@@ -155,7 +155,7 @@ public class AsrHandler {
                 }else if(value>=2 && value <100){
                     log.info("第三次空asr识别，挂断电话，callId[{}]",callId);
                     caches.put(key,100);
-                    localFsServer.hangup(callId); //挂断电话
+                    localFsServer.hangup(callId+Constant.UUID_SEPARATE+orgId); //挂断电话
                     //修改意向标签和意向备注
                     CallOutPlan callOutPlan = new CallOutPlan();
                     callOutPlan.setCallId(new BigInteger(callId));
@@ -203,7 +203,7 @@ public class AsrHandler {
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
-                localFsServer.hangup(callPlan.getCallId().toString());
+                localFsServer.hangup(callPlan.getCallId().toString()+Constant.UUID_SEPARATE+callPlan.getOrgId());
             }
         }
     }

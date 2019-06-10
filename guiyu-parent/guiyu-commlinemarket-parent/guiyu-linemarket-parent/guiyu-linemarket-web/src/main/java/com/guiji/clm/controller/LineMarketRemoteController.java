@@ -8,6 +8,7 @@ import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.model.SimLineStatus;
 import com.guiji.clm.model.SipLineVO;
+import com.guiji.clm.service.LineService;
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.service.sip.SipLineInfoService;
 import com.guiji.clm.service.voip.VoipGwManager;
@@ -117,6 +118,27 @@ public class LineMarketRemoteController implements LineMarketRemote{
 		}
 		return Result.ok();
     }
+
+    @Autowired
+	LineService lineService;
+
+	/**
+	 * 查询用户线路名
+	 * @param userId
+	 * @param lineId
+	 * @return
+	 */
+	@Override
+	public Result.ReturnData<SipLineVO> queryLineNameByLineId(
+			@RequestParam(value="userId",required=true) String userId,
+			@RequestParam(value="lineId",required=true) Integer lineId) {
+
+		SipLineVO vo = lineService.queryLineInfo(Integer.valueOf(userId), lineId);
+
+		return Result.ok(vo);
+	}
+
+
 
     @Autowired
 	VoipGwManager voipGwManager;

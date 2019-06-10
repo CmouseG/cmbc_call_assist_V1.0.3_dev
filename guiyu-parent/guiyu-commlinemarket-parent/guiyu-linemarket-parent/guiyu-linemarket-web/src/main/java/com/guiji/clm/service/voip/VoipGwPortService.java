@@ -2,6 +2,8 @@ package com.guiji.clm.service.voip;
 
 import java.util.List;
 
+import com.guiji.clm.constant.ClmConstants;
+import com.guiji.clm.service.LineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,8 @@ public class VoipGwPortService {
 	VoipGwPortMapper voipGwPortMapper;
 	@Autowired
 	VoipGwPortHisHisService voipGwPortHisHisService;
-	
+	@Autowired
+	LineService lineService;
 	
 	/**
 	 * 新增/更新申请审批记录
@@ -43,6 +46,7 @@ public class VoipGwPortService {
 				//更新
 				voipGwPort.setUpdateTime(DateUtil.getCurrent4Time());
 				voipGwPortMapper.updateByPrimaryKey(voipGwPort);
+
 			}else {
 				//新增
 				voipGwPort.setGwStatus(VoipGwStatusEnum.OK.getCode()); //初始正常状态
@@ -50,6 +54,13 @@ public class VoipGwPortService {
 				voipGwPort.setUpdateTime(DateUtil.getCurrent4Time());
 				voipGwPortMapper.insert(voipGwPort);
 			}
+
+			if(null == voipGwPort.getUserId()) {
+				lineService.updateLineInfo(voipGwPort, ClmConstants.DEL);
+			} else {
+				lineService.updateLineInfo(voipGwPort, ClmConstants.UPDATE);
+			}
+
 			//异步记录变更历史
 			voipGwPortHisHisService.asyncSaveGwPortHis(voipGwPort);
 		}

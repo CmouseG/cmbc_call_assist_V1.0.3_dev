@@ -51,6 +51,17 @@ public interface LineMarketRemote {
 			@RequestParam(value="lineId",required=true) Integer lineId);
 
 	/**
+	 * 查询用户线路名
+	 * @param userId
+	 * @param lineId
+	 * @return
+	 */
+	@PostMapping(value = "/remote/queryLineNameByLineId")
+	Result.ReturnData<SipLineVO> queryLineNameByLineId(
+			@RequestParam(value = "userId", required = true) String userId,
+			@RequestParam(value = "lineId", required = true) Integer lineId);
+
+	/**
 	 * 查询用户SIM卡线路对应端口状态
 	 * @param userId
 	 * @param lineId

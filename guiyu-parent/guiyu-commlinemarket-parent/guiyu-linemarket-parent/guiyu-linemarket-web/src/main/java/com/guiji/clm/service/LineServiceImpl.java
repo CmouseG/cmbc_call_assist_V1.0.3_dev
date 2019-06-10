@@ -121,8 +121,6 @@ public class LineServiceImpl implements LineService {
     @Override
     public void updateLineInfo(SipLineExclusive exclusive, int op) {
 
-        System.out.println(JsonUtils.bean2Json(exclusive));
-
         if (ClmConstants.DEL == op) {
             redisUtil.hdel(ClmConstants.LINE_INFO_MAP, exclusive.getLineId().toString());
         }

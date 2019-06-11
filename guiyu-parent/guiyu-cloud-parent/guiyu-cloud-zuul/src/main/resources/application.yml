@@ -32,9 +32,9 @@ spring:
       location: /  # 上传的临时目录
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.1.124:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: 123456
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: base
+    password: base@1234
     driver-class-name: com.mysql.jdbc.Driver
     minIdle: 5
     maxActive: 200

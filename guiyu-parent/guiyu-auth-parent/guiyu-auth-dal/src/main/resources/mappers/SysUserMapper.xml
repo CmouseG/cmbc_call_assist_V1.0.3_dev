@@ -696,7 +696,7 @@
   	<select id="checkEffective" resultType="long">
   		SELECT u.id FROM sys_user u
 		LEFT JOIN sys_organization o ON u.org_code = o.`code`
-		WHERE u.id = 1
+		WHERE u.id = #{userId}
 		AND(o.effective_date <![CDATA[<=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
 		AND(o.invalid_date <![CDATA[>=]]> DATE_FORMAT(NOW(),'%Y-%m-%d'))
   	</select>

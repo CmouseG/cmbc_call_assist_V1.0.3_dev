@@ -53,7 +53,7 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
     public ReturnT<String> execute(String param) throws Exception {
         Date time = new Date();
         //获取拨打日期
-        String today = DateTimeUtils.getDateString(time, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SPLICING);
+        Integer today = Integer.valueOf(DateTimeUtils.getDateString(time, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SPLICING));
         //获取当前开始、结束时间
         Date beginTime = DateTimeUtils.getDayStartTime(time);
         Date endTime = DateTimeUtils.getDayEndTime(time);
@@ -68,7 +68,7 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
             //获取计划表中完成数量
             List<TotalBatchPlanCountVo> totalList = new ArrayList<TotalBatchPlanCountVo>();
             for(Integer orgId: orgIdList){
-                List<TotalBatchPlanCountVo> totalBatch = planMapper.totalPlanByOrg(orgId, Integer.valueOf(today));
+                List<TotalBatchPlanCountVo> totalBatch = planMapper.totalPlanByOrg(orgId, today);
                 totalList.addAll(totalBatch);
             }
             //通知

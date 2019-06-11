@@ -341,6 +341,7 @@
     FROM dispatch_plan_batch b
     WHERE b.status_notify = ${@com.guiji.dispatch.enums.BatchNotifyStatusEnum@WAITING.getStatus()}
       AND b.gmt_create BETWEEN #{beginTime} AND #{endTime}
+      GROUP BY b.user_id
   </select>
 
   <update id="updNotifyStatusByBatch">

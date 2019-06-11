@@ -55,11 +55,7 @@
                 and isread = #{isRead}
             </if>
             <if test="customerId != null">
-                and ( customer_id = #{customerId}
-                <if test="agentId != null">
-                    or agent_id = #{agentId}
-                </if>
-                )
+                and customer_id = #{customerId}
             </if>
             <if test="queryUser != null">
                 and customer_id = #{queryUser}

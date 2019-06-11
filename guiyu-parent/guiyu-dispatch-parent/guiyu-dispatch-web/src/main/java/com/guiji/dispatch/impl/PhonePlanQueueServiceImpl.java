@@ -4,13 +4,15 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
-import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
+import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private IDispatchBatchLineService lineService;
 
 	@Autowired
-	private IDispatchPlanService planService;
+	private DispatchPlanMapper planMapper;
 
 	@Override
 	public void execute() throws Exception {
@@ -112,7 +114,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 														break LoopUser;
 														*/
 														//将该计划任务的推送拨打队列状态重新变更为"未推送"
-														planService.updPlanStatusSyncById(plan.getPlanUuidLong(), SyncStatusEnum.NO_SYNC.getStatus());
+														this.updPlanStatusSyncById(plan.getPlanUuidLong(), SyncStatusEnum.NO_SYNC.getStatus());
 													}
 												}
 												this.pushPlanQueue(sortPlan, queue);
@@ -152,6 +154,20 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 			}
 		}
 	}
+
+    /**
+     * 变更任务计划的推送队列状态
+     * @param planUuid
+     * @param statusSync
+     * @return
+     */
+    private boolean updPlanStatusSyncById(Long planUuid, Integer statusSync) {
+        List<Long> list = new ArrayList<>();
+        list.add(planUuid);
+        Integer orgId = IdUtils.doParse(Long.valueOf(planUuid)).getOrgId();
+        boolean bool = DaoHandler.getMapperBoolRes(planMapper.updPlanByStatusSync(list, SyncStatusEnum.NO_SYNC.getStatus(), orgId));
+        return bool;
+    }
 
 
 	private boolean isNewAlotContains(List<UserLineBotenceVO> newList, String oldIdBotenceQueueName)

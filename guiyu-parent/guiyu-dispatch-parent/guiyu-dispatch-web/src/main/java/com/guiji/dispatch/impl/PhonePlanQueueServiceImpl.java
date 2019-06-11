@@ -86,10 +86,15 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 							try {
 								long currentQueueSize = redisUtil.lGetListSize(queue);//拨打队列长度
 								Integer userMaxRobotCount = dto.getMaxRobotCount();		//分配用户、话术的最大机器人数
-								if (currentQueueSize < userMaxRobotCount * 100) {//当拨打队列数据量小于100倍机器人数量，则从数据库中获取下批数据
+								int minSelectCount = 66;
+								if(minSelectCount < userMaxRobotCount * 3){
+									minSelectCount = userMaxRobotCount * 3;
+								}
+
+								if (currentQueueSize < (minSelectCount / 3)) {//当拨打队列数据量小于100倍机器人数量，则从数据库中获取下批数据
 									// mod by xujin
 									//从数据库获取需要放入拨打队列数据，以分配机器人数200倍的数量获取
-									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,userMaxRobotCount * 200);
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,minSelectCount);
 									int len = 0;
 									if(null != dispatchPlanList && dispatchPlanList.size()>0){
 										len = dispatchPlanList.size();

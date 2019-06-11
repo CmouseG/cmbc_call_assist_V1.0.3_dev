@@ -61,6 +61,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						: (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
 				if (systemMaxPlan == 0) {
 					logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
+					continue;
 				}
 				String hour = String.valueOf(DateUtil.getCurrentHour());
 				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
@@ -83,10 +84,12 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						if (distributedLockHandler.tryLock(queueLock, 1000L))
 						{
 							try {
-								long currentQueueSize = redisUtil.lGetListSize(queue);
-								if (currentQueueSize < systemMaxPlan *2) {
+								long currentQueueSize = redisUtil.lGetListSize(queue);//拨打队列长度
+								Integer userMaxRobotCount = dto.getMaxRobotCount();		//分配用户、话术的最大机器人数
+								if (currentQueueSize < userMaxRobotCount * 100) {//当拨打队列数据量小于100倍机器人数量，则从数据库中获取下批数据
 									// mod by xujin
-									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+									//从数据库获取需要放入拨打队列数据，以分配机器人数200倍的数量获取
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,userMaxRobotCount * 200);
 									int len = 0;
 									if(null != dispatchPlanList && dispatchPlanList.size()>0){
 										len = dispatchPlanList.size();
@@ -103,7 +106,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 														this.cleanQueueByQueueName(queue);
 														break LoopUser;
 														*/
-														//将该计划任务的推送队列状态变更为"未推送"
+														//将该计划任务的推送拨打队列状态重新变更为"未推送"
 														planService.updPlanStatusSyncById(plan.getPlanUuidLong(), SyncStatusEnum.NO_SYNC.getStatus());
 													}
 												}

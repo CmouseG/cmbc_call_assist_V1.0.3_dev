@@ -849,7 +849,7 @@
 
   <update id="updPlanByStatusSync">
     UPDATE dispatch_plan
-    SET status_sync = #{status}
+    SET status_sync = #{statusSync}
     WHERE plan_uuid in
     <foreach item="item" index="index" collection="params" open="("
              separator="," close=")">

@@ -22,10 +22,7 @@ import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
-import com.guiji.dispatch.enums.AuthLevelEnum;
-import com.guiji.dispatch.enums.BatchNotifyStatusEnum;
-import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
+import com.guiji.dispatch.enums.*;
 import com.guiji.dispatch.exception.BaseException;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.*;
@@ -1502,6 +1499,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public int queryPlanCountByBatch(Integer batchId) {
 		return planExtMapper.queryPlanCountByBatch(batchId);
+	}
+
+	@Override
+	public boolean updPlanStatusSyncById(Long planUuid, Integer statusSync) {
+		List<Long> list = new ArrayList<>();
+		list.add(planUuid);
+		Integer orgId = IdUtils.doParse(Long.valueOf(planUuid)).getOrgId();
+		boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.updPlanByStatusSync(list, SyncStatusEnum.NO_SYNC.getStatus(), orgId));
+		return bool;
 	}
 
 

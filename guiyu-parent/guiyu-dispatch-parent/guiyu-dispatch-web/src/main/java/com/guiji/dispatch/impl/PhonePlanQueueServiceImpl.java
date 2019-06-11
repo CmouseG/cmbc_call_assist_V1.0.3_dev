@@ -4,10 +4,10 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.constant.RedisConstant;
-import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.enums.SyncStatusEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,10 +40,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private IDispatchBatchLineService lineService;
 
 	@Autowired
-	private DispatchPlanMapper dispatchPlanMapper;
-
-	@Autowired
-	private ThreadPoolTaskExecutor asyncServiceExecutor;
+	private IDispatchPlanService planService;
 
 	@Override
 	public void execute() throws Exception {
@@ -102,11 +98,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 												DispatchPlan sortPlan = lineService.sortLine(plan);
 												if (isVerChanged(systemMaxPlanVer)) {
 													if (!isNewAlotContains((List<UserLineBotenceVO>) redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN), dto.getUserId() + "_" + dto.getBotenceName())) {
-
+														/*
 														this.pushPlan2Queue(dispatchPlanList, queue);
 														this.cleanQueueByQueueName(queue);
-
 														break LoopUser;
+														*/
+														//将该计划任务的推送队列状态变更为"未推送"
+														planService.updPlanStatusSyncById(plan.getPlanUuidLong(), SyncStatusEnum.NO_SYNC.getStatus());
 													}
 												}
 												this.pushPlanQueue(sortPlan, queue);

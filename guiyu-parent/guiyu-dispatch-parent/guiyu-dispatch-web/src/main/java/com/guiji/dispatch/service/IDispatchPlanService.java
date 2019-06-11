@@ -162,6 +162,9 @@ public interface IDispatchPlanService {
     //查询批次数量
     int queryPlanCountByBatch(Integer batchId);
 
+    //更新
+    boolean updPlanStatusSyncById(Long planUuid, Integer statusSync);
+
     void addPlan(DispatchPlan dispatchPlan);
 
     void addPlanAsync(AddPlanAsyncEntity entity);

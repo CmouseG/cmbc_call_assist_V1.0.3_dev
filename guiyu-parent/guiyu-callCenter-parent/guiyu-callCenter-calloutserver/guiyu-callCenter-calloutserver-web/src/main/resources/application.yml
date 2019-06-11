@@ -108,5 +108,5 @@ weixin:
     reordListUrl: pages/list/list #小程序通话记录列表页面
 rabbit:
   general:
-    fanout:
+    direct:
       queue: callCenter.record_update_mq #队列名称

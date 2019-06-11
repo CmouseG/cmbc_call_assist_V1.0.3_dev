@@ -64,7 +64,7 @@ public class LineServiceImpl implements LineService {
             sipLineVO.setLineName(list.get(0).getLineName());
             sipLineVO.setUserId(userId.toString());
 
-            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), sipLineVO);
+            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), sipLineVO, 10*60L);
 
             return sipLineVO;
         }
@@ -90,7 +90,7 @@ public class LineServiceImpl implements LineService {
                 vo.setLineName("网关端口"+voipGwPorts.get(0).getPort());
             }
 
-            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), vo);
+            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), vo, 10*60L);
 
             return vo;
         }
@@ -110,7 +110,7 @@ public class LineServiceImpl implements LineService {
             vo.setLineId(lineId);
             vo.setLineName(sipLineBaseInfos.get(0).getLineName());
 
-            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), vo);
+            redisUtil.hset(ClmConstants.LINE_INFO_MAP, lineId.toString(), vo, 10*60L);
 
             return vo;
         }
@@ -120,6 +120,10 @@ public class LineServiceImpl implements LineService {
 
     @Override
     public void updateLineInfo(SipLineExclusive exclusive, int op) {
+
+        if(exclusive.getLineId() == null) {
+            return;
+        }
 
         if (ClmConstants.DEL == op) {
             redisUtil.hdel(ClmConstants.LINE_INFO_MAP, exclusive.getLineId().toString());
@@ -137,6 +141,10 @@ public class LineServiceImpl implements LineService {
 
     @Override
     public void updateLineInfo(VoipGwPort voipGwPort, int op) {
+
+        if(voipGwPort.getLineId() == null) {
+            return;
+        }
 
         String userId = voipGwPort.getUserId();
         Integer lineId = voipGwPort.getLineId();

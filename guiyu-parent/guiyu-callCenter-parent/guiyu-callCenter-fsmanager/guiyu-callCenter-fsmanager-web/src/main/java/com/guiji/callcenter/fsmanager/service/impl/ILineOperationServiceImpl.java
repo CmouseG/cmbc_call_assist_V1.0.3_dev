@@ -196,7 +196,7 @@ public class ILineOperationServiceImpl implements ILineOperationService {
 
             //codec有修改，刷新s缓存
             if(lineInfo.getCodec()!=null && !lineInfo.getCodec().equals(lineInfoDB.getCodec())){
-                putToRedis(lineInfo.getLineId()+"",lineInfo.getFsagentId(),lineInfo.getCodec());
+                putToRedis(lineInfo.getLineId()+"",lineInfoDB.getFsagentId(),lineInfo.getCodec());
             }
         }
     }
@@ -567,8 +567,8 @@ public class ILineOperationServiceImpl implements ILineOperationService {
                 redisUtil.set("sipLineId_"+lineId,fsLineInfoVO);
             }
         }catch (Exception e){
-          log.error("线路：[{}]，获取freeswitch信息失败[{}],错误:[{}]",lineId,serviceId,e.toString());
-
+            log.error("线路：[{}]，获取freeswitch信息失败[{}],错误:[{}],清除缓存",lineId,serviceId,e.toString());
+            redisUtil.del("sipLineId_"+lineId);
         }
     }
 

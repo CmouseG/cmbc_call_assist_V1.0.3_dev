@@ -178,8 +178,8 @@ public class CallBack4MQListener {
 						+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 				DispatchPlan dispatchRedis = (DispatchPlan) obj;
 				//拨打限制，重新推入队列
-				redisUtil.leftPush(planQueue, dispatchRedis);
-				redisUtil.del(lineLimitKey);
+                redisUtil.del(lineLimitKey);
+				boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
 			}else{
 				logger.info("lineLimitKey:{},限制拨打数据为null", lineLimitKey);
 			}
@@ -207,8 +207,8 @@ public class CallBack4MQListener {
 							+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					//不可用，重新推入队列
-					redisUtil.leftPush(planQueue, dispatchRedis);
-					redisUtil.del(lineDisabledKey);
+                    redisUtil.del(lineDisabledKey);
+					boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
 				}
 			}
 		}catch(Exception e){

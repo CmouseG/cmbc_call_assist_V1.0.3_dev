@@ -170,9 +170,9 @@ public class CallBack4MQListener {
 			String planUuid = mqSuccPhoneDto.getPlanuuid();
 			String lineLimitKey = RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid;
 			Object obj = redisUtil.get(lineLimitKey);
-			logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, obj);
+		//	logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, obj);
 			if (null != obj) {
-				logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, JsonUtils.bean2Json(obj));
+		//		logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, JsonUtils.bean2Json(obj));
 				//队列
 				String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT
 						+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
@@ -180,9 +180,7 @@ public class CallBack4MQListener {
 				//拨打限制，重新推入队列
             //    redisUtil.del(lineLimitKey);
 				boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
-				logger.info("lineLimitKey:{},重新推入队列{}", bool?"成功":"失败");
-			}else{
-				logger.info("lineLimitKey:{},限制拨打数据为null", lineLimitKey);
+		//		logger.info("lineLimitKey:{},重新推入队列{}", lineLimitKey, bool?"成功":"失败");
 			}
 		}catch(Exception e){
 			logger.error("判断SIM卡线路是否限制拨打,重新推入推列异常", e);

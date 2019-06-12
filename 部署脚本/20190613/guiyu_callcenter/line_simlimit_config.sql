@@ -15,3 +15,4 @@ CREATE TABLE `line_simlimit_config` (
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`line_id`)
+  );

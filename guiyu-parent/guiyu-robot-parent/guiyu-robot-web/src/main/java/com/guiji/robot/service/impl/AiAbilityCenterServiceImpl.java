@@ -597,7 +597,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 
 		if(!aiHangupReq.getSeqId().equals(nowAi.getSeqId())) {
 			//机器人不存在，不再抛异常了
-			logger.error("当前机器人:{}会话id:{}，当前挂断会话id：{}不一致，挂断失败",aiHangupReq.getAiNo(), aiHangupReq.getSeqId(), aiHangupReq.getSeqId());
+			logger.error("当前机器人:{}会话id:{}，当前挂断会话id：{}不一致，挂断失败",aiHangupReq.getAiNo(), nowAi.getSeqId(), aiHangupReq.getSeqId());
 
 			throw new RobotException(AiErrorEnum.AI00060038.getErrorCode(), AiErrorEnum.AI00060038.getErrorMsg());
 		}

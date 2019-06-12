@@ -8,6 +8,10 @@ public class MQSuccPhoneDto {
 	private String tempId;
 	private Integer userId;
 	private Boolean simLineIsOk;
+	/**
+	 * sim限制标识  false：限制拨打
+	 */
+	private Boolean simLimitFlag;
 
 	public String getPlanuuid() {
 		return planuuid;
@@ -50,5 +54,13 @@ public class MQSuccPhoneDto {
 
 	public void setSimLineIsOk(Boolean simLineIsOk) {
 		this.simLineIsOk = simLineIsOk;
+	}
+
+	public Boolean getSimLimitFlag() {
+		return simLimitFlag;
+	}
+
+	public void setSimLimitFlag(Boolean simLimitFlag) {
+		this.simLimitFlag = simLimitFlag;
 	}
 }

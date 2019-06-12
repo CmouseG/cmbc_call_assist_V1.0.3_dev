@@ -28,9 +28,9 @@ public class DispatchManagerImpl implements DispatchManager {
 
     @Override
     public void successScheduleSim(String planUuid, String phoneNo, String intent, Integer userId, Integer lineId,
-                                   String tempId, Boolean isNeedPlan, Boolean simLineIsOk) {
-        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}],isNeedPlan[{}]",
-                planUuid,phoneNo,intent,lineId,simLineIsOk,isNeedPlan);
+                                   String tempId, Boolean isNeedPlan, Boolean simLineIsOk, Boolean simLimitFlag) {
+        log.info("=========startSchedule:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}],isNeedPlan[{}],simLimitFlag[{}]",
+                planUuid,phoneNo,intent,lineId,simLineIsOk,isNeedPlan,simLimitFlag);
         if(StringUtils.isBlank(planUuid)){
             log.info("---startSchedule planUuid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}],lineId[{}],simLineIsOk[{}]",
                     planUuid,phoneNo,intent,lineId,simLineIsOk);
@@ -53,6 +53,9 @@ public class DispatchManagerImpl implements DispatchManager {
         if(simLineIsOk!=null){
             mqSuccPhoneDto.setSimLineIsOk(simLineIsOk);
         }
+        if(simLimitFlag!=null){
+            mqSuccPhoneDto.setSimLimitFlag(simLimitFlag);
+        }
         log.warn("{},{},{},{},{}", phoneNo, com.guiji.utils.DateUtil.formatDatetime(new Date()),
                 Constant.MODULE_CALLOUTSERVER, "回调调度中心", planUuid);
 
@@ -70,6 +73,6 @@ public class DispatchManagerImpl implements DispatchManager {
      */
     @Override
     public void successSchedule(String planUuid, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId, Boolean isNeedPlan) {
-        successScheduleSim( planUuid,  phoneNo,  intent,  userId,  lineId, tempId,  isNeedPlan,  null);
+        successScheduleSim( planUuid,  phoneNo,  intent,  userId,  lineId, tempId,  isNeedPlan,  null,null);
     }
 }

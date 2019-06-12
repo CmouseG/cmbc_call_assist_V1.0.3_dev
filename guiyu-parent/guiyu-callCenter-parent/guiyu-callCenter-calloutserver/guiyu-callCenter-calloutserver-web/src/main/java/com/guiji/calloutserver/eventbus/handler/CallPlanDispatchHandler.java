@@ -162,7 +162,7 @@ public class CallPlanDispatchHandler {
                     if(!allowSimCall){
                         log.info("sim卡超限，不允许拨打,planUuid[{}]",callPlan.getPlanUuid());
                         dispatchService.successScheduleSim(callPlan.getPlanUuid(), callPlan.getPhoneNum(), null, callPlan.getCustomerId(),
-                                callPlan.getLineId(), callPlan.getTempId(), true, false);
+                                callPlan.getLineId(), callPlan.getTempId(), true, null, false);
                         return;
                     }
                 }

@@ -33,6 +33,13 @@ public interface DispatchPlanMapper {
 
     int updateByPrimaryKey(DispatchPlan record);
 
+    //计划完成变更
+    int finishPlanById(@Param("planUuid") Long planUuid,
+                       @Param("statusPlan") Integer statusPlan,
+                       @Param("result") String result,
+                       @Param("callbackTime") Date callbackTime,
+                       @Param("orgId") Integer orgId);
+
 	List<DispatchPlan> selectByCallHour(@Param("record")DispatchPlan record, @Param("orgId") Integer orgId);//@Param("orgIds")List<Integer> orgIds
 
     //获取等于当前日期的拨打用户列表

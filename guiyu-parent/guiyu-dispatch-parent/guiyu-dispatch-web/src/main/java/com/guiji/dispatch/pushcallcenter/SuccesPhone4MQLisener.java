@@ -1,11 +1,13 @@
 package com.guiji.dispatch.pushcallcenter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.enums.IsNotifyMsgEnum;
+import com.guiji.dispatch.enums.PlanStatusEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
@@ -84,27 +86,30 @@ public class SuccesPhone4MQLisener {
 			logger.info("当前队列任务接受的回调：" + message);
 			logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
 					"guiyu_dispatch", "呼叫中心回调SuccesPhone4MQLisener.process", message);
-			//判断线路是否可用(线路不可用，或被限制)
+			//判断线路是否可用
 			if (null != mqSuccPhoneDto
 					&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
-			    logger.info("当前计划plan_uuid:{},线路id:{}不可用或被限制", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
+			    logger.info("当前计划plan_uuid:{},线路id:{}不可用", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
 				return;
 			}
 
-			DispatchPlanExample ex = new DispatchPlanExample();
+			//判断线路是否被限制
+			if (null != mqSuccPhoneDto
+					&& null != mqSuccPhoneDto.getSimLimitFlag() && !mqSuccPhoneDto.getSimLimitFlag()) {
+				logger.info("当前计划plan_uuid:{},线路id:{}设置拨打限制", mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLineId());
+				return;
+			}
 
+			Long planUuid = Long.valueOf(mqSuccPhoneDto.getPlanuuid());
 			Integer orgId = IdUtils.doParse(Long.valueOf(mqSuccPhoneDto.getPlanuuid())).getOrgId();
-			ex.createCriteria().andPlanUuidEqualTo(Long.valueOf(mqSuccPhoneDto.getPlanuuid())).andOrgIdEqualTo(orgId);
-			List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
-			if (list.size() <= 0) {
+			DispatchPlan dispatchPlan = dispatchPlanMapper.queryDispatchPlanById(planUuid, orgId);
+			if (null == dispatchPlan) {
 				logger.info("当前队列任务回调 uuid错误！");
 				return;
 			} else {
-				DispatchPlan dispatchPlan = list.get(0);
-				dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
-				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());// 增加意向标签
-				dispatchPlan.setLineId(mqSuccPhoneDto.getLineId()+"");// 实际拨打线路ID
-				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
+				String result =  mqSuccPhoneDto.getLabel();
+				dispatchPlanMapper.finishPlanById(planUuid, PlanStatusEnum.FINISH.getStatus(), result,
+						new Date(), orgId);
 				logger.info("当前队列任务回调修改结果" + result);
 				//消息通知(改成定时任务，每小时执行一次)
 			//	this.sendMsgNotify(dispatchPlan);
@@ -127,7 +132,8 @@ public class SuccesPhone4MQLisener {
 	 * 发送短信
 	 * @param dispatchPlan
 	 */
-	private void sendSms(DispatchPlan dispatchPlan){
+	@Async
+	protected void sendSms(DispatchPlan dispatchPlan){
 		try{
 			SendMReqVO vo = new SendMReqVO();
 			vo.setOrgCode(dispatchPlan.getOrgCode());
@@ -145,6 +151,7 @@ public class SuccesPhone4MQLisener {
 	 * 发送消息通知
 	 * @param dispatchPlan
 	 */
+	@Async
 	private void sendMsgNotify(DispatchPlan dispatchPlan){
 		// 查询当前是否批次结束
 		MessageSend send = selectBatchOver(dispatchPlan);

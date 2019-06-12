@@ -1,19 +1,18 @@
 package com.guiji.dispatch.bean;
 
 public class MQSuccPhoneDto {
+
 	private String planuuid;
 	private String label;
-	private Integer userId;
 	private Integer lineId;
 	private String tempId;
+	private Integer userId;
 	private Boolean simLineIsOk;
-	
-	public Integer getUserId() {
-		return userId;
-	}
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
+	/**
+	 * sim限制标识  false：限制拨打
+	 */
+	private Boolean simLimitFlag;
+
 	public String getPlanuuid() {
 		return planuuid;
 	}
@@ -25,6 +24,12 @@ public class MQSuccPhoneDto {
 	}
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public Integer getLineId() {
@@ -49,5 +54,13 @@ public class MQSuccPhoneDto {
 
 	public void setSimLineIsOk(Boolean simLineIsOk) {
 		this.simLineIsOk = simLineIsOk;
+	}
+
+	public Boolean getSimLimitFlag() {
+		return simLimitFlag;
+	}
+
+	public void setSimLimitFlag(Boolean simLimitFlag) {
+		this.simLimitFlag = simLimitFlag;
 	}
 }

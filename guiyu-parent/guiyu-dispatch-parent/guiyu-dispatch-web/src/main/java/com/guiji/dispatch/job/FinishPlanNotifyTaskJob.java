@@ -51,6 +51,7 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String param) throws Exception {
+        logger.info("开始执行已完成任务站内信、短信通知定时任务  begin");
         Date time = new Date();
         //获取拨打日期
         Integer today = Integer.valueOf(DateTimeUtils.getDateString(time, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SPLICING));
@@ -83,6 +84,7 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
             }
 
         }
+        logger.info("开始执行已完成任务站内信、短信通知定时任务  end");
         return ReturnT.SUCCESS;
     }
 
@@ -97,6 +99,7 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
             //统计计划数量(已完成，计划中，暂停中，停止中)
             if (null != totalData &&
                     totalData.getFinishCount()>0 && totalData.getDoingCount() == 0) {
+                logger.info("用户:{} 批次:{}已完成，开始通知", totalData.getUserId(), totalData.getBatchId());
                 send = new MessageSend();
                 send.setUserId(Long.valueOf(totalData.getUserId()));
                 send.setNoticeType(NoticeType.task_finish);

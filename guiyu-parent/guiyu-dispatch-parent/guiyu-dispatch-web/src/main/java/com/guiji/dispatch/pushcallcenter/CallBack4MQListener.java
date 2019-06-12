@@ -60,6 +60,9 @@ public class CallBack4MQListener {
 		}
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
 		MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
+		if(null == mqSuccPhoneDto){
+			return;
+		}
 		String time = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
 		logger.info("呼叫中心回调数据:{},回调时间:{}", message, time);
 		logger.warn("呼叫中心回调数据，号码:{}, 时间:{}, 模块:{}, 操作:{}, 内容:{}", mqSuccPhoneDto.getPlanuuid(), time,
@@ -68,11 +71,23 @@ public class CallBack4MQListener {
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/
 		//判断线路是否可用
-		if (null != mqSuccPhoneDto
-				&& null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
+		Integer userId = mqSuccPhoneDto.getUserId();
+		String tempId = mqSuccPhoneDto.getTempId();
+		boolean bool = true;
+		//SIM线路拨打限制
+		if( null != mqSuccPhoneDto.getSimLimitFlag() && !mqSuccPhoneDto.getSimLimitFlag()) {
+			this.checkSimLineLimit(mqSuccPhoneDto);
+			bool = false;
+		}
+
+		//SIM卡线路不可用
+		if(bool && null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
 			this.checkSimLineDisabled(mqSuccPhoneDto);//线路不可用，则放回队列
-			this.counterDecr(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getTempId());//计数器-1
-		}else {
+			bool = false;
+		}
+
+		//正常流程
+		if(bool){
 			PushRecordsExample ex = new PushRecordsExample();
 			ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
 					.andCallbackStatusEqualTo(Constant.NOCALLBACK);
@@ -80,12 +95,9 @@ public class CallBack4MQListener {
 			// 设置已经回调的状态
 			re.setCallbackStatus(Constant.CALLBACKED);
 			int result = recordMapper.updateByExampleSelective(re, ex);
-			if (result > 0) {
-				this.counterDecr(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getTempId());//计数器-1
-			}
 		}
 
-		logger.info("ready to notify third api: {}", JsonUtils.bean2Json(mqSuccPhoneDto));
+		this.counterDecr(userId, tempId);//计数器-1
 
 		//通知三方单个号码完成
 		this.notifyThirdResult(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLabel());
@@ -109,6 +121,7 @@ public class CallBack4MQListener {
 	 */
 	@Async("asyncSuccPhoneExecutor")
 	protected void notifyThirdResult(Integer userId, String planUuid, String result){
+		logger.info("ready to notify third api userId{},planUuid:{},result:{}", userId, planUuid, result);
 		Integer orgId = getApiService.getOrgIdByUser(userId + "");
 		DispatchPlan vo = planMapper.queryDispatchPlanById(Long.valueOf(planUuid), orgId);
 
@@ -144,6 +157,30 @@ public class CallBack4MQListener {
 	}
 
 	/**
+	 * 判断限制拨打，重新放入队列中
+	 * @param mqSuccPhoneDto
+	 */
+	private void checkSimLineLimit(MQSuccPhoneDto mqSuccPhoneDto){
+		try{
+			//从redis中获取之前从拨打队列获取的任务数据
+			String planUuid = mqSuccPhoneDto.getPlanuuid();
+			String lineLimitKey = RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid;
+			Object obj = redisUtil.get(lineLimitKey);
+			if (null != obj) {
+				//队列
+				String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT
+						+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
+				DispatchPlan dispatchRedis = (DispatchPlan) obj;
+				//拨打限制，重新推入队列
+				redisUtil.leftPush(planQueue, dispatchRedis);
+				redisUtil.del(lineLimitKey);
+			}
+		}catch(Exception e){
+			logger.error("判断SIM卡线路是否限制拨打,重新推入推列异常", e);
+		}
+	}
+
+	/**
 	 * 判断处理网关SIM卡线路是否可用,不可用则重新推入队列
 	 * @param mqSuccPhoneDto
 	 */
@@ -155,12 +192,11 @@ public class CallBack4MQListener {
 				//从redis中获取之前从队列获取的任务数据
 				String planUuid = mqSuccPhoneDto.getPlanuuid();
 				String lineDisabledKey = RedisConstant.RedisConstantKey.LINE_DISABLED + planUuid;
-				//队列
-				Integer userId = mqSuccPhoneDto.getUserId();
-				String tempId = mqSuccPhoneDto.getTempId();
-				String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + userId + "_" + tempId;
 				Object obj = redisUtil.get(lineDisabledKey);
 				if (null != obj) {
+					//队列
+					String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT
+							+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					//不可用，重新推入队列
 					redisUtil.leftPush(planQueue, dispatchRedis);

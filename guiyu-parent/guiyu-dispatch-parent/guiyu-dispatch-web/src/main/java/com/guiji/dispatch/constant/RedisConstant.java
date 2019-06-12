@@ -53,6 +53,8 @@ public class RedisConstant {
         //遇到呼叫中心线路不可用或者被限制的数据： LINE_DISABLED_ + plan_uuid
         public final static String LINE_DISABLED = "LINE_DISABLED_";
 
+        //SIM线路限制拨打  SIM_LINE_LIMIT_ + plan_uuid
+        public final static String SIM_LINE_LIMIT = "SIM_LINE_LIMIT_";
 
         public final static String DISPATCH_ADD_PLAN_COUNT_PRE = "dispatch.plan.batch.count";
 

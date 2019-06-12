@@ -669,6 +669,19 @@
       cust_company = #{custCompany}
     where plan_uuid = #{planUuid,jdbcType=BIGINT}  and org_id=#{orgId,jdbcType=BIGINT}
   </update>
+
+
+  <update id="finishPlanById">
+    update dispatch_plan
+    <set>
+      status_plan = #{statusPlan},
+      result = #{result},
+      gmt_modified = #{callbackTime}
+    </set>
+    WHERE plan_uuid = #{planUuid}
+    AND org_id=#{orgId}
+  </update>
+
   <select id="selectByCallHour" resultType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     select
     <include refid="Base_Column_List" />

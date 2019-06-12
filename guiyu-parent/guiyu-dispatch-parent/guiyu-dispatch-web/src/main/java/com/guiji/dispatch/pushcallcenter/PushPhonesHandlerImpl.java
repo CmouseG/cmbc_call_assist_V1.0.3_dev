@@ -176,6 +176,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 											//预备可能遇到呼叫中心线路不可用的情况,有效时间15分钟
 										 	redisUtil.set(RedisConstant.RedisConstantKey.LINE_DISABLED + dispatchRedis.getPlanUuid(), dispatchRedis,
 													RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT);
+
+										 	//防止SIM线路拨打限制
+											 redisUtil.set(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + dispatchRedis.getPlanUuid(), dispatchRedis);
 										 }
 									}
 

@@ -100,7 +100,6 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
      * @param totalData
      * @return
      */
-    @Async
     protected MessageSend sendMsgNotify(TotalBatchPlanCountVo totalData) {
         MessageSend send = null;
         try {

@@ -45,6 +45,8 @@ public class RedissonConfig {
     public RedissonClient getRedisson() {
 
         Config config = new Config();
+
+        config.setCodec(new org.redisson.codec.JsonJacksonCodec());
         config.useSingleServer().setAddress("redis://" + host + ":" + port)
                 .setDatabase(database)
                 .setPassword(password)

@@ -31,6 +31,7 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.rabbitmq.client.Channel;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -169,7 +170,9 @@ public class CallBack4MQListener {
 			String planUuid = mqSuccPhoneDto.getPlanuuid();
 			String lineLimitKey = RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid;
 			Object obj = redisUtil.get(lineLimitKey);
+			logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, obj);
 			if (null != obj) {
+				logger.info("lineLimitKey:{},限制拨打数据:{}", lineLimitKey, JsonUtils.bean2Json(obj));
 				//队列
 				String planQueue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT
 						+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
@@ -177,6 +180,8 @@ public class CallBack4MQListener {
 				//拨打限制，重新推入队列
 				redisUtil.leftPush(planQueue, dispatchRedis);
 				redisUtil.del(lineLimitKey);
+			}else{
+				logger.info("lineLimitKey:{},限制拨打数据为null", lineLimitKey);
 			}
 		}catch(Exception e){
 			logger.error("判断SIM卡线路是否限制拨打,重新推入推列异常", e);

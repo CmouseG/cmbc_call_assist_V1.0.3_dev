@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -171,6 +172,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()){
 										//防止SIM线路拨打限制
 										redisUtil.set(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + dispatchRedis.getPlanUuid(), dispatchRedis);
+										logger.info("lineLimitKey:{}存入redis:{}", RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + dispatchRedis.getPlanUuid(), JsonUtils.bean2Json(dispatchRedis));
 										//预备可能遇到呼叫中心线路不可用的情况,有效时间15分钟
 										redisUtil.set(RedisConstant.RedisConstantKey.LINE_DISABLED + dispatchRedis.getPlanUuid(), dispatchRedis,
 												RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT);

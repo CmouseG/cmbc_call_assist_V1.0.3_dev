@@ -208,7 +208,7 @@ public class CallBack4MQListener {
 							+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					//不可用，重新推入队列
-                //    redisUtil.del(lineDisabledKey);
+                    redisUtil.del(lineDisabledKey);
 					boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
 				}
 			}

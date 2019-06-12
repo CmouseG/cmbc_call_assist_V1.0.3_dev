@@ -169,17 +169,15 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 									//SIM网关路线
 									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()){
-										 if(!isSimPush) {
-										 	//不推送呼叫中，重新入栈推送队列
+										//防止SIM线路拨打限制
+										redisUtil.set(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + dispatchRedis.getPlanUuid(), dispatchRedis);
+										//预备可能遇到呼叫中心线路不可用的情况,有效时间15分钟
+										redisUtil.set(RedisConstant.RedisConstantKey.LINE_DISABLED + dispatchRedis.getPlanUuid(), dispatchRedis,
+												RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT);
+										if(!isSimPush) {
+											//不推送呼叫中，重新入栈推送队列
 											redisUtil.leftPush(queue, dispatchRedis);
-										 }else{
-											//预备可能遇到呼叫中心线路不可用的情况,有效时间15分钟
-										 	redisUtil.set(RedisConstant.RedisConstantKey.LINE_DISABLED + dispatchRedis.getPlanUuid(), dispatchRedis,
-													RedisConstant.RedisConstantKey.REDIS_CALL_QUEUE_USER_LINE_ROBOT_TIMEOUT);
-
-										 	//防止SIM线路拨打限制
-											 redisUtil.set(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + dispatchRedis.getPlanUuid(), dispatchRedis);
-										 }
+										}
 									}
 
 									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板

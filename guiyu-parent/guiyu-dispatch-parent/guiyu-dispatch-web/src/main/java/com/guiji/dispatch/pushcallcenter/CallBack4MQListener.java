@@ -70,7 +70,7 @@ public class CallBack4MQListener {
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路是否可用,不可用则重新推入队列	begin*****************/
-		//判断线路是否可用
+		String planUuid = mqSuccPhoneDto.getPlanuuid();
 		Integer userId = mqSuccPhoneDto.getUserId();
 		String tempId = mqSuccPhoneDto.getTempId();
 		boolean bool = true;
@@ -78,9 +78,11 @@ public class CallBack4MQListener {
 		if( null != mqSuccPhoneDto.getSimLimitFlag() && !mqSuccPhoneDto.getSimLimitFlag()) {
 			this.checkSimLineLimit(mqSuccPhoneDto);
 			bool = false;
+		}else{
+			redisUtil.del(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid);
 		}
 
-		//SIM卡线路不可用
+		//判断线路是否可用、SIM卡线路不可用
 		if(bool && null != mqSuccPhoneDto.getSimLineIsOk() && !mqSuccPhoneDto.getSimLineIsOk()) {
 			this.checkSimLineDisabled(mqSuccPhoneDto);//线路不可用，则放回队列
 			bool = false;
@@ -97,7 +99,8 @@ public class CallBack4MQListener {
 			int result = recordMapper.updateByExampleSelective(re, ex);
 		}
 
-		this.counterDecr(userId, tempId);//计数器-1
+		//计数器-1
+		this.counterDecr(userId, tempId);
 
 		//通知三方单个号码完成
 		this.notifyThirdResult(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLabel());

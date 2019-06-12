@@ -76,11 +76,11 @@ public class CallBack4MQListener {
 		String tempId = mqSuccPhoneDto.getTempId();
 		boolean bool = true;
 		//SIM线路拨打限制
-		if( null != mqSuccPhoneDto.getSimLimitFlag() && !mqSuccPhoneDto.getSimLimitFlag()) {
-			this.checkSimLineLimit(mqSuccPhoneDto);
+		if(null != mqSuccPhoneDto.getSimLimitFlag() && !mqSuccPhoneDto.getSimLimitFlag()) {
+			this.checkSimLineLimit(mqSuccPhoneDto);//限制拨打判断是否放回拨打队列
 			bool = false;
 		}else{
-			redisUtil.del(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid);
+			redisUtil.del(RedisConstant.RedisConstantKey.SIM_LINE_LIMIT + planUuid);//删除SIM限制拨打key
 		}
 
 		//判断线路是否可用、SIM卡线路不可用
@@ -178,8 +178,9 @@ public class CallBack4MQListener {
 						+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 				DispatchPlan dispatchRedis = (DispatchPlan) obj;
 				//拨打限制，重新推入队列
-                redisUtil.del(lineLimitKey);
+            //    redisUtil.del(lineLimitKey);
 				boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
+				logger.info("lineLimitKey:{},重新推入队列{}", bool?"成功":"失败");
 			}else{
 				logger.info("lineLimitKey:{},限制拨打数据为null", lineLimitKey);
 			}
@@ -207,7 +208,7 @@ public class CallBack4MQListener {
 							+ mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
 					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					//不可用，重新推入队列
-                    redisUtil.del(lineDisabledKey);
+                //    redisUtil.del(lineDisabledKey);
 					boolean bool = redisUtil.leftPush(planQueue, dispatchRedis);
 				}
 			}

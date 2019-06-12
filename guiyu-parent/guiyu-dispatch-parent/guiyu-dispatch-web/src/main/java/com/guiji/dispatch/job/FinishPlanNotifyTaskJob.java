@@ -8,9 +8,11 @@ import com.guiji.dispatch.enums.BatchNotifyStatusEnum;
 import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.TotalBatchPlanCountVo;
+import com.guiji.notice.api.INoticeSend;
 import com.guiji.notice.enm.NoticeType;
 import com.guiji.notice.entity.MessageSend;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.wechat.vo.SendMsgReqVO;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -41,6 +44,9 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
 
     @Autowired
     private GetApiService getApiService;
+
+    @Autowired
+    private INoticeSend sendMsg;
 
     @Value("${weixin.templateId}")
     String weixinTemplateId;
@@ -69,14 +75,15 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
             //获取计划表中完成数量
             List<TotalBatchPlanCountVo> totalList = new ArrayList<TotalBatchPlanCountVo>();
             for(Integer orgId: orgIdList){
-                List<TotalBatchPlanCountVo> totalBatch = planMapper.totalPlanByOrg(orgId, today);
+                //统计未通知的用户、批次计划各种状态数量
+                List<TotalBatchPlanCountVo> totalBatch = planMapper.totalNoNotifyPlanByOrg(orgId, today);
                 totalList.addAll(totalBatch);
             }
             //通知
             if(null != totalList && totalList.size()>0){
                 for(TotalBatchPlanCountVo totalData : totalList){
                     //消息通知
-                    MessageSend msg = this.selectBatchOver(totalData);
+                    MessageSend msg = this.sendMsgNotify(totalData);
                     if(null != msg) {//变更批次状态, 已通知
                         batchMapper.updNotifyStatusByBatch(totalData.getBatchId(), BatchNotifyStatusEnum.SUCCESS.getStatus());
                     }
@@ -93,7 +100,8 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
      * @param totalData
      * @return
      */
-    private MessageSend selectBatchOver(TotalBatchPlanCountVo totalData) {
+    @Async
+    protected MessageSend sendMsgNotify(TotalBatchPlanCountVo totalData) {
         MessageSend send = null;
         try {
             //统计计划数量(已完成，计划中，暂停中，停止中)
@@ -117,6 +125,9 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
                 map.put("keyword2", new SendMsgReqVO.Item("任务完成", null));
                 map.put("keyword3", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
                 send.setWeixinData(map);
+
+                logger.info("当前批次结束,通知结束消息:{}", JsonUtils.bean2Json(send));
+                sendMsg.sendMessage(send);
             }
         }catch(Exception e){
             logger.error("消息通知异常", e);

@@ -76,6 +76,6 @@ public interface DispatchPlanMapper {
     List<DispatchPlan> getPlanUuidList(DispatchPlanExample example);
 
     //统计计划表中按批次分组统计各种状态数量
-    List<TotalBatchPlanCountVo> totalPlanByOrg(@Param("orgId") Integer orgId,
+    List<TotalBatchPlanCountVo> totalNoNotifyPlanByOrg(@Param("orgId") Integer orgId,
                                                @Param("callData") Integer callData);
 }

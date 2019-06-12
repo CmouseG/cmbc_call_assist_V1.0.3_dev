@@ -1053,7 +1053,7 @@
   </select>
 
 
-  <select id="totalPlanByOrg" resultType="com.guiji.dispatch.vo.TotalBatchPlanCountVo">
+  <select id="totalNoNotifyPlanByOrg" resultType="com.guiji.dispatch.vo.TotalBatchPlanCountVo">
     SELECT
       p.batch_id,
       p.user_id,
@@ -1065,6 +1065,7 @@
       IFNULL(SUM(p.status_plan = 4),0) AS stopCount
     FROM dispatch_plan p , dispatch_plan_batch b
     WHERE p.batch_id = b.id
+      AND b.status_notify = ${@com.guiji.dispatch.enums.BatchNotifyStatusEnum@WAITING.getStatus()}
       AND p.org_id = #{orgId}
       AND p.call_data = #{callData}
       GROUP BY p.batch_id, p.user_id

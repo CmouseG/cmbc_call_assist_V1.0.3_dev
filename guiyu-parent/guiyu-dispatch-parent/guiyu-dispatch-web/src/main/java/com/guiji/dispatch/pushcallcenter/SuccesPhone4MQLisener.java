@@ -152,7 +152,7 @@ public class SuccesPhone4MQLisener {
 	 * @param dispatchPlan
 	 */
 	@Async
-	private void sendMsgNotify(DispatchPlan dispatchPlan){
+	protected void sendMsgNotify(DispatchPlan dispatchPlan){
 		// 查询当前是否批次结束
 		MessageSend send = selectBatchOver(dispatchPlan);
 		String redisKey = RedisConstant.RedisConstantKey.MSG_NOTIFY_FLAG_ + dispatchPlan.getBatchId();

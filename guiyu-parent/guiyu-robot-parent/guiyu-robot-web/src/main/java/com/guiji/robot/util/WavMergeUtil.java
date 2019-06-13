@@ -79,8 +79,28 @@ public class WavMergeUtil {
 				IOUtils.closeQuietly(bi3);
 			}
 		} else {
-		   //否则只有一个,直接返回语音路径
-			orgWavList.get(0);
+
+			BufferedInputStream b4 = null;
+
+			AudioInputStream audioInputStream = null;
+
+			try {
+				//否则只有一个,直接返回语音路径
+				b4 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(0))));
+
+				audioInputStream = AudioSystem.getAudioInputStream(b4);
+
+				//生成语音
+				AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, fileOut);
+			} catch (Exception ex) {
+
+			} finally {
+				IOUtils.closeQuietly(b4);
+
+				IOUtils.closeQuietly(audioInputStream);
+			}
+
+
 		}
 	}
 }

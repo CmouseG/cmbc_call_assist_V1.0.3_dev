@@ -104,7 +104,8 @@ public class CallStateServiceImpl implements CallStateService {
                 }
 
                 try {
-                    dispatchService.successSchedule(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(),callOutPlan.getAccurateIntent(), callOutPlan.getCustomerId(), callOutPlan.getLineId(),callOutPlan.getTempId(),true);
+                    dispatchService.successSchedule(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(),callOutPlan.getAccurateIntent()!=null? callOutPlan.getAccurateIntent():"W",
+                            callOutPlan.getCustomerId(), callOutPlan.getLineId(),callOutPlan.getTempId(),true);
                     log.info("---->>回调dispatcher，返回结果,callId[{}]",callOutPlan.getCallId());
                 } catch (Exception e) {
                     log.error("调用调度中心 successSchedule 出现异常:" + e);

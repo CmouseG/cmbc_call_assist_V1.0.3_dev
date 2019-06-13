@@ -98,10 +98,9 @@ public class CallServiceImpl implements CallService {
             } catch (Exception e) {
                log.error("makeCall线程sleep出现异常",e);
             }
-            log.info("开始执行呼叫命令[{}]", cmd);
-            fsManager.executeAsync(cmd);
         }
-
+        log.info("开始..执行呼叫命令[{}]", cmd);
+        fsManager.executeAsync(cmd);
 
         Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("bell_time","bell_time");
         String value = returnData.getBody().get(0).getDictValue();

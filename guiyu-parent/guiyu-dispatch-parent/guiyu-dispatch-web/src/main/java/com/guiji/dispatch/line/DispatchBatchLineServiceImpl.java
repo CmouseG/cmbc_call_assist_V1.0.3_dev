@@ -114,7 +114,7 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 	}
 
 	@Override
-	public void getLineRule() {/*
+	public void getLineRule() {
 		DispatchPlan param = new DispatchPlan();
 		param.setCallData(Integer.valueOf(new SimpleDateFormat("yyyyMMdd").format(new Date())));
 		// 查询用户
@@ -126,12 +126,13 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 					.querySipRouteRule(String.valueOf(dis.getUserId()));
 			if (querySipRouteRule.getBody() != null) {
 				// 查询每个用户的分配规则
-				redisUtils.set("LINE_RULE_USER_ID_" + dis.getUserId(), querySipRouteRule.getBody());
+				redisUtils.set("LINE_RULE_USER_ID_" + dis.getUserId(), querySipRouteRule.getBody(),
+						RedisConstant.RedisConstantKey.lineKey.USER_LINE_RULE_TIMEOUT);
 			} else {
 				logger.info("查询用户sip线路路由规则为null>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			}
 		}
-	*/}
+	}
 
 	@Override
 	public void getLineRate() {

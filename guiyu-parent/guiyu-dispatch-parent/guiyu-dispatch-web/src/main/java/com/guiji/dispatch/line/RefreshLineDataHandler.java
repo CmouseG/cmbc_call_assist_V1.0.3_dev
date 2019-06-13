@@ -21,8 +21,8 @@ public class RefreshLineDataHandler extends IJobHandler{
 
 	@Override
 	public ReturnT<String> execute(String arg0) throws Exception {
-//		//根据用户更新用户规则
-		lineService.getLineRule();
+//		//根据用户更新用户规则(已经放到线路优先级处理中获取，或者系统启动时获取)
+	//	lineService.getLineRule();
 		//更新接通率
 		lineService.getLineRate();
 		return SUCCESS;

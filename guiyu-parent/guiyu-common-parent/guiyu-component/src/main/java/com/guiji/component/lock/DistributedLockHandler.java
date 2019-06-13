@@ -81,7 +81,7 @@ public class DistributedLockHandler
                 }
                 else
                 {
-                    logger.info(Thread.currentThread().getName() + " : ----> lock[" + lock.getName() + "] is exist!!!");
+                    logger.debug(Thread.currentThread().getName() + " : ----> lock[" + lock.getName() + "] is exist!!!");
                 }
                 if (System.currentTimeMillis() - startTime > timeout)
                 {

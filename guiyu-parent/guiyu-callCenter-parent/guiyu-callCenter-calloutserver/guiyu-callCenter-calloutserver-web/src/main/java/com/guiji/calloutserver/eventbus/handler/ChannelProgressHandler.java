@@ -97,7 +97,9 @@ public class ChannelProgressHandler {
                         log.info("2分钟后，开始释放ai资源,callplanId[{}], aiId[{}]", callOutPlan2Minutes.getCallId(), callOutPlan2Minutes.getAiId());
                         aiManager.releaseAi(callOutPlan2Minutes);
                         log.info("2分钟后，回调调度中心，callId[{}]", callOutPlan2Minutes.getCallId());
-                        dispatchService.successSchedule(callOutPlan2Minutes.getPlanUuid(),callOutPlan2Minutes.getPhoneNum(),callOutPlan2Minutes.getAccurateIntent(), callOutPlan2Minutes.getCustomerId(), callOutPlan2Minutes.getLineId(), callOutPlan2Minutes.getTempId(),true);
+                        dispatchService.successSchedule(callOutPlan2Minutes.getPlanUuid(),callOutPlan2Minutes.getPhoneNum(),
+                                callOutPlan2Minutes.getAccurateIntent()!=null ? callOutPlan2Minutes.getAccurateIntent() : "W", callOutPlan2Minutes.getCustomerId(),
+                                callOutPlan2Minutes.getLineId(), callOutPlan2Minutes.getTempId(),true);
                     }
 
                 }, 2, TimeUnit.MINUTES);

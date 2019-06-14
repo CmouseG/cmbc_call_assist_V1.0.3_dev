@@ -4,14 +4,24 @@ server:
 spring:
   application:
     name: guiyu-sms-web
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db_guiji?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: root
+  datasource:  
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: sms
+    password: sms@1234
+    driver-class-name: com.mysql.jdbc.Driver 
+    minIdle: 5  
+    maxActive: 200  
+    initialSize: 5 
+    timeBetweenEvictionRunsMillis: 3000  
+    minEvictableIdleTimeMillis: 300000  
+    validationQuery: SELECT 'ZTM' FROM DUAL  
+    testWhileIdle: true  
+    testOnBorrow: false  
+    testOnReturn: false
   redis:
     database: 8
-    host: 192.168.1.57
+    host: 192.168.1.81
     port: 6379
     password: 123456
     pool:

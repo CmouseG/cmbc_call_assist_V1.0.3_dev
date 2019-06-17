@@ -114,6 +114,7 @@ public class SuccesPhone4MQLisener {
 				//消息通知(改成定时任务，每小时执行一次)
 			//	this.sendMsgNotify(dispatchPlan);
 				// 第三方回调
+				dispatchPlan.setResult(result);
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
 				this.sendSms(dispatchPlan);

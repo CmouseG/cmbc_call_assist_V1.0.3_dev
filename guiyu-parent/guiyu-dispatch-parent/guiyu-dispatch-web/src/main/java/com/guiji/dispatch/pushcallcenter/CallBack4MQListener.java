@@ -1,37 +1,27 @@
 package com.guiji.dispatch.pushcallcenter;
 
-import com.alibaba.druid.support.json.JSONUtils;
+import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.PushRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.PushRecords;
+import com.guiji.dispatch.dao.entity.PushRecordsExample;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
-import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.model.MqNotifyMessage;
-import com.guiji.dispatch.model.PlanCallResultVo;
 import com.guiji.dispatch.service.GetApiService;
-import com.guiji.dispatch.service.ThirdApiNotifyService;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.GateWayLineOccupyVo;
-import com.guiji.guiyu.message.component.QueueSender;
-import org.apache.commons.lang3.StringUtils;
+import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import com.guiji.dispatch.bean.MQSuccPhoneDto;
-import com.guiji.dispatch.dao.PushRecordsMapper;
-import com.guiji.dispatch.dao.entity.PushRecords;
-import com.guiji.dispatch.dao.entity.PushRecordsExample;
-import com.guiji.dispatch.util.Constant;
-import com.guiji.utils.JsonUtils;
-import com.guiji.utils.RedisUtil;
-import com.rabbitmq.client.Channel;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -103,8 +93,6 @@ public class CallBack4MQListener {
 		//计数器-1
 		this.counterDecr(userId, tempId);
 
-		//通知三方单个号码完成
-		this.notifyThirdResult(mqSuccPhoneDto.getUserId(), mqSuccPhoneDto.getPlanuuid(), mqSuccPhoneDto.getLabel());
 	}
 
 	@Autowired
@@ -112,32 +100,6 @@ public class CallBack4MQListener {
 
 	@Autowired
 	DispatchPlanMapper planMapper;
-
-	@Autowired
-	ThirdApiNotifyService thirdApiNotifyService;
-
-	private static final String NOTIFY_QUEUE = "thirdApi.notify";
-
-	/**
-	 * 通知三方单个号码完成
-	 * @param planUuid
-	 * @param result
-	 */
-	@Async("asyncSuccPhoneExecutor")
-	protected void notifyThirdResult(Integer userId, String planUuid, String result){
-		logger.info("ready to notify third api userId{},planUuid:{},result:{}", userId, planUuid, result);
-		Integer orgId = getApiService.getOrgIdByUser(userId + "");
-		DispatchPlan vo = planMapper.queryDispatchPlanById(Long.valueOf(planUuid), orgId);
-
-		logger.info("notify plan info: {}", JsonUtils.bean2Json(vo));
-
-        try {
-            thirdApiNotifyService.singleNotify(vo);
-        }catch(Exception e){
-            logger.error("MQ通知三方完成异常", e);
-        }
-	}
-
 
 	/**
 	 * 计数器减1

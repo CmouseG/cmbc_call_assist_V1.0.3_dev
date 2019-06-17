@@ -9,6 +9,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
+import com.guiji.dispatch.service.ThirdApiNotifyService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
@@ -39,10 +40,17 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 	@Autowired
 	private ICallPlanDetail callPlanDetail;
 
+	@Autowired
+	ThirdApiNotifyService notifyService;
+
 	@Override
 	public void execute(DispatchPlan dis) {
 		logger.info("---------------------第三方回调------------------------");
 		// 回调批次拨打结束通知。
+
+		//异步第三方回调处理
+		notifyService.singleNotify(dis);
+
 		ReturnData<SysUser> user = auth.getUserById(dis.getUserId().longValue());
 		if (user.getBody() != null) {
 			if (user.getBody().getCallRecordUrl() != null && user.getBody().getCallRecordUrl() != "") {

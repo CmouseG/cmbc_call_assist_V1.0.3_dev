@@ -1,13 +1,14 @@
 package com.guiji.dispatch.impl;
 
 import com.guiji.dispatch.bean.DispatchPlanBatchAddRes;
-import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.model.DispatchPlanBatchAddVo;
 import com.guiji.dispatch.model.MqNotifyMessage;
 import com.guiji.dispatch.model.PlanCallResultVo;
+import com.guiji.dispatch.service.GetApiService;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.ThirdApiNotifyService;
 import com.guiji.guiyu.message.component.QueueSender;
@@ -38,7 +39,15 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
     QueueSender mqSender;
 
     @Autowired
+    GetApiService getApiService;
+
+
+
+    @Autowired
     DispatchPlanBatchMapper dispatchPlanBatchMapper;
+
+    @Autowired
+    DispatchPlanMapper planMapper;
 
     @Autowired
     IDispatchPlanService dispatchPlanService;
@@ -50,7 +59,6 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
     @Override
     @Async("asyncThirdApiNotify")
     public void singleNotify(DispatchPlan plan) {
-
 
         DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(plan.getBatchId());
         if(StringUtils.isNotEmpty(dispatchPlanBatch.getSingleCallbackUrl())) {
@@ -104,7 +112,7 @@ public class ThirdNotifyServiceImpl implements ThirdApiNotifyService {
                 res.append("^");
                 res.append(org.apache.commons.lang.StringUtils.isEmpty(obj.getAttach()) ? "" : obj.getAttach());
                 res.append("^");
-                res.append(org.apache.commons.lang.StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams().replace("|", "-"));
+                res.append(org.apache.commons.lang.StringUtils.isEmpty(obj.getParams()) ? "" : obj.getParams().replace("|", "~"));
                 res.append("^");
                 res.append(org.apache.commons.lang.StringUtils.isEmpty(obj.getCustName()) ? "" : obj.getCustName());
                 res.append("^");

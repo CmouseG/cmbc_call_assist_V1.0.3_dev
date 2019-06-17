@@ -1,7 +1,6 @@
 package com.guiji.dispatch.service;
 
 import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 
 /**
  * @Classname ThirdApiNotifyService

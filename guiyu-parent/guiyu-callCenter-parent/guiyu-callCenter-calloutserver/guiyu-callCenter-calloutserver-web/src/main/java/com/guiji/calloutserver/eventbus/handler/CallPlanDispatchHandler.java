@@ -189,7 +189,7 @@ public class CallPlanDispatchHandler {
                     //没有机器人资源，会少一路并发数，直接return了
                     log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "申请机器人失败", callPlan.getCallId());
-                    readyFail(callPlan,"605",false);
+                    readyFail(callPlan,"605",false,simCall);
                     return;
                 }
 
@@ -204,10 +204,17 @@ public class CallPlanDispatchHandler {
                     log.warn("{},{},{},{},{}", callPlan.getPhoneNum(), com.guiji.utils.DateUtil.formatDatetime(new Date()),
                             Constant.MODULE_CALLOUTSERVER, "下载tts语音失败", callPlan.getCallId());
                     log.error("downloadTtsWav，下载tts语音，出现异常 callid{}", callPlan.getCallId(), e);
-                    readyFail(callPlan,null,true);
+                    readyFail(callPlan,"608",true,simCall);
                     //释放机器人
                     aiManager.releaseAi(callPlan);
                     return;
+                }
+
+                try {
+                    //存储sim卡状态
+                    simCallManager.addSimCall(callPlan.getCallId().toString(), simCall);
+                }catch (Exception e){
+                    log.error("addSimCall出现异常",e);
                 }
 
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));
@@ -215,23 +222,26 @@ public class CallPlanDispatchHandler {
 
                 //将lineList 存储到到redis中
                 lineListManager.addLineList(callPlan.getCallId().toString(),lineList);
-                //存储sim卡状态
-                simCallManager.addSimCall(callPlan.getCallId().toString(),simCall);
+
             }
 
         });
 
     }
 
-    public void readyFail(CallOutPlan callPlan,String reason,Boolean isNeedPlan){
+    public void readyFail(CallOutPlan callPlan,String reason,Boolean isNeedPlan,Boolean isSimCall){
         callPlan.setCallState(ECallState.norobot_fail.ordinal());
         callPlan.setAccurateIntent("W");
         callPlan.setReason(reason);
         callOutPlanService.update(callPlan);
-        dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), isNeedPlan);
-        callingCountManager.removeOneCall();
+        dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W",
+                callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), isNeedPlan);
+//        callingCountManager.removeOneCall();
         lineCountWService.addWCount(callPlan.getLineId(),callPlan.getOrgCode(),callPlan.getCustomerId());
-//        statisticReportHandler.updateReportToday(callPlan);
+
+        //记录sim卡拨打次数，防止sim卡拨打超限
+        simLimitService.addSimCall(isSimCall,callPlan.getLineId(),0);
+
     }
 
 

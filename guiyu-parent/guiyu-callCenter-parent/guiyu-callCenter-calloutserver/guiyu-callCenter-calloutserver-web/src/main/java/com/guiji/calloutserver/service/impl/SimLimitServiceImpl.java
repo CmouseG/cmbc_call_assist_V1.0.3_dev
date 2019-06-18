@@ -39,25 +39,36 @@ public class SimLimitServiceImpl implements SimLimitService {
     public void addSimCall(String callId, Integer lineId, Integer billSec) {
         try{
             if (simCallManager.isSimCall(callId)) {
-
-                LineSimlimitConfig lineSimlimitConfig = lineSimlimitConfigMapper.selectByPrimaryKey(lineId);
-                if (lineSimlimitConfig != null) {
-                    //拨打次数
-                    setSimCount(simLimitCallCount + lineId, lineSimlimitConfig.getCallCountPeriod(),1);
-
-                    if (billSec != null && billSec > 0) {
-                        //接通次数
-                        setSimCount(simLimitConnectCount + lineId, lineSimlimitConfig.getConnectCountPeriod(),1);
-
-                        //接通时长
-                        setSimCount(simLimitConnectTime + lineId, lineSimlimitConfig.getConnectTimePeriod(),billSec);
-                    }
-                }
+                addSimCall(true,lineId,billSec);
             }
         }catch (Exception e){
             log.error("addSimCall出现异常",e);
         }
 
+    }
+
+    @Override
+    public void addSimCall(Boolean isSimcall, Integer lineId, Integer billSec) {
+
+        if ((isSimcall != null) && isSimcall) {
+            try {
+                LineSimlimitConfig lineSimlimitConfig = lineSimlimitConfigMapper.selectByPrimaryKey(lineId);
+                if (lineSimlimitConfig != null) {
+                    //拨打次数
+                    setSimCount(simLimitCallCount + lineId, lineSimlimitConfig.getCallCountPeriod(), 1);
+
+                    if (billSec != null && billSec > 0) {
+                        //接通次数
+                        setSimCount(simLimitConnectCount + lineId, lineSimlimitConfig.getConnectCountPeriod(), 1);
+
+                        //接通时长
+                        setSimCount(simLimitConnectTime + lineId, lineSimlimitConfig.getConnectTimePeriod(), billSec);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("addSimCall..出现异常", e);
+            }
+        }
     }
 
     private void setSimCount(String key, Integer period, Integer incr) {

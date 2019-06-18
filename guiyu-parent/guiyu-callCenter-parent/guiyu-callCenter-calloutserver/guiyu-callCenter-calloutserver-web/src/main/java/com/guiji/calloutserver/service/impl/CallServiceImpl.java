@@ -7,6 +7,7 @@ import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.manager.FsLineManager;
+import com.guiji.calloutserver.manager.SimCallManager;
 import com.guiji.calloutserver.service.CallService;
 import com.guiji.component.result.Result;
 import com.guiji.dict.api.ISysDict;
@@ -46,6 +47,8 @@ public class CallServiceImpl implements CallService {
     ISysDict iSysDict;
     @Autowired
     CallPlanDispatchHandler callPlanDispatchHandler;
+    @Autowired
+    SimCallManager simCallManager;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -60,12 +63,12 @@ public class CallServiceImpl implements CallService {
             fsLine = fsLineManager.getFsLine(callplan.getLineId());
         }catch (Exception e){
             log.error("获取呼叫线路出现异常",e);
-            callPlanDispatchHandler.readyFail(callplan,"605",false);
+            callPlanDispatchHandler.readyFail(callplan,"607",false,simCallManager.isSimCall(callplan.getCallId().toString()));
             return;
         }
         if(fsLine==null){
             log.error("获取呼叫线路出现异常");
-            callPlanDispatchHandler.readyFail(callplan,"605",false);
+            callPlanDispatchHandler.readyFail(callplan,"607",false,simCallManager.isSimCall(callplan.getCallId().toString()));
             return;
         }
         String codec = fsLine.getCodec();

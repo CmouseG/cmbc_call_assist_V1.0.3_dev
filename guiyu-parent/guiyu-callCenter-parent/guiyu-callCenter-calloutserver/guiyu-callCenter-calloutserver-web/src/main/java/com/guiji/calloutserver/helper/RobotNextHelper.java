@@ -198,7 +198,30 @@ public class RobotNextHelper {
         callDetail.setAccurateIntent(aiResponse.getAccurateIntent());
         callDetail.setReason(aiResponse.getReason());
         callDetail.setKeywords(aiResponse.getKeyWords());
-        callDetail.setWordSegmentResult(aiResponse.getWordSegmentResult());
+
+        callDetail.setWordSegmentResult(subWordSegment(aiResponse.getWordSegmentResult()));
+    }
+
+    private String subWordSegment(String wordSegment){
+
+        String result="";
+        if(wordSegment!=null && wordSegment.length()>250){
+            try {
+                String before = wordSegment.substring(0, 250);
+                String[] beforeArr = before.split("', '");
+                String end = beforeArr[beforeArr.length - 1];
+                if (before.endsWith("', '")) {
+                    result = before.substring(0, before.length() - end.length() - 8) + "']";
+                } else {
+                    result = before.substring(0, before.length() - end.length() - 4) + "']";
+                }
+            }catch (Exception e){
+                log.error("subWordSegment出现异常",e);
+            }
+        }else{
+            result = wordSegment;
+        }
+        return result;
     }
 
 

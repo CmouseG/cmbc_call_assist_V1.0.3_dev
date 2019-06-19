@@ -1,5 +1,5 @@
 server:
-  id: 1  #所有calloutserver和toagentserver需修改为不一样的，取值范围1至1023
+  id: 999  #所有calloutserver和toagentserver需修改为不一样的，取值范围1至1023
   port: 18024
   tomcat:
     max-threads: 800
@@ -85,7 +85,7 @@ ribbon:
 #支持的最大拨打数量
 callCount.max: 400
 #是否开启挂机频率检测
-callInspect.open: true
+callInspect.open: false
 #录音补偿机制，检查多少天内的数据
 callFileCheck.day.ago: 3
 #xxl-job admin中心配置

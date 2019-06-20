@@ -29,6 +29,12 @@ public class BussinessService
 	 */
 	public void addBussiness(String businessName, String businessEmail, Long userId, String orgCode)
 	{
+		SysBusinessExample example = new SysBusinessExample();
+		example.createCriteria().andBusinessEmailEqualTo(businessEmail);
+		List<SysBusiness> businesses = businessMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(businesses)){
+			throw new GuiyuException("此邮箱已存在！");
+		}
 		SysBusiness business = new SysBusiness();
 		business.setBusinessName(businessName);
 		business.setBusinessEmail(businessEmail);

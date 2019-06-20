@@ -4,51 +4,49 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class SysOrganization implements Serializable {
+public class SysOrganization implements Serializable 
+{
+	private static final long serialVersionUID = 1L;
     private Integer id;
-
     private String name;
-
     private String code;
-
     private String subCode;
-
     private Integer type;
-
     private Integer robot;
     private String startDate;
     private String endDate;
-
     private Integer line;
-
     private Integer botstence;
 	private Integer open;
     private Integer delFlag;
-
     private Long createId;
-
     private Date createTime;
-
     private Long updateId;
-
-    private Date updateTime;
-    
+    private Date updateTime;    
     private String createName;
     private String updateName;
     private String parentName;
-
     private List<Integer> product;
-
     private List<String> industryIds;
     private List<String> menuIds;
-    private Integer usable;
+    private Integer usable;   
     
     private String effectiveDate;
     private String invalidDate;
     
-    private static final long serialVersionUID = 1L;
+    private Integer bussinessId;
 
-    public String getEffectiveDate()
+    public Integer getBussinessId()
+	{
+		return bussinessId;
+	}
+
+	public void setBussinessId(Integer bussinessId)
+	{
+		this.bussinessId = bussinessId;
+	}
+
+	public String getEffectiveDate()
 	{
 		return effectiveDate;
 	}

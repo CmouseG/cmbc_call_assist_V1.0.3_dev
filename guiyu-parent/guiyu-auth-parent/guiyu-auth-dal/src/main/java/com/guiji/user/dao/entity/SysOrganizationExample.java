@@ -124,6 +124,11 @@ public class SysOrganizationExample {
             }
             criteria.add(new Criterion(condition, value1, value2));
         }
+        
+        public Criteria andBussinessIdEqualTo(Integer value) {
+            addCriterion("bussiness_id =", value, "bussinessId");
+            return (Criteria) this;
+        }
 
         public Criteria andIdIsNull() {
             addCriterion("id is null");

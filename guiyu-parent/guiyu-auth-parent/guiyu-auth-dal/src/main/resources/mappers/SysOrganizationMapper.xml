@@ -118,12 +118,14 @@
     insert into sys_organization (id, `name`, code, 
       `type`, robot, line,botstence,
       `open`, del_flag, create_id, 
-      create_time, update_id, update_time,sub_code
+      create_time, update_id, update_time,sub_code,
+      bussiness_id
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
       #{type,jdbcType=INTEGER}, #{robot,jdbcType=INTEGER}, #{line,jdbcType=INTEGER}, #{botstence,jdbcType=INTEGER},
       #{open,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, #{createId,jdbcType=BIGINT},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR},
+      #{bussinessId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" useGeneratedKeys="true" keyProperty="id">
@@ -347,6 +349,7 @@
       <if test="invalidDate != null">
         invalid_date = #{invalidDate,jdbcType=VARCHAR},
       </if>
+      bussiness_id = #{bussinessId,jdbcType=INTEGER},
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -485,9 +488,10 @@
   </select>
 
 	<select id="getOrgByUsername" parameterType="java.lang.String" resultType="java.util.Map">
-		SELECT a.username, b.`name`, b.id, b.`code` FROM sys_user a
+		SELECT a.username, b.`name`, b.id, b.`code`, c.business_name, c.business_email FROM sys_user a
 		LEFT JOIN sys_organization b ON a.org_code = b.`code`
-		WHERE a.username = #{username} 
+		LEFT JOIN sys_business c ON b.bussiness_id = c.id
+		WHERE a.username = #{username}
 	</select>
 
 </mapper>

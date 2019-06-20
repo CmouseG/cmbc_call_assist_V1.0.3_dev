@@ -16,6 +16,7 @@
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="sub_code" property="subCode" jdbcType="VARCHAR" />
+    <result column="bussiness_id" property="bussinessId" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="Example_Where_Clause" >
@@ -78,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, `name`, code, `type`, robot, line, botstence,`open`, del_flag, create_id, create_time,
-    update_id, update_time,sub_code
+    update_id, update_time,sub_code,bussiness_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysOrganizationExample" >
     select

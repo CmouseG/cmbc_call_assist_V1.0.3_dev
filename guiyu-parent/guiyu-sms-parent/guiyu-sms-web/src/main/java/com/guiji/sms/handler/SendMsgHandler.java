@@ -20,6 +20,7 @@ import com.guiji.sms.platform.factory.XiangYunZhiTong;
 import com.guiji.sms.platform.factory.XiaoYa;
 import com.guiji.sms.platform.factory.XuanDuKeji;
 import com.guiji.sms.platform.factory.XuanWu;
+import com.guiji.sms.platform.factory.YunPian;
 import com.guiji.sms.platform.factory.YunTongXun;
 import com.guiji.sms.platform.factory.YunXun;
 import com.guiji.sms.platform.factory.ZhuanXinYun;
@@ -62,6 +63,8 @@ public class SendMsgHandler
 	XuanDuKeji xuanDuKeji;
 	@Autowired
 	WangJingFu wangJingFu;
+	@Autowired
+	YunPian yunPian;
 	
 	public void choosePlatformToSend(String identification, JSONObject params, List<String> phoneList)
 	{
@@ -139,6 +142,11 @@ public class SendMsgHandler
 		{
 			log.info("通过<网经服>发送短信...");
 			wangJingFu.sendMessage(params, phoneList);
+		}
+		else if("yp".equals(identification))
+		{
+			log.info("通过<云片>发送短信...");
+			yunPian.sendMessage(params, phoneList);
 		}
 	}
 }

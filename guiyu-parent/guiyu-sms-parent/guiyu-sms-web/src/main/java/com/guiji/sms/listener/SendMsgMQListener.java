@@ -54,7 +54,6 @@ public class SendMsgMQListener
 		String templateId = sendMReq.getTemplateId();
 		String intentionTag = sendMReq.getIntentionTag(); // 都是单个意向标签
 		// 获取短信配置
-		// 获取短信配置
 		SmsConfig config = redisUtil.getT(orgCode+"_"+templateId+"_"+intentionTag);
 		if(config == null){
 			config = configService.getSendConfig(templateId, intentionTag, orgCode);

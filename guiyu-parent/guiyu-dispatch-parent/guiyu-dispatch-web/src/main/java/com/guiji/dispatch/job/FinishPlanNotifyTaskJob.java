@@ -62,7 +62,8 @@ public class FinishPlanNotifyTaskJob extends IJobHandler {
         //获取拨打日期
         Integer today = Integer.valueOf(DateTimeUtils.getDateString(time, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SPLICING));
         //获取当前开始、结束时间
-        Date beginTime = DateTimeUtils.getDayStartTime(time);
+        Date weekTime = DateTimeUtils.getDateByOffsetDays(time, -7);//查看最近7天的批次任务
+        Date beginTime = DateTimeUtils.getDayStartTime(weekTime);
         Date endTime = DateTimeUtils.getDayEndTime(time);
 
         //获取批次表的当天批次数据

@@ -5,6 +5,8 @@ import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 
 import java.util.Date;
 import java.util.List;
+
+import com.guiji.dispatch.sys.ResultPage;
 import org.apache.ibatis.annotations.Param;
 
 public interface DispatchPlanBatchMapper {
@@ -38,4 +40,9 @@ public interface DispatchPlanBatchMapper {
 
     //根据批次号更新批次通知状态
     int updNotifyStatusByBatch(@Param("batchId") Integer batchId, @Param("statusNotify") Integer statusNotify);
+
+    //查询批次
+    List<DispatchPlanBatch> queryBatchByParam(@Param("batchParam") DispatchPlanBatch batchParam,
+                                              @Param("page") ResultPage<DispatchPlanBatch> page,
+                                              @Param("authLevel") Integer authLevel);
 }

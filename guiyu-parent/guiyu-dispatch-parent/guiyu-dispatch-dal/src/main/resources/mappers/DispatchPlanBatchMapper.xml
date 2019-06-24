@@ -351,4 +351,43 @@
     WHERE id = #{batchId}
   </update>
 
+
+  <select id="queryBatchByParam" resultType="com.guiji.dispatch.dao.entity.DispatchPlanBatch">
+    SELECT
+      id, user_id, name, status_show, status_notify, times, gmt_create, gmt_modified,
+      org_code, callback_url, total_num, single_callback_url
+    FROM dispatch_plan_batch b
+    WHERE 1 = 1
+      <if test="batchParam.statusNotify != null">
+        AND status_notify = #{batchParam.statusNotify}
+      </if>
+      <if test="batchParam.statusShow != null">
+        AND status_show = #{batchParam.statusShow}
+      </if>
+      <if test="batchParam.name != null">
+        AND b.name LIKE CONCAT('%', #{batchParam.name},'%')
+      </if>
+      <if test="batchParam.id != null">
+        AND id = #{batchParam.id}
+      </if>
+      <if test="authLevel == 2 and batchParam.orgCode != null">
+        AND b.org_code = #{batchParam.orgCode}
+      </if>
+      <if test="authLevel == 3 and batchParam.orgCode != null">
+        AND ( b.org_code = #{batchParam.orgCode} OR b.org_code LIKE CONCAT(#{batchParam.orgCode},'%') )
+      </if>
+      <if test="authLevel == 1 and batchParam.userId != null">
+        AND b.user_id = #{batchParam.userId}
+      </if>
+      /*ORDER BY id DESC*/
+      <if test="page != null and page.isPage ">
+        <if test="page.orderBy != null " >
+            order by ${page.orderBy}	${page.sort}
+        </if>
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
 </mapper>

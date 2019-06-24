@@ -655,10 +655,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		/*List<Integer> allOrgIds = getAllOrgIds();
 		List<Integer> subOrgIds = getSubOrgIds(orgId);*/
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+		/*
 		int countNums = 0;
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria createCriteria = ex.createCriteria();
-		/*if (!isSuperAdmin) {
+		*//*if (!isSuperAdmin) {
 
 			createCriteria.andOrgIdIn(subOrgIds);
 			if (StringUtils.isNotEmpty(orgCode)) {
@@ -668,29 +669,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		} else {
 			createCriteria.andOrgIdIn(allOrgIds);
 			countNums = dispatchPlanMapper.countByExample(ex);
-		}*/
+		}*//*
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
 		createCriteria.andOrgIdIn(orgIds);//本组织或本组织及以下组织
 
 		countNums = dispatchPlanMapper.countByExample(ex);
+		*/
 
-		ex = new DispatchPlanExample();
-		createCriteria = ex.createCriteria();
-		/*if (!isSuperAdmin) {
-			// 不是超级管理员就是通过orgCode查询
-			createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-					.andOrgIdIn(subOrgIds);
-			if (StringUtils.isNotEmpty(orgCode)) {
-				createCriteria.andOrgCodeLike(orgCode + "%");
-			}
-		} else {
-			// 超级管理员查询所有
-			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);
-			;
-		}*/
-		createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);
+		/*******未拨打计划数，计划中数量************************************/
+		DispatchPlanExample ex = new DispatchPlanExample();
+		Criteria createCriteria = ex.createCriteria();
+		createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);//计划中、未删除
 		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
 			createCriteria.andUserIdEqualTo(Integer.valueOf(operUserId));
 		}
@@ -698,60 +689,42 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		int noCallNums = dispatchPlanMapper.countByExample(ex);
 
-		DispatchPlanExample ex1 = new DispatchPlanExample();
-		Criteria andStatusPlanEqualTo2 = ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
-				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
-		/*if (!isSuperAdmin) {
-			andStatusPlanEqualTo2.andOrgIdIn(subOrgIds);
-			if (StringUtils.isNotEmpty(orgCode)) {
-				andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
-			}
-		}
-		else
-		{
-			andStatusPlanEqualTo2.andOrgIdIn(allOrgIds);
+		DispatchPlanBatch batchParam = new DispatchPlanBatch();
+		batchParam.setOrgCode(orgCode);
+		batchParam.setUserId(null != operUserId?Integer.valueOf(operUserId):null);
+		ResultPage<DispatchPlanBatch> page = new ResultPage<DispatchPlanBatch>(1,1);
+		page.setOrderBy("id");
+		page.setSort("DESC");
+		/**********最后计划日期******************************/
+		batchParam.setStatusNotify(BatchNotifyStatusEnum.WAITING.getStatus());
+		List<DispatchPlanBatch> doingList = dispatchPlanBatchMapper.queryBatchByParam(batchParam, page , authLevel);
+		String lastPlanDate = null;
+        if (null != doingList && doingList.size() > 0) {
+        	Date batchModifyTime = doingList.get(0).getGmtModified();
+				lastPlanDate = null != batchModifyTime?
+						DateTimeUtils.getDateString(batchModifyTime, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT):lastPlanDate;
+        }
+
+		/*ex.setOrderByClause("call_data DESC");
+		ex.setLimitStart(0);
+		ex.setLimitEnd(1);
+		List<DispatchPlan> doingList1 = dispatchPlanMapper.selectByExample(ex);
+		String lastPlanDate1 = null;
+		if (null != doingList1 && doingList1.size() > 0) {
+			lastPlanDate1 = doingList1.get(0).getCallData() + "";
 		}*/
-		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
-			andStatusPlanEqualTo2.andUserIdEqualTo(Integer.valueOf(operUserId));
-		}
-		andStatusPlanEqualTo2.andOrgIdIn(orgIds);//本组织或本组织及以下组织
-		ex1.setOrderByClause("`plan_uuid` ASC");
-		ex1.setLimitStart(0);
-		ex1.setLimitEnd(1);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
 
-		DispatchPlan dis = new DispatchPlan();
-		if (selectByExample.size() > 0) {
-			dis = selectByExample.get(selectByExample.size() - 1);
+		/*******最后拨打日期*************/
+		batchParam.setStatusNotify(BatchNotifyStatusEnum.SUCCESS.getStatus());
+		List<DispatchPlanBatch> finishList = dispatchPlanBatchMapper.queryBatchByParam(batchParam, page , authLevel);
+		String lastCalledDate = DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+		if (null != finishList && finishList.size() > 0) {
+			Date batchModifyTime = finishList.get(0).getGmtModified();
+			lastCalledDate = null != batchModifyTime?
+					DateTimeUtils.getDateString(batchModifyTime, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT):lastCalledDate;
 		}
 
-		DispatchPlanExample ex2 = new DispatchPlanExample();
-		Criteria andStatusPlanEqualTo3 = ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
-				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
-		/*if (!isSuperAdmin) {
-			andStatusPlanEqualTo3.andOrgIdIn(subOrgIds);
-			if (StringUtils.isNotEmpty(orgCode)) {
-				andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
-			}
-		}
-		else
-		{
-			andStatusPlanEqualTo3.andOrgIdIn(allOrgIds);
-		}*/
-		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(operUserId)){//本人
-			andStatusPlanEqualTo3.andUserIdEqualTo(Integer.valueOf(operUserId));
-		}
-		andStatusPlanEqualTo3.andOrgIdIn(orgIds);//本组织或本组织及以下组织
-		ex2.setOrderByClause("`plan_uuid` DESC");
-		ex2.setLimitStart(0);
-		ex2.setLimitEnd(1);
-		List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
-
-		DispatchPlan dis1 = new DispatchPlan();
-		if (selectByExample2.size() > 0) {
-			dis1 = selectByExample2.get(0);
-		}
-
+		/****服务天数****/
 		ReturnData<SysUser> user = auth.getUserById(userId);
 		if (user.getBody() != null) {
 			SysUser body = user.getBody();
@@ -763,10 +736,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			jsonObject.put("useDay", day);
 		}
 
-		jsonObject.put("countNums", countNums);
+	//	jsonObject.put("countNums", countNums);		//暂时不用
 		jsonObject.put("noCallNums", noCallNums);
-		jsonObject.put("lastPlanDate", dis.getCallData());
-		jsonObject.put("lastCalledDate", dis1.getCallData());
+		/*jsonObject.put("lastPlanDate", dis.getCallData());
+		jsonObject.put("lastCalledDate", dis1.getCallData());*/
+		jsonObject.put("lastPlanDate", lastPlanDate);
+		jsonObject.put("lastCalledDate", lastCalledDate);
 		return jsonObject;
 
 	}

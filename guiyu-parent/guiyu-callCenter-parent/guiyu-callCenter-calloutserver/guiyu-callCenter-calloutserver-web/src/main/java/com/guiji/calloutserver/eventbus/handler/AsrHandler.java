@@ -15,6 +15,7 @@ import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.manager.AIManager;
+import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +48,8 @@ public class AsrHandler {
     LocalFsServer localFsServer;
     @Autowired
     CallOutRecordService callOutRecordService;
+    @Autowired
+    CallLineAvailableManager callLineAvailableManager;
 
     //注册这个监听器
     @PostConstruct
@@ -107,6 +110,16 @@ public class AsrHandler {
                 //进行F类识别
                 doWithErrorResponse(callPlan, event);
                 return;
+            }
+
+            //电话已经挂断，但是，没有接听，进行F类识别
+            if (callPlan.getCallState() == ECallState.hangup_ok.ordinal() || callPlan.getCallState() == ECallState.hangup_fail.ordinal()) {
+                if(!callLineAvailableManager.isChannelAnswer(callPlan.getCallId().toString())){
+                    log.warn("通道[{}]挂断，未接听，需要对收到的asr进行F类识别", event.getUuid());
+                    //进行F类识别
+                    doWithErrorResponse(callPlan, event);
+                    return;
+                }
             }
 
             //如果当前正处于转人工的状态，则忽略该asr识别

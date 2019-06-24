@@ -114,7 +114,7 @@ public class AsrHandler {
 
             //电话已经挂断，但是，没有接听，进行F类识别
             if (callPlan.getCallState() == ECallState.hangup_ok.ordinal() || callPlan.getCallState() == ECallState.hangup_fail.ordinal()) {
-                if(!callLineAvailableManager.isChannelAnswer(callPlan.getCallId().toString())){
+                if(callPlan.getBillSec()==0 && !callLineAvailableManager.isChannelAnswer(callPlan.getCallId().toString())){
                     log.warn("通道[{}]挂断，未接听，需要对收到的asr进行F类识别", event.getUuid());
                     //进行F类识别
                     doWithErrorResponse(callPlan, event);

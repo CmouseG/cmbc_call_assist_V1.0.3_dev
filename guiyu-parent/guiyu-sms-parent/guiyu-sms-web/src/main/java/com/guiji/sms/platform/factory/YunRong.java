@@ -26,16 +26,17 @@ import com.guiji.sms.common.SmsException;
 import com.guiji.sms.dao.entity.SmsSendDetail;
 import com.guiji.sms.platform.ISendMessage;
 import com.guiji.sms.queue.SendDetailQueue;
+import com.guiji.sms.utils.CryptographyUtil;
 import com.guiji.sms.utils.SetDetailParamsUtil;
 
 /**
- * 短信平台-云片
+ * 短信平台-云融正通
  */
 @Component
-public class YunPian implements ISendMessage
+public class YunRong implements ISendMessage
 {
-	private static final Logger log = LoggerFactory.getLogger(YunPian.class);
-	private String url = "https://sms.yunpian.com/v2/sms/single_send.json";
+	private static final Logger log = LoggerFactory.getLogger(YunRong.class);
+	private String url = "http://47.96.147.133:9001/smsSend.do";
 	
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -60,9 +61,12 @@ public class YunPian implements ISendMessage
 	{
 		SmsSendDetail record = null;
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
-		paramsList.add(new BasicNameValuePair("apikey",  params.getString("apikey")));
+		String username = params.getString("username");
+		paramsList.add(new BasicNameValuePair("username", username));
+		String password = CryptographyUtil.encodeMD5_32bit_LowerCase(username+CryptographyUtil.encodeMD5_32bit_LowerCase(params.getString("password")));
+		paramsList.add(new BasicNameValuePair("password", password));
+		paramsList.add(new BasicNameValuePair("content", params.getString("smsContent")));
 		paramsList.add(new BasicNameValuePair("mobile", phone));
-		paramsList.add(new BasicNameValuePair("text", params.getString("smsContent")));
 		String result = doPost(paramsList); // 发送请求
 		record = handleResult(result, params); // 处理结果
 		record.setPhone(phone);
@@ -85,7 +89,7 @@ public class YunPian implements ISendMessage
 		} 
 		catch (Exception e){
 			log.error("调用短信平台商服务异常", e);
-			result = "{\"code\":\"404\",\"msg\":\"调用短信平台商服务异常\"}";
+			result = "404";
 		}
 		finally {
 			IOUtils.close(response);
@@ -98,17 +102,14 @@ public class YunPian implements ISendMessage
 	private SmsSendDetail handleResult(String resultStr, JSONObject params)
 	{
 		SmsSendDetail record = new SmsSendDetail();
-		JSONObject returnData = JSONObject.parseObject(resultStr);
-		// 返回参数
-		String code = returnData.getString("code");
-		String msg = returnData.getString("msg");
-		if("0".equals(code)){
-			log.info("发送成功:code:{},msg:{}", code, msg);
+		Long msgid = Long.parseLong(resultStr);
+		if(msgid > 0){
+			log.info("发送成功:msgid:{}", msgid);
 			record.setSendStatus(1);
 		}else{
-			log.info("发送失败:code:{},msg:{}", code, msg);
+			log.info("发送失败:msgid:{}", msgid);
 			record.setSendStatus(0);
-			record.setFailReason(msg);
+			record.setFailReason(msgid.toString());
 		}
 		SetDetailParamsUtil.setParams(record,params); // 设置结果（发送详情）参数
 		return record;

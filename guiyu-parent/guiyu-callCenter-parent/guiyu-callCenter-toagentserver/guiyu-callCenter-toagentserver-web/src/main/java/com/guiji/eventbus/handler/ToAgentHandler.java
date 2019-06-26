@@ -169,7 +169,7 @@ public class ToAgentHandler {
         queryRecordInDetail.setArea(phoneService.findLocationByPhone(callPlan.getPhoneNum()));
         queryRecordInDetail.setBillSec(callPlan.getBillSec());
 
-        String answerTime = DateUtil.toString(callPlan.getAnswerTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
+        String answerTime = DateUtil.toString(callPlan.getAgentAnswerTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
         queryRecordInDetail.setAnswerTime(answerTime);
         queryRecordInDetail.setCallrecordId(callPlan.getPlanUuid());
 

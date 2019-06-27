@@ -122,7 +122,7 @@ public class CallPlanDispatchHandler {
                 String value = returnData.getBody().get(0).getDictValue();
                 Thread.sleep(Integer.valueOf(value)*1000);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("getDictValueByTypeKey出现异常",e);
             }
         }
         //重新查询一次，意向标签可能不准确
@@ -130,7 +130,7 @@ public class CallPlanDispatchHandler {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                log.info("successSchedule sleep出现异常",e);
+                log.error("successSchedule sleep出现异常",e);
             }
         }
         CallOutPlan realCallOutPlan = callOutPlanService.findByCallId(callPlan.getCallId(), callPlan.getOrgId());

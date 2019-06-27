@@ -128,7 +128,7 @@ public class CallPlanDispatchHandler {
         //重新查询一次，意向标签可能不准确
         if(callPlan.getAccurateIntent()!=null && callPlan.getAccurateIntent().equals("W") && callPlan.getDuration()>0){  // W类有可能被修改为F类识别修改
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 log.error("successSchedule sleep出现异常",e);
             }

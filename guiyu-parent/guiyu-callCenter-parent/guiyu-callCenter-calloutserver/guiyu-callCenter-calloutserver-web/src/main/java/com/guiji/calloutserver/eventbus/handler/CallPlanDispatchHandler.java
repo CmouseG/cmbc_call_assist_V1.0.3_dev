@@ -126,6 +126,13 @@ public class CallPlanDispatchHandler {
             }
         }
         //重新查询一次，意向标签可能不准确
+        if(callPlan.getAccurateIntent()!=null && callPlan.getAccurateIntent().equals("W") && callPlan.getDuration()>0){  // W类有可能被修改为F类识别修改
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                log.info("successSchedule sleep出现异常",e);
+            }
+        }
         CallOutPlan realCallOutPlan = callOutPlanService.findByCallId(callPlan.getCallId(), callPlan.getOrgId());
         dispatchService.successSchedule(realCallOutPlan.getPlanUuid(),realCallOutPlan.getPhoneNum(),realCallOutPlan.getAccurateIntent(),
                 realCallOutPlan.getCustomerId(), realCallOutPlan.getLineId(), realCallOutPlan.getTempId(), true);

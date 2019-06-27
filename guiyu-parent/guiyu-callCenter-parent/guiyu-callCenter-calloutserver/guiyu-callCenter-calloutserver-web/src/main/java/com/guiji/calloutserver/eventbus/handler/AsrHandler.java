@@ -17,6 +17,7 @@ import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.service.*;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ public class AsrHandler {
     CallOutRecordService callOutRecordService;
     @Autowired
     CallLineAvailableManager callLineAvailableManager;
+    @Autowired
+    IDispatchPlanOut iDispatchPlanOut;
 
     //注册这个监听器
     @PostConstruct
@@ -108,7 +111,7 @@ public class AsrHandler {
                     callPlan.getCallState() == ECallState.progress.ordinal()) {
                 log.warn("通道[{}]还未接听，需要对收到的asr进行F类识别", event.getUuid());
                 //进行F类识别
-                doWithErrorResponse(callPlan, event);
+                doWithErrorResponse(callPlan, event, false);
                 return;
             }
 
@@ -117,7 +120,7 @@ public class AsrHandler {
                 if(callPlan.getBillSec()==0 && !callLineAvailableManager.isChannelAnswer(callPlan.getCallId().toString())){
                     log.warn("通道[{}]挂断，未接听，需要对收到的asr进行F类识别", event.getUuid());
                     //进行F类识别
-                    doWithErrorResponse(callPlan, event);
+                    doWithErrorResponse(callPlan, event, callPlan.getAccurateIntent()!=null && callPlan.getAccurateIntent().equals("W"));
                     return;
                 }
             }
@@ -194,7 +197,7 @@ public class AsrHandler {
      * @param callPlan
      * @param event
      */
-    private void doWithErrorResponse(CallOutPlan callPlan, AsrCustomerEvent event) {
+    private void doWithErrorResponse(CallOutPlan callPlan, AsrCustomerEvent event, Boolean updateReason) {
         if (Strings.isNullOrEmpty(event.getAsrText())) {
             log.warn("F类识别失败，因asr识别结果为空");
             return;
@@ -217,6 +220,15 @@ public class AsrHandler {
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
                 localFsServer.hangup(callPlan.getCallId().toString()+Constant.UUID_SEPARATE+callPlan.getOrgId());
+            }
+            if(updateReason){
+                try {
+                    Thread.sleep(180000);
+                } catch (InterruptedException e) {
+                    log.error("F类识别sleep出现异常",e);
+                }
+                log.info("3分钟后，将新的意向标签同步给调度中心");
+                iDispatchPlanOut.updateLabelByUUID(callPlan.getPlanUuid(),"F");
             }
         }
     }

@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IOrg;
 import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.user.dao.entity.SysUser;
-import com.guiji.wechat.dtos.AuthAccessTokenDto;
-import com.guiji.wechat.dtos.CustomMenuCreateDto;
-import com.guiji.wechat.dtos.KeFuBindDto;
-import com.guiji.wechat.dtos.WeChatUserDto;
+import com.guiji.wechat.dtos.*;
 import com.guiji.wechat.messages.UserBindWeChatMessage;
 import com.guiji.wechat.scheduler.AccessTokenScheduler;
 import com.guiji.wechat.service.api.WeChatCommonApi;
@@ -21,6 +19,7 @@ import com.guiji.wechat.util.properties.WeChatUrlProperty;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +28,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.guiji.wechat.util.constants.RabbitMqConstant.USER_BIND_WECHAT_EXCHANGE;
 
@@ -65,6 +68,9 @@ public class AdminController {
 
     @Resource
     private IApiLogin iApiLogin;
+
+    @Resource
+    private IOrg iOrg;
 
     @Resource
     private WeChatUrlProperty weChatUrlProperty;
@@ -169,9 +175,9 @@ public class AdminController {
         }
 
         String openId = authAccessTokenDto.getOpenid();
-        SysUser user = getUserByCheckUserBind(openId);
-        if(null != user){
-            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, user.getUsername(), user.getOrgName()));
+        SysUserDto sysUserDto = getUserByCheckUserBind(openId);
+        if(null != sysUserDto){
+            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, sysUserDto));
         }
 
         return new ModelAndView("redirect:" + buildLoginUrl(openId));
@@ -212,17 +218,23 @@ public class AdminController {
 
         return Result.ok(true);
     }
+
     private String buildKeFuUrl(String domain, String userName){
-        return buildKeFuUrl(domain, userName, GUEST);
+        SysUserDto sysUserDto = new SysUserDto();
+        sysUserDto.setUsername(userName);
+        sysUserDto.setOrgName(GUEST);
+
+        return buildKeFuUrl(domain, sysUserDto);
     }
 
-    private String buildKeFuUrl(String domain, String userName, String orgName){
+    private String buildKeFuUrl(String domain, SysUserDto sysUserDto){
 
-        logger.info("domain:{}, userName:{}", domain, userName);
+        logger.info("domain:{}, sysUserDto:{}", domain, JSON.toJSONString(sysUserDto));
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuUrl())
-                .queryParam("userName", userName)
-                .queryParam("orgName", orgName);
+                .queryParam("userName", sysUserDto.getUsername())
+                .queryParam("orgName", sysUserDto.getOrgName())
+                .queryParam("businessEmail", sysUserDto.getBusinessEmail());
 
         return builder.build().toUri().toString();
     }
@@ -231,7 +243,7 @@ public class AdminController {
         return weChatEnvProperties.getUserLoginUrl() + "?openId=" + openId;
     }
 
-    private SysUser getUserByCheckUserBind(String openId){
+    private SysUserDto getUserByCheckUserBind(String openId){
         try{
             List<SysUser> userList = iAuth.getUserByOpenId(openId).getBody();
             logger.info("openId:{}, userList:{}", openId, JSON.toJSON(userList));
@@ -239,7 +251,17 @@ public class AdminController {
             if(CollectionUtils.isEmpty(userList)){
                 return null;
             }
-            return userList.get(0);
+
+            SysUserDto sysUserDto = new SysUserDto();
+            BeanUtils.copyProperties(userList.get(0), sysUserDto);
+
+            Map userBusinessInfoMap = iOrg.getOrgByUsername(sysUserDto.getUsername()).getBody();
+            logger.info("userBusinessInfoMap:{}", JSON.toJSONString(userBusinessInfoMap));
+            if(!CollectionUtils.isEmpty(userBusinessInfoMap)){
+                sysUserDto.setBusinessEmail(String.valueOf(userBusinessInfoMap.get("business_email")));
+            }
+
+            return sysUserDto;
         }catch (Exception e){
             logger.error("failed get user by openId", e);
             return null;

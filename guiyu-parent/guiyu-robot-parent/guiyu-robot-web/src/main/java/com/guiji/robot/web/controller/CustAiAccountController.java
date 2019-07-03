@@ -30,6 +30,7 @@ import com.guiji.robot.util.ListUtil;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -255,6 +256,52 @@ public class CustAiAccountController implements CustAiAccountRemote {
         return Result.ok(list);
     }
 
+    /**
+     * 查询用户正在使用的机器人开户账号明细
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/queryTemplateByOrgCode", method = RequestMethod.POST)
+    public Result.ReturnData<List<AiTemplateVO>> queryTemplateByOrgCode(
+            @RequestParam(value = "qOrgCode", required = false) String qOrgCode,
+            @RequestHeader Integer userId,
+            @RequestHeader String orgCode,
+            @RequestHeader Integer authLevel,
+            @RequestHeader Boolean isSuperAdmin) {
+
+        UserAiCfgBaseCondition condition = new UserAiCfgBaseCondition();
+
+        condition.setUserId(userId.toString());
+        condition.setAuthLevel(authLevel);
+        condition.setIsSuperAdmin(isSuperAdmin);
+        condition.setQOrgCode(qOrgCode);
+        condition.setOrgCode(orgCode);
+
+        List<String> ids = iUserAiCfgService.queryAllByCondition(condition);
+
+        List<AiTemplateVO> rtnList = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(ids)) {
+            List<List<String>> list = Lists.partition(ids, 100);
+
+            list.forEach(splitIds -> {
+                ServerResult<List<BotSentenceProcess>> templateData = iBotSentenceProcess.getTemplateByIds(splitIds);
+                if (templateData != null && ListUtil.isNotEmpty(templateData.getData())) {
+                    templateData.getData().forEach(obj -> {
+                        AiTemplateVO aiTemplateVO = new AiTemplateVO();
+                        aiTemplateVO.setTemplateId(obj.getTemplateId());
+                        aiTemplateVO.setTemplateName(obj.getTemplateName());
+                        rtnList.add(aiTemplateVO);
+                    });
+                }
+            });
+
+
+        }
+
+        return Result.ok(rtnList);
+    }
 
     /**
      * 查询用户正在使用的机器人开户账号明细
@@ -464,9 +511,9 @@ public class CustAiAccountController implements CustAiAccountRemote {
 
         List<AiTemplateVO> body = listReturnData.getBody();
 
-        for(AiTemplateVO aiTemplateVO : body) {
+        for (AiTemplateVO aiTemplateVO : body) {
 
-            if(aiTemplateVO.getTemplateId().equals(templateId)) {
+            if (aiTemplateVO.getTemplateId().equals(templateId)) {
                 CustTemplateVo vo = new CustTemplateVo();
 
                 BeanUtil.copyProperties(aiTemplateVO, vo);
@@ -481,7 +528,7 @@ public class CustAiAccountController implements CustAiAccountRemote {
 
     @Override
     @PostMapping(value = "/queryCustTemplateList")
-    public Result.ReturnData<List<CustTemplateVo>> queryCustTemplateList(@RequestParam("userId") Long userId){
+    public Result.ReturnData<List<CustTemplateVo>> queryCustTemplateList(@RequestParam("userId") Long userId) {
 
         ReturnData<List<AiTemplateVO>> listReturnData = queryCustRobotTemplateList("", userId);
 

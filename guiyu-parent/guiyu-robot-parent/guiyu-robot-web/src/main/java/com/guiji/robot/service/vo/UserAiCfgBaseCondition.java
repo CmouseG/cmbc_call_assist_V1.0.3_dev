@@ -2,8 +2,6 @@ package com.guiji.robot.service.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @version V1.0
  * @ClassName: UserAiCfgBaseCondition
@@ -25,4 +23,8 @@ public class UserAiCfgBaseCondition {
     private String orgCode;
     //所属者查询
     private String qUserId;
+
+    private String qOrgCode;
+
+    private Boolean isSuperAdmin;
 }

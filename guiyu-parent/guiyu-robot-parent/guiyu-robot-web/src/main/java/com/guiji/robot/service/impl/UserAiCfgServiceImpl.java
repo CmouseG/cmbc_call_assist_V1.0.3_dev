@@ -24,7 +24,9 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.StrUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.assertj.core.util.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -705,6 +707,68 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
         }
     }
 
+    /**
+     * 查询拥有的话术id
+     *
+     * @param condition
+     * @return
+     */
+    @Override
+    public List<String> queryAllByCondition(UserAiCfgBaseCondition condition) {
+
+        List<String> ids = new ArrayList<>();
+
+        if (RobotConstants.USER_DATA_AUTH_ME == condition.getAuthLevel() && !condition.getIsSuperAdmin()) {
+            UserAiCfgInfoExample example = new UserAiCfgInfoExample();
+
+            example.createCriteria().andUserIdEqualTo(condition.getUserId()).andStatusEqualTo(RobotConstants.USER_CFG_STATUS_S);
+
+            List<UserAiCfgInfo> userAiCfgInfos = userAiCfgInfoMapper.selectByExample(example);
+
+            if (CollectionUtils.isNotEmpty(userAiCfgInfos)) {
+                userAiCfgInfos.forEach(obj -> {
+                    if (StringUtils.isNotEmpty(obj.getTemplateIds())) {
+                        ids.addAll(Lists.newArrayList(obj.getTemplateIds().split(",")));
+                    }
+                });
+            }
+        } else {
+            UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+            //若超管，查询组织及以下所有
+            if (condition.getIsSuperAdmin()) {
+                if (StringUtils.isNotEmpty(condition.getQOrgCode())) {
+                    example.createCriteria().andOrgCodeLike(condition.getQOrgCode() + "%");
+                }
+            } else {
+                if (RobotConstants.USER_DATA_AUTH_ORGTREE == condition.getAuthLevel()) {
+                    if (StringUtils.isNotEmpty(condition.getQOrgCode())) {
+                        example.createCriteria().andOrgCodeLike(condition.getQOrgCode() + "%");
+                    }
+                } else {
+                    example.createCriteria().andOrgCodeEqualTo(condition.getOrgCode());
+                }
+            }
+            List<UserAiCfgBaseInfo> userAiCfgBaseInfos = userAiCfgBaseInfoMapper.selectByExample(example);
+
+            if (CollectionUtils.isNotEmpty(userAiCfgBaseInfos)) {
+                userAiCfgBaseInfos.forEach(obj -> {
+
+                    if (StringUtils.isNotEmpty(obj.getTemplateIds())) {
+                        ids.addAll(Lists.newArrayList(obj.getTemplateIds().split(",")));
+                    }
+
+                });
+            }
+        }
+
+        Set<String> idSet = new HashSet<>();
+
+        ids.forEach(obj -> {
+            idSet.add(obj);
+        });
+
+        return Lists.newArrayList(idSet);
+    }
 
     /**
      * 校验用户本次新增机器人总数是否有超过总控数量

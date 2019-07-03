@@ -132,4 +132,11 @@ public interface IUserAiCfgService {
      * @param id
      */
     void delUserCfg(String userId, int id);
+
+    /**
+     * 查询拥有的模板ids
+     * @param condition
+     * @return
+     */
+    List<String> queryAllByCondition(UserAiCfgBaseCondition condition);
 }

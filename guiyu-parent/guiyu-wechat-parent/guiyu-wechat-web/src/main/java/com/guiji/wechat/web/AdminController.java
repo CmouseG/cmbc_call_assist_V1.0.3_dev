@@ -7,6 +7,7 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.FanoutSender;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.wechat.dtos.*;
 import com.guiji.wechat.messages.UserBindWeChatMessage;
@@ -246,7 +247,7 @@ public class AdminController {
     private SysUserDto getUserByCheckUserBind(String openId){
         try{
             List<SysUser> userList = iAuth.getUserByOpenId(openId).getBody();
-            logger.info("openId:{}, userList:{}", openId, JSON.toJSON(userList));
+            logger.info("openId:{}, userList:{}", openId, JSON.toJSONString(userList));
 
             if(CollectionUtils.isEmpty(userList)){
                 return null;
@@ -254,6 +255,11 @@ public class AdminController {
 
             SysUserDto sysUserDto = new SysUserDto();
             BeanUtils.copyProperties(userList.get(0), sysUserDto);
+
+            SysOrganization sysOrganization = iAuth.getOrgByUserId(sysUserDto.getId()).getBody();
+            logger.info("sysOrganization:{}", JSON.toJSONString(sysOrganization));
+            sysUserDto.setOrgCode(sysOrganization.getCode());
+            sysUserDto.setOrgName(sysOrganization.getName());
 
             Map userBusinessInfoMap = iOrg.getOrgByUsername(sysUserDto.getUsername()).getBody();
             logger.info("userBusinessInfoMap:{}", JSON.toJSONString(userBusinessInfoMap));

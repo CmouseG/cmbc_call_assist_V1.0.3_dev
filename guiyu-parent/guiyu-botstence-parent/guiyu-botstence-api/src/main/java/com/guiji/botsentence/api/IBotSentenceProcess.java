@@ -18,7 +18,10 @@ public interface IBotSentenceProcess {
 	
 	@RequestMapping(value="/botSentenceProcess/getTemplateById")
 	public ServerResult<List<BotSentenceProcess>> getTemplateById(@RequestParam("templateId")String templateId);
-	
+
+	@RequestMapping(value="/botSentenceProcess/getTemplateByIds")
+	ServerResult<List<BotSentenceProcess>> getTemplateByIds(@RequestParam("templateIds") List<String> templateIds);
+
 	@RequestMapping(value="/available/countTemplateByOrgCode")
 	public ServerResult<Integer> countTemplateByOrgCode(@RequestParam("orgCode")String orgCode);
 }

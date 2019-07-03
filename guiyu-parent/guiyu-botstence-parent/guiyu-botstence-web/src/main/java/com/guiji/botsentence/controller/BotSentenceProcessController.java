@@ -1,47 +1,32 @@
 package com.guiji.botsentence.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.google.common.collect.Lists;
 import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateTradeVO;
+import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceShareAuthMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceShareAuth;
-import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTemplate;
-import com.guiji.botsentence.dao.entity.BotSentenceTemplateExample;
+import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.service.IBotSentenceProcessService;
-import com.guiji.botsentence.service.IBotSentenceTemplateService;
-import com.guiji.botsentence.service.IWeChatAppletService;
-import com.guiji.botsentence.service.impl.BotSentenceTemplateServiceImpl;
-import com.guiji.botsentence.service.impl.BotsentenceVariableServiceImpl;
-import com.guiji.botsentence.service.impl.FileGenerateServiceImpl;
 import com.guiji.botsentence.util.IndustryUtil;
-import com.guiji.botsentence.vo.BotSentenceProcessVO;
-import com.guiji.botsentence.vo.CommonDialogVO;
-import com.guiji.botsentence.vo.FlowEdge;
-import com.guiji.botsentence.vo.FlowInfoVO;
-import com.guiji.botsentence.vo.FlowNode;
-import com.guiji.botsentence.vo.GenerateTTSVO;
+import com.guiji.botsentence.vo.*;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -55,22 +40,16 @@ import com.guiji.component.result.ServerResult;
 @RequestMapping(value="botSentenceProcess")
 public class BotSentenceProcessController {
 
-	@Autowired
+	@Resource
 	private IBotSentenceProcessService botSentenceProcessService;
 	
-	@Autowired
-	private IWeChatAppletService weChatAppletService;
+	@Resource
+	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
-	@Autowired
-	private BotsentenceVariableServiceImpl botsentenceVariableService;
-	
-	@Autowired
-	private IBotSentenceTemplateService botSentenceTemplateService;
-	
-	@Autowired
+	@Resource
 	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
-	@Autowired
+	@Resource
 	private IndustryUtil industryUtil;
 	
 	
@@ -548,7 +527,19 @@ public class BotSentenceProcessController {
 		//List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
 	}
-	
+
+	@RequestMapping(value="getTemplateByIds")
+	public ServerResult<List<BotSentenceProcess>> getTemplateByIds(@RequestParam("templateIds") List<String> templateIds){
+		if(CollectionUtils.isEmpty(templateIds)){
+			return ServerResult.createBySuccess(Lists.newArrayList());
+		}
+
+		BotSentenceProcessExample processExample = new BotSentenceProcessExample();
+		processExample.createCriteria().andTemplateIdIn(templateIds);
+
+		return ServerResult.createBySuccess(botSentenceProcessMapper.selectByExample(processExample));
+	}
+
 	@RequestMapping(value="saveIndustry")
 	@Jurisdiction("botsentence_mytemplate_save")
 	public ServerResult saveTrade(@JsonParam String industryName, @JsonParam String industryId, @RequestHeader("userId") String userId){

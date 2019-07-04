@@ -5,12 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.guiji.auth.api.IOrg;
 import com.guiji.auth.exception.CheckConditionException;
@@ -29,6 +28,8 @@ import com.guiji.user.dao.entity.SysOrganization;
 @RestController
 @RequestMapping("organization")
 public class OrganizationController implements IOrg{
+
+	private Logger logger = LoggerFactory.getLogger(OrganizationController.class);
 
 	@Autowired
 	private UserService userService;
@@ -263,8 +264,9 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("getOrgByUsername")
-	public ReturnData<Map> getOrgByUsername(String username)
+	public ReturnData<Map> getOrgByUsername(@RequestParam("username") String username)
 	{
+		logger.info("getOrgByUsername request userName:{}", username);
 		return Result.ok(organizationService.getOrgByUsername(username));
 	}
 	

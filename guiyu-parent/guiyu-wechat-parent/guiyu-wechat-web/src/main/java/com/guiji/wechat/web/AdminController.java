@@ -261,7 +261,9 @@ public class AdminController {
             sysUserDto.setOrgCode(sysOrganization.getCode());
             sysUserDto.setOrgName(sysOrganization.getName());
 
-            Map userBusinessInfoMap = iOrg.getOrgByUsername(sysUserDto.getUsername()).getBody();
+            logger.info("userName:{},userName2:{}", sysUserDto.getUsername(), userList.get(0).getUsername());
+            Map userBusinessInfoMap = iOrg.getOrgByUsername(userList.get(0).getUsername()).getBody();
+
             logger.info("userBusinessInfoMap:{}", JSON.toJSONString(userBusinessInfoMap));
             if(!CollectionUtils.isEmpty(userBusinessInfoMap)){
                 sysUserDto.setBusinessEmail(String.valueOf(userBusinessInfoMap.get("business_email")));

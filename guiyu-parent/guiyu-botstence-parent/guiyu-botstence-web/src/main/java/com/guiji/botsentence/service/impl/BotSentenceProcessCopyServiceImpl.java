@@ -1,70 +1,11 @@
 package com.guiji.botsentence.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.botsentence.constant.Constant;
-import com.guiji.botsentence.dao.BotSentenceAdditionMapper;
-import com.guiji.botsentence.dao.BotSentenceBranchMapper;
-import com.guiji.botsentence.dao.BotSentenceDomainMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeMapper;
-import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
-import com.guiji.botsentence.dao.BotSentenceIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceOptionsLevelMapper;
-import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
-import com.guiji.botsentence.dao.BotSentenceProcessMapper;
-import com.guiji.botsentence.dao.BotSentenceShareAuthMapper;
-import com.guiji.botsentence.dao.BotSentenceShareHistoryMapper;
-import com.guiji.botsentence.dao.BotSentenceSurveyIntentMapper;
-import com.guiji.botsentence.dao.BotSentenceSurveyMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsParamMapper;
-import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import com.guiji.botsentence.dao.entity.BotSentenceAddition;
-import com.guiji.botsentence.dao.entity.BotSentenceBranch;
-import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
-import com.guiji.botsentence.dao.entity.BotSentenceDomain;
-import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGrade;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeExample;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRule;
-import com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample;
-import com.guiji.botsentence.dao.entity.BotSentenceIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptions;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsExample;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsLevel;
-import com.guiji.botsentence.dao.entity.BotSentenceOptionsLevelExample;
-import com.guiji.botsentence.dao.entity.BotSentenceProcess;
-import com.guiji.botsentence.dao.entity.BotSentenceShareAuth;
-import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample;
+import com.guiji.botsentence.dao.*;
+import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample.Criteria;
-import com.guiji.botsentence.dao.entity.BotSentenceShareHistory;
-import com.guiji.botsentence.dao.entity.BotSentenceShareHistoryExample;
-import com.guiji.botsentence.dao.entity.BotSentenceSurvey;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyExample;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntent;
-import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntentExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsParam;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsParamExample;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTask;
-import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
-import com.guiji.botsentence.dao.entity.VoliceInfo;
-import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import com.guiji.botsentence.dao.entity.ext.IntentVO;
 import com.guiji.botsentence.dao.entity.ext.VoliceInfoVO;
 import com.guiji.botsentence.dao.ext.BotSentenceBranchExtMapper;
@@ -81,8 +22,15 @@ import com.guiji.component.client.util.SystemUtil;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
-
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * 话术市场复制、分享功能相关服务类
@@ -94,76 +42,76 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 
 	private Logger logger = LoggerFactory.getLogger(BotSentenceProcessServiceImpl.class);
 	
-	@Autowired
+	@Resource
 	private IOrg orgService;
 	
-	@Autowired
+	@Resource
 	private IAuth iAuth;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainMapper botSentenceDomainMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchMapper botSentenceBranchMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceIntentMapper botSentenceIntentMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceBranchExtMapper botSentenceBranchExtMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceDomainExtMapper botSentenceDomainExtMapper;
 	
-	@Autowired
+	@Resource
 	private com.guiji.botsentence.dao.VoliceInfoMapper voliceInfoMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceAdditionMapper botSentenceAdditionMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceProcessServiceImpl botSentenceProcessServiceImpl;
 	
-	@Autowired
+	@Resource
 	private BotSentenceGradeMapper botSentenceGradeMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceGradeRuleMapper botSentenceGradeRuleMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceOptionsMapper botSentenceOptionsMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceOptionsLevelMapper botSentenceOptionsLevelMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyMapper botSentenceSurveyMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceSurveyIntentMapper botSentenceSurveyIntentMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceTtsParamMapper botSentenceTtsParamMapper;
 	
-	@Autowired
+	@Resource
 	private VoliceServiceImpl voliceServiceImpl;
 	
-	@Autowired
+	@Resource
 	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceShareHistoryMapper botSentenceShareHistoryMapper;
 	
-	@Autowired
+	@Resource
 	private BotSentenceShareAuthExtMapper botSentenceShareAuthExtMapper;
 	
 	@Override
@@ -370,31 +318,6 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 						}
 					}
 					newIntent = BotSentenceUtil.listToString(newIntentList);
-					
-					
-					/*String[] intentArray = oldIntent.split(",");
-					for(int i = 0 ; i < intentArray.length ; i++) {
-						for(IntentVO vo : intentsList) {
-							if(newIntentList.contains((vo.getOldIntentId()) + "")) {
-								if(!newIntentList2.contains(vo.getId().toString())) {
-									newIntentList2.add(vo.getId().toString());
-								}
-							}
-						}
-					}
-					
-					if(null != newIntentList2 && newIntentList2.size() > 0) {
-						for(int i = 0 ; i < newIntentList2.size() ; i++) {
-							if(i == newIntentList2.size() - 1) {//最后一条
-								newIntent = newIntent + newIntentList2.get(i);
-							}else {
-								newIntent = newIntent + newIntentList2.get(i) + ",";
-							}
-						}
-					}else {
-						newIntent = null;
-					}*/
-					
 				}else {
 					newIntent = null;
 				}

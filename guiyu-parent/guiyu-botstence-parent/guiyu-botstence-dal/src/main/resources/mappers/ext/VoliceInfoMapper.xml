@@ -42,7 +42,7 @@
       template_id, domain_name, `type`, 
       num, content, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
-      `name`, times, need_tts)
+      `name`, times, need_tts, tts_composite_type)
     values 
      <foreach collection="list" item="item" index="index" separator="," >
         (
@@ -59,7 +59,8 @@
         #{item.lstUpdateUser},
         #{item.name},
         #{item.times},
-        #{item.needTts}
+        #{item.needTts},
+		 #{ttsCompositeType,jdbcType=INTEGER}
         )
     </foreach>
 

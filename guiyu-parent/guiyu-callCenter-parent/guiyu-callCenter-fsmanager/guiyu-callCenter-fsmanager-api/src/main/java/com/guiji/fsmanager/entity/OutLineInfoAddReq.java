@@ -56,6 +56,11 @@ public class OutLineInfoAddReq implements Serializable {
     //trunk模式为0，register模式为1，sim卡模式为2
     private int lineType;
 
+    //线路归属地区号
+    private String lineLocation;
+    //外地号码前缀
+    private String nonlocalPrefix;
+
     private static final long serialVersionUID = 1L;
 
     public String getLineName() {
@@ -155,6 +160,22 @@ public class OutLineInfoAddReq implements Serializable {
         this.lineType = lineType;
     }
 
+    public String getLineLocation() {
+        return lineLocation;
+    }
+
+    public void setLineLocation(String lineLocation) {
+        this.lineLocation = lineLocation;
+    }
+
+    public String getNonlocalPrefix() {
+        return nonlocalPrefix;
+    }
+
+    public void setNonlocalPrefix(String nonlocalPrefix) {
+        this.nonlocalPrefix = nonlocalPrefix;
+    }
+
     @Override
     public String toString() {
         return "OutLineInfoAddReq{" +
@@ -170,6 +191,8 @@ public class OutLineInfoAddReq implements Serializable {
                 ", sipUser='" + sipUser + '\'' +
                 ", sipPwd='" + sipPwd + '\'' +
                 ", lineType=" + lineType +
+                ", lineLocation=" + lineLocation +
+                ", nonlocalPrefix=" + nonlocalPrefix +
                 '}';
     }
 }

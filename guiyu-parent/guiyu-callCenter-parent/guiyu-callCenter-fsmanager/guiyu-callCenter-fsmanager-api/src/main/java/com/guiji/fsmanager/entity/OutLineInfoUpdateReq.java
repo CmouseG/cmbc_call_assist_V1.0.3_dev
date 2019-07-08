@@ -46,6 +46,11 @@ public class OutLineInfoUpdateReq implements Serializable {
 
     private int lineType;
 
+    //线路归属地区号
+    private String lineLocation;
+    //外地号码前缀
+    private String nonlocalPrefix;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getLineId() {
@@ -145,6 +150,22 @@ public class OutLineInfoUpdateReq implements Serializable {
         this.lineType = lineType;
     }
 
+    public String getLineLocation() {
+        return lineLocation;
+    }
+
+    public void setLineLocation(String lineLocation) {
+        this.lineLocation = lineLocation;
+    }
+
+    public String getNonlocalPrefix() {
+        return nonlocalPrefix;
+    }
+
+    public void setNonlocalPrefix(String nonlocalPrefix) {
+        this.nonlocalPrefix = nonlocalPrefix;
+    }
+
     @Override
     public String toString() {
         return "OutLineInfoUpdateReq{" +
@@ -160,6 +181,8 @@ public class OutLineInfoUpdateReq implements Serializable {
                 ", sipUser='" + sipUser + '\'' +
                 ", sipPwd='" + sipPwd + '\'' +
                 ", lineType=" + lineType +
+                ", lineLocation=" + lineLocation +
+                ", nonlocalPrefix=" + nonlocalPrefix +
                 '}';
     }
 }

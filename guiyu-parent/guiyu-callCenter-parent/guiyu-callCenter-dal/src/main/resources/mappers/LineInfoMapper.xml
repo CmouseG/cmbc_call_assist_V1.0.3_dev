@@ -25,6 +25,8 @@
     <result column="sip_pwd" property="sipPwd" jdbcType="VARCHAR" />
     <result column="line_type" property="lineType" jdbcType="INTEGER" />
     <result column="fsagent_id" property="fsagentId" jdbcType="VARCHAR" />
+    <result column="line_location" property="lineLocation" jdbcType="VARCHAR" />
+    <result column="nonlocal_prefix" property="nonlocalPrefix" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -159,14 +161,14 @@
       create_date, update_date, remark, 
       createt_by, update_by, org_code, 
       sip_user, sip_pwd, line_type, 
-      fsagent_id)
+      fsagent_id,line_location, nonlocal_prefix)
     values (#{lineId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, 
       #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, 
       #{callerNum,jdbcType=VARCHAR}, #{calleePrefix,jdbcType=VARCHAR}, #{maxConcurrentCalls,jdbcType=INTEGER}, 
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{createtBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, 
       #{sipUser,jdbcType=VARCHAR}, #{sipPwd,jdbcType=VARCHAR}, #{lineType,jdbcType=INTEGER}, 
-      #{fsagentId,jdbcType=VARCHAR})
+      #{fsagentId,jdbcType=VARCHAR, #{lineLocation,jdbcType=VARCHAR}, #{nonlocalPrefix,jdbcType=VARCHAR}})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" useGeneratedKeys="true"   keyProperty="lineId">
     <!--
@@ -231,6 +233,12 @@
       </if>
       <if test="fsagentId != null" >
         fsagent_id,
+      </if>
+      <if test="lineLocation != null" >
+        line_location,
+      </if>
+      <if test="nonlocalPrefix != null" >
+        nonlocal_prefix,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -462,6 +470,12 @@
       <if test="fsagentId != null" >
         fsagent_id = #{fsagentId,jdbcType=VARCHAR},
       </if>
+      <if test="lineLocation != null" >
+        line_location = #{lineLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="nonlocalPrefix != null" >
+        nonlocal_prefix = #{nonlocalPrefix,jdbcType=VARCHAR},
+      </if>
     </set>
     where line_id = #{lineId,jdbcType=INTEGER}
   </update>
@@ -488,7 +502,9 @@
       sip_user = #{sipUser,jdbcType=VARCHAR},
       sip_pwd = #{sipPwd,jdbcType=VARCHAR},
       line_type = #{lineType,jdbcType=INTEGER},
-      fsagent_id = #{fsagentId,jdbcType=VARCHAR}
+      fsagent_id = #{fsagentId,jdbcType=VARCHAR},
+      line_location = #{lineLocation,jdbcType=VARCHAR},
+      nonlocal_prefix = #{nonlocalPrefix,jdbcType=VARCHAR}
     where line_id = #{lineId,jdbcType=INTEGER}
   </update>
 </mapper>

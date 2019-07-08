@@ -9,6 +9,11 @@ public class FsLineInfoVO {
 
     private String codec;
 
+    //线路归属地区号
+    private String lineLocation;
+    //外地号码前缀
+    private String nonlocalPrefix;
+
     public String getFsIp() {
         return fsIp;
     }
@@ -41,6 +46,22 @@ public class FsLineInfoVO {
         this.codec = codec;
     }
 
+    public String getLineLocation() {
+        return lineLocation;
+    }
+
+    public void setLineLocation(String lineLocation) {
+        this.lineLocation = lineLocation;
+    }
+
+    public String getNonlocalPrefix() {
+        return nonlocalPrefix;
+    }
+
+    public void setNonlocalPrefix(String nonlocalPrefix) {
+        this.nonlocalPrefix = nonlocalPrefix;
+    }
+
     @Override
     public String toString() {
         return "FsLineInfoVO{" +
@@ -48,6 +69,8 @@ public class FsLineInfoVO {
                 ", fsInPort='" + fsInPort + '\'' +
                 ", fsOutPort='" + fsOutPort + '\'' +
                 ", codec='" + codec + '\'' +
+                ", lineLocation='" + lineLocation + '\'' +
+                ", nonlocalPrefix='" + nonlocalPrefix + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package com.guiji.calloutserver.service.impl;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.calloutserver.config.AliAsrConfig;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
@@ -9,6 +10,7 @@ import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.calloutserver.manager.FsLineManager;
 import com.guiji.calloutserver.manager.SimCallManager;
 import com.guiji.calloutserver.service.CallService;
+import com.guiji.calloutserver.service.PhoneService;
 import com.guiji.component.result.Result;
 import com.guiji.dict.api.ISysDict;
 import com.guiji.dict.vo.SysDictVO;
@@ -16,7 +18,6 @@ import com.guiji.fsmanager.entity.FsLineInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,6 +50,8 @@ public class CallServiceImpl implements CallService {
     CallPlanDispatchHandler callPlanDispatchHandler;
     @Autowired
     SimCallManager simCallManager;
+    @Autowired
+    PhoneService phoneService;
 
     ScheduledExecutorService makecallScheduledExecutor = Executors.newScheduledThreadPool(20);
 
@@ -71,6 +74,7 @@ public class CallServiceImpl implements CallService {
             callPlanDispatchHandler.readyFail(callplan,"607",false,simCallManager.isSimCall(callplan.getCallId().toString()));
             return;
         }
+
         String codec = fsLine.getCodec();
 
         String ip = fsLine.getFsIp();
@@ -79,6 +83,25 @@ public class CallServiceImpl implements CallService {
         }
         String callid = callplan.getCallId().toString();
         Integer orgId = callplan.getOrgId();
+
+        log.info("呼叫getFsLine,callId[{}],fsLine[{}]",callid,fsLine);
+        String phoneNum = callplan.getPhoneNum();
+
+        //获取线路的号码归属地和外地号码前缀
+        String lineLocation = fsLine.getLineLocation();
+        String nonlocalPrefix = fsLine.getNonlocalPrefix();
+        if (lineLocation != null && nonlocalPrefix != null) {
+            try {
+                String location = phoneService.findLocationByPhone(phoneNum);
+                log.info("lineLocation[{}],location[{}],callid[{}]", lineLocation, location, callid);
+                if (location != null && !lineLocation.equals(location)) {// 表示外地号码
+                    phoneNum = nonlocalPrefix + phoneNum;
+                }
+            } catch (Exception e) {
+                log.error("设置呼叫前缀出现异常", e);
+            }
+        }
+
         //构建外呼命令
         String cmd = String.format("originate {" +
                         (StringUtils.isNotEmpty(codec) ? "absolute_codec_string="+codec+"," : "") +
@@ -87,14 +110,13 @@ public class CallServiceImpl implements CallService {
                         ", record_session:/usr/local/freeswitch/recordings/%s, park' inline",
                 callid+Constant.UUID_SEPARATE+orgId,
                 callplan.getLineId(),
-                callplan.getPhoneNum(),
+                phoneNum,
                 ip,
                 fsLine.getFsInPort(),
                 aliAsrConfig.getAccessId(),
                 aliAsrConfig.getAccessSecret(),
                 recordFile);
 
-        log.info("执行呼叫命令前sleep,callId[{}]",callid);
         synchronized (this){
             try {
                 Thread.sleep(50);

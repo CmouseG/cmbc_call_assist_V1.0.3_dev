@@ -168,7 +168,7 @@
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{createtBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, 
       #{sipUser,jdbcType=VARCHAR}, #{sipPwd,jdbcType=VARCHAR}, #{lineType,jdbcType=INTEGER}, 
-      #{fsagentId,jdbcType=VARCHAR, #{lineLocation,jdbcType=VARCHAR}, #{nonlocalPrefix,jdbcType=VARCHAR}})
+      #{fsagentId,jdbcType=VARCHAR, #{lineLocation,jdbcType=VARCHAR}, #{nonlocalPrefix,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" useGeneratedKeys="true"   keyProperty="lineId">
     <!--

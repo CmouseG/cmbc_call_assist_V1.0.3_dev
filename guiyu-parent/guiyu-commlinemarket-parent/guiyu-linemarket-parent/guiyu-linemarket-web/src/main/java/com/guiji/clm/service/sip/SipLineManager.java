@@ -28,6 +28,7 @@ import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,7 +81,7 @@ public class SipLineManager {
             throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(), ClmErrorEnum.C00060001.getErrorMsg());
         }
 
-        if(sipLineBaseInfo.getSupplierType() == 0) {
+        if (sipLineBaseInfo.getSupplierType() == 0) {
             sipLineBaseInfo.setUnivalent(sipLineBaseInfo.getContractUnivalent());
         }
 
@@ -715,10 +716,22 @@ public class SipLineManager {
             lineInfo.setCodec(sipLineBaseInfo.getCodec());
             lineInfo.setCallerNum(sipLineBaseInfo.getCallerNum());
             lineInfo.setCalleePrefix(sipLineBaseInfo.getDestinationPrefix());
+            String overtArea = sipLineBaseInfo.getOvertArea();
+
+            if (StringUtils.isNotEmpty(overtArea)) {
+                String[] split = overtArea.split(",");
+
+                String s = split[split.length - 1];
+
+                //获取地区code
+                lineInfo.setLineLocation(s);
+            }
+
+            lineInfo.setNonlocalPrefix(sipLineBaseInfo.getNonLocalPrefix());
             lineInfo.setMaxConcurrentCalls(sipLineBaseInfo.getMaxConcurrentCalls());
             lineInfo.setOrgCode(sipLineBaseInfo.getOrgCode());
             lineInfo.setLineType(sipLineBaseInfo.getRegFlag() ? 1 : 0);
-            if(lineInfo.getLineType() == 1) {
+            if (lineInfo.getLineType() == 1) {
                 lineInfo.setSipUser(sipLineBaseInfo.getSipAccount());
                 lineInfo.setSipPwd(sipLineBaseInfo.getSipPsd());
             }
@@ -750,8 +763,20 @@ public class SipLineManager {
                 lineInfo.setCalleePrefix(sipLineBaseInfo.getDestinationPrefix());
                 lineInfo.setMaxConcurrentCalls(sipLineBaseInfo.getMaxConcurrentCalls());
                 lineInfo.setOrgCode(sipLineBaseInfo.getOrgCode());
+                String overtArea = sipLineBaseInfo.getOvertArea();
+
+                if (StringUtils.isNotEmpty(overtArea)) {
+                    String[] split = overtArea.split(",");
+
+                    String s = split[split.length - 1];
+
+                    //获取地区code
+                    lineInfo.setLineLocation(s);
+                }
+
+                lineInfo.setNonlocalPrefix(sipLineBaseInfo.getNonLocalPrefix());
                 lineInfo.setLineType(sipLineBaseInfo.getRegFlag() ? 1 : 0);
-                if(lineInfo.getLineType() == 1) {
+                if (lineInfo.getLineType() == 1) {
                     lineInfo.setSipUser(sipLineBaseInfo.getSipAccount());
                     lineInfo.setSipPwd(sipLineBaseInfo.getSipPsd());
                 }

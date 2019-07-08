@@ -1116,6 +1116,76 @@ public class SipLineBaseInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andNonLocalPrefixIsNull() {
+            addCriterion("non_local_prefix is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixIsNotNull() {
+            addCriterion("non_local_prefix is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixEqualTo(String value) {
+            addCriterion("non_local_prefix =", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixNotEqualTo(String value) {
+            addCriterion("non_local_prefix <>", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixGreaterThan(String value) {
+            addCriterion("non_local_prefix >", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixGreaterThanOrEqualTo(String value) {
+            addCriterion("non_local_prefix >=", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixLessThan(String value) {
+            addCriterion("non_local_prefix <", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixLessThanOrEqualTo(String value) {
+            addCriterion("non_local_prefix <=", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixLike(String value) {
+            addCriterion("non_local_prefix like", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixNotLike(String value) {
+            addCriterion("non_local_prefix not like", value, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixIn(List<String> values) {
+            addCriterion("non_local_prefix in", values, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixNotIn(List<String> values) {
+            addCriterion("non_local_prefix not in", values, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixBetween(String value1, String value2) {
+            addCriterion("non_local_prefix between", value1, value2, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
+        public Criteria andNonLocalPrefixNotBetween(String value1, String value2) {
+            addCriterion("non_local_prefix not between", value1, value2, "nonLocalPrefix");
+            return (Criteria) this;
+        }
+
         public Criteria andDestinationPrefixIsNull() {
             addCriterion("destination_prefix is null");
             return (Criteria) this;

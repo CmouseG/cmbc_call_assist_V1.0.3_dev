@@ -35,6 +35,8 @@ public class SipLineBaseInfo implements Serializable {
 
     private String belongOrgCode;
 
+    private String nonLocalPrefix;
+
     private String destinationPrefix;
 
     private Integer maxConcurrentCalls;
@@ -203,6 +205,14 @@ public class SipLineBaseInfo implements Serializable {
 
     public void setBelongOrgCode(String belongOrgCode) {
         this.belongOrgCode = belongOrgCode == null ? null : belongOrgCode.trim();
+    }
+
+    public String getNonLocalPrefix() {
+        return nonLocalPrefix;
+    }
+
+    public void setNonLocalPrefix(String nonLocalPrefix) {
+        this.nonLocalPrefix = nonLocalPrefix == null ? null : nonLocalPrefix.trim();
     }
 
     public String getDestinationPrefix() {
@@ -418,6 +428,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", regFlag=").append(regFlag);
         sb.append(", callerNum=").append(callerNum);
         sb.append(", belongOrgCode=").append(belongOrgCode);
+        sb.append(", nonLocalPrefix=").append(nonLocalPrefix);
         sb.append(", destinationPrefix=").append(destinationPrefix);
         sb.append(", maxConcurrentCalls=").append(maxConcurrentCalls);
         sb.append(", useConcurrentCalls=").append(useConcurrentCalls);

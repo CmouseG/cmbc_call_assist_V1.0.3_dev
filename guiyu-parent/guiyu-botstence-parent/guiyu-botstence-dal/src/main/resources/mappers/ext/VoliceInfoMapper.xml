@@ -60,7 +60,7 @@
         #{item.name},
         #{item.times},
         #{item.needTts},
-		 #{ttsCompositeType,jdbcType=INTEGER}
+		#{item.ttsCompositeType}
         )
     </foreach>
 

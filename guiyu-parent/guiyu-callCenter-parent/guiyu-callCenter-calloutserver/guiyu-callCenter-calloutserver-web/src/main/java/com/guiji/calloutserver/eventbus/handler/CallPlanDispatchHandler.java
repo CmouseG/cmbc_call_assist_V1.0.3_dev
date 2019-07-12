@@ -159,8 +159,14 @@ public class CallPlanDispatchHandler {
                 if(simCall!=null && simCall){
                     //判断拨打是否超限
                     Boolean allowSimCall = simLimitService.isAllowSimCall(callPlan.getLineId());
-                    if(!allowSimCall){
-                        log.info("sim卡超限，不允许拨打,planUuid[{}]",callPlan.getPlanUuid());
+                    if (!allowSimCall) {
+                        try {
+                            Thread.sleep(25000);
+                        } catch (Exception e) {
+                            log.error("allowSimCall sleep异常,", e);
+                        }
+
+                        log.info("sim卡超限，不允许拨打,planUuid[{}]", callPlan.getPlanUuid());
                         dispatchService.successScheduleSim(callPlan.getPlanUuid(), callPlan.getPhoneNum(), null, callPlan.getCustomerId(),
                                 callPlan.getLineId(), callPlan.getTempId(), true, null, false);
                         return;
